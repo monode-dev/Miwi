@@ -1,0 +1,37 @@
+{
+  "name": "miwi",
+  "version": "0.0.17",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/monode-dev/Miwi.git"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "tsc",
+    "version": "npm run build && git add -A dist",
+    "postpublish": "git push && git push --tags",
+    "pub": "sucrase-node pub.ts"
+  },
+  "devDependencies": {
+    "@babel/types": "^7.22.10",
+    "@types/node": "^20.4.2",
+    "semver": "^7.5.4",
+    "sucrase": "^3.32.0"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./b-x": "./dist/b-x/index.js",
+    "./solidJs": "./dist/solidjs/index.js"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.4"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    }
+  }
+}
