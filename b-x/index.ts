@@ -1,8 +1,8 @@
 import { DecorationSty, computeBoxDecoration } from "./BoxDecoration";
 import {
-  Axis,
+  Axis as _Axis,
   defaultOverflowX,
-  Align,
+  Align as _Align,
   computeBoxLayout,
   LayoutSty,
 } from "./BoxLayout";
@@ -17,6 +17,10 @@ export type _Sty = SizeSty &
   TextSty &
   InteractionSty;
 export type Sty = Partial<_Sty>;
+export type Align = _Align;
+export const Align = _Align;
+export type Axis = _Axis;
+export const Axis = _Axis;
 
 // Cutom Element
 export class Miwi_Box extends HTMLElement {
@@ -45,7 +49,7 @@ export class Miwi_Box extends HTMLElement {
   }
 
   private get _axis() {
-    return this.sty.axis ?? Axis.column;
+    return this.sty.axis ?? _Axis.column;
   }
 
   computeParentStyle() {
@@ -81,9 +85,9 @@ export class Miwi_Box extends HTMLElement {
     const childWidthGrows = childNodes.some((child) => {
       if (!(child instanceof Miwi_Box)) return false;
       const computedChildStyle = getComputedStyle(child);
-      return this._axis === Axis.row
+      return this._axis === _Axis.row
         ? computedChildStyle.flexBasis !== "auto"
-        : this._axis === Axis.column
+        : this._axis === _Axis.column
         ? child.style.width === `100%`
         : false;
     });
@@ -94,9 +98,9 @@ export class Miwi_Box extends HTMLElement {
     const childHeightGrows = childNodes.some((child) => {
       if (!(child instanceof Miwi_Box)) return false;
       const computedChildStyle = getComputedStyle(child);
-      return this._axis === Axis.row
+      return this._axis === _Axis.row
         ? child.style.height === `100%`
-        : this._axis === Axis.column
+        : this._axis === _Axis.column
         ? computedChildStyle.flexBasis !== "auto"
         : false;
     });
@@ -121,7 +125,7 @@ export class Miwi_Box extends HTMLElement {
   }
 
   updateStyle() {
-    const align = this.sty.align ?? Align.center;
+    const align = this.sty.align ?? _Align.center;
 
     const newStyle = {
       ...computeBoxSize(
@@ -158,11 +162,11 @@ export class Miwi_Box extends HTMLElement {
 
     this.classList.toggle(
       stackClassName,
-      (this.sty.axis ?? Axis.column) === Axis.stack,
+      (this.sty.axis ?? _Axis.column) === _Axis.stack,
     );
     this.classList.toggle(
       nonStackClassName,
-      (this.sty.axis ?? Axis.column) !== Axis.stack,
+      (this.sty.axis ?? _Axis.column) !== _Axis.stack,
     );
   }
 

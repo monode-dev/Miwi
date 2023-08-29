@@ -1,9 +1,11 @@
 import { computeBoxDecoration } from "./BoxDecoration";
-import { Axis, defaultOverflowX, Align, computeBoxLayout, } from "./BoxLayout";
+import { Axis as _Axis, defaultOverflowX, Align as _Align, computeBoxLayout, } from "./BoxLayout";
 import { exists, isString } from "./BoxUtils";
 import { computeBoxSize } from "./BoxSize";
 import { computeTextStyle } from "./BoxText";
 import { computeBoxInteraction } from "./BoxInteraction";
+export const Align = _Align;
+export const Axis = _Axis;
 // Cutom Element
 export class Miwi_Box extends HTMLElement {
     _parentObserver;
@@ -29,7 +31,7 @@ export class Miwi_Box extends HTMLElement {
         this.updateStyle();
     }
     get _axis() {
-        return this.sty.axis ?? Axis.column;
+        return this.sty.axis ?? _Axis.column;
     }
     computeParentStyle() {
         if (exists(this.parentElement)) {
@@ -62,9 +64,9 @@ export class Miwi_Box extends HTMLElement {
             if (!(child instanceof Miwi_Box))
                 return false;
             const computedChildStyle = getComputedStyle(child);
-            return this._axis === Axis.row
+            return this._axis === _Axis.row
                 ? computedChildStyle.flexBasis !== "auto"
-                : this._axis === Axis.column
+                : this._axis === _Axis.column
                     ? child.style.width === `100%`
                     : false;
         });
@@ -76,9 +78,9 @@ export class Miwi_Box extends HTMLElement {
             if (!(child instanceof Miwi_Box))
                 return false;
             const computedChildStyle = getComputedStyle(child);
-            return this._axis === Axis.row
+            return this._axis === _Axis.row
                 ? child.style.height === `100%`
-                : this._axis === Axis.column
+                : this._axis === _Axis.column
                     ? computedChildStyle.flexBasis !== "auto"
                     : false;
         });
@@ -101,7 +103,7 @@ export class Miwi_Box extends HTMLElement {
         }
     }
     updateStyle() {
-        const align = this.sty.align ?? Align.center;
+        const align = this.sty.align ?? _Align.center;
         const newStyle = {
             ...computeBoxSize(this.sty, this._anyChildIsABoxWithAGrowingWidth, this._anyChildIsABoxWithAGrowingHeight, this._parentAxis, this._parentPadTop, this._parentPadRight, this._parentPadBottom, this._parentPadLeft),
             ...computeBoxLayout(this.sty, align, this._parentAxis, this._axis, this._childCount),
@@ -114,8 +116,8 @@ export class Miwi_Box extends HTMLElement {
                 this.style[key] = newStyle[key];
             }
         }
-        this.classList.toggle(stackClassName, (this.sty.axis ?? Axis.column) === Axis.stack);
-        this.classList.toggle(nonStackClassName, (this.sty.axis ?? Axis.column) !== Axis.stack);
+        this.classList.toggle(stackClassName, (this.sty.axis ?? _Axis.column) === _Axis.stack);
+        this.classList.toggle(nonStackClassName, (this.sty.axis ?? _Axis.column) !== _Axis.stack);
     }
     constructor() {
         super();
