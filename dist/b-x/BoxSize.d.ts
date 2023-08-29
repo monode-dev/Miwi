@@ -1,8 +1,9 @@
 import { CssProps } from "./BoxUtils";
 import { Axis, LayoutSty, Overflow } from "./BoxLayout";
+export type Size = number | string | FlexSize;
 export type SizeSty = {
-    width: number | string | FlexSize;
-    height: number | string | FlexSize;
+    width: Size;
+    height: Size;
 };
 export declare const muToRem = 1.125;
 export declare function sizeToCss(num: number | string): string;

@@ -12,7 +12,7 @@ import {
   LayoutSty,
 } from "./BoxLayout";
 import { exists, isString } from "./BoxUtils";
-import { SizeSty, computeBoxSize, sizeToCss } from "./BoxSize";
+import { SizeSty, computeBoxSize, Size as _Size } from "./BoxSize";
 import { TextSty, computeTextStyle } from "./BoxText";
 import { InteractionSty, computeBoxInteraction } from "./BoxInteraction";
 
@@ -29,6 +29,7 @@ export const Axis = _Axis;
 export type Overflow = _Overflow;
 export const Overflow = _Overflow;
 export const mdColors = _mdColors;
+export type Size = _Size;
 
 // Cutom Element
 export class Miwi_Box extends HTMLElement {

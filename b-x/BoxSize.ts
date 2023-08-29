@@ -7,9 +7,10 @@ import {
   defaultOverflowY,
 } from "./BoxLayout";
 
+export type Size = number | string | FlexSize;
 export type SizeSty = {
-  width: number | string | FlexSize;
-  height: number | string | FlexSize;
+  width: Size;
+  height: Size;
 };
 
 // scale: [positive-space, negative-space]
