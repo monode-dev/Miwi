@@ -1,6 +1,6 @@
 import { DecorationSty } from "./BoxDecoration";
 import { Axis as _Axis, Overflow as _Overflow, Align as _Align, LayoutSty } from "./BoxLayout";
-import { SizeSty, Size as _Size } from "./BoxSize";
+import { SizeSty, Size as _Size, sizeToCss as _sizeToCss } from "./BoxSize";
 import { TextSty } from "./BoxText";
 import { InteractionSty } from "./BoxInteraction";
 export type _Sty = SizeSty & DecorationSty & LayoutSty & TextSty & InteractionSty;
@@ -81,6 +81,7 @@ export declare const mdColors: {
     readonly sameAsText: "currentColor";
 };
 export type Size = _Size;
+export declare const sizeToCss: typeof _sizeToCss;
 export declare class Miwi_Box extends HTMLElement {
     private _parentObserver;
     private _parentAxis;
