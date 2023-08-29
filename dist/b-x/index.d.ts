@@ -1,5 +1,5 @@
 import { DecorationSty } from "./BoxDecoration";
-import { Axis as _Axis, Align as _Align, LayoutSty } from "./BoxLayout";
+import { Axis as _Axis, Overflow as _Overflow, Align as _Align, LayoutSty } from "./BoxLayout";
 import { SizeSty } from "./BoxSize";
 import { TextSty } from "./BoxText";
 import { InteractionSty } from "./BoxInteraction";
@@ -54,6 +54,31 @@ export declare const Axis: {
     readonly row: "row";
     readonly column: "column";
     readonly stack: "stack";
+};
+export type Overflow = _Overflow;
+export declare const Overflow: {
+    readonly forceStretchParent: "forceStretchParent";
+    readonly crop: "crop";
+    readonly wrap: "wrap";
+    readonly scroll: "scroll";
+};
+export declare const mdColors: {
+    readonly white: "#ffffffff";
+    readonly almostWhite: "#f9fafdff";
+    readonly pink: "#e91e63ff";
+    readonly red: "#f44336ff";
+    readonly orange: "#ff9800ff";
+    readonly yellow: "#ffea00ff";
+    readonly dataplateyellow: "#f2b212";
+    readonly green: "#4caf50ff";
+    readonly teal: "#009688ff";
+    readonly blue: "#2196f3ff";
+    readonly purple: "#9c27b0ff";
+    readonly brown: "#795548ff";
+    readonly grey: "#9e9e9eff";
+    readonly black: "#000000ff";
+    readonly transparent: "#ffffff00";
+    readonly sameAsText: "currentColor";
 };
 export declare class Miwi_Box extends HTMLElement {
     private _parentObserver;

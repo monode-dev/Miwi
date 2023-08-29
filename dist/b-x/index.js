@@ -1,11 +1,13 @@
-import { computeBoxDecoration } from "./BoxDecoration";
-import { Axis as _Axis, defaultOverflowX, Align as _Align, computeBoxLayout, } from "./BoxLayout";
+import { computeBoxDecoration, mdColors as _mdColors, } from "./BoxDecoration";
+import { Axis as _Axis, defaultOverflowX, Overflow as _Overflow, Align as _Align, computeBoxLayout, } from "./BoxLayout";
 import { exists, isString } from "./BoxUtils";
 import { computeBoxSize } from "./BoxSize";
 import { computeTextStyle } from "./BoxText";
 import { computeBoxInteraction } from "./BoxInteraction";
 export const Align = _Align;
 export const Axis = _Axis;
+export const Overflow = _Overflow;
+export const mdColors = _mdColors;
 // Cutom Element
 export class Miwi_Box extends HTMLElement {
     _parentObserver;

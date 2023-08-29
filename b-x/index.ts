@@ -1,7 +1,12 @@
-import { DecorationSty, computeBoxDecoration } from "./BoxDecoration";
+import {
+  DecorationSty,
+  computeBoxDecoration,
+  mdColors as _mdColors,
+} from "./BoxDecoration";
 import {
   Axis as _Axis,
   defaultOverflowX,
+  Overflow as _Overflow,
   Align as _Align,
   computeBoxLayout,
   LayoutSty,
@@ -21,6 +26,9 @@ export type Align = _Align;
 export const Align = _Align;
 export type Axis = _Axis;
 export const Axis = _Axis;
+export type Overflow = _Overflow;
+export const Overflow = _Overflow;
+export const mdColors = _mdColors;
 
 // Cutom Element
 export class Miwi_Box extends HTMLElement {
