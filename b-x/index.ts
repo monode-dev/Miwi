@@ -219,13 +219,13 @@ export class Miwi_Box extends HTMLElement {
     });
 
     this._selfObserver = new MutationObserver((mutationsList, observer) => {
+      let shouldUpdateStyle = false;
       for (let mutation of mutationsList) {
         if (mutation.type === "childList") {
-          const shouldUpdateStyle = this.updateChildList();
-          if (shouldUpdateStyle) this.updateStyle();
-          break;
+          shouldUpdateStyle = shouldUpdateStyle || this.updateChildList();
         }
       }
+      if (shouldUpdateStyle) this.updateStyle();
     });
   }
 
