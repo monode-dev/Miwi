@@ -95,19 +95,19 @@ export class Miwi_Box extends HTMLElement {
         return shouldUpdateStyle;
     }
     updateChildList() {
+        let shouldUpdateStyle = false;
         this._childrenObserver.disconnect();
         const childNodes = Array.from(this.childNodes);
         if (this._childCount !== childNodes.length) {
             this._childCount = childNodes.length;
-            this.updateStyle();
+            shouldUpdateStyle = true;
         }
-        const shouldUpdateStyle = this.updateChildSizeGrows();
-        if (shouldUpdateStyle)
-            this.updateStyle();
+        shouldUpdateStyle = shouldUpdateStyle || this.updateChildSizeGrows();
         for (let i = 0; i < childNodes.length; i++) {
             const childNode = childNodes[i];
             this._childrenObserver.observe(childNode, { attributes: true });
         }
+        return shouldUpdateStyle;
     }
     updateStyle() {
         const align = this.sty.align ?? _Align.center;
@@ -150,7 +150,10 @@ export class Miwi_Box extends HTMLElement {
         this._selfObserver = new MutationObserver((mutationsList, observer) => {
             for (let mutation of mutationsList) {
                 if (mutation.type === "childList") {
-                    this.updateChildList();
+                    const shouldUpdateStyle = this.updateChildList();
+                    if (shouldUpdateStyle)
+                        this.updateStyle();
+                    break;
                 }
             }
         });
