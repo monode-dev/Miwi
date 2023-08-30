@@ -37,31 +37,34 @@ export class Miwi_Box extends HTMLElement {
         return this.sty.axis ?? _Axis.column;
     }
     computeParentStyle() {
+        let shouldUpdateStyle = false;
         if (exists(this.parentElement)) {
             const computedParentStyle = getComputedStyle(this.parentElement);
             if (this._parentAxis !== computedParentStyle.flexDirection) {
                 this._parentAxis = computedParentStyle.flexDirection;
-                this.updateStyle();
+                shouldUpdateStyle = true;
             }
             if (this._parentPadTop !== computedParentStyle.paddingTop) {
                 this._parentPadTop = computedParentStyle.paddingTop;
-                this.updateStyle();
+                shouldUpdateStyle = true;
             }
             if (this._parentPadRight !== computedParentStyle.paddingRight) {
                 this._parentPadRight = computedParentStyle.paddingRight;
-                this.updateStyle();
+                shouldUpdateStyle = true;
             }
             if (this._parentPadBottom !== computedParentStyle.paddingBottom) {
                 this._parentPadBottom = computedParentStyle.paddingBottom;
-                this.updateStyle();
+                shouldUpdateStyle = true;
             }
             if (this._parentPadLeft !== computedParentStyle.paddingLeft) {
                 this._parentPadLeft = computedParentStyle.paddingLeft;
-                this.updateStyle();
+                shouldUpdateStyle = true;
             }
         }
+        return shouldUpdateStyle;
     }
     updateChildSizeGrows() {
+        let shouldUpdateStyle = false;
         const childNodes = Array.from(this.childNodes);
         const childWidthGrows = childNodes.some((child) => {
             if (!(child instanceof Miwi_Box))
@@ -75,7 +78,7 @@ export class Miwi_Box extends HTMLElement {
         });
         if (this._anyChildIsABoxWithAGrowingWidth !== childWidthGrows) {
             this._anyChildIsABoxWithAGrowingWidth = childWidthGrows;
-            this.updateStyle();
+            shouldUpdateStyle = true;
         }
         const childHeightGrows = childNodes.some((child) => {
             if (!(child instanceof Miwi_Box))
@@ -89,21 +92,24 @@ export class Miwi_Box extends HTMLElement {
         });
         if (this._anyChildIsABoxWithAGrowingHeight !== childHeightGrows) {
             this._anyChildIsABoxWithAGrowingHeight = childHeightGrows;
-            this.updateStyle();
+            shouldUpdateStyle = true;
         }
+        return shouldUpdateStyle;
     }
     updateChildList() {
+        let shouldUpdateStyle = false;
         this._childrenObserver.disconnect();
         const childNodes = Array.from(this.childNodes);
         if (this._childCount !== childNodes.length) {
             this._childCount = childNodes.length;
-            this.updateStyle();
+            shouldUpdateStyle = true;
         }
-        this.updateChildSizeGrows();
+        shouldUpdateStyle ||= this.updateChildSizeGrows();
         for (let i = 0; i < childNodes.length; i++) {
             const childNode = childNodes[i];
             this._childrenObserver.observe(childNode, { attributes: true });
         }
+        return shouldUpdateStyle;
     }
     updateStyle() {
         const align = this.sty.align ?? _Align.center;
@@ -128,7 +134,10 @@ export class Miwi_Box extends HTMLElement {
             for (let mutation of mutationsList) {
                 if (mutation.type === "attributes" &&
                     mutation.attributeName === "style") {
-                    this.computeParentStyle();
+                    const shouldUpdateStyle = this.computeParentStyle();
+                    if (shouldUpdateStyle)
+                        this.updateStyle();
+                    return;
                 }
             }
         });
@@ -137,14 +146,20 @@ export class Miwi_Box extends HTMLElement {
                 if (mutation.type === "attributes" &&
                     mutation.attributeName === "style" &&
                     mutation.target instanceof Element) {
-                    this.updateChildSizeGrows();
+                    const shouldUpdateStyle = this.updateChildSizeGrows();
+                    if (shouldUpdateStyle)
+                        this.updateStyle();
+                    return;
                 }
             }
         });
         this._selfObserver = new MutationObserver((mutationsList, observer) => {
             for (let mutation of mutationsList) {
                 if (mutation.type === "childList") {
-                    this.updateChildList();
+                    const shouldUpdateStyle = this.updateChildList();
+                    if (shouldUpdateStyle)
+                        this.updateStyle();
+                    return;
                 }
             }
         });
