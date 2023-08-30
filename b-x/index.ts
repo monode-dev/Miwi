@@ -174,7 +174,7 @@ export class Miwi_Box extends HTMLElement {
 
     for (const key of Object.keys(newStyle)) {
       if (newStyle[key] !== this.style[key as keyof CSSStyleDeclaration]) {
-        (this.style as any)[key] = newStyle[key];
+        (this.style as any)[key] = newStyle[key] ?? ``;
         if (this.sty.shouldLog && key === `maxWidth`) {
           console.log(`maxWidth`, newStyle[`maxWidth`], this.style[`maxWidth`]);
         }
