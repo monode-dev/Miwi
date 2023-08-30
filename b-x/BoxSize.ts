@@ -78,6 +78,9 @@ export function computeSizeInfo({
       ? undefined // ?? `100%` // I turned (maxSize: 100%) off because a 100% caps the element at the height of its parent which doesn't work if the parent scrolls its content
       : sizeToCss(size.max)
     : exactSize;
+  if (shouldLog) {
+    console.log(`size`, size, exactSize, minSize, maxSize, sizeIsFlex);
+  }
   return [exactSize, minSize, maxSize, sizeIsFlex] as const;
 }
 
@@ -105,6 +108,7 @@ export function computeBoxSize(
     size: width,
     isMainAxis: parentAxis === Axis.row,
     overflow: sty.overflowX ?? defaultOverflowX,
+    shouldLog,
   });
   let height =
     (sty.height ?? -1) === -1
