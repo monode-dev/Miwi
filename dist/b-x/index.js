@@ -117,9 +117,6 @@ export class Miwi_Box extends HTMLElement {
         for (const key of Object.keys(newStyle)) {
             if (newStyle[key] !== this.style[key]) {
                 this.style[key] = newStyle[key] ?? ``;
-                if (this.sty.shouldLog && key === `maxWidth`) {
-                    console.log(`maxWidth`, newStyle[`maxWidth`], this.style[`maxWidth`]);
-                }
             }
         }
         this.classList.toggle(stackClassName, (this.sty.axis ?? _Axis.column) === _Axis.stack);
