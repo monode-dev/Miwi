@@ -37,29 +37,31 @@ export class Miwi_Box extends HTMLElement {
         return this.sty.axis ?? _Axis.column;
     }
     computeParentStyle() {
+        let shouldUpdateStyle = false;
         if (exists(this.parentElement)) {
             const computedParentStyle = getComputedStyle(this.parentElement);
             if (this._parentAxis !== computedParentStyle.flexDirection) {
                 this._parentAxis = computedParentStyle.flexDirection;
-                this.updateStyle();
+                shouldUpdateStyle = true;
             }
             if (this._parentPadTop !== computedParentStyle.paddingTop) {
                 this._parentPadTop = computedParentStyle.paddingTop;
-                this.updateStyle();
+                shouldUpdateStyle = true;
             }
             if (this._parentPadRight !== computedParentStyle.paddingRight) {
                 this._parentPadRight = computedParentStyle.paddingRight;
-                this.updateStyle();
+                shouldUpdateStyle = true;
             }
             if (this._parentPadBottom !== computedParentStyle.paddingBottom) {
                 this._parentPadBottom = computedParentStyle.paddingBottom;
-                this.updateStyle();
+                shouldUpdateStyle = true;
             }
             if (this._parentPadLeft !== computedParentStyle.paddingLeft) {
                 this._parentPadLeft = computedParentStyle.paddingLeft;
-                this.updateStyle();
+                shouldUpdateStyle = true;
             }
         }
+        return shouldUpdateStyle;
     }
     updateChildSizeGrows() {
         let shouldUpdateStyle = false;
@@ -102,8 +104,8 @@ export class Miwi_Box extends HTMLElement {
             this._childCount = childNodes.length;
             shouldUpdateStyle = true;
         }
-        const shouldUpdateStyle2 = this.updateChildSizeGrows();
-        if (shouldUpdateStyle || shouldUpdateStyle2)
+        shouldUpdateStyle ||= this.updateChildSizeGrows();
+        if (shouldUpdateStyle)
             this.updateStyle();
         for (let i = 0; i < childNodes.length; i++) {
             const childNode = childNodes[i];
