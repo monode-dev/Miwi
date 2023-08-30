@@ -130,14 +130,15 @@ export class Miwi_Box extends HTMLElement {
   }
 
   updateChildList() {
+    let shouldUpdateStyle = false;
     this._childrenObserver.disconnect();
     const childNodes = Array.from(this.childNodes);
     if (this._childCount !== childNodes.length) {
       this._childCount = childNodes.length;
-      this.updateStyle();
+      shouldUpdateStyle = true;
     }
-    const shouldUpdateStyle = this.updateChildSizeGrows();
-    if (shouldUpdateStyle) this.updateStyle();
+    const shouldUpdateStyle2 = this.updateChildSizeGrows();
+    if (shouldUpdateStyle || shouldUpdateStyle2) this.updateStyle();
     for (let i = 0; i < childNodes.length; i++) {
       const childNode = childNodes[i];
       this._childrenObserver.observe(childNode, { attributes: true });
