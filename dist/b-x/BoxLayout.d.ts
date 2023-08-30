@@ -46,7 +46,7 @@ export type AlignStyProps = {
 export type _FlexAlign = (typeof _FlexAlign)[keyof typeof _FlexAlign];
 export declare const _FlexAlign: {
     readonly start: "flex-start";
-    readonly center: "safe center";
+    readonly center: "center";
     readonly end: "flex-end";
 };
 export type _SpaceAlign = (typeof _SpaceAlign)[keyof typeof _SpaceAlign];
@@ -67,7 +67,7 @@ export declare const Align: {
         readonly alignY: "flex-start";
     };
     readonly topCenter: {
-        readonly alignX: "safe center";
+        readonly alignX: "center";
         readonly alignY: "flex-start";
     };
     readonly topRight: {
@@ -76,22 +76,22 @@ export declare const Align: {
     };
     readonly centerLeft: {
         readonly alignX: "flex-start";
-        readonly alignY: "safe center";
+        readonly alignY: "center";
     };
     readonly center: {
-        readonly alignX: "safe center";
-        readonly alignY: "safe center";
+        readonly alignX: "center";
+        readonly alignY: "center";
     };
     readonly centerRight: {
         readonly alignX: "flex-end";
-        readonly alignY: "safe center";
+        readonly alignY: "center";
     };
     readonly bottomLeft: {
         readonly alignX: "flex-start";
         readonly alignY: "flex-end";
     };
     readonly bottomCenter: {
-        readonly alignX: "safe center";
+        readonly alignX: "center";
         readonly alignY: "flex-end";
     };
     readonly bottomRight: {

@@ -64,7 +64,7 @@ export type AlignStyProps = {
 export type _FlexAlign = (typeof _FlexAlign)[keyof typeof _FlexAlign];
 export const _FlexAlign = {
   start: `flex-start`,
-  center: `safe center`,
+  center: `center`,
   end: `flex-end`,
 } as const;
 export type _SpaceAlign = (typeof _SpaceAlign)[keyof typeof _SpaceAlign];

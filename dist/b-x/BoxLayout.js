@@ -21,7 +21,7 @@ export const defaultOverflowX = Overflow.forceStretchParent; // Overflow.crop;
 export const defaultOverflowY = Overflow.forceStretchParent; // Overflow.crop; // This is because otherwise text gets cut off.
 export const _FlexAlign = {
     start: `flex-start`,
-    center: `safe center`,
+    center: `center`,
     end: `flex-end`,
 };
 export const _SpaceAlign = {
