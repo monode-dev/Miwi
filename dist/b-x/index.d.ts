@@ -3,7 +3,9 @@ import { Axis as _Axis, Overflow as _Overflow, Align as _Align, LayoutSty } from
 import { SizeSty, Size as _Size, sizeToCss as _sizeToCss } from "./BoxSize";
 import { TextSty } from "./BoxText";
 import { InteractionSty } from "./BoxInteraction";
-export type _Sty = SizeSty & DecorationSty & LayoutSty & TextSty & InteractionSty;
+export type _Sty = SizeSty & DecorationSty & LayoutSty & TextSty & InteractionSty & {
+    shouldLog?: boolean;
+};
 export type Sty = Partial<_Sty>;
 export type Align = _Align;
 export declare const Align: {

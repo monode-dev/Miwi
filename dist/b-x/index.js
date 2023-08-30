@@ -108,7 +108,7 @@ export class Miwi_Box extends HTMLElement {
     updateStyle() {
         const align = this.sty.align ?? _Align.center;
         const newStyle = {
-            ...computeBoxSize(this.sty, this._anyChildIsABoxWithAGrowingWidth, this._anyChildIsABoxWithAGrowingHeight, this._parentAxis, this._parentPadTop, this._parentPadRight, this._parentPadBottom, this._parentPadLeft),
+            ...computeBoxSize(this.sty, this._anyChildIsABoxWithAGrowingWidth, this._anyChildIsABoxWithAGrowingHeight, this._parentAxis, this._parentPadTop, this._parentPadRight, this._parentPadBottom, this._parentPadLeft, this.sty.shouldLog),
             ...computeBoxLayout(this.sty, align, this._parentAxis, this._axis, this._childCount),
             ...computeBoxDecoration(this.sty),
             ...computeTextStyle(this.sty, isString(align) ? align : align.alignX, this.sty.overflowX ?? defaultOverflowX),

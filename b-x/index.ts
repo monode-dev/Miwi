@@ -25,7 +25,9 @@ export type _Sty = SizeSty &
   DecorationSty &
   LayoutSty &
   TextSty &
-  InteractionSty;
+  InteractionSty & {
+    shouldLog?: boolean;
+  };
 export type Sty = Partial<_Sty>;
 export type Align = _Align;
 export const Align = _Align;
@@ -152,6 +154,7 @@ export class Miwi_Box extends HTMLElement {
         this._parentPadRight,
         this._parentPadBottom,
         this._parentPadLeft,
+        this.sty.shouldLog,
       ),
       ...computeBoxLayout(
         this.sty,

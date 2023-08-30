@@ -13,9 +13,10 @@ export interface FlexSize {
     max: number;
 }
 export declare function isFlexSize(size: any): size is FlexSize;
-export declare function computeSizeInfo({ size, isMainAxis, overflow, }: {
+export declare function computeSizeInfo({ size, isMainAxis, overflow, shouldLog, }: {
     size: number | string | FlexSize;
     isMainAxis: boolean;
     overflow: Overflow;
+    shouldLog?: boolean;
 }): readonly [string | undefined, string | undefined, string | undefined, boolean];
-export declare function computeBoxSize(sty: Partial<SizeSty & LayoutSty>, childWidthGrows: boolean, childHeightGrows: boolean, parentAxis: Axis, parentPadTop: string, parentPadRight: string, parentPadBottom: string, parentPadLeft: string): CssProps;
+export declare function computeBoxSize(sty: Partial<SizeSty & LayoutSty>, childWidthGrows: boolean, childHeightGrows: boolean, parentAxis: Axis, parentPadTop: string, parentPadRight: string, parentPadBottom: string, parentPadLeft: string, shouldLog?: boolean): CssProps;

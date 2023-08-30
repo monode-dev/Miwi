@@ -23,7 +23,7 @@ function roundToString(num, digits = 0) {
 export function isFlexSize(size) {
     return exists(size?.flex);
 }
-export function computeSizeInfo({ size, isMainAxis, overflow, }) {
+export function computeSizeInfo({ size, isMainAxis, overflow, shouldLog, }) {
     const isShrink = size === -1;
     const sizeIsFlex = isFlexSize(size);
     const exactSize = !isMainAxis && sizeIsFlex
@@ -49,7 +49,7 @@ export function computeSizeInfo({ size, isMainAxis, overflow, }) {
         : exactSize;
     return [exactSize, minSize, maxSize, sizeIsFlex];
 }
-export function computeBoxSize(sty, childWidthGrows, childHeightGrows, parentAxis, parentPadTop, parentPadRight, parentPadBottom, parentPadLeft) {
+export function computeBoxSize(sty, childWidthGrows, childHeightGrows, parentAxis, parentPadTop, parentPadRight, parentPadBottom, parentPadLeft, shouldLog) {
     let width = (sty.width ?? -1) === -1 ? (childWidthGrows ? `1f` : -1) : sty.width ?? -1;
     if (isString(width) && width.endsWith(`f`)) {
         width = {

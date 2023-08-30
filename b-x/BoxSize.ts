@@ -47,10 +47,12 @@ export function computeSizeInfo({
   size,
   isMainAxis,
   overflow,
+  shouldLog,
 }: {
   size: number | string | FlexSize;
   isMainAxis: boolean;
   overflow: Overflow;
+  shouldLog?: boolean;
 }) {
   const isShrink = size === -1;
   const sizeIsFlex = isFlexSize(size);
@@ -88,6 +90,7 @@ export function computeBoxSize(
   parentPadRight: string,
   parentPadBottom: string,
   parentPadLeft: string,
+  shouldLog?: boolean,
 ): CssProps {
   let width =
     (sty.width ?? -1) === -1 ? (childWidthGrows ? `1f` : -1) : sty.width ?? -1;
