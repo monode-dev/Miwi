@@ -115,6 +115,9 @@ export class Miwi_Box extends HTMLElement {
             ...computeBoxInteraction(this.sty),
         };
         for (const key of Object.keys(newStyle)) {
+            if (this.sty.shouldLog) {
+                console.log(Object.keys(newStyle));
+            }
             if (newStyle[key] !== this.style[key]) {
                 this.style[key] = newStyle[key];
             }

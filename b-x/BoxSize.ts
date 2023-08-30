@@ -128,7 +128,7 @@ export function computeBoxSize(
     isMainAxis: parentAxis === Axis.column,
     overflow: sty.overflowY ?? defaultOverflowY,
   });
-  return {
+  const result = {
     // Sizing
     display: `flex`,
     boxSizing: `border-box`,
@@ -234,4 +234,8 @@ export function computeBoxSize(
     //           : undefined
     //       : undefined,
   };
+  if (shouldLog) {
+    console.log(`sizeCss`, result);
+  }
+  return result;
 }

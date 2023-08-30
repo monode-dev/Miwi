@@ -173,6 +173,9 @@ export class Miwi_Box extends HTMLElement {
     };
 
     for (const key of Object.keys(newStyle)) {
+      if (this.sty.shouldLog) {
+        console.log(Object.keys(newStyle));
+      }
       if (newStyle[key] !== this.style[key as keyof CSSStyleDeclaration]) {
         (this.style as any)[key] = newStyle[key];
       }
