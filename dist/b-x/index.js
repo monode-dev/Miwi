@@ -109,8 +109,10 @@ export class Miwi_Box extends HTMLElement {
             const childNode = childNodes[i];
             this._childrenObserver.observe(childNode, { attributes: true });
         }
-        if (shouldUpdateStyle)
+        if (shouldUpdateStyle) {
             this.updateStyle();
+            console.log(shouldUpdateStyle);
+        }
     }
     updateStyle() {
         const align = this.sty.align ?? _Align.center;
