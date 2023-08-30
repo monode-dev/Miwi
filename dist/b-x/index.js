@@ -102,12 +102,15 @@ export class Miwi_Box extends HTMLElement {
             this._childCount = childNodes.length;
             shouldUpdateStyle = true;
         }
-        shouldUpdateStyle = shouldUpdateStyle || this.updateChildSizeGrows();
+        shouldUpdateStyle ||= this.updateChildSizeGrows();
+        if (shouldUpdateStyle)
+            this.updateStyle();
         for (let i = 0; i < childNodes.length; i++) {
             const childNode = childNodes[i];
             this._childrenObserver.observe(childNode, { attributes: true });
         }
-        return shouldUpdateStyle;
+        if (shouldUpdateStyle)
+            this.updateStyle();
     }
     updateStyle() {
         const align = this.sty.align ?? _Align.center;
@@ -148,14 +151,11 @@ export class Miwi_Box extends HTMLElement {
             }
         });
         this._selfObserver = new MutationObserver((mutationsList, observer) => {
-            let shouldUpdateStyle = false;
             for (let mutation of mutationsList) {
                 if (mutation.type === "childList") {
-                    shouldUpdateStyle = shouldUpdateStyle || this.updateChildList();
+                    this.updateChildList();
                 }
             }
-            if (shouldUpdateStyle)
-                this.updateStyle();
         });
     }
     connectedCallback() {
