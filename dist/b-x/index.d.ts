@@ -102,7 +102,7 @@ export declare class Miwi_Box extends HTMLElement {
     set sty(value: Partial<_Sty>);
     private get _axis();
     computeParentStyle(): void;
-    updateChildSizeGrows(): void;
+    updateChildSizeGrows(): boolean;
     updateChildList(): void;
     updateStyle(): void;
     constructor();
