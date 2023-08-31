@@ -1,5 +1,5 @@
 import "./global.d.ts";
-export * from "./global.d";
+export * from "./global";
 export * from "./AppBar";
 export * from "./Body";
 export * from "./Box";

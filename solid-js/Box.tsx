@@ -2,11 +2,8 @@ import { signal, watchEffect, exists, computed } from "./utils";
 import "../b-x";
 import { Axis, Sty } from "../b-x";
 import {
-  onMount,
   type JSX,
   type ParentProps,
-  children as awaitChildren,
-  children,
 } from "solid-js";
 
 type BDashXProps = ParentProps & {
@@ -84,37 +81,6 @@ export function parseSty(
 // })();
 export function grow(flex: number = 1) {
   return `${flex}f`;
-}
-
-const boxClassName = `b-x`;
-const widthGrowsClassName = `b-x-width-grows`;
-const heightGrowsClassName = `b-x-height-grows`;
-
-function computeSomeChildGrows(children: JSX.ArrayElement): {
-  someChildWidthGrows: boolean;
-  someChildHeightGrows: boolean;
-} {
-  const result = {
-    someChildWidthGrows: false,
-    someChildHeightGrows: false,
-  };
-  for (const child of children) {
-    if (
-      !(child instanceof HTMLElement) ||
-      !child.classList.contains(boxClassName)
-    )
-      continue;
-    if (child.classList.contains(widthGrowsClassName)) {
-      result.someChildWidthGrows = true;
-    }
-    if (child.classList.contains(heightGrowsClassName)) {
-      result.someChildHeightGrows = true;
-    }
-  }
-  return result;
-}
-function toArray(v: JSX.Element) {
-  return Array.isArray(v) ? v : [v];
 }
 
 export type BoxProps = Partial<Sty> & BDashXProps;

@@ -61,30 +61,6 @@ export function parseSty(props, defaultSty) {
 export function grow(flex = 1) {
     return `${flex}f`;
 }
-const boxClassName = `b-x`;
-const widthGrowsClassName = `b-x-width-grows`;
-const heightGrowsClassName = `b-x-height-grows`;
-function computeSomeChildGrows(children) {
-    const result = {
-        someChildWidthGrows: false,
-        someChildHeightGrows: false,
-    };
-    for (const child of children) {
-        if (!(child instanceof HTMLElement) ||
-            !child.classList.contains(boxClassName))
-            continue;
-        if (child.classList.contains(widthGrowsClassName)) {
-            result.someChildWidthGrows = true;
-        }
-        if (child.classList.contains(heightGrowsClassName)) {
-            result.someChildHeightGrows = true;
-        }
-    }
-    return result;
-}
-function toArray(v) {
-    return Array.isArray(v) ? v : [v];
-}
 export function Box(props) {
     return <b-x {...props} sty={parseSty(props)}/>;
 }
