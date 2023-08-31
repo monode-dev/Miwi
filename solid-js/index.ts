@@ -1,4 +1,3 @@
-import "./global.d.ts";
 import { Axis, Align, Overflow } from "../b-x";
 
 const _window = window as any;
