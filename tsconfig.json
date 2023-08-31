@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
+    "strict": true,
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
     "lib": ["ESNext", "DOM"],
     "declaration": true,
     "outDir": "./dist",
-    "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
   },
   "include": ["*/**/*.ts"],
   "exclude": ["node_modules", "*/**/*.d.ts"]
