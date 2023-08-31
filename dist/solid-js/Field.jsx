@@ -4,7 +4,6 @@ import { Row } from "./Row";
 import { Icon } from "./Icon";
 import { computed, signal, watchDeps, watchEffect, exists, } from "./utils";
 import { sizeToCss } from "../b-x";
-import "./Field.css";
 import { Column } from "./Column";
 export function Field(props) {
     const sty = parseSty(props);

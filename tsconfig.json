@@ -11,6 +11,6 @@
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   },
-  "include": ["*/**/*.ts"],
+  "include": ["*/**/*.ts", "global.d.ts"],
   "exclude": ["node_modules", "*/**/*.d.ts"]
 }

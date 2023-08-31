@@ -1,4 +1,3 @@
-export * from "./global";
 export * from "./AppBar";
 export * from "./Body";
 export * from "./Box";
@@ -7,6 +6,7 @@ export * from "./Card";
 export * from "./Column";
 export * from "./DeleteDialog";
 export * from "./Field";
+export * from "./GlobalTypes";
 export * from "./HiddenDelete";
 export * from "./Icon";
 export * from "./Label";

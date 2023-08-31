@@ -1,6 +1,6 @@
 {
   "name": "miwi",
-  "version": "0.0.56",
+  "version": "0.0.58",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "license": "MIT",
@@ -18,8 +18,9 @@
   "devDependencies": {
     "@babel/types": "^7.22.10",
     "@types/node": "^20.4.2",
+    "esbuild": "^0.19.2",
     "semver": "^7.5.4",
-    "sucrase": "^3.32.0"
+    "sucrase": "^3.34.0"
   },
   "exports": {
     ".": "./dist/index.js",

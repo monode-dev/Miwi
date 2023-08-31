@@ -11,7 +11,6 @@ import {
   exists,
 } from "./utils";
 import { sizeToCss } from "../b-x";
-import "./Field.css";
 import { Column } from "./Column";
 
 export type KeyboardType =

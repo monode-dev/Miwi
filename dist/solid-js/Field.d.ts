@@ -1,6 +1,5 @@
 import { BoxProps } from "./Box";
 import { Signal } from "./utils";
-import "./Field.css";
 export type KeyboardType = "none" | "text" | "tel" | "url" | "email" | "numeric" | "decimal" | "search";
 type FormattedResult = {
     input: string;
