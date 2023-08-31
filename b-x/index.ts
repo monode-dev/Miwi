@@ -71,8 +71,8 @@ export class Miwi_Box extends HTMLElement {
     return this.sty.axis ?? _Axis.column;
   }
 
-  private _widthGrows: boolean = false;
-  private _heightGrows: boolean = false;
+  private _widthGrows: boolean | undefined = undefined;
+  private _heightGrows: boolean | undefined = undefined;
   private _numChildrenWithGrowingWidths: number = 0;
   private _numChildrenWithGrowingHeights: number = 0;
   private get _someChildWidthGrows() {
