@@ -12,7 +12,7 @@ import { HiddenDelete } from "./HiddenDelete";
 import { Icon } from "./Icon";
 import { Label } from "./Label";
 import { Modal } from "./Modal";
-import { Nav } from "./Nav";
+export * from "./Nav";
 import { NumField } from "./NumField";
 import { OfflineWarning } from "./OfflineWarning";
 import { Page } from "./Page";
@@ -39,7 +39,6 @@ export {
   Icon,
   Label,
   Modal,
-  Nav,
   NumField,
   OfflineWarning,
   Page,
