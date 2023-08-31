@@ -28,6 +28,28 @@ const primaryColorStyleElement = document.createElement(`style`);
 primaryColorStyleElement.innerHTML = `
 :root {
   --primary-color: ${_window.tkeGlobal.$theme.colors.primary};
+}
+
+.field::placeholder {
+  color: var(--placeholder-color);
+}
+
+/* Add vendor-prefixed rules for better browser compatibility */
+.field::-webkit-input-placeholder {
+  color: var(--placeholder-color);
+}
+
+.field::-moz-placeholder {
+  color: var(--placeholder-color);
+  opacity: 1;
+}
+
+.field:-ms-input-placeholder {
+  color: var(--placeholder-color);
+}
+
+.field::-ms-input-placeholder {
+  color: var(--placeholder-color);
 }`;
 document.body.appendChild(primaryColorStyleElement);
 export * from "./global";
