@@ -203,7 +203,9 @@ export class Miwi_Box extends HTMLElement {
           mutation.type === "attributes" &&
           mutation.attributeName === "style"
         ) {
-          this.computeParentStyle();
+          const shouldUpdateStyle = this.computeParentStyle();
+          if (shouldUpdateStyle) this.updateStyle();
+          return;
         }
       }
     });
@@ -223,10 +225,11 @@ export class Miwi_Box extends HTMLElement {
     });
 
     this._selfObserver = new MutationObserver((mutationsList, observer) => {
-      for (let mutation of mutationsList) {
+      for (const mutation of mutationsList) {
         if (mutation.type === "childList") {
           const shouldUpdateStyle = this.updateChildList();
           if (shouldUpdateStyle) this.updateStyle();
+          return;
         }
       }
     });
