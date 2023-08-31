@@ -1,7 +1,7 @@
 import { computeBoxDecoration, mdColors as _mdColors, } from "./BoxDecoration";
 import { Axis as _Axis, defaultOverflowX, Overflow as _Overflow, Align as _Align, computeBoxLayout, } from "./BoxLayout";
 import { exists, isString } from "./BoxUtils";
-import { computeBoxSize, sizeToCss as _sizeToCss, } from "./BoxSize";
+import { computeBoxSize, sizeToCss as _sizeToCss, isFlexSize, formatRawSize, } from "./BoxSize";
 import { computeTextStyle } from "./BoxText";
 import { computeBoxInteraction } from "./BoxInteraction";
 export const Align = _Align;
@@ -17,11 +17,11 @@ export class Miwi_Box extends HTMLElement {
     _parentPadRight = `0px`;
     _parentPadBottom = `0px`;
     _parentPadLeft = `0px`;
-    _selfObserver;
-    _childrenObserver;
+    // private _selfObserver: MutationObserver;
+    // private _childrenObserver: MutationObserver;
     _childCount = 0;
-    _anyChildIsABoxWithAGrowingWidth = false;
-    _anyChildIsABoxWithAGrowingHeight = false;
+    // private _anyChildIsABoxWithAGrowingWidth: boolean = false;
+    // private _anyChildIsABoxWithAGrowingHeight: boolean = false;
     static get observedAttributes() {
         return ["sty"];
     }
@@ -35,6 +35,35 @@ export class Miwi_Box extends HTMLElement {
     }
     get _axis() {
         return this.sty.axis ?? _Axis.column;
+    }
+    _widthGrows = false;
+    _heightGrows = false;
+    _numChildrenWithGrowingWidths = 0;
+    _numChildrenWithGrowingHeights = 0;
+    get _someChildWidthGrows() {
+        return this._numChildrenWithGrowingWidths > 0;
+    }
+    get _someChildHeightGrows() {
+        return this._numChildrenWithGrowingHeights > 0;
+    }
+    thisIsAChildTogglingTheFactThatItGrows(props) {
+        let shouldUpdateStyle = false;
+        if (exists(props.widthGrows)) {
+            const oldSomeChildGrows = this._someChildWidthGrows;
+            this._numChildrenWithGrowingWidths += props.widthGrows ? 1 : -1;
+            if (oldSomeChildGrows !== this._someChildWidthGrows) {
+                shouldUpdateStyle = true;
+            }
+        }
+        if (exists(props.heightGrows)) {
+            const oldSomeChildGrows = this._someChildHeightGrows;
+            this._numChildrenWithGrowingHeights += props.heightGrows ? 1 : -1;
+            if (oldSomeChildGrows !== this._someChildHeightGrows) {
+                shouldUpdateStyle = true;
+            }
+        }
+        if (shouldUpdateStyle)
+            this.updateStyle();
     }
     computeParentStyle() {
         let shouldUpdateStyle = false;
@@ -63,58 +92,64 @@ export class Miwi_Box extends HTMLElement {
         }
         return shouldUpdateStyle;
     }
-    updateChildSizeGrows() {
-        let shouldUpdateStyle = false;
-        const childNodes = Array.from(this.childNodes);
-        const childWidthGrows = childNodes.some((child) => {
-            if (!(child instanceof Miwi_Box))
-                return false;
-            const computedChildStyle = getComputedStyle(child);
-            return this._axis === _Axis.row
-                ? computedChildStyle.flexBasis !== "auto"
-                : this._axis === _Axis.column
-                    ? child.style.width === `100%`
-                    : false;
-        });
-        if (this._anyChildIsABoxWithAGrowingWidth !== childWidthGrows) {
-            this._anyChildIsABoxWithAGrowingWidth = childWidthGrows;
-            shouldUpdateStyle = true;
-        }
-        const childHeightGrows = childNodes.some((child) => {
-            if (!(child instanceof Miwi_Box))
-                return false;
-            const computedChildStyle = getComputedStyle(child);
-            return this._axis === _Axis.row
-                ? child.style.height === `100%`
-                : this._axis === _Axis.column
-                    ? computedChildStyle.flexBasis !== "auto"
-                    : false;
-        });
-        if (this._anyChildIsABoxWithAGrowingHeight !== childHeightGrows) {
-            this._anyChildIsABoxWithAGrowingHeight = childHeightGrows;
-            shouldUpdateStyle = true;
-        }
-        return shouldUpdateStyle;
-    }
-    updateChildList() {
-        let shouldUpdateStyleCC = false;
-        this._childrenObserver.disconnect();
-        const childNodes = Array.from(this.childNodes);
-        if (this._childCount !== childNodes.length) {
-            this._childCount = childNodes.length;
-            shouldUpdateStyleCC = true;
-        }
-        const shouldUpdateStyleCSG = this.updateChildSizeGrows();
-        for (let i = 0; i < childNodes.length; i++) {
-            const childNode = childNodes[i];
-            this._childrenObserver.observe(childNode, { attributes: true });
-        }
-        return shouldUpdateStyleCC || shouldUpdateStyleCSG;
-    }
+    // updateChildSizeGrows(): boolean {
+    //   let shouldUpdateStyle = false;
+    //   const childNodes = Array.from(this.childNodes);
+    //   const childWidthGrows = childNodes.some((child) => {
+    //     if (!(child instanceof Miwi_Box)) return false;
+    //     const computedChildStyle = getComputedStyle(child);
+    //     return this._axis === _Axis.row
+    //       ? computedChildStyle.flexBasis !== "auto"
+    //       : this._axis === _Axis.column
+    //       ? child.style.width === `100%`
+    //       : false;
+    //   });
+    //   if (this._anyChildIsABoxWithAGrowingWidth !== childWidthGrows) {
+    //     this._anyChildIsABoxWithAGrowingWidth = childWidthGrows;
+    //     shouldUpdateStyle = true;
+    //   }
+    //   const childHeightGrows = childNodes.some((child) => {
+    //     if (!(child instanceof Miwi_Box)) return false;
+    //     const computedChildStyle = getComputedStyle(child);
+    //     return this._axis === _Axis.row
+    //       ? child.style.height === `100%`
+    //       : this._axis === _Axis.column
+    //       ? computedChildStyle.flexBasis !== "auto"
+    //       : false;
+    //   });
+    //   if (this._anyChildIsABoxWithAGrowingHeight !== childHeightGrows) {
+    //     this._anyChildIsABoxWithAGrowingHeight = childHeightGrows;
+    //     shouldUpdateStyle = true;
+    //   }
+    //   return shouldUpdateStyle;
+    // }
+    // updateChildList(): boolean {
+    //   let shouldUpdateStyleCC = false;
+    //   this._childrenObserver.disconnect();
+    //   const childNodes = Array.from(this.childNodes);
+    //   if (this._childCount !== childNodes.length) {
+    //     this._childCount = childNodes.length;
+    //     shouldUpdateStyleCC = true;
+    //   }
+    //   const shouldUpdateStyleCSG = this.updateChildSizeGrows();
+    //   for (let i = 0; i < childNodes.length; i++) {
+    //     const childNode = childNodes[i];
+    //     this._childrenObserver.observe(childNode, { attributes: true });
+    //   }
+    //   return shouldUpdateStyleCC || shouldUpdateStyleCSG;
+    // }
     updateStyle() {
         const align = this.sty.align ?? _Align.center;
+        const formattedWidth = formatRawSize({
+            someChildGrows: this._someChildWidthGrows,
+            size: this.sty.width,
+        });
+        const formattedHeight = formatRawSize({
+            someChildGrows: this._someChildHeightGrows,
+            size: this.sty.height,
+        });
         const newStyle = {
-            ...computeBoxSize(this.sty, this._anyChildIsABoxWithAGrowingWidth, this._anyChildIsABoxWithAGrowingHeight, this._parentAxis, this._parentPadTop, this._parentPadRight, this._parentPadBottom, this._parentPadLeft, this.sty.shouldLog),
+            ...computeBoxSize(this.sty, formattedWidth, formattedHeight, this._parentAxis, this._parentPadTop, this._parentPadRight, this._parentPadBottom, this._parentPadLeft, this.sty.shouldLog),
             ...computeBoxLayout(this.sty, align, this._parentAxis, this._axis, this._childCount),
             ...computeBoxDecoration(this.sty),
             ...computeTextStyle(this.sty, isString(align) ? align : align.alignX, this.sty.overflowX ?? defaultOverflowX),
@@ -127,6 +162,24 @@ export class Miwi_Box extends HTMLElement {
         }
         this.classList.toggle(stackClassName, (this.sty.axis ?? _Axis.column) === _Axis.stack);
         this.classList.toggle(nonStackClassName, (this.sty.axis ?? _Axis.column) !== _Axis.stack);
+        // Recompute growth
+        const newWidthGrows = isFlexSize(formattedWidth) && formattedWidth.flex > 0;
+        const shouldUpdateWidthGrows = this._widthGrows !== newWidthGrows;
+        const newHeightGrows = isFlexSize(formattedHeight) && formattedHeight.flex > 0;
+        const shouldUpdateHeightGrows = this._heightGrows !== newHeightGrows;
+        if (shouldUpdateWidthGrows)
+            this._widthGrows = newWidthGrows;
+        if (shouldUpdateHeightGrows)
+            this._heightGrows = newHeightGrows;
+        if (shouldUpdateWidthGrows || shouldUpdateHeightGrows) {
+            if (exists(this.parentElement) &&
+                this.parentElement instanceof Miwi_Box) {
+                this.parentElement.thisIsAChildTogglingTheFactThatItGrows({
+                    widthGrows: shouldUpdateWidthGrows ? newWidthGrows : undefined,
+                    heightGrows: shouldUpdateHeightGrows ? newHeightGrows : undefined,
+                });
+            }
+        }
     }
     constructor() {
         super();
@@ -142,43 +195,49 @@ export class Miwi_Box extends HTMLElement {
                 }
             }
         });
-        this._childrenObserver = new MutationObserver((mutationsList, observer) => {
-            let shouldUpdateStyle = false;
-            for (let mutation of mutationsList) {
-                if (mutation.type === "attributes" &&
-                    mutation.attributeName === "style" &&
-                    mutation.target instanceof Element) {
-                    shouldUpdateStyle = this.updateChildSizeGrows();
-                }
-            }
-            if (shouldUpdateStyle)
-                this.updateStyle();
-        });
-        this._selfObserver = new MutationObserver((mutationsList, observer) => {
-            for (const mutation of mutationsList) {
-                if (mutation.type === "childList") {
-                    const shouldUpdateStyle = this.updateChildList();
-                    if (shouldUpdateStyle)
-                        this.updateStyle();
-                    return;
-                }
-            }
-        });
+        // this._childrenObserver = new MutationObserver((mutationsList, observer) => {
+        //   let shouldUpdateStyle = false;
+        //   for (let mutation of mutationsList) {
+        //     if (
+        //       mutation.type === "attributes" &&
+        //       mutation.attributeName === "style" &&
+        //       mutation.target instanceof Element
+        //     ) {
+        //       shouldUpdateStyle = this.updateChildSizeGrows();
+        //     }
+        //   }
+        //   if (shouldUpdateStyle) this.updateStyle();
+        // });
+        // this._selfObserver = new MutationObserver((mutationsList, observer) => {
+        //   for (const mutation of mutationsList) {
+        //     if (mutation.type === "childList") {
+        //       const shouldUpdateStyle = this.updateChildList();
+        //       if (shouldUpdateStyle) this.updateStyle();
+        //       return;
+        //     }
+        //   }
+        // });
     }
     connectedCallback() {
         this.computeParentStyle();
-        this.updateChildList();
+        // this.updateChildList();
         this.updateStyle();
-        this._selfObserver.observe(this, { childList: true });
+        // this._selfObserver.observe(this, { childList: true });
         if (exists(this.parentElement)) {
             this._parentObserver.observe(this.parentElement, { attributes: true });
         }
     }
     disconnectedCallback() {
         this._parentObserver.disconnect();
-        this._selfObserver.disconnect();
-        this._childrenObserver.disconnect();
+        // this._selfObserver.disconnect();
+        // this._childrenObserver.disconnect();
         this._childCount = 0;
+        if (this.parentElement instanceof Miwi_Box) {
+            this.parentElement.thisIsAChildTogglingTheFactThatItGrows({
+                widthGrows: false,
+                heightGrows: false,
+            });
+        }
     }
 }
 const stackClassName = `b-x-stack`;

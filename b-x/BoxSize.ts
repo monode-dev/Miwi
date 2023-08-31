@@ -84,10 +84,30 @@ export function computeSizeInfo({
   return [exactSize, minSize, maxSize, sizeIsFlex] as const;
 }
 
+export function formatRawSize(props: {
+  someChildGrows: boolean;
+  size: Size | undefined;
+}): Size {
+  let formattedSize =
+    (props.size ?? -1) === -1
+      ? props.someChildGrows
+        ? `1f`
+        : -1
+      : props.size ?? -1;
+  if (isString(formattedSize) && formattedSize.endsWith(`f`)) {
+    formattedSize = {
+      min: -1,
+      flex: parseFloat(formattedSize.split(`f`)[0]),
+      max: Infinity,
+    }; // satisfies FlexSize;
+  }
+  return formattedSize;
+}
+
 export function computeBoxSize(
   sty: Partial<SizeSty & LayoutSty>,
-  childWidthGrows: boolean,
-  childHeightGrows: boolean,
+  formattedWidth: Size,
+  formattedHeight: Size,
   parentAxis: Axis,
   parentPadTop: string,
   parentPadRight: string,
@@ -95,36 +115,14 @@ export function computeBoxSize(
   parentPadLeft: string,
   shouldLog?: boolean,
 ): CssProps {
-  let width =
-    (sty.width ?? -1) === -1 ? (childWidthGrows ? `1f` : -1) : sty.width ?? -1;
-  if (isString(width) && width.endsWith(`f`)) {
-    width = {
-      flex: parseFloat(width.split(`f`)[0]),
-      min: -1,
-      max: Infinity,
-    }; // satisfies FlexSize;
-  }
   const [exactWidth, wMin, wMax, widthGrows] = computeSizeInfo({
-    size: width,
+    size: formattedWidth,
     isMainAxis: parentAxis === Axis.row,
     overflow: sty.overflowX ?? defaultOverflowX,
     shouldLog,
   });
-  let height =
-    (sty.height ?? -1) === -1
-      ? childHeightGrows
-        ? `1f`
-        : -1
-      : sty.height ?? -1;
-  if (isString(height) && height.endsWith(`f`)) {
-    height = {
-      flex: parseFloat(height.split(`f`)[0]),
-      min: -1,
-      max: Infinity,
-    }; // satisfies FlexSize;
-  }
   const [exactHeight, hMin, hMax, heightGrows] = computeSizeInfo({
-    size: height,
+    size: formattedHeight,
     isMainAxis: parentAxis === Axis.column,
     overflow: sty.overflowY ?? defaultOverflowY,
   });
@@ -207,14 +205,14 @@ export function computeBoxSize(
     })(),
     flexBasis:
       parentAxis === Axis.column
-        ? isFlexSize(height)
-          ? `${height.flex * 100}%`
+        ? isFlexSize(formattedHeight)
+          ? `${formattedHeight.flex * 100}%`
           : heightGrows
           ? `100%`
           : undefined
         : parentAxis === Axis.row
-        ? isFlexSize(width)
-          ? `${width.flex * 100}%`
+        ? isFlexSize(formattedWidth)
+          ? `${formattedWidth.flex * 100}%`
           : widthGrows
           ? `100%`
           : undefined
