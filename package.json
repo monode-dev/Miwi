@@ -1,6 +1,6 @@
 {
   "name": "miwi",
-  "version": "0.0.52",
+  "version": "0.0.53",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "license": "MIT",
@@ -24,7 +24,7 @@
   "exports": {
     ".": "./dist/index.js",
     "./b-x": "./dist/b-x/index.js",
-    "./solidJs": "./dist/solidjs/index.js"
+    "./solid-js": "./dist/solid-js/index.js"
   },
   "peerDependencies": {
     "gsap": "^3.12.2",
@@ -32,6 +32,12 @@
     "vue": "^3.3.4"
   },
   "peerDependenciesMeta": {
+    "gsap": {
+      "optional": true
+    },
+    "solid-js": {
+      "optional": true
+    },
     "vue": {
       "optional": true
     }
