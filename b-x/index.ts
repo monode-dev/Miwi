@@ -209,16 +209,17 @@ export class Miwi_Box extends HTMLElement {
     });
 
     this._childrenObserver = new MutationObserver((mutationsList, observer) => {
+      let shouldUpdateStyle = false;
       for (let mutation of mutationsList) {
         if (
           mutation.type === "attributes" &&
           mutation.attributeName === "style" &&
           mutation.target instanceof Element
         ) {
-          const shouldUpdateStyle = this.updateChildSizeGrows();
-          if (shouldUpdateStyle) this.updateStyle();
+          shouldUpdateStyle = this.updateChildSizeGrows();
         }
       }
+      if (shouldUpdateStyle) this.updateStyle();
     });
 
     this._selfObserver = new MutationObserver((mutationsList, observer) => {
