@@ -81,8 +81,8 @@ export function formatNumWithCommas(
 ): string {
   const rounded = roundToString(num, digits);
   const [whole, decimal] = rounded.split(`.`);
-  const wholeWithComma = whole.replace(/\B(?=(\d{3})+(?!\d))/g, `,`);
-  return `${wholeWithComma}${exists(decimal) ? `.${decimal}` : ``}`;
+  const wholeWithComma = whole?.replace(/\B(?=(\d{3})+(?!\d))/g, `,`);
+  return `${wholeWithComma ?? ``}${exists(decimal) ? `.${decimal}` : ``}`;
 }
 
 export function roundToString(num: number, digits: number | `min` = 0): string {

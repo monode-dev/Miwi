@@ -97,7 +97,7 @@ export function formatRawSize(props: {
   if (isString(formattedSize) && formattedSize.endsWith(`f`)) {
     formattedSize = {
       min: -1,
-      flex: parseFloat(formattedSize.split(`f`)[0]),
+      flex: parseFloat(formattedSize.split(`f`)[0]!),
       max: Infinity,
     }; // satisfies FlexSize;
   }

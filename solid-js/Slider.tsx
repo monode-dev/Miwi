@@ -29,12 +29,12 @@ export function Slider(
     document.addEventListener("touchmove", doDrag);
     document.addEventListener("mouseup", stopDrag);
     document.addEventListener("touchend", stopDrag);
-    updateValue("touches" in event ? event.touches[0].clientX : event.clientX);
+    updateValue("touches" in event ? event.touches[0]!.clientX : event.clientX);
   }
 
   function doDrag(event: MouseEvent | TouchEvent) {
     if (!isDragging.value) return;
-    updateValue("touches" in event ? event.touches[0].clientX : event.clientX);
+    updateValue("touches" in event ? event.touches[0]!.clientX : event.clientX);
   }
 
   function stopDrag() {

@@ -46,16 +46,16 @@ export function TabView(
     let lastSwipeY = 0;
     tabBodiesParent?.addEventListener("touchstart", (e: TouchEvent) => {
       const touch = e.touches[0];
-      swipeStartX = touch.clientX;
-      swipeStartY = touch.clientY;
-      lastSwipeX = touch.clientX;
-      lastSwipeY = touch.clientY;
+      swipeStartX = touch!.clientX;
+      swipeStartY = touch!.clientY;
+      lastSwipeX = touch!.clientX;
+      lastSwipeY = touch!.clientY;
       swipeStartTime = Date.now();
     });
     tabBodiesParent?.addEventListener("touchmove", (e: TouchEvent) => {
       const touch = e.touches[0];
-      lastSwipeX = touch.clientX;
-      lastSwipeY = touch.clientY;
+      lastSwipeX = touch!.clientX;
+      lastSwipeY = touch!.clientY;
     });
     tabBodiesParent?.addEventListener("touchend", (e: TouchEvent) => {
       const deltaX = lastSwipeX - swipeStartX;
