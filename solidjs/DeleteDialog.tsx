@@ -1,17 +1,16 @@
-import { Doc } from "mufasa";
 import { grow, Box, BoxProps } from "./Box";
 import { Card } from "./Card";
 import { Button } from "./Button";
 import { Row } from "./Row";
 import { Text } from "./Text";
-import { pageTransitions, popPage } from "@/Nav";
+import { pageTransitions, popPage } from "./Nav";
 
 // export default {
 //   transitions: pageTransitions.fadeIn(),
 // };
 
 export function DeleteDialog(
-  props: BoxProps & { obj: Doc<{}>; message: string }
+  props: BoxProps & { onDelete?: () => void; message: string },
 ) {
   let cardRef: HTMLElement | undefined = undefined;
 
@@ -20,7 +19,7 @@ export function DeleteDialog(
   }
   function handleYes() {
     closePopUp();
-    props.obj.deleteDoc();
+    props.onDelete?.();
   }
 
   // Close the pop up when the user clicks outside of it

@@ -1,17 +1,11 @@
-import { signal } from "./utils";
-import { Network } from "@capacitor/network";
-import { sizeToCss } from "miwi/b-x";
-import { pageTransitions } from "@/Nav";
-import { Box } from "./miwi-widgets/Box";
-import { Row } from "./miwi-widgets/Row";
-import { Icon } from "./miwi-widgets/Icon";
+import { Signal, signal } from "./utils";
+import { sizeToCss } from "../b-x";
+import { pageTransitions } from "./Nav";
+import { Box } from "./Box";
+import { Row } from "./Row";
+import { Icon } from "./Icon";
 
-export function OfflineWarning() {
-  const hasInternet = signal(true);
-  Network.getStatus().then((status) => (hasInternet.value = status.connected));
-  Network.addListener("networkStatusChange", (status) => {
-    hasInternet.value = status.connected;
-  });
+export function OfflineWarning(props: {isOnline: Signal<boolean>}) {
   const offlineWarningTransitions = pageTransitions.from({
     duration: 0.15,
     y: sizeToCss(4),
@@ -23,7 +17,7 @@ export function OfflineWarning() {
     //   @enter="offlineWarningTransitions.enter"
     //   @leave="offlineWarningTransitions.leave"
     // >
-    hasInternet ? undefined : (
+    props.isOnline.value ? undefined : (
       <div
         style={{
           background: `transparent`,

@@ -1,4 +1,4 @@
-import { Size } from "miwi/b-x";
+import { Size } from "../b-x";
 // https://pictogrammers.com/library/mdi/
 import * as mdijs from "@mdi/js";
 import { Box } from "./Box";
@@ -11,7 +11,12 @@ function toMdiName(str: string) {
   return str.split("-").map(ucFirst).join("");
 }
 
-export function Icon(props: { icon: string; color?: string; size?: Size, onClick?: () => void }) {
+export function Icon(props: {
+  icon: string;
+  color?: string;
+  size?: Size;
+  onClick?: () => void;
+}) {
   return (
     <Box
       width={props.size ?? 1}

@@ -1,4 +1,4 @@
-import { JSX, Show, onMount } from "solid-js";
+import { Show, onMount } from "solid-js";
 import { Box, BoxProps, grow, parseSty } from "./Box";
 import { Row } from "./Row";
 import { Icon } from "./Icon";
@@ -9,8 +9,8 @@ import {
   watchDeps,
   watchEffect,
   exists,
-} from "@/utils";
-import { sizeToCss } from "miwi/b-x";
+} from "./utils";
+import { sizeToCss } from "../b-x";
 import "./Field.css";
 import { Column } from "./Column";
 

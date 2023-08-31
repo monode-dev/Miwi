@@ -1,6 +1,6 @@
 import { createMemo } from "solid-js";
 import { Box, BoxProps, grow, parseSty } from "./Box";
-import { computed } from "@/utils";
+import { computed } from "./utils";
 
 // {
 //   heading?: boolean;

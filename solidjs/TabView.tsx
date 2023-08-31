@@ -1,5 +1,5 @@
 import { gsap } from "gsap";
-import { Signal } from "@/utils";
+import { Signal } from "./utils";
 import { onMount, createEffect, JSX } from "solid-js";
 import { Box, BoxProps, grow } from "./Box";
 import { Row } from "./Row";

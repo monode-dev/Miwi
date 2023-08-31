@@ -1,8 +1,8 @@
 import { gsap } from "gsap";
 import { Box, BoxProps, grow } from "./Box";
 import { Row } from "./Row";
-import { createEffect, onMount } from "solid-js";
-import { Signal, exists } from "@/utils";
+import { createEffect } from "solid-js";
+import { Signal, exists } from "./utils";
 import { Column } from "./Column";
 
 export function TabButtons(

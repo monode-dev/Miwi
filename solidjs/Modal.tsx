@@ -1,7 +1,7 @@
-import { Signal, computed, exists, signal, watchDeps } from "@/utils";
-import { Box, BoxProps, grow, parseSty } from "./Box";
+import { Signal, exists, signal, watchDeps } from "./utils";
+import { Box, BoxProps, grow } from "./Box";
 import { Stack } from "./Stack";
-import { Size } from "miwi/b-x";
+import { Size } from "../b-x";
 import { JSX, Show } from "solid-js";
 
 export function Modal<T>(

@@ -101,7 +101,9 @@ export const JUST_FUEL = `justFuel`;
 
 export function formatPhoneNumber(input: string, event: InputEvent) {
   let ogInputLength = input?.length; // GET FULL LENGTH OF INPUT STRING
-  let caretPos = event.target?.selectionStart; // GET CURRENT CURSOR POSITION
+  let caretPos = (
+    event.target as HTMLInputElement | HTMLTextAreaElement | undefined
+  )?.selectionStart; // GET CURRENT CURSOR POSITION
   let justNums = input?.replace(/\D/g, ""); // STRIP NON-NUMERIC CHARS
   let justNumsLength = justNums?.length; // GET LENGTH OF NUMBER STRING
 
@@ -155,7 +157,8 @@ export function formatAddress(input: string, event: InputEvent) {
 
   return {
     input: input,
-    caret: event.target?.selectionStart,
+    caret: (event.target as HTMLInputElement | HTMLTextAreaElement | undefined)
+      ?.selectionStart,
   };
 }
 

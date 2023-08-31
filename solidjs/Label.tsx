@@ -22,7 +22,7 @@ export function Label(
         ...props.sty,
       }}
     >
-      <Text hint={props.hint}>{props.label}:</Text>
+      <Text hint={props.hint ?? false}>{props.label}:</Text>
       {props.children}
     </Row>
   ) : (

@@ -1,5 +1,5 @@
 import { Component, For, JSX } from "solid-js";
-import { computed, signal, sessionStore } from "./utils";
+import { computed, signal, sessionStore, Signal } from "./utils";
 import { gsap } from "gsap";
 import { Box } from "./Box";
 import { OfflineWarning } from "./OfflineWarning";
@@ -110,7 +110,7 @@ function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
     [`z-index`]: zIndex,
   };
 }
-export function Nav() {
+export function Nav(props: { isOnline: Signal<boolean> }) {
   const nav = useNav();
   return (
     <Box
@@ -139,7 +139,7 @@ export function Nav() {
       {/* </transition-group> */}
 
       {/* Offline warning is infront of all pages. */}
-      <OfflineWarning />
+      <OfflineWarning isOnline={props.isOnline} />
     </Box>
   );
 }

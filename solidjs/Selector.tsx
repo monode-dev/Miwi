@@ -5,7 +5,7 @@ import {
   injectDefaults,
   signal,
   watchDeps,
-} from "@/utils";
+} from "./utils";
 import { BoxProps, grow, parseSty } from "./Box";
 import { Text } from "./Text";
 import { Row } from "./Row";

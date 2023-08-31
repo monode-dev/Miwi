@@ -1,5 +1,5 @@
 import { Box, BoxProps } from "./Box";
-import { computed } from "@/utils";
+import { computed } from "./utils";
 
 export function Button(
   props: {

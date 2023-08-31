@@ -1,4 +1,4 @@
-import { signal } from "@/utils";
+import { signal } from "./utils";
 import { BoxProps, grow, parseSty } from "./Box";
 import { Icon } from "./Icon";
 import { Modal } from "./Modal";

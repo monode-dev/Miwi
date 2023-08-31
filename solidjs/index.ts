@@ -1,3 +1,4 @@
+import "./global.d.ts";
 import type { ExpectedGlobals } from "./global.d";
 import { AppBar } from "./AppBar";
 import { Body } from "./Body";
@@ -7,7 +8,6 @@ import { Card } from "./Card";
 import { Column } from "./Column";
 import { DeleteDialog } from "./DeleteDialog";
 import { Field } from "./Field";
-import "./global.d.ts";
 import { HiddenDelete } from "./HiddenDelete";
 import { Icon } from "./Icon";
 import { Label } from "./Label";
@@ -23,6 +23,7 @@ import { Stack } from "./Stack";
 import { TabButtons } from "./TabButtons";
 import { TabView } from "./TabView";
 import { Text } from "./Text";
+import { signal, computed, watchEffect, watchDeps } from "./utils";
 
 export type { ExpectedGlobals };
 export {
@@ -49,4 +50,8 @@ export {
   TabButtons,
   TabView,
   Text,
+  signal,
+  computed,
+  watchEffect,
+  watchDeps,
 };

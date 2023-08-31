@@ -1,6 +1,6 @@
 import { BoxProps } from "./Box";
-import { exists } from "miwi/b-x/BoxUtils";
-import { signal, Signal, watchDeps } from "@/utils";
+import { exists } from "../b-x/BoxUtils";
+import { signal, Signal, watchDeps } from "./utils";
 import { Field, KeyboardType } from "./Field";
 
 export function NumField(
