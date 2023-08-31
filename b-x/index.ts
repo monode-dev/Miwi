@@ -237,9 +237,11 @@ export class Miwi_Box extends HTMLElement {
 
     // Recompute growth
     const newWidthGrows = isFlexSize(formattedWidth) && formattedWidth.flex > 0;
+    this.classList.toggle(`b-x-width-grows`, newWidthGrows);
     const shouldUpdateWidthGrows = this._widthGrows !== newWidthGrows;
     const newHeightGrows =
       isFlexSize(formattedHeight) && formattedHeight.flex > 0;
+    this.classList.toggle(`b-x-height-grows`, newHeightGrows);
     const shouldUpdateHeightGrows = this._heightGrows !== newHeightGrows;
     if (shouldUpdateWidthGrows) this._widthGrows = newWidthGrows;
     if (shouldUpdateHeightGrows) this._heightGrows = newHeightGrows;
