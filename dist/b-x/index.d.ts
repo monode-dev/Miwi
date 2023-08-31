@@ -108,6 +108,10 @@ export declare class Miwi_Box extends HTMLElement {
         heightGrows?: boolean;
     }): void;
     computeParentStyle(): boolean;
+    computeSomeChildGrows(): {
+        someChildWidthGrows: boolean;
+        someChildHeightGrows: boolean;
+    };
     updateStyle(): void;
     constructor();
     connectedCallback(): void;
