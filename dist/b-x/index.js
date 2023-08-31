@@ -105,12 +105,12 @@ export class Miwi_Box extends HTMLElement {
             shouldUpdateStyle = true;
         }
         const shouldUpdateStyle2 = this.updateChildSizeGrows();
-        if (shouldUpdateStyle || shouldUpdateStyle2)
-            this.updateStyle();
         for (let i = 0; i < childNodes.length; i++) {
             const childNode = childNodes[i];
             this._childrenObserver.observe(childNode, { attributes: true });
         }
+        if (shouldUpdateStyle || shouldUpdateStyle2)
+            this.updateStyle();
     }
     updateStyle() {
         const align = this.sty.align ?? _Align.center;
@@ -131,6 +131,7 @@ export class Miwi_Box extends HTMLElement {
     }
     constructor() {
         super();
+        this.classList.add(`b-x`);
         this._parentObserver = new MutationObserver((mutationsList, observer) => {
             for (let mutation of mutationsList) {
                 if (mutation.type === "attributes" &&
