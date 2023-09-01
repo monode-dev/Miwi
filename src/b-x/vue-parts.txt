@@ -1,0 +1,28 @@
+declare module "@vue/runtime-core" {
+  interface ComponentCustomProperties {
+    $Axis: typeof Axis;
+    $Overflow: typeof Overflow;
+    $Align: typeof Align;
+    $mdColors: typeof mdColors;
+  }
+}
+
+declare module "vue" {
+  export interface GlobalComponents {
+    "b-x": {
+      sty?: Sty;
+      /** Html attributes go here. */
+    };
+  }
+}
+
+declare global {
+  type Sty = Partial<_Sty>;
+}
+
+export function registerGlobalProperties(app: App): void {
+  app.config.globalProperties.$Axis = Axis;
+  app.config.globalProperties.$Overflow = Overflow;
+  app.config.globalProperties.$Align = Align;
+  app.config.globalProperties.$mdColors = mdColors;
+}

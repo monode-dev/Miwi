@@ -1,16 +1,79 @@
 {
   "name": "miwi",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "0.0.106",
+  "license": "MIT",
+  "author": "Monode",
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/monode-dev/Miwi.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "private": false,
+  "sideEffects": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "browser": {},
+  "exports": {
+    "solid": "./dist/index.jsx",
+    "import": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "typesVersions": {},
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "vite serve dev",
+    "build": "tsup",
+    "test": "concurrently pnpm:test:*",
+    "test:client": "vitest",
+    "test:ssr": "pnpm run test:client --mode ssr",
+    "prepublishOnly": "npm run build",
+    "format": "prettier --ignore-path .gitignore -w \"src/**/*.{js,ts,json,css,tsx,jsx}\" \"dev/**/*.{js,ts,json,css,tsx,jsx}\"",
+    "lint": "concurrently pnpm:lint:*",
+    "lint:code": "eslint --ignore-path .gitignore --max-warnings 0 src/**/*.{js,ts,tsx,jsx}",
+    "lint:types": "tsc --noEmit",
+    "update-deps": "pnpm up -Li",
+    "pub": "sucrase-node pub.ts"
+  },
+  "peerDependencies": {
+    "@mdi/js": "^7.2.96",
+    "gsap": "^3.12.2",
+    "solid-js": "^1.6.0"
   },
   "devDependencies": {
-    "@total-typescript/ts-reset": "^0.4.2",
-    "typescript": "^4.9.3",
-    "vite": "^4.1.0"
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.1.0",
+    "concurrently": "^8.2.0",
+    "esbuild": "^0.18.15",
+    "esbuild-plugin-solid": "^0.5.0",
+    "eslint": "^8.45.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-no-only-tests": "^3.1.0",
+    "jsdom": "^22.1.0",
+    "prettier": "3.0.0",
+    "semver": "^7.5.4",
+    "solid-js": "^1.7.8",
+    "sucrase": "^3.34.0",
+    "tsup": "^7.1.0",
+    "tsup-preset-solid": "^2.0.1",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.6",
+    "vite-plugin-solid": "^2.7.0",
+    "vitest": "^0.33.0"
+  },
+  "keywords": [
+    "solid"
+  ],
+  "packageManager": "pnpm@8.6.0",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8.6.0"
+  },
+  "dependencies": {
+    "uuidv4": "^6.2.13"
   }
 }
