@@ -1,17 +1,15 @@
-import { BoxProps } from "./Box";
-import { computed, exists } from "./utils";
-import { Row } from "./Row";
-import { Text } from "./Text";
+import { BoxProps } from './Box'
+import { computed, exists } from './utils'
+import { Row } from './Row'
+import { Say } from './Say'
 
 export function Label(
   props: {
-    label?: string;
-    hint?: boolean;
+    label?: string
+    hint?: boolean
   } & BoxProps,
 ) {
-  const shouldShowLabel = computed(
-    () => exists(props.label) && props.label.length > 0,
-  );
+  const shouldShowLabel = computed(() => exists(props.label) && props.label.length > 0)
 
   return shouldShowLabel.value ? (
     <Row
@@ -22,10 +20,10 @@ export function Label(
         ...props.sty,
       }}
     >
-      <Text hint={props.hint ?? false}>{props.label}:</Text>
+      <Say hint={props.hint ?? false}>{props.label}:</Say>
       {props.children}
     </Row>
   ) : (
     props.children
-  );
+  )
 }

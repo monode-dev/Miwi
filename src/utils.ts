@@ -217,3 +217,7 @@ export function sessionStore<T>(storeName: string, defineStore: () => T): () => 
     return (window as any)[storePropName]
   }
 }
+
+export type AllowOne<T> = {
+  [K in keyof T]: { [P in keyof T]?: P extends K ? T[P] : undefined }
+}[keyof T]

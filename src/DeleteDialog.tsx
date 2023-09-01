@@ -1,34 +1,32 @@
-import { grow, Box, BoxProps } from "./Box";
-import { Card } from "./Card";
-import { Button } from "./Button";
-import { Row } from "./Row";
-import { Text } from "./Text";
-import { pageTransitions, popPage } from "./Nav";
+import { grow, Box, BoxProps } from './Box'
+import { Card } from './Card'
+import { Button } from './Button'
+import { Row } from './Row'
+import { Say } from './Say'
+import { pageTransitions, popPage } from './Nav'
 
 // export default {
 //   transitions: pageTransitions.fadeIn(),
 // };
 
-export function DeleteDialog(
-  props: BoxProps & { onDelete?: () => void; message: string },
-) {
-  let cardRef: HTMLElement | undefined = undefined;
+export function DeleteDialog(props: BoxProps & { onDelete?: () => void; message: string }) {
+  let cardRef: HTMLElement | undefined = undefined
 
   function closePopUp() {
-    popPage();
+    popPage()
   }
   function handleYes() {
-    closePopUp();
-    props.onDelete?.();
+    closePopUp()
+    props.onDelete?.()
   }
 
   // Close the pop up when the user clicks outside of it
   function popOnClickOutside(e: MouseEvent) {
     if (cardRef?.contains(e.target as any)) {
-      return;
+      return
     }
-    closePopUp();
-    e.stopPropagation();
+    closePopUp()
+    e.stopPropagation()
   }
 
   return (
@@ -48,9 +46,7 @@ export function DeleteDialog(
             shadowSize: 0,
           }}
         >
-          <Text sty={{ height: -1, width: grow(), overflowX: $Overflow.wrap }}>
-            {props.message}
-          </Text>
+          <Say sty={{ height: -1, width: grow(), overflowX: $Overflow.wrap }}>{props.message}</Say>
           <Row sty={{ width: `1f`, align: $Align.spaceEvenly }}>
             <Button outlined onClick={handleYes}>
               Yes
@@ -61,5 +57,5 @@ export function DeleteDialog(
       </Box>
       ;
     </>
-  );
+  )
 }

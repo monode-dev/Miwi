@@ -1,67 +1,67 @@
-import { gsap } from "gsap";
-import { Signal } from "./utils";
-import { onMount, createEffect, JSX } from "solid-js";
-import { Box, BoxProps, grow } from "./Box";
-import { Row } from "./Row";
-import { Text } from "./Text";
+import { gsap } from 'gsap'
+import { Signal } from './utils'
+import { onMount, createEffect, JSX } from 'solid-js'
+import { Box, BoxProps, grow } from './Box'
+import { Row } from './Row'
+import { Say } from './Say'
 
 export function TabView(
   props: BoxProps & {
-    selectedTab: Signal<number>;
-    tab0?: JSX.Element;
-    tab1?: JSX.Element;
-    tab2?: JSX.Element;
+    selectedTab: Signal<number>
+    tab0?: JSX.Element
+    tab1?: JSX.Element
+    tab2?: JSX.Element
   },
 ) {
   function selectTab(newTab: number) {
     if (newTab === props.selectedTab.value) {
-      return;
+      return
     }
-    props.selectedTab.value = newTab;
+    props.selectedTab.value = newTab
   }
 
   // TODO: WHAT IS THIS??
   //const tabBodiesParent = ref<ComponentPublicInstance | null>(null);
-  let tabBodiesParent: HTMLElement | undefined = undefined;
+  let tabBodiesParent: HTMLElement | undefined = undefined
 
   createEffect(() => {
-    const newTab = props.selectedTab.value;
-    const newTabPosition = [`100vw`, 0, `-100vw`][newTab];
+    const newTab = props.selectedTab.value
+    const newTabPosition = [`100vw`, 0, `-100vw`][newTab]
     if (tabBodiesParent) {
       // TODO: UPDATE THIS
       gsap.to(tabBodiesParent, {
         duration: 0.15,
         x: newTabPosition,
-        ease: "power1.out",
-      });
+        ease: 'power1.out',
+      })
     }
-  });
+  })
 
   // Swipe gesture
   onMount(() => {
-    let swipeStartTime = 0;
-    let swipeStartX = 0;
-    let swipeStartY = 0;
-    let lastSwipeX = 0;
-    let lastSwipeY = 0;
-    tabBodiesParent?.addEventListener("touchstart", (e: TouchEvent) => {
-      const touch = e.touches[0];
-      swipeStartX = touch!.clientX;
-      swipeStartY = touch!.clientY;
-      lastSwipeX = touch!.clientX;
-      lastSwipeY = touch!.clientY;
-      swipeStartTime = Date.now();
-    });
-    tabBodiesParent?.addEventListener("touchmove", (e: TouchEvent) => {
-      const touch = e.touches[0];
-      lastSwipeX = touch!.clientX;
-      lastSwipeY = touch!.clientY;
-    });
-    tabBodiesParent?.addEventListener("touchend", (e: TouchEvent) => {
-      const deltaX = lastSwipeX - swipeStartX;
-      const deltaY = lastSwipeY - swipeStartY;
-      const deltaTime = Date.now() - swipeStartTime;
-      const velocityX = deltaX / deltaTime;
+    let swipeStartTime = 0
+    let swipeStartX = 0
+    let swipeStartY = 0
+    let lastSwipeX = 0
+    let lastSwipeY = 0
+    tabBodiesParent?.addEventListener('touchstart', (e: TouchEvent) => {
+      const touch = e.touches[0]
+      swipeStartX = touch!.clientX
+      swipeStartY = touch!.clientY
+      lastSwipeX = touch!.clientX
+      lastSwipeY = touch!.clientY
+      swipeStartTime = Date.now()
+    })
+    tabBodiesParent?.addEventListener('touchmove', (e: TouchEvent) => {
+      const touch = e.touches[0]
+      lastSwipeX = touch!.clientX
+      lastSwipeY = touch!.clientY
+    })
+    tabBodiesParent?.addEventListener('touchend', (e: TouchEvent) => {
+      const deltaX = lastSwipeX - swipeStartX
+      const deltaY = lastSwipeY - swipeStartY
+      const deltaTime = Date.now() - swipeStartTime
+      const velocityX = deltaX / deltaTime
       if (
         Math.abs(deltaX) > Math.abs(deltaY) &&
         Math.abs(deltaX) > 50 &&
@@ -69,13 +69,13 @@ export function TabView(
       ) {
         // e.preventDefault();
         if (deltaX > 0) {
-          selectTab(Math.max(0, props.selectedTab.value - 1));
+          selectTab(Math.max(0, props.selectedTab.value - 1))
         } else {
-          selectTab(Math.min(2, props.selectedTab.value + 1));
+          selectTab(Math.min(2, props.selectedTab.value + 1))
         }
       }
-    });
-  });
+    })
+  })
 
   return (
     <Row
@@ -96,7 +96,7 @@ export function TabView(
           overflowX: $Overflow.crop,
         }}
       >
-        {props.tab0 ?? <Text hint>Tab 0</Text>}
+        {props.tab0 ?? <Say hint>Tab 0</Say>}
       </Box>
       <Box
         sty={{
@@ -105,7 +105,7 @@ export function TabView(
           overflowX: $Overflow.crop,
         }}
       >
-        {props.tab1 ?? <Text hint>Tab 1</Text>}
+        {props.tab1 ?? <Say hint>Tab 1</Say>}
       </Box>
       <Box
         sty={{
@@ -114,8 +114,8 @@ export function TabView(
           overflowX: $Overflow.crop,
         }}
       >
-        {props.tab2 ?? <Text hint>Tab 2</Text>}
+        {props.tab2 ?? <Say hint>Tab 2</Say>}
       </Box>
     </Row>
-  );
+  )
 }

@@ -3,7 +3,7 @@ import { Box, BoxProps, grow, parseSty } from './Box'
 import { Icon } from './Icon'
 import { Modal } from './Modal'
 import { Row } from './Row'
-import { Text } from './Text'
+import { Say } from './Say'
 import { mdiClose, mdiDotsVertical } from '@mdi/js'
 
 export function HiddenDelete(
@@ -22,7 +22,7 @@ export function HiddenDelete(
       isOpen={isOpen}
     >
       <Row scale={scale} onClick={() => (isOpen.value = false)} width={grow()}>
-        <Text width={grow()}>Cancel</Text>
+        <Say width={grow()}>Cancel</Say>
         <Icon iconPath={mdiClose} />
       </Row>
       {props.children}
@@ -34,7 +34,7 @@ export function HiddenDelete(
         }}
         textColor={$theme.colors.error}
       >
-        <Text width={grow()}>Delete</Text>
+        <Say width={grow()}>Delete</Say>
         {/* <Icon icon="delete" /> */}
       </Row>
     </Modal>
