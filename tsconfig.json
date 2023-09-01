@@ -15,7 +15,8 @@
     "noUncheckedIndexedAccess": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "types": []
+    "types": [],
+    "outDir": "./dist"
   },
   "include": ["*/**/*.ts", "global.d.ts"],
   "exclude": ["node_modules", "dist", "*/**/*.d.ts"]

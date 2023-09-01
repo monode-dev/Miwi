@@ -1,8 +1,6 @@
 {
   "name": "miwi",
-  "version": "0.0.60",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "version": "0.0.61",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -23,7 +21,6 @@
     "sucrase": "^3.34.0"
   },
   "exports": {
-    ".": "./dist/index.js",
     "./b-x": "./dist/b-x/index.js",
     "./solid-js": "./dist/solid-js/index.js"
   },
