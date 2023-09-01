@@ -5,8 +5,9 @@ export function Say(
   props: AllowOne<{
     heading: boolean
     title: boolean
-    hint: boolean
   }> & {
+    hint?: boolean
+  } & {
     singleLine?: boolean
   } & BoxProps,
 ) {
