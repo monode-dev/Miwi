@@ -8,9 +8,15 @@
     "declaration": true,
     "outDir": "./dist",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "allowJs": true,
+    "skipLibCheck": false,
+    "resolveJsonModule": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   },
-  "include": ["*/**/*.ts", "global.d.ts"],
+  "include": ["*/**/*.ts", "*/**/*.tsx", "global.d.ts"],
   "exclude": ["node_modules", "*/**/*.d.ts"]
 }
