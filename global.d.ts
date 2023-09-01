@@ -1,4 +1,4 @@
-import { Align, Axis, Overflow } from "./b-x/index";
+import { Align, Axis, Overflow } from "./b-x";
 declare global {
   const $theme: {
     readonly colors: {
@@ -17,5 +17,4 @@ declare global {
   const $Axis: typeof Axis;
   const $Overflow: typeof Overflow;
 }
-
 export {};
