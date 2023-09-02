@@ -47,6 +47,7 @@ const styProps = [
   'textIsBold',
   'textIsItalic',
   'textIsUnderlined',
+  'cssCursor',
   'shouldLog',
 ]
 export function parseSty(props: BoxProps, defaultSty?: Partial<Sty>): Partial<Sty> {
@@ -56,8 +57,8 @@ export function parseSty(props: BoxProps, defaultSty?: Partial<Sty>): Partial<St
       (props as any)?.[key] ?? (props?.sty as any)?.[key] ?? (defaultSty as any)?.[key]
   }
   parsedSty.bonusTouchArea =
-    props?.bonusTouchArea ??
-    props?.sty?.bonusTouchArea ??
+    props.bonusTouchArea ??
+    props.sty?.bonusTouchArea ??
     defaultSty?.bonusTouchArea ??
     exists(props.onClick)
   return parsedSty
