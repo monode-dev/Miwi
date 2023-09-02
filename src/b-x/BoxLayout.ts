@@ -23,8 +23,8 @@ export type PadStyProps = {
   padLeft: _PadUnit
   // Between
   padBetween: _PadUnit
-  padBetweenRows: _PadUnit
-  padBetweenColumns: _PadUnit
+  padBetweenX: _PadUnit
+  padBetweenY: _PadUnit
 }
 
 // Axis
@@ -134,10 +134,11 @@ export function computeBoxLayout(
   const padBottom = sizeToCss(sty.padBottom ?? sty.padAroundY ?? sty.padAround ?? sty.pad ?? 0)
   const padLeft = sizeToCss(sty.padLeft ?? sty.padAroundX ?? sty.padAround ?? sty.pad ?? 0)
   // NOTE: We want pad between to cascade, but not pad around.
-  const padBetweenRows = sizeToCss(sty.padBetweenRows ?? sty.padBetween ?? sty.pad ?? undefined)
-  const padBetweenColumns = sizeToCss(
-    sty.padBetweenColumns ?? sty.padBetween ?? sty.pad ?? undefined,
-  )
+  const padBetweenX = sizeToCss(sty.padBetweenX ?? sty.padBetween ?? sty.pad ?? undefined)
+  const padBetweenY = sizeToCss(sty.padBetweenY ?? sty.padBetween ?? sty.pad ?? undefined)
+  if ((sty as any).shouldLog) {
+    console.log(`padBetween`, padBetweenX, padBetweenY)
+  }
   // Align
   const alignX = (() => {
     let result = sty.alignX ?? (isString(align) ? align : align.alignX) ?? _FlexAlign.center
@@ -164,8 +165,8 @@ export function computeBoxLayout(
     // NOTE: Default could maybe be based off of font size.
     // NOTE: We might consider making padding and spacing cascade. I'm not sure if we want to, but it might reduce developer code.
     padding: `${padTop} ${padRight} ${padBottom} ${padLeft}`,
-    rowGap: padBetweenRows,
-    columnGap: padBetweenColumns,
+    rowGap: padBetweenX,
+    columnGap: padBetweenY,
     margin: 0,
 
     // Align: https://css-tricks.com/snippets/css/a-guide-to-flexbox/
