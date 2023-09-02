@@ -16,7 +16,7 @@ export type SizeSty = {
 // scale: [positive-space, negative-space]
 // const muToRem = 1.125; //1.0625;
 export const muToRem = 1.125; //1.0625;
-export function sizeToCss(num: number | string) {
+export function sizeToCss(num: number | string | undefined) {
   if (isNum(num)) {
     const remValue = num * muToRem;
     const fontSize = parseFloat(
