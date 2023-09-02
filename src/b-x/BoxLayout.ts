@@ -134,8 +134,8 @@ export function computeBoxLayout(
   const padBottom = sizeToCss(sty.padBottom ?? sty.padAroundY ?? sty.padAround ?? sty.pad ?? 0)
   const padLeft = sizeToCss(sty.padLeft ?? sty.padAroundX ?? sty.padAround ?? sty.pad ?? 0)
   // NOTE: We want pad between to cascade, but not pad around.
-  const padBetweenX = sizeToCss(sty.padBetweenX ?? sty.padBetween ?? sty.pad ?? undefined)
-  const padBetweenY = sizeToCss(sty.padBetweenY ?? sty.padBetween ?? sty.pad ?? undefined)
+  const padBetweenX = sizeToCss(sty.padBetweenX ?? sty.padBetween ?? sty.pad ?? `inherit`)
+  const padBetweenY = sizeToCss(sty.padBetweenY ?? sty.padBetween ?? sty.pad ?? `inherit`)
   if ((sty as any).shouldLog) {
     console.log(`padBetween`, padBetweenX, padBetweenY)
   }
