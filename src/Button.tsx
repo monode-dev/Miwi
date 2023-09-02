@@ -38,11 +38,11 @@ export function Button(
     <Box
       align={$Align.center}
       axis={$Axis.row}
-      cssCursor={`default`}
       {...shapeSty.value}
       {...colorSty.value}
       {...shadowSty.value}
       {...props}
+      cssCursor={`default`}
     >
       {props.children}
     </Box>
