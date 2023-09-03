@@ -1,26 +1,26 @@
-import { gsap } from "gsap";
-import { Box, BoxProps, grow } from "./Box";
-import { Row } from "./Row";
-import { createEffect } from "solid-js";
-import { Signal, exists } from "./utils";
-import { Column } from "./Column";
+import { gsap } from 'gsap'
+import { Box, BoxProps, grow } from './Box'
+import { Row } from './Row'
+import { createEffect } from 'solid-js'
+import { Signal, exists } from './utils'
+import { Column } from './Column'
 
 export function TabButtons(
   props: BoxProps & {
-    selectedTab: Signal<number>;
-    labels?: [string, string, string];
+    selectedTab: Signal<number>
+    labels?: [string, string, string]
   },
 ) {
-  const labels = props.labels ?? ["Tab 0", "Tab 1", "Tab 2"];
-  const tabButtonWidth = 5;
-  let tab0Ref: HTMLElement | undefined = undefined;
-  let tab1Ref: HTMLElement | undefined = undefined;
-  let tab2Ref: HTMLElement | undefined = undefined;
-  let tabUnderline: HTMLElement | undefined = undefined;
+  const labels = props.labels ?? ['Tab 0', 'Tab 1', 'Tab 2']
+  const tabButtonWidth = 5
+  let tab0Ref: HTMLElement | undefined = undefined
+  let tab1Ref: HTMLElement | undefined = undefined
+  let tab2Ref: HTMLElement | undefined = undefined
+  let tabUnderline: HTMLElement | undefined = undefined
 
   function selectTab(newTab: number) {
-    if (newTab === props.selectedTab.value) return;
-    props.selectedTab.value = newTab;
+    if (newTab === props.selectedTab.value) return
+    props.selectedTab.value = newTab
   }
 
   createEffect(() => {
@@ -30,7 +30,7 @@ export function TabButtons(
         (tab1Ref?.offsetLeft ?? 0) - (tab2Ref?.offsetLeft ?? 0),
         0,
         (tab2Ref?.offsetLeft ?? 0) - (tab1Ref?.offsetLeft ?? 0),
-      ][props.selectedTab.value];
+      ][props.selectedTab.value]
 
       // console.log(getComputedStyle(tabUnderline));
 
@@ -38,12 +38,12 @@ export function TabButtons(
       gsap.to(tabUnderline, {
         duration: 0.15,
         x: newUnderlinePosition,
-        ease: "power1.out",
-      });
+        ease: 'power1.out',
+      })
     }
-  });
+  })
   return (
-    <Column shouldLog={true}>
+    <Column>
       <Row
         onClick={props.onClick}
         sty={{
@@ -52,25 +52,13 @@ export function TabButtons(
           ...props.sty,
         }}
       >
-        <Box
-          width={tabButtonWidth}
-          ref={(el) => (tab0Ref = el)}
-          onClick={() => selectTab(0)}
-        >
+        <Box width={tabButtonWidth} ref={el => (tab0Ref = el)} onClick={() => selectTab(0)}>
           {labels[0]}
         </Box>
-        <Box
-          width={tabButtonWidth}
-          ref={(el) => (tab1Ref = el)}
-          onClick={() => selectTab(1)}
-        >
+        <Box width={tabButtonWidth} ref={el => (tab1Ref = el)} onClick={() => selectTab(1)}>
           {labels[1]}
         </Box>
-        <Box
-          width={tabButtonWidth}
-          ref={(el) => (tab2Ref = el)}
-          onClick={() => selectTab(2)}
-        >
+        <Box width={tabButtonWidth} ref={el => (tab2Ref = el)} onClick={() => selectTab(2)}>
           {labels[2]}
         </Box>
       </Row>
@@ -92,7 +80,7 @@ export function TabButtons(
         >
           <Box sty={{ width: tabButtonWidth }} />
           <Box
-            ref={(el) => (tabUnderline = el)}
+            ref={el => (tabUnderline = el)}
             sty={{
               width: tabButtonWidth,
               height: 0.125,
@@ -110,20 +98,11 @@ export function TabButtons(
             alignY: $Align.end,
           }}
         >
-          <Box
-            onClick={() => selectTab(0)}
-            sty={{ width: tabButtonWidth, height: grow() }}
-          />
-          <Box
-            onClick={() => selectTab(1)}
-            sty={{ width: tabButtonWidth, height: grow() }}
-          />
-          <Box
-            onClick={() => selectTab(2)}
-            sty={{ width: tabButtonWidth, height: grow() }}
-          />
+          <Box onClick={() => selectTab(0)} sty={{ width: tabButtonWidth, height: grow() }} />
+          <Box onClick={() => selectTab(1)} sty={{ width: tabButtonWidth, height: grow() }} />
+          <Box onClick={() => selectTab(2)} sty={{ width: tabButtonWidth, height: grow() }} />
         </Box>
       </Box>
     </Column>
-  );
+  )
 }
