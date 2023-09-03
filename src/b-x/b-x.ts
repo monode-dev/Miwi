@@ -179,7 +179,7 @@ export class Miwi_Box extends HTMLElement {
       size: this.sty.height,
     })
 
-    this.style.setProperty('--miwi-size-scale', '27px');
+    this.style.setProperty('--miwi-size-scale', '27px')
     applyStylePart(
       this.style,
       computeBoxSize(
