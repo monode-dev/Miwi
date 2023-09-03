@@ -37,7 +37,10 @@ export const mdColors = _mdColors
 export type Size = _Size
 export const sizeToCss = _sizeToCss
 
-function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps) {
+function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps, shouldLog?: boolean) {
+  if (shouldLog) {
+    console.log(Object.keys(updates))
+  }
   for (const key of Object.keys(updates)) {
     if (updates[key] !== selfStyle[key as keyof CSSStyleDeclaration]) {
       ;(selfStyle as any)[key] = updates[key] ?? ``
