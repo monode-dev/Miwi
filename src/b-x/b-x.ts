@@ -38,18 +38,20 @@ export type Size = _Size
 export const sizeToCss = _sizeToCss
 
 function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps, shouldLog?: boolean) {
-  if (shouldLog) {
-    console.log(Object.keys(updates))
-  }
   for (const key of Object.keys(updates)) {
-    if (!Number.isNaN(Number(key))) {
-      console.warn(`key is a number`, key, updates[key])
-    }
-    if (updates[key] !== selfStyle.getPropertyValue(key)) {
-      selfStyle.setProperty(key, (updates[key] ?? ``).toString())
+    if (updates[key] !== selfStyle[key as keyof CSSStyleDeclaration]) {
+      ;(selfStyle as any)[key] = updates[key] ?? ``
     }
   }
 }
+
+// function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps, shouldLog?: boolean) {
+//   for (const key of Object.keys(updates)) {
+//     if (updates[key] !== selfStyle.getPropertyValue(key)) {
+//       selfStyle.setProperty(key, (updates[key] ?? ``).toString())
+//     }
+//   }
+// }
 
 // Cutom Element
 export class Miwi_Box extends HTMLElement {
