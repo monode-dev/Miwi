@@ -40,7 +40,7 @@ export function AppBar(
         sty={sty.value}
       >
         {/* Main Row */}
-        <Box width={grow()} axis={$Axis.row} pad={0.5} scale={1.5}>
+        <Box width={grow()} axis={$Axis.row} pad={0.5} scale={1.5} shouldLog>
           {/* Left */}
           <Box width={grow()} align={$Align.centerLeft}>
             {props.left ??
