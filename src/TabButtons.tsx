@@ -86,7 +86,6 @@ export function TabButtons(
               height: 0.125,
               background: $theme.colors.sameAsText,
             }}
-            shouldLog
           />
           <Box sty={{ width: tabButtonWidth }} />
         </Box>

@@ -54,9 +54,6 @@ export function computeBoxDecoration(sty: Partial<DecorationSty>): CssProps {
           : -1,
     }
   })()
-  if ((sty as any).shouldLog) {
-    console.log(`background`, sty.background)
-  }
   return {
     // Box Style
     // background: sty.background,
