@@ -39,7 +39,7 @@ export function computeTextStyle(
     fontFamily: `inherit`, //`Roboto`,
     [sizeScaleCssVarName]: sizeToCss(sty.scale),
     // If we want font size and box size to be different we should wrap this in a `calc()`.
-    fontSize: `var(${sizeScaleCssVarName})`,
+    fontSize: exists(sty.scale) ? `var(${sizeScaleCssVarName})` : undefined,
     fontWeight: exists(sty.textIsBold) ? (sty.textIsBold ? `bold` : `normal`) : undefined,
     fontStyle: exists(sty.textIsItalic) ? (sty.textIsItalic ? `italic` : `normal`) : undefined,
     textDecoration: exists(sty.textIsUnderlined)
