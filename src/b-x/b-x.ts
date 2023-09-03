@@ -43,7 +43,7 @@ function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps, shoul
   }
   for (const key of Object.keys(updates)) {
     if (updates[key] !== selfStyle[key as keyof CSSStyleDeclaration]) {
-      ;(selfStyle as any)[key] = updates[key] ?? ``
+      selfStyle.setProperty(key, (updates[key] ?? ``).toString())
     }
   }
 }

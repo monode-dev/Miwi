@@ -1,15 +1,18 @@
-import { JSX } from 'solid-js'
+import { JSX, Show } from 'solid-js'
 import { Box, BoxProps, grow, parseSty } from './Box'
 import { computed } from './utils'
 import { useNav } from './Nav'
 import { Icon } from './Icon'
 import { mdiArrowLeft } from '@mdi/js'
+import { Row } from './Row'
 
 export function AppBar(
   props: {
     left?: JSX.Element
     right?: JSX.Element
     bottom?: JSX.Element
+  } & {
+    shouldShowBackArrowWhenApplicable?: boolean
   } & BoxProps,
 ) {
   const nav = useNav()
@@ -40,25 +43,30 @@ export function AppBar(
         sty={sty.value}
       >
         {/* Main Row */}
-        <Box width={grow()} axis={$Axis.row} pad={0.5} scale={1.5} shouldLog>
+        <Row width={grow()} pad={0.5} scale={1.5} shouldLog>
           {/* Left */}
-          <Box width={grow()} align={$Align.centerLeft}>
-            {props.left ??
-              (nav.openedPages.value.length > 1 ? (
-                <Icon onClick={nav.popPage} size={1.25} iconPath={mdiArrowLeft} />
-              ) : undefined)}
-          </Box>
+          <Row width={grow()} align={$Align.centerLeft}>
+            <Show
+              when={
+                (props.shouldShowBackArrowWhenApplicable ?? true) &&
+                nav.openedPages.value.length > 1
+              }
+            >
+              <Icon onClick={nav.popPage} size={1.25} iconPath={mdiArrowLeft} />
+            </Show>
+            {props.left}
+          </Row>
 
           {/* Title / Center */}
-          <Box width={grow(3)} align={$Align.center} textIsBold={true} axis={$Axis.row}>
+          <Row width={grow(3)} align={$Align.center} textIsBold={true}>
             {props.children}
-          </Box>
+          </Row>
 
           {/* Right */}
-          <Box width={grow()} align={$Align.centerRight}>
+          <Row width={grow()} align={$Align.centerRight}>
             {props.right}
-          </Box>
-        </Box>
+          </Row>
+        </Row>
 
         {/* Bottom Row */}
         <Box width={grow()} scale={1}>
