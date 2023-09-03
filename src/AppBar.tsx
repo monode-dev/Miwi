@@ -5,7 +5,7 @@ import { useNav } from './Nav'
 import { Icon } from './Icon'
 import { mdiArrowLeft } from '@mdi/js'
 import { Row } from './Row'
-import { Column } from './Column';
+import { Column } from './Column'
 
 export function AppBar(
   props: {
@@ -64,7 +64,7 @@ export function AppBar(
           </Row>
 
           {/* Right */}
-          <Row width={grow()} align={$Align.centerRight} scale={1.5}>
+          <Row width={grow()} align={$Align.centerRight}>
             {props.right}
           </Row>
         </Row>
