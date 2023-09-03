@@ -31,9 +31,6 @@ export function computeTextStyle(
   alignX: AlignSingleAxis,
   overflowX: Overflow,
 ): CssProps {
-  if ((sty as any).shouldLog) {
-    console.log(`${sizeScaleCssVarName}: ${sizeToCss(sty.scale)};`)
-  }
   return {
     // Text Style
     fontFamily: `inherit`, //`Roboto`,

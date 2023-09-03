@@ -37,7 +37,7 @@ export const mdColors = _mdColors
 export type Size = _Size
 export const sizeToCss = _sizeToCss
 
-function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps, shouldLog?: boolean) {
+function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps) {
   for (const key of Object.keys(updates)) {
     if (key.startsWith(`--`)) {
       selfStyle.setProperty(key, (updates[key] ?? ``).toString())
@@ -47,7 +47,7 @@ function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps, shoul
   }
 }
 
-// function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps, shouldLog?: boolean) {
+// function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps) {
 //   for (const key of Object.keys(updates)) {
 //     if (updates[key] !== selfStyle.getPropertyValue(key)) {
 //       selfStyle.setProperty(key, (updates[key] ?? ``).toString())
@@ -200,18 +200,14 @@ export class Miwi_Box extends HTMLElement {
       computeBoxLayout(this.sty, align, this._parentAxis, this._axis, this._childCount),
     )
     applyStylePart(this.style, computeBoxDecoration(this.sty))
-    const textStyle = computeTextStyle(
-      this.sty,
-      isString(align) ? align : align.alignX,
-      this.sty.overflowX ?? defaultOverflowX,
+    applyStylePart(
+      this.style,
+      computeTextStyle(
+        this.sty,
+        isString(align) ? align : align.alignX,
+        this.sty.overflowX ?? defaultOverflowX,
+      ),
     )
-    if (this.sty.shouldLog) {
-      console.log(`textStyle`, JSON.stringify(textStyle, null, 2))
-    }
-    applyStylePart(this.style, textStyle, this.sty.shouldLog)
-    if (this.sty.shouldLog) {
-      console.log(`style`, JSON.stringify(this.style, null, 2))
-    }
     applyStylePart(this.style, computeBoxInteraction(this.sty))
 
     this.classList.toggle(stackClassName, (this.sty.axis ?? _Axis.column) === _Axis.stack)
