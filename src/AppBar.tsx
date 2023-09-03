@@ -5,6 +5,7 @@ import { useNav } from './Nav'
 import { Icon } from './Icon'
 import { mdiArrowLeft } from '@mdi/js'
 import { Row } from './Row'
+import { Column } from './Column';
 
 export function AppBar(
   props: {
@@ -22,7 +23,7 @@ export function AppBar(
     }),
   )
   return (
-    <Box width={grow()}>
+    <Column width={grow()}>
       {/* Notch Spacer */}
       <Box
         width={grow()}
@@ -32,7 +33,7 @@ export function AppBar(
       />
 
       {/* AppBar */}
-      <Box
+      <Column
         width={grow()}
         background={sty.value.background}
         shadowSize={1.25}
@@ -63,16 +64,16 @@ export function AppBar(
           </Row>
 
           {/* Right */}
-          <Row width={grow()} align={$Align.centerRight}>
+          <Row width={grow()} align={$Align.centerRight} scale={1.5}>
             {props.right}
           </Row>
         </Row>
 
         {/* Bottom Row */}
-        <Box width={grow()} scale={1}>
+        <Row width={grow()} scale={1}>
           {props.bottom}
-        </Box>
-      </Box>
-    </Box>
+        </Row>
+      </Column>
+    </Column>
   )
 }
