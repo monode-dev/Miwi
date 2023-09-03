@@ -221,3 +221,7 @@ export function sessionStore<T>(storeName: string, defineStore: () => T): () => 
 export type AllowOne<T> = {
   [K in keyof T]: { [P in keyof T]?: P extends K ? T[P] : undefined }
 }[keyof T]
+
+export type DeepPartial<T extends {}> = {
+  [K in keyof T]?: T[K] extends {} ? DeepPartial<T[K]> : T[K]
+}

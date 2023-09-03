@@ -1,4 +1,5 @@
 import { Axis, Align, Overflow } from './b-x/b-x'
+import { DeepPartial } from './utils'
 
 // SECTION: Global variables
 declare global {
@@ -53,7 +54,7 @@ document.body.appendChild(themeSciptElement)
 const themeStyleElement = document.createElement(`style`)
 setTheme({})
 document.body.appendChild(themeStyleElement)
-export function setTheme(props: Partial<Omit<typeof $theme, `sameAsText`>>) {
+export function setTheme(props: DeepPartial<Omit<typeof $theme, `sameAsText`>>) {
   themeStyleElement.innerHTML = `
   :root {
     --miwi-color-primary: ${props.colors?.primary ?? `#b3dd3e`};
