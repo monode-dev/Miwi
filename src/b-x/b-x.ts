@@ -42,7 +42,10 @@ function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps, shoul
     console.log(Object.keys(updates))
   }
   for (const key of Object.keys(updates)) {
-    if (updates[key] !== selfStyle[key as keyof CSSStyleDeclaration]) {
+    if (!Number.isNaN(Number(key))) {
+      console.warn(`key is a number`, key, updates[key])
+    }
+    if (updates[key] !== selfStyle.getPropertyValue(key)) {
       selfStyle.setProperty(key, (updates[key] ?? ``).toString())
     }
   }
