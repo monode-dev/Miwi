@@ -59,7 +59,7 @@ const $theme = ${JSON.stringify({
     lightHint: `var(--miwi-color-light-hint)`,
     warning: `var(--miwi-color-warning)`,
     error: `var(--miwi-color-error)`,
-    sameAsText: `current-color`,
+    sameAsText: `currentColor`,
   },
 } satisfies typeof $theme)};`
 document.body.appendChild(themeSciptElement)

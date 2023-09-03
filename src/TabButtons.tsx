@@ -43,7 +43,7 @@ export function TabButtons(
     }
   })
   return (
-    <Column shouldLog={true}>
+    <Column>
       <Row
         onClick={props.onClick}
         sty={{
