@@ -39,7 +39,9 @@ export const sizeToCss = _sizeToCss
 
 function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps, shouldLog?: boolean) {
   for (const key of Object.keys(updates)) {
-    if (updates[key] !== selfStyle[key as keyof CSSStyleDeclaration]) {
+    if (key.startsWith(`--`)) {
+      selfStyle.setProperty(key, (updates[key] ?? ``).toString())
+    } else if (updates[key] !== selfStyle[key as keyof CSSStyleDeclaration]) {
       ;(selfStyle as any)[key] = updates[key] ?? ``
     }
   }
@@ -179,7 +181,6 @@ export class Miwi_Box extends HTMLElement {
       size: this.sty.height,
     })
 
-    this.style.setProperty('--miwi-size-scale', '27px')
     applyStylePart(
       this.style,
       computeBoxSize(
