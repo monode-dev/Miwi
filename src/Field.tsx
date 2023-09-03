@@ -194,12 +194,13 @@ export function Field(
         [`overflow-y`]: `visible` as const,
         [`line-height`]: sizeToCss(scale.value),
         [`caret-color`]: $theme.colors.primary,
+        '--miwi-placeholder-color': props.hintColor ?? $theme.colors.hint,
       },
     }
     return (props.lineCount ?? 1) > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />
   }
   return (
-    <Row
+    <Box
       onClick={props.onClick ?? (() => tryFocus())}
       width={grow()}
       height={
@@ -209,6 +210,7 @@ export function Field(
       padBetween={0.25}
       overflowY={$Overflow.forceStretchParent}
       align={$Align.topLeft}
+      axis={$Axis.row}
       {...sty}
       scale={scale.value}
     >
@@ -237,6 +239,6 @@ export function Field(
           </Box>
         </Box>
       </Show>
-    </Row>
+    </Box>
   )
 }

@@ -14,7 +14,7 @@ export function Say(
   const sty = parseSty(props, {
     overflowX: $Overflow.wrap,
   })
-  const scale = computed(() => sty.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : 1))
+  const scale = computed(() => sty.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : undefined))
   const overflowX = sty.overflowX ?? (props.singleLine ?? false ? $Overflow.crop : $Overflow.wrap)
 
   return (

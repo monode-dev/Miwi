@@ -1,5 +1,24 @@
 import { Axis, Align, Overflow } from './b-x/b-x'
 
+// SECTION: Global variables
+declare global {
+  const $Align: typeof Align
+  const $Axis: typeof Axis
+  const $Overflow: typeof Overflow
+}
+const _window = window as any
+_window.miwi_globalVars = {}
+_window.miwi_globalVars.$Align = Align
+_window.miwi_globalVars.$Axis = Axis
+_window.miwi_globalVars.$Overflow = Overflow
+const globalScipt = document.createElement(`script`)
+globalScipt.innerHTML = `
+const $Align = window.miwi_globalVars.$Align;
+const $Axis = window.miwi_globalVars.$Axis;
+const $Overflow = window.miwi_globalVars.$Overflow;`
+document.body.appendChild(globalScipt)
+
+// SECTION: Theme
 declare global {
   const $theme: {
     readonly colors: {
@@ -14,77 +33,65 @@ declare global {
       readonly sameAsText: string
     }
   }
-  const $Align: typeof Align
-  const $Axis: typeof Axis
-  const $Overflow: typeof Overflow
 }
-
-const _window = window as any
-_window.tkeGlobal = {}
-_window.tkeGlobal.$theme = {
+const themeSciptElement = document.createElement(`script`)
+themeSciptElement.innerHTML = `
+const $theme = ${JSON.stringify({
   colors: {
-    primary: `#b3dd3e`,
-    accent: `#ffffffff`,
-    pageBackground: `#f9fafdff`,
-    text: `#000000ff`,
-    hint: `#9e9e9eff`,
-    lightHint: `lightgray`,
-    warning: `#ff9800ff`,
-    error: `#f44336ff`,
-    sameAsText: 'currentColor',
+    primary: `var(--miwi-color-primary)`,
+    accent: `var(--miwi-color-accent)`,
+    pageBackground: `var(--miwi-color-page-background)`,
+    text: `var(--miwi-color-text)`,
+    hint: `var(--miwi-color-hint)`,
+    lightHint: `var(--miwi-color-light-hint)`,
+    warning: `var(--miwi-color-warning)`,
+    error: `var(--miwi-color-error)`,
+    sameAsText: `current-color`,
   },
-}
-_window.tkeGlobal.$Align = Align
-_window.tkeGlobal.$Axis = Axis
-_window.tkeGlobal.$Overflow = Overflow
-
-const globalScipt = document.createElement(`script`)
-globalScipt.innerHTML = `
-const $theme = window.tkeGlobal.$theme;
-const $Align = window.tkeGlobal.$Align;
-const $Axis = window.tkeGlobal.$Axis;
-const $Overflow = window.tkeGlobal.$Overflow;`
-document.body.appendChild(globalScipt)
-const primaryColorStyleElement = document.createElement(`style`)
-//_window.tkeGlobal.$theme.colors.primary
-primaryColorStyleElement.innerHTML = getDefautlStyle({
-  primaryColor: _window.tkeGlobal.$theme.colors.primary,
-})
-document.body.appendChild(primaryColorStyleElement)
-function getDefautlStyle(props: { primaryColor: string }) {
-  return `
+} satisfies typeof $theme)};`
+document.body.appendChild(themeSciptElement)
+const themeStyleElement = document.createElement(`style`)
+setTheme({})
+document.body.appendChild(themeStyleElement)
+export function setTheme(props: Partial<Omit<typeof $theme, `sameAsText`>>) {
+  themeStyleElement.innerHTML = `
   :root {
-    --primary-color: ${props.primaryColor};
-  }
-  
-  .field::placeholder {
-    color: var(--placeholder-color);
-  }
-  
-  /* Add vendor-prefixed rules for better browser compatibility */
-  .field::-webkit-input-placeholder {
-    color: var(--placeholder-color);
-  }
-  
-  .field::-moz-placeholder {
-    color: var(--placeholder-color);
-    opacity: 1;
-  }
-  
-  .field:-ms-input-placeholder {
-    color: var(--placeholder-color);
-  }
-  
-  .field::-ms-input-placeholder {
-    color: var(--placeholder-color);
+    --miwi-color-primary: ${props.colors?.primary ?? `#b3dd3e`};
+    --miwi-color-accent: ${props.colors?.accent ?? `#ffffffff`};
+    --miwi-color-page-background: ${props.colors?.pageBackground ?? `#f9fafdff`};
+    --miwi-color-text: ${props.colors?.text ?? `#000000ff`};
+    --miwi-color-hint: ${props.colors?.hint ?? `#9e9e9eff`};
+    --miwi-color-light-hint: ${props.colors?.lightHint ?? `lightgray`};
+    --miwi-color-warning: ${props.colors?.warning ?? `#ff9800ff`};
+    --miwi-color-error: ${props.colors?.error ?? `#f44336ff`};
   }`
 }
-export function setPrimaryColor(color: string) {
-  _window.tkeGlobal.$theme.colors.primary = color
-  primaryColorStyleElement.innerHTML = getDefautlStyle({
-    primaryColor: _window.tkeGlobal.$theme.colors.primary,
-  })
+
+// Field style
+const fieldStyleElement = document.createElement(`style`)
+fieldStyleElement.innerHTML = `
+.field::placeholder {
+  color: var(--miwi-placeholder-color);
 }
+
+/* Add vendor-prefixed rules for better browser compatibility */
+.field::-webkit-input-placeholder {
+  color: var(--miwi-placeholder-color);
+}
+
+.field::-moz-placeholder {
+  color: var(--miwi-placeholder-color);
+  opacity: 1;
+}
+
+.field:-ms-input-placeholder {
+  color: var(--miwi-placeholder-color);
+}
+
+.field::-ms-input-placeholder {
+  color: var(--miwi-placeholder-color);
+}`
+document.body.appendChild(fieldStyleElement)
 
 export * from './b-x/b-x'
 export * from './AppBar'

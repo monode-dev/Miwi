@@ -1,9 +1,9 @@
-import { Box, BoxProps } from "./Box";
+import { Box, BoxProps } from './Box'
 
-export function Row(props: BoxProps) {
+export function Row(props: BoxProps & { axis?: never }) {
   return (
     <Box axis={$Axis.row} {...props}>
       {props.children}
     </Box>
-  );
+  )
 }
