@@ -18,8 +18,8 @@ export function Icon(props: {
 }) {
   return (
     <Box
-      width={props.size ?? 1}
-      height={props.size ?? 1}
+      width={props.size ?? $theme.scale}
+      height={props.size ?? $theme.scale}
       textColor={props.color ?? `currentColor`}
       overflowY={$Overflow.crop}
       onClick={props.onClick}

@@ -1,6 +1,7 @@
 import { isNum, exists, CssProps } from './BoxUtils'
 import { Align, AlignSingleAxis, Overflow, _FlexAlign } from './BoxLayout'
 import { sizeToCss } from './BoxSize'
+import { sizeScaleCssVarName } from 'src/theme'
 
 export type TextSty = {
   scale: number | string
@@ -25,12 +26,6 @@ export type TextSty = {
   // useEllipsisForOverflow: boolean;
 }
 
-// const fontSizeToHtmlUnit = 0.9;
-export function numToFontSize(num: number) {
-  // return sizeToCss(fontSizeToHtmlUnit * num);
-  return sizeToCss(num) // * 1.3);
-}
-
 export function computeTextStyle(
   sty: Partial<TextSty>,
   alignX: AlignSingleAxis,
@@ -39,7 +34,9 @@ export function computeTextStyle(
   return {
     // Text Style
     fontFamily: `inherit`, //`Roboto`,
-    fontSize: isNum(sty.scale) ? numToFontSize(sty.scale) : sty.scale,
+    [sizeScaleCssVarName]: sizeToCss(sty.scale),
+    // If we want font size and box size to be different we should wrap this in a `calc()`.
+    fontSize: `var(${sizeScaleCssVarName})`,
     fontWeight: exists(sty.textIsBold) ? (sty.textIsBold ? `bold` : `normal`) : undefined,
     fontStyle: exists(sty.textIsItalic) ? (sty.textIsItalic ? `italic` : `normal`) : undefined,
     textDecoration: exists(sty.textIsUnderlined)

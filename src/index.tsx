@@ -1,5 +1,7 @@
 import { Axis, Align, Overflow } from './b-x/b-x'
 import { DeepPartial } from './utils'
+import { sizeScaleCssVarName } from './theme'
+import { sizeToCss } from './b-x/BoxSize'
 
 // SECTION: Global variables
 declare global {
@@ -22,6 +24,7 @@ document.body.appendChild(globalScipt)
 // SECTION: Theme
 declare global {
   const $theme: {
+    readonly scale: number | string
     readonly colors: {
       readonly primary: string
       readonly accent: string
@@ -36,8 +39,17 @@ declare global {
   }
 }
 const themeSciptElement = document.createElement(`script`)
+/** TODO: Implement h1, h2, and bodyText
+ * h1: {
+ *   scale: `var(--miwi-h1-scale)`,
+ *   color: `var(--miwi-h1-color)`,
+ * }
+ * --miwi-h1-scale: 1.5;
+ * --miwi-h1-color: var(--miwi-color-text);
+ */
 themeSciptElement.innerHTML = `
 const $theme = ${JSON.stringify({
+  scale: `var(${sizeScaleCssVarName})` as any,
   colors: {
     primary: `var(--miwi-color-primary)`,
     accent: `var(--miwi-color-accent)`,
@@ -57,6 +69,7 @@ document.body.appendChild(themeStyleElement)
 export function setTheme(props: DeepPartial<Omit<typeof $theme, `sameAsText`>>) {
   themeStyleElement.innerHTML = `
   :root {
+    ${sizeScaleCssVarName}: ${sizeToCss(props.scale ?? 1)};
     --miwi-color-primary: ${props.colors?.primary ?? `#b3dd3e`};
     --miwi-color-accent: ${props.colors?.accent ?? `#ffffffff`};
     --miwi-color-page-background: ${props.colors?.pageBackground ?? `#f9fafdff`};
