@@ -201,7 +201,7 @@ export class Miwi_Box extends HTMLElement {
     if (this.sty.shouldLog) {
       console.log(`textStyle`, JSON.stringify(textStyle, null, 2))
     }
-    applyStylePart(this.style, textStyle, true)
+    applyStylePart(this.style, textStyle, this.sty.shouldLog)
     if (this.sty.shouldLog) {
       console.log(`style`, JSON.stringify(this.style, null, 2))
     }
