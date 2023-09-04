@@ -163,6 +163,7 @@ export function Field(
     inputElement?.focus()
   }
 
+  const lineCount = props.lineCount ?? 1
   function _Input() {
     const inputProps = {
       ref: (el: HTMLInputElement | HTMLTextAreaElement) => (inputElement = el),
@@ -176,8 +177,8 @@ export function Field(
       onKeyPress: handleKeyPress,
       onPaste: handlePaste,
       class: 'field',
-      rows: exists(props.lineCount) ? props.lineCount : undefined,
-      wrap: props.lineCount !== 1 ? (`soft` as const) : undefined,
+      rows: exists(lineCount) ? lineCount : undefined,
+      wrap: lineCount !== 1 ? (`soft` as const) : undefined,
       style: {
         border: 'none',
         'background-color': 'transparent',
@@ -197,15 +198,13 @@ export function Field(
         '--miwi-placeholder-color': props.hintColor ?? $theme.colors.hint,
       },
     }
-    return (props.lineCount ?? 1) > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />
+    return lineCount > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />
   }
   return (
     <Box
       onClick={props.onClick ?? (() => tryFocus())}
       width={grow()}
-      height={
-        exists(props.lineCount) ? scale.value * props.lineCount + underlineHeight.value : undefined
-      }
+      height={exists(lineCount) ? scale.value * lineCount + underlineHeight.value : undefined}
       textColor={$theme.colors.text}
       padBetween={0.25}
       overflowY={$Overflow.forceStretchParent}
@@ -219,10 +218,7 @@ export function Field(
       </Show>
 
       <Show when={props.underlined} fallback={<_Input />}>
-        <Box
-          width={grow()}
-          height={exists(props.lineCount) ? scale.value * props.lineCount : undefined}
-        >
+        <Box width={grow()} height={exists(lineCount) ? scale.value * lineCount : undefined}>
           <Column width={grow()}>
             <Row width={grow()}>
               <Box width={0.25} />
