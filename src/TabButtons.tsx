@@ -2,12 +2,12 @@ import { gsap } from 'gsap'
 import { Box, BoxProps, grow } from './Box'
 import { Row } from './Row'
 import { createEffect } from 'solid-js'
-import { Signal, exists } from './utils'
+import { Sig, exists } from './utils'
 import { Column } from './Column'
 
 export function TabButtons(
   props: BoxProps & {
-    selectedTab: Signal<number>
+    selectedTabSig: Sig<number>
     labels?: [string, string, string]
   },
 ) {
@@ -19,8 +19,8 @@ export function TabButtons(
   let tabUnderline: HTMLElement | undefined = undefined
 
   function selectTab(newTab: number) {
-    if (newTab === props.selectedTab.value) return
-    props.selectedTab.value = newTab
+    if (newTab === props.selectedTabSig.value) return
+    props.selectedTabSig.value = newTab
   }
 
   createEffect(() => {
@@ -30,7 +30,7 @@ export function TabButtons(
         (tab1Ref?.offsetLeft ?? 0) - (tab2Ref?.offsetLeft ?? 0),
         0,
         (tab2Ref?.offsetLeft ?? 0) - (tab1Ref?.offsetLeft ?? 0),
-      ][props.selectedTab.value]
+      ][props.selectedTabSig.value]
 
       // console.log(getComputedStyle(tabUnderline));
 

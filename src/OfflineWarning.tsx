@@ -1,4 +1,4 @@
-import { Signal, signal } from './utils'
+import { Sig, SigGet, sig } from './utils'
 import { sizeToCss } from './b-x/b-x'
 import { pageTransitions } from './Nav'
 import { Box } from './Box'
@@ -6,7 +6,7 @@ import { Row } from './Row'
 import { Icon } from './Icon'
 import { mdiWifiOff } from '@mdi/js'
 
-export function OfflineWarning(props: { isOnline: Signal<boolean> }) {
+export function OfflineWarning(props: { isOnlineSig: SigGet<boolean> }) {
   const offlineWarningTransitions = pageTransitions.from({
     duration: 0.15,
     y: sizeToCss(4),
@@ -18,7 +18,7 @@ export function OfflineWarning(props: { isOnline: Signal<boolean> }) {
     //   @enter="offlineWarningTransitions.enter"
     //   @leave="offlineWarningTransitions.leave"
     // >
-    props.isOnline.value ? undefined : (
+    props.isOnlineSig.value ? undefined : (
       <div
         style={{
           background: `transparent`,

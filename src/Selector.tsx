@@ -1,4 +1,4 @@
-import { Signal, computed, exists, injectDefaults, signal, watchDeps } from './utils'
+import { Sig, compute, exists, injectDefaults, sig, watchDeps } from './utils'
 import { BoxProps, grow, parseSty } from './Box'
 import { Say } from './Say'
 import { Row } from './Row'
@@ -12,9 +12,9 @@ export function Selector<T>(
     value: T
     getLabelForData: (data: T) => string | null
     noneLabel?: string
-    modalIsOpen?: Signal<boolean>
+    modalIsOpenSig?: Sig<boolean>
     emptyListText?: string
-    filterString?: Signal<string>
+    filterStringSig?: Sig<string>
     showCancelOptionForFilter?: boolean
     isWide?: boolean
   } & BoxProps,
@@ -25,27 +25,27 @@ export function Selector<T>(
     isWide: false,
   })
   const sty = parseSty(props)
-  const selectedLabel = computed(() => {
+  const selectedLabel = compute(() => {
     return props.getLabelForData(props.value) ?? props.noneLabel
   })
-  const thereAreNoOptions = computed(() => {
+  const thereAreNoOptions = compute(() => {
     return !exists(props.children) || (Array.isArray(props.children) && props.children.length === 0)
   })
 
   //
-  const _modalIsOpen = signal(props.modalIsOpen?.value ?? false)
-  if (exists(props.modalIsOpen)) {
-    watchDeps([props.modalIsOpen], () => {
-      if (_modalIsOpen.value === props.modalIsOpen!.value) return
-      if (props.modalIsOpen) {
+  const _modalIsOpen = sig(props.modalIsOpenSig?.value ?? false)
+  if (exists(props.modalIsOpenSig)) {
+    watchDeps([props.modalIsOpenSig], () => {
+      if (_modalIsOpen.value === props.modalIsOpenSig!.value) return
+      if (props.modalIsOpenSig) {
         openDropDown()
       } else {
         closeDropDown()
       }
     })
     watchDeps([_modalIsOpen], () => {
-      if (_modalIsOpen.value === props.modalIsOpen!.value) return
-      props.modalIsOpen!.value = _modalIsOpen.value
+      if (_modalIsOpen.value === props.modalIsOpenSig!.value) return
+      props.modalIsOpenSig!.value = _modalIsOpen.value
     })
   }
 
@@ -57,8 +57,8 @@ export function Selector<T>(
   function closeDropDown() {
     if (!_modalIsOpen.value) return
     _modalIsOpen.value = false
-    if (exists(props.filterString)) {
-      props.filterString.value = ``
+    if (exists(props.filterStringSig)) {
+      props.filterStringSig.value = ``
     }
   }
   return (
@@ -66,7 +66,7 @@ export function Selector<T>(
       openButton={
         <Row
           onClick={() => {
-            if (exists(props.filterString)) {
+            if (exists(props.filterStringSig)) {
               openDropDown()
             } else {
               if (_modalIsOpen.value) {
@@ -81,7 +81,7 @@ export function Selector<T>(
           align={$Align.spaceBetween}
         >
           {' '}
-          {!exists(props.filterString) || !_modalIsOpen.value ? (
+          {!exists(props.filterStringSig) || !_modalIsOpen.value ? (
             <Say
               width={grow()}
               overflowX={$Overflow.crop}
@@ -90,10 +90,10 @@ export function Selector<T>(
               {selectedLabel.value}
             </Say>
           ) : (
-            <Field value={props.filterString} hintText="Search" hasFocus={signal(true)} />
+            <Field valueSig={props.filterStringSig} hintText="Search" hasFocusSig={sig(true)} />
           )}
           <Icon
-            iconPath={exists(props.filterString) && _modalIsOpen.value ? mdiClose : mdiMenuDown}
+            iconPath={exists(props.filterStringSig) && _modalIsOpen.value ? mdiClose : mdiMenuDown}
             onClick={() => {
               if (_modalIsOpen.value) {
                 _modalIsOpen.value = false
@@ -106,7 +106,7 @@ export function Selector<T>(
       }
       openButtonWidth={grow()}
       openButtonHeight={sty.scale ?? 1}
-      isOpen={_modalIsOpen}
+      isOpenSig={_modalIsOpen}
       modalWidth={props.isWide ? `100%` : undefined}
     >
       {/* SECTION: No Options */}
@@ -117,7 +117,7 @@ export function Selector<T>(
       )}
 
       {/* SECTION: Cancel */}
-      {exists(props.filterString) && props.showCancelOptionForFilter && !thereAreNoOptions.value ? (
+      {exists(props.filterStringSig) && props.showCancelOptionForFilter && !thereAreNoOptions.value ? (
         <Say hint onClick={() => (_modalIsOpen.value = false)} width={grow()}>
           Cancel
         </Say>

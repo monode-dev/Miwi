@@ -1,12 +1,12 @@
 import { BoxProps } from './Box'
-import { signal, Signal, watchDeps, exists } from './utils'
+import { sig, Sig, watchDeps, exists } from './utils'
 import { Field, KeyboardType } from './Field'
 
 export function NumField(
   props: {
-    value?: Signal<number | null>
+    valueSig?: Sig<number | null>
     negativesAreAllowed?: boolean
-    hasFocus?: Signal<boolean>
+    hasFocusSig?: Sig<boolean>
     hint?: string
     hintColor?: string
     icon?: string
@@ -17,11 +17,11 @@ export function NumField(
   } & BoxProps,
 ) {
   const keyboard = props.keyboard ?? 'decimal'
-  const _stringValue = signal(props.value?.toString() ?? '')
+  const _stringValue = sig(props.valueSig?.toString() ?? '')
 
-  if (exists(props.value)) {
-    watchDeps([props.value], () => {
-      const value = props.value?.value
+  if (exists(props.valueSig)) {
+    watchDeps([props.valueSig], () => {
+      const value = props.valueSig?.value
       if (!exists(value)) {
         _stringValue.value = ''
       } else if (textToNumber(_stringValue.value) !== value) {
@@ -30,12 +30,12 @@ export function NumField(
     })
     watchDeps([_stringValue], () => {
       if (_stringValue.value === '') {
-        props.value!.value = null
+        props.valueSig!.value = null
       } else {
         if (!validateInput(_stringValue.value)) return
         const asNumber = textToNumber(_stringValue.value)
-        if (asNumber === props.value!.value) return
-        props.value!.value = asNumber
+        if (asNumber === props.valueSig!.value) return
+        props.valueSig!.value = asNumber
       }
     })
   }
@@ -56,8 +56,8 @@ export function NumField(
   return (
     <div>
       <Field
-        value={_stringValue}
-        hasFocus={props.hasFocus}
+        valueSig={_stringValue}
+        hasFocusSig={props.hasFocusSig}
         hintText={props.hint}
         hintColor={props.hintColor}
         iconPath={props.icon}

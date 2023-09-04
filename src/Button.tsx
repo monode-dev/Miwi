@@ -1,5 +1,5 @@
 import { Box, BoxProps } from './Box'
-import { computed } from './utils'
+import { compute } from './utils'
 
 export function Button(
   props: {
@@ -9,7 +9,7 @@ export function Button(
     outlined?: boolean
   } & BoxProps,
 ) {
-  const shapeSty = computed(() => {
+  const shapeSty = compute(() => {
     if (props.round) {
       return { cornerRadius: `100%` }
     } else if (props.pill) {
@@ -18,7 +18,7 @@ export function Button(
       return { cornerRadius: 0.25, pad: 0.5 }
     }
   })
-  const colorSty = computed(() =>
+  const colorSty = compute(() =>
     props.outlined
       ? {
           background: $theme.colors.accent,
@@ -31,7 +31,7 @@ export function Button(
           textColor: $theme.colors.accent,
         },
   )
-  const shadowSty = computed(() =>
+  const shadowSty = compute(() =>
     props.raised ? { shadowSize: 1, shadowDirection: $Align.bottomRight } : {},
   )
   return (

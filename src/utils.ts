@@ -1,10 +1,10 @@
 import { createEffect, createMemo, createSignal, on } from 'solid-js'
 
-export type Signal<T> = { readonly _isSignal: true; value: T }
-export function signal<T>(initValue: T): Signal<T> {
+export type Sig<T> = { readonly _isSig: true; value: T }
+export function sig<T>(initValue: T): Sig<T> {
   const [getValue, setValue] = createSignal(initValue)
   return {
-    _isSignal: true,
+    _isSig: true,
     get value(): T {
       return getValue()
     },
@@ -13,11 +13,11 @@ export function signal<T>(initValue: T): Signal<T> {
     },
   }
 }
-export function isSignal(x: any): x is Signal<any> {
+export function isSig(x: any): x is Sig<any> {
   return x?._isSignal === true
 }
-export type Getter<T> = { readonly value: T }
-export function computed<T>(getter: () => T): Getter<T> {
+export type SigGet<T> = { readonly value: T }
+export function compute<T>(getter: () => T): SigGet<T> {
   const read = createMemo(getter)
   return {
     get value(): T {
@@ -25,7 +25,7 @@ export function computed<T>(getter: () => T): Getter<T> {
     },
   }
 }
-export function watchDeps(deps: Getter<any>[], callback: () => void) {
+export function watchDeps(deps: SigGet<any>[], callback: () => void) {
   return createEffect(
     on(
       // Solid JS expects functions like it is use to.

@@ -208,7 +208,10 @@ export class Miwi_Box extends HTMLElement {
         this.sty.overflowX ?? defaultOverflowX,
       ),
     )
-    applyStylePart(this.style, computeBoxInteraction(this.sty))
+    const interactionConfig = computeBoxInteraction(this.sty)
+    this.onmouseenter = interactionConfig.elementAttributes.onMouseEnter ?? null
+    this.onmouseleave = interactionConfig.elementAttributes.onMouseLeave ?? null
+    applyStylePart(this.style, interactionConfig.cssProps)
 
     this.classList.toggle(stackClassName, (this.sty.axis ?? _Axis.column) === _Axis.stack)
     this.classList.toggle(nonStackClassName, (this.sty.axis ?? _Axis.column) !== _Axis.stack)

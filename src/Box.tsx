@@ -1,4 +1,4 @@
-import { signal, watchEffect, exists, computed } from './utils'
+import { sig, watchEffect, exists, compute } from './utils'
 import './b-x/b-x'
 import { Axis, Sty } from './b-x/b-x'
 import { type JSX, type ParentProps } from 'solid-js'

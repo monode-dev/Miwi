@@ -1,5 +1,5 @@
 import { Component, For, JSX, Show, onMount } from 'solid-js'
-import { computed, signal, sessionStore, Signal, watchDeps, exists } from './utils'
+import { compute, sig, sessionStore, Sig, watchDeps, exists } from './utils'
 import { gsap } from 'gsap'
 import { Box } from './Box'
 import { OfflineWarning } from './OfflineWarning'
@@ -89,12 +89,12 @@ type PageTransitionRecord =
       inOrOut: `out`
     }
 export const useNav = sessionStore('navigator', () => {
-  const _pagesInTransitions = signal<PageTransitionRecord[]>([])
+  const _pagesInTransitions = sig<PageTransitionRecord[]>([])
 
   return {
-    openedPages: signal<PageToOpen[]>([]),
+    openedPages: sig<PageToOpen[]>([]),
     _pagesInTransitions,
-    pagesAreTransitioning: computed(() => _pagesInTransitions.value.length > 0),
+    pagesAreTransitioning: compute(() => _pagesInTransitions.value.length > 0),
     pushPage<T>(newPage: PageComponent<T>, props: T) {
       _pagesInTransitions.value = [
         ..._pagesInTransitions.value,
@@ -144,7 +144,7 @@ function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
     [`z-index`]: zIndex,
   }
 }
-export function Nav(props: { isOnline: Signal<boolean> }) {
+export function Nav(props: { isOnlineSig: Sig<boolean> }) {
   // let pageHasAnimatedIn: boolean[] = []
   const nav = useNav()
   let aPageTransitionIsRunning = false
@@ -188,7 +188,7 @@ export function Nav(props: { isOnline: Signal<boolean> }) {
       </For>
 
       {/* Offline warning is infront of all pages. */}
-      <OfflineWarning isOnline={props.isOnline} />
+      <OfflineWarning isOnlineSig={props.isOnlineSig} />
 
       {/* Disable interaction durring page transitions */}
       <Show when={nav.pagesAreTransitioning.value}>

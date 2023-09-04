@@ -1,6 +1,6 @@
 import { JSX, Show } from 'solid-js'
 import { Box, BoxProps, grow, parseSty } from './Box'
-import { computed } from './utils'
+import { compute } from './utils'
 import { useNav } from './Nav'
 import { Icon } from './Icon'
 import { mdiArrowLeft } from '@mdi/js'
@@ -17,7 +17,7 @@ export function AppBar(
   } & BoxProps,
 ) {
   const nav = useNav()
-  const sty = computed(() =>
+  const sty = compute(() =>
     parseSty(props, {
       background: $theme.colors.primary,
     }),

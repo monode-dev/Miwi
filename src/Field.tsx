@@ -2,7 +2,7 @@ import { Show, onMount } from 'solid-js'
 import { Box, BoxProps, grow, parseSty } from './Box'
 import { Row } from './Row'
 import { Icon } from './Icon'
-import { computed, signal, Signal, watchDeps, watchEffect, exists } from './utils'
+import { compute, sig, Sig, watchDeps, watchEffect, exists } from './utils'
 import { sizeToCss } from './b-x/b-x'
 import { Column } from './Column'
 
@@ -21,9 +21,9 @@ type FormattedResult = {
 }
 export function Field(
   props: {
-    value?: Signal<string>
-    tempValue?: Signal<string>
-    hasFocus?: Signal<boolean>
+    valueSig?: Sig<string>
+    tempValueSig?: Sig<string>
+    hasFocusSig?: Sig<boolean>
     hintText?: string
     hintColor?: string
     lineCount?: number
@@ -42,27 +42,27 @@ export function Field(
 ) {
   const sty = parseSty(props)
 
-  const value = props.value ?? signal(``)
+  const value = props.valueSig ?? sig(``)
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined
-  const inputElementHasFocus = signal(props.hasFocus ?? false)
-  const scale = computed(
+  const inputElementHasFocus = sig(props.hasFocusSig ?? false)
+  const scale = compute(
     () => (sty.scale as number) ?? (props.heading ? 1.5 : props.title ? 1.25 : 1),
   )
 
   // Input
   function setTempValue(newValue: string | undefined | null) {
     const stringValue = newValue ?? ``
-    if (exists(props.tempValue)) {
-      props.tempValue.value = stringValue
+    if (exists(props.tempValueSig)) {
+      props.tempValueSig.value = stringValue
     } else {
       value.value = stringValue
     }
   }
   function getTempValue() {
-    return props.tempValue?.value ?? value.value ?? ``
+    return props.tempValueSig?.value ?? value.value ?? ``
   }
   watchDeps([value], () => {
-    if (!props.hasFocus) {
+    if (!props.hasFocusSig) {
       setTempValue(value.value)
     }
   })
@@ -114,8 +114,8 @@ export function Field(
   const handleFocus = (e: FocusEvent) => {
     valueOnFocus = value.value
     inputElementHasFocus.value = true
-    if (exists(props.hasFocus)) {
-      props.hasFocus.value = true
+    if (exists(props.hasFocusSig)) {
+      props.hasFocusSig.value = true
     }
   }
 
@@ -129,13 +129,13 @@ export function Field(
       setTempValue(value.value)
     }
     inputElementHasFocus.value = false
-    if (exists(props.hasFocus)) {
-      props.hasFocus.value = false
+    if (exists(props.hasFocusSig)) {
+      props.hasFocusSig.value = false
     }
   }
   watchEffect(() => {
-    if (props.hasFocus?.value !== (inputElement === document.activeElement)) {
-      if (props.hasFocus) {
+    if (props.hasFocusSig?.value !== (inputElement === document.activeElement)) {
+      if (props.hasFocusSig) {
         inputElement?.focus()
       } else {
         inputElement?.blur()
@@ -143,9 +143,9 @@ export function Field(
     }
   })
 
-  const underlineHeight = computed(() => (props.underlined ? 0.25 * scale.value : 0))
+  const underlineHeight = compute(() => (props.underlined ? 0.25 * scale.value : 0))
 
-  const detailColor = computed(() =>
+  const detailColor = compute(() =>
     inputElementHasFocus.value
       ? $theme.colors.primary
       : value.value === `` || !exists(value.value)
@@ -154,7 +154,7 @@ export function Field(
   )
 
   onMount(() => {
-    if (props.hasFocus) {
+    if (props.hasFocusSig) {
       inputElement?.focus()
     }
   })

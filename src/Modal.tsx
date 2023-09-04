@@ -1,4 +1,4 @@
-import { Signal, exists, signal, watchDeps } from './utils'
+import { Sig, exists, sig, watchDeps } from './utils'
 import { Box, BoxProps, grow } from './Box'
 import { Stack } from './Stack'
 import { Size } from './b-x/b-x'
@@ -9,7 +9,7 @@ export function Modal<T>(
     openButton: JSX.Element
     openButtonWidth: Size
     openButtonHeight: Size
-    isOpen?: Signal<boolean>
+    isOpenSig?: Sig<boolean>
     modalWidth?: Size
   } & BoxProps,
 ) {
@@ -18,24 +18,24 @@ export function Modal<T>(
   let modal: HTMLElement | undefined = undefined
 
   //
-  const _isOpen = signal(props.isOpen?.value ?? false)
-  if (exists(props.isOpen)) {
-    watchDeps([props.isOpen], () => {
-      if (_isOpen.value === props.isOpen!.value) return
-      if (props.isOpen!.value) {
+  const _isOpen = sig(props.isOpenSig?.value ?? false)
+  if (exists(props.isOpenSig)) {
+    watchDeps([props.isOpenSig], () => {
+      if (_isOpen.value === props.isOpenSig!.value) return
+      if (props.isOpenSig!.value) {
         openDropDown()
       } else {
         closeDropDown()
       }
     })
     watchDeps([_isOpen], () => {
-      if (_isOpen.value === props.isOpen!.value) return
-      props.isOpen!.value = _isOpen.value
+      if (_isOpen.value === props.isOpenSig!.value) return
+      props.isOpenSig!.value = _isOpen.value
     })
   }
 
   //
-  const shouldOpenUpwards = signal(false)
+  const shouldOpenUpwards = sig(false)
   function openDropDown() {
     if (_isOpen.value) return
     if (exists(modal)) {

@@ -1,4 +1,4 @@
-import { signal } from './utils'
+import { sig } from './utils'
 import { Box, BoxProps, grow, parseSty } from './Box'
 import { Icon } from './Icon'
 import { Modal } from './Modal'
@@ -13,13 +13,13 @@ export function HiddenDelete(
 ) {
   const sty = parseSty(props)
   const scale = sty.scale ?? 1
-  const isOpen = signal(false)
+  const isOpen = sig(false)
   return (
     <Modal
       openButton={<Icon iconPath={mdiDotsVertical} onClick={() => (isOpen.value = true)} />}
       openButtonWidth={scale}
       openButtonHeight={scale}
-      isOpen={isOpen}
+      isOpenSig={isOpen}
     >
       <Row scale={scale} onClick={() => (isOpen.value = false)} width={grow()}>
         <Say width={grow()}>Cancel</Say>

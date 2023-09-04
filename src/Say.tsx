@@ -1,5 +1,5 @@
 import { Box, BoxProps, parseSty } from './Box'
-import { AllowOne, computed } from './utils'
+import { AllowOne, compute } from './utils'
 
 export function Say(
   props: AllowOne<{
@@ -14,7 +14,7 @@ export function Say(
   const sty = parseSty(props, {
     overflowX: $Overflow.wrap,
   })
-  const scale = computed(() => sty.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : undefined))
+  const scale = compute(() => sty.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : undefined))
   const overflowX = sty.overflowX ?? (props.singleLine ?? false ? $Overflow.crop : $Overflow.wrap)
 
   return (

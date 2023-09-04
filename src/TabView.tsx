@@ -1,5 +1,5 @@
 import { gsap } from 'gsap'
-import { Signal } from './utils'
+import { Sig } from './utils'
 import { onMount, createEffect, JSX } from 'solid-js'
 import { Box, BoxProps, grow } from './Box'
 import { Row } from './Row'
@@ -7,17 +7,17 @@ import { Say } from './Say'
 
 export function TabView(
   props: BoxProps & {
-    selectedTab: Signal<number>
+    selectedTabSig: Sig<number>
     tab0?: JSX.Element
     tab1?: JSX.Element
     tab2?: JSX.Element
   },
 ) {
   function selectTab(newTab: number) {
-    if (newTab === props.selectedTab.value) {
+    if (newTab === props.selectedTabSig.value) {
       return
     }
-    props.selectedTab.value = newTab
+    props.selectedTabSig.value = newTab
   }
 
   // TODO: WHAT IS THIS??
@@ -25,7 +25,7 @@ export function TabView(
   let tabBodiesParent: HTMLElement | undefined = undefined
 
   createEffect(() => {
-    const newTab = props.selectedTab.value
+    const newTab = props.selectedTabSig.value
     const newTabPosition = [`100vw`, 0, `-100vw`][newTab]
     if (tabBodiesParent) {
       // TODO: UPDATE THIS
@@ -69,9 +69,9 @@ export function TabView(
       ) {
         // e.preventDefault();
         if (deltaX > 0) {
-          selectTab(Math.max(0, props.selectedTab.value - 1))
+          selectTab(Math.max(0, props.selectedTabSig.value - 1))
         } else {
-          selectTab(Math.min(2, props.selectedTab.value + 1))
+          selectTab(Math.min(2, props.selectedTabSig.value + 1))
         }
       }
     })

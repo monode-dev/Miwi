@@ -1,5 +1,5 @@
 import { BoxProps } from './Box'
-import { computed, exists } from './utils'
+import { compute, exists } from './utils'
 import { Row } from './Row'
 import { Say } from './Say'
 
@@ -9,7 +9,7 @@ export function Label(
     hint?: boolean
   } & BoxProps,
 ) {
-  const shouldShowLabel = computed(() => exists(props.label) && props.label.length > 0)
+  const shouldShowLabel = compute(() => exists(props.label) && props.label.length > 0)
 
   return shouldShowLabel.value ? (
     <Row
