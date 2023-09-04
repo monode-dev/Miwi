@@ -78,5 +78,8 @@ export function grow(flex: number = 1) {
 
 export type BoxProps = Partial<Sty> & BDashXProps
 export function Box(props: BoxProps) {
+  const parsedSty = parseSty(props, {
+    cssCursor: exists(props.onClick) ? `pointer` : undefined,
+  })
   return <b-x {...props} sty={parseSty(props)} />
 }

@@ -38,7 +38,6 @@ export function Button(
     <Box
       align={$Align.center}
       axis={$Axis.row}
-      cssCursor={`pointer`}
       {...shapeSty.value}
       {...colorSty.value}
       {...shadowSty.value}
