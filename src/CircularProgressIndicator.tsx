@@ -6,8 +6,11 @@ export function CircularProgressIndicator(props: {
   thickness?: number | string
   color?: string
 }) {
-  const diameterPx = sizeToCss(props.diameter ?? 4)
-  const thicknessPx = sizeToCss(props.thickness ?? 0.5)
+  const diameterMu = props.diameter ?? 4
+  const diameterPx = sizeToCss(diameterMu)
+  const thicknessPx = sizeToCss(
+    props.thickness ?? (typeof diameterMu === `number` ? diameterMu / 8 : diameterMu),
+  )
   const color = props.color ?? $theme.colors.sameAsText
   const speed = 2.5 // Degrees per frame
   // A state for rotation angle
