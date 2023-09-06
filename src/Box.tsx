@@ -61,6 +61,11 @@ export function parseSty(props: BoxProps, defaultSty?: Partial<Sty>): Partial<St
     props.sty?.bonusTouchArea ??
     defaultSty?.bonusTouchArea ??
     exists(props.onClick)
+  parsedSty.cssCursor =
+    props.cssCursor ??
+    props.sty?.cssCursor ??
+    defaultSty?.cssCursor ??
+    (exists(props.onClick) ? `pointer` : `default`)
   return parsedSty
 }
 
@@ -78,8 +83,5 @@ export function grow(flex: number = 1) {
 
 export type BoxProps = Partial<Sty> & BDashXProps
 export function Box(props: BoxProps) {
-  // if (!exists(props.cssCursor) && !exists(props.sty?.cssCursor)) {
-  //   props.cssCursor = exists(props.onClick) ? `pointer` : `default`
-  // }
   return <b-x {...props} sty={parseSty(props)} />
 }
