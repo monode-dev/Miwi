@@ -1,6 +1,6 @@
 {
   "name": "miwi",
-  "version": "0.0.152",
+  "version": "0.0.153",
   "license": "MIT",
   "author": "Monode",
   "contributors": [],
@@ -42,7 +42,7 @@
   "peerDependencies": {
     "@mdi/js": "^7.2.96",
     "gsap": "^3.12.2",
-    "solid-js": "^1.6.0"
+    "solid-js": "^1.7.8"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.1.0",
@@ -56,7 +56,7 @@
     "jsdom": "^22.1.0",
     "prettier": "3.0.0",
     "semver": "^7.5.4",
-    "solid-js": "^1.7.8",
+    "solid-js": "1.7.8",
     "sucrase": "^3.34.0",
     "tsup": "^7.1.0",
     "tsup-preset-solid": "^2.0.1",
