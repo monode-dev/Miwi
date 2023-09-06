@@ -81,5 +81,5 @@ export function Box(props: BoxProps) {
   const parsedSty = parseSty(props, {
     cssCursor: exists(props.onClick) ? `pointer` : `default`,
   })
-  return <b-x {...props} sty={parseSty(props)} />
+  return <b-x {...props} sty={parsedSty} />
 }
