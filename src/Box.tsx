@@ -78,8 +78,8 @@ export function grow(flex: number = 1) {
 
 export type BoxProps = Partial<Sty> & BDashXProps
 export function Box(props: BoxProps) {
-  if (!exists(props.cssCursor) && !exists(props.sty?.cssCursor)) {
-    props.cssCursor = exists(props.onClick) ? `pointer` : `default`
-  }
+  // if (!exists(props.cssCursor) && !exists(props.sty?.cssCursor)) {
+  //   props.cssCursor = exists(props.onClick) ? `pointer` : `default`
+  // }
   return <b-x {...props} sty={parseSty(props)} />
 }
