@@ -1,6 +1,8 @@
 import { CssProps, exists, isNum, isString } from './BoxUtils'
 import { sizeToCss } from './BoxSize'
 
+// NOTE: Look into https://solid-dnd.com/ for drag and drop, and reorderable lists.
+
 export type LayoutSty = PadStyProps &
   AlignStyProps & {
     axis: Axis
