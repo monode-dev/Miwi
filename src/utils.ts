@@ -13,6 +13,7 @@ export function sig<T>(initValue: T): Sig<T> {
     },
   }
 }
+
 export function isSig(x: any): x is Sig<any> {
   return x?._isSignal === true
 }

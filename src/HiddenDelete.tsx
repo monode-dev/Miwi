@@ -8,7 +8,7 @@ import { mdiClose, mdiDotsVertical } from '@mdi/js'
 
 export function HiddenDelete(
   props: {
-    onDelete: () => void
+    onDelete?: () => void
   } & BoxProps,
 ) {
   const sty = parseSty(props)
