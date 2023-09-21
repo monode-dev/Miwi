@@ -22,6 +22,7 @@ export function Icon(props: {
       height={props.size ?? $theme.scale}
       textColor={props.color ?? `currentColor`}
       overflowY={$Overflow.crop}
+      overflowX={$Overflow.crop}
       onClick={props.onClick}
     >
       {/* From: https://github.com/therufa/mdi-vue/blob/master/v3.js */}
