@@ -2,8 +2,7 @@ import { gsap } from 'gsap'
 import { Sig } from './utils'
 import { onMount, createEffect, JSX } from 'solid-js'
 import { Box, BoxProps, grow } from './Box'
-import { Row } from './Row'
-import { Say } from './Say'
+import { Txt } from './Txt'
 
 export function TabView(
   props: BoxProps & {
@@ -78,44 +77,25 @@ export function TabView(
   })
 
   return (
-    <Row
+    <Box
       ref={tabBodiesParent}
+      axis={$Axis.row}
       width="300%"
       onClick={props.onClick}
-      sty={{
-        height: grow(),
-        align: $Align.topCenter,
-        overflowX: $Overflow.crop,
-        ...props.sty,
-      }}
+      height={grow()}
+      align={$Align.topCenter}
+      overflowX={$Overflow.crop}
+      {...props}
     >
-      <Box
-        sty={{
-          width: grow(),
-          height: grow(),
-          overflowX: $Overflow.crop,
-        }}
-      >
-        {props.tab0 ?? <Say hint>Tab 0</Say>}
+      <Box width={grow()} height={grow()} overflowX={$Overflow.crop}>
+        {props.tab0 ?? <Txt hint>Tab 0</Txt>}
       </Box>
-      <Box
-        sty={{
-          width: grow(),
-          height: grow(),
-          overflowX: $Overflow.crop,
-        }}
-      >
-        {props.tab1 ?? <Say hint>Tab 1</Say>}
+      <Box width={grow()} height={grow()} overflowX={$Overflow.crop}>
+        {props.tab1 ?? <Txt hint>Tab 1</Txt>}
       </Box>
-      <Box
-        sty={{
-          width: grow(),
-          height: grow(),
-          overflowX: $Overflow.crop,
-        }}
-      >
-        {props.tab2 ?? <Say hint>Tab 2</Say>}
+      <Box width={grow()} height={grow()} overflowX={$Overflow.crop}>
+        {props.tab2 ?? <Txt hint>Tab 2</Txt>}
       </Box>
-    </Row>
+    </Box>
   )
 }

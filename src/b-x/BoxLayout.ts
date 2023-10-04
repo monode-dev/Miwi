@@ -1,5 +1,5 @@
 import { CssProps, exists, isNum, isString } from './BoxUtils'
-import { sizeToCss } from './BoxSize'
+import { Size, sizeToCss } from './BoxSize'
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and reorderable lists.
 
@@ -9,6 +9,31 @@ export type LayoutSty = PadStyProps &
     overflowX: Overflow
     overflowY: Overflow
   }
+
+type PartSty = {
+  width: -1
+  /**
+   * @deprecated When width is shrink, this is ignored.
+   */
+  align: Align
+}
+function test(part: PartSty) {}
+test({ width: -1, align: `center` })
+const myVal: PartSty = { width: -1, align: `center` }
+console.log(myVal)
+type UserProps = {
+  name: string;
+  /**
+   * @deprecated Use `lastName` instead.
+   */
+  surname: string;
+  lastName: string;
+}
+const user: UserProps = {
+  name: "John",
+  surname: "Doe",  // VSCode will show a strike-through here
+  lastName: "Smith"
+}
 
 // Pad
 type _PadUnit = number | string

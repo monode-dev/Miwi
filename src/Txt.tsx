@@ -1,7 +1,7 @@
-import { Box, BoxProps, parseSty } from './Box'
+import { Box, BoxProps } from './Box'
 import { AllowOne, compute } from './utils'
 
-export function Say(
+export function Txt(
   props: AllowOne<{
     heading: boolean
     title: boolean
@@ -11,11 +11,8 @@ export function Say(
     singleLine?: boolean
   } & BoxProps,
 ) {
-  const sty = parseSty(props, {
-    overflowX: $Overflow.wrap,
-  })
-  const scale = compute(() => sty.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : undefined))
-  const overflowX = sty.overflowX ?? (props.singleLine ?? false ? $Overflow.crop : $Overflow.wrap)
+  const scale = compute(() => props.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : undefined))
+  const overflowX = props.overflowX ?? (props.singleLine ?? false ? $Overflow.crop : $Overflow.wrap)
 
   return (
     <Box

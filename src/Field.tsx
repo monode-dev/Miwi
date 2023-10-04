@@ -35,9 +35,6 @@ export function Field(
     title?: boolean
     validateNextInput?: (nextInput: string) => boolean
     formatInput?: (nextInput: string, event: InputEvent) => FormattedResult
-    sty?: {
-      scale?: number
-    }
   } & BoxProps,
 ) {
   const sty = parseSty(props)
@@ -150,7 +147,7 @@ export function Field(
       ? $theme.colors.primary
       : value.value === `` || !exists(value.value)
       ? $theme.colors.hint
-      : props.sty?.textColor ?? $theme.colors.text,
+      : props.textColor ?? $theme.colors.text,
   )
 
   onMount(() => {

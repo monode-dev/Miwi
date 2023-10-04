@@ -17,6 +17,7 @@ export function sig<T>(initValue: T): Sig<T> {
 export function isSig(x: any): x is Sig<any> {
   return x?._isSignal === true
 }
+// TODO: Maybe name Formula
 export type SigGet<T> = { readonly value: T }
 export function compute<T>(getter: () => T): SigGet<T> {
   const read = createMemo(getter)

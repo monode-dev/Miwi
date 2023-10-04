@@ -17,31 +17,27 @@ export function AppBar(
   } & BoxProps,
 ) {
   const nav = useNav()
-  const sty = compute(() =>
-    parseSty(props, {
-      background: $theme.colors.primary,
-    }),
-  )
   return (
     <Column width={grow()}>
       {/* Notch Spacer */}
       <Box
         width={grow()}
         height={`env(safe-area-inset-top)`}
-        background={sty.value.background}
+        background={props.background ?? $theme.colors.primary}
         zIndex={2}
       />
 
       {/* AppBar */}
-      <Column
+      <Box
         width={grow()}
-        background={sty.value.background}
+        axis={$Axis.column}
+        background={props.background ?? $theme.colors.primary}
         shadowSize={1.25}
         shadowDirection={$Align.bottomCenter}
         align={$Align.bottomCenter}
         textColor={$theme.colors.accent}
         zIndex={1}
-        sty={sty.value}
+        {...props}
       >
         {/* Main Row */}
         <Row width={grow()} pad={0.5} scale={1.5}>
@@ -73,7 +69,7 @@ export function AppBar(
         <Row width={grow()} scale={1}>
           {props.bottom}
         </Row>
-      </Column>
+      </Box>
     </Column>
   )
 }

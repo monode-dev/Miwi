@@ -1,6 +1,6 @@
 import { Sig, compute, exists, injectDefaults, sig, watchDeps } from './utils'
 import { BoxProps, grow, parseSty } from './Box'
-import { Say } from './Say'
+import { Txt } from './Txt'
 import { Row } from './Row'
 import { Icon } from './Icon'
 import { Modal } from './Modal'
@@ -82,13 +82,13 @@ export function Selector<T>(
         >
           {' '}
           {!exists(props.filterStringSig) || !_modalIsOpen.value ? (
-            <Say
+            <Txt
               width={grow()}
               overflowX={$Overflow.crop}
               textColor={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
             >
               {selectedLabel.value}
-            </Say>
+            </Txt>
           ) : (
             <Field valueSig={props.filterStringSig} hintText="Search" hasFocusSig={sig(true)} />
           )}
@@ -111,16 +111,18 @@ export function Selector<T>(
     >
       {/* SECTION: No Options */}
       {thereAreNoOptions.value ? undefined : (
-        <Say hint onClick={() => (_modalIsOpen.value = false)} width={grow()}>
+        <Txt hint onClick={() => (_modalIsOpen.value = false)} width={grow()}>
           {props.emptyListText}
-        </Say>
+        </Txt>
       )}
 
       {/* SECTION: Cancel */}
-      {exists(props.filterStringSig) && props.showCancelOptionForFilter && !thereAreNoOptions.value ? (
-        <Say hint onClick={() => (_modalIsOpen.value = false)} width={grow()}>
+      {exists(props.filterStringSig) &&
+      props.showCancelOptionForFilter &&
+      !thereAreNoOptions.value ? (
+        <Txt hint onClick={() => (_modalIsOpen.value = false)} width={grow()}>
           Cancel
-        </Say>
+        </Txt>
       ) : undefined}
 
       {/* SECTION: Custom Options */}

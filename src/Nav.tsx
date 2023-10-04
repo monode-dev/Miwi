@@ -95,6 +95,7 @@ export const useNav = sessionStore('navigator', () => {
     openedPages: sig<PageToOpen[]>([]),
     _pagesInTransitions,
     pagesAreTransitioning: compute(() => _pagesInTransitions.value.length > 0),
+    // TODO: Poping a page and then immediately pushing a page seems to fail
     pushPage<T>(newPage: PageComponent<T>, props: T) {
       _pagesInTransitions.value = [
         ..._pagesInTransitions.value,
@@ -170,12 +171,7 @@ export function Nav(props: { isOnlineSig: Sig<boolean> }) {
     }
   }
   return (
-    <Box
-      sty={{
-        width: `100%`,
-        height: `100%`,
-      }}
-    >
+    <Box width={`100%`} height={`100%`}>
       {/* Openned Pages */}
       <For each={nav.openedPages.value}>
         {(page, index) => (

@@ -1,6 +1,6 @@
-import { sig, watchEffect, exists, compute } from './utils'
+import { exists } from './utils'
 import './b-x/b-x'
-import { Axis, Sty } from './b-x/b-x'
+import { Sty } from './b-x/b-x'
 import { type JSX, type ParentProps } from 'solid-js'
 
 type BDashXProps = ParentProps & {
@@ -50,38 +50,87 @@ const styProps = [
   'cssCursor',
   'shouldLog',
 ]
-export function parseSty(props: BoxProps, defaultSty?: Partial<Sty>): Partial<Sty> {
-  let parsedSty: Partial<Sty> = {}
+// export function parseSty(props: BoxProps, defaultSty?: Partial<Sty>): Partial<Sty> {
+//   const parsedSty: Partial<Sty> = {}
+//   for (const key of styProps) {
+//     ;(parsedSty as any)[key] = (props as any)?.[key] ?? (defaultSty as any)?.[key]
+//   }
+//   parsedSty.bonusTouchArea =
+//     props.bonusTouchArea ?? defaultSty?.bonusTouchArea ?? exists(props.onClick)
+//   parsedSty.cssCursor =
+//     props.cssCursor ?? defaultSty?.cssCursor ?? (exists(props.onClick) ? `pointer` : `default`)
+//   return parsedSty
+// }
+export function parseSty(props: BoxProps): Partial<Sty> {
+  const parsedSty: Partial<Sty> = {}
   for (const key of styProps) {
-    ;(parsedSty as any)[key] =
-      (props as any)?.[key] ?? (props?.sty as any)?.[key] ?? (defaultSty as any)?.[key]
+    ;(parsedSty as any)[key] = (props as any)?.[key]
   }
-  parsedSty.bonusTouchArea =
-    props.bonusTouchArea ??
-    props.sty?.bonusTouchArea ??
-    defaultSty?.bonusTouchArea ??
-    exists(props.onClick)
-  parsedSty.cssCursor =
-    props.cssCursor ??
-    props.sty?.cssCursor ??
-    defaultSty?.cssCursor ??
-    (exists(props.onClick) ? `pointer` : `default`)
+  parsedSty.bonusTouchArea = props.bonusTouchArea ?? exists(props.onClick)
+  parsedSty.cssCursor = props.cssCursor ?? (exists(props.onClick) ? `pointer` : `default`)
+  parsedSty.width =
+    props.width ??
+    (props.widthGrows !== false
+      ? props.widthGrows === true
+        ? grow()
+        : props.widthGrows
+      : undefined) ??
+    (props.widthShrinks !== false
+      ? props.widthShrinks === true
+        ? -1
+        : props.widthShrinks
+      : undefined)
+  parsedSty.height =
+    props.height ??
+    (props.heightGrows !== false
+      ? props.heightGrows === true
+        ? grow()
+        : props.heightGrows
+      : undefined) ??
+    (props.heightShrinks !== false
+      ? props.heightShrinks === true
+        ? -1
+        : props.heightShrinks
+      : undefined)
   return parsedSty
 }
 
-// type Grow = `1f` & {
-//   (flex: number): `${number}f`;
-// };
-// export const grow: Grow = (() => {
-//   const growString = `1f`;
-//   const growFunction = (flex: number): `${number}f` => `${flex}f`;
-//   return Object.assign(growString, growFunction);
-// })();
 export function grow(flex: number = 1) {
   return `${flex}f`
 }
 
-export type BoxProps = Partial<Sty> & BDashXProps
+type OnlyOne<T extends {}> = Partial<
+  {
+    [K in keyof T]: Pick<T, K> & Partial<Record<Exclude<keyof T, K>, never>>
+  }[keyof T]
+>
+
+// type FlagSty = OnlyOne<{
+//   width: Sty[`width`]
+//   widthGrows: boolean | number | string
+//   widthShrinks: boolean
+// }> &
+//   OnlyOne<{
+//     height: Sty[`height`]
+//     heightGrows: boolean | number | string
+//     heightShrinks: boolean
+//   }>
+type FlagSty = Partial<
+  {
+    width: Sty[`width`]
+    widthGrows: boolean | number | string
+    widthShrinks: boolean
+  } & {
+    height: Sty[`height`]
+    heightGrows: boolean | number | string
+    heightShrinks: boolean
+  }
+>
+
+export type BoxProps = Partial<Omit<Sty, `width` | `height`>> &
+  FlagSty &
+  ParentProps &
+  JSX.DOMAttributes<HTMLDivElement>
 export function Box(props: BoxProps) {
   return <b-x {...props} sty={parseSty(props)} />
 }

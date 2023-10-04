@@ -44,13 +44,12 @@ export function TabButtons(
   })
   return (
     <Column>
-      <Row
+      <Box
+        axis={$Axis.row}
         onClick={props.onClick}
-        sty={{
-          width: grow(),
-          alignX: $Align.spaceAround,
-          ...props.sty,
-        }}
+        width={grow()}
+        alignX={$Align.spaceAround}
+        {...props}
       >
         <Box width={tabButtonWidth} ref={el => (tab0Ref = el)} onClick={() => selectTab(0)}>
           {labels[0]}
@@ -61,46 +60,34 @@ export function TabButtons(
         <Box width={tabButtonWidth} ref={el => (tab2Ref = el)} onClick={() => selectTab(2)}>
           {labels[2]}
         </Box>
-      </Row>
-      <Box
-        sty={{
-          width: grow(),
-          height: 0.375,
-          axis: $Axis.stack,
-        }}
-      >
+      </Box>
+      <Box width={grow()} height={0.375} axis={$Axis.stack}>
         <Box
-          sty={{
-            width: grow(),
-            height: 0.375,
-            axis: $Axis.row,
-            alignX: $Align.spaceAround,
-            alignY: $Align.end,
-          }}
+          width={grow()}
+          height={0.375}
+          axis={$Axis.row}
+          alignX={$Align.spaceAround}
+          alignY={$Align.end}
         >
-          <Box sty={{ width: tabButtonWidth }} />
+          <Box width={tabButtonWidth} />
           <Box
             ref={el => (tabUnderline = el)}
-            sty={{
-              width: tabButtonWidth,
-              height: 0.125,
-              background: $theme.colors.sameAsText,
-            }}
+            width={tabButtonWidth}
+            height={0.125}
+            background={$theme.colors.sameAsText}
           />
-          <Box sty={{ width: tabButtonWidth }} />
+          <Box width={tabButtonWidth} />
         </Box>
         <Box
-          sty={{
-            width: grow(),
-            height: 0.375,
-            axis: $Axis.row,
-            alignX: $Align.spaceAround,
-            alignY: $Align.end,
-          }}
+          width={grow()}
+          height={0.375}
+          axis={$Axis.row}
+          alignX={$Align.spaceAround}
+          alignY={$Align.end}
         >
-          <Box onClick={() => selectTab(0)} sty={{ width: tabButtonWidth, height: grow() }} />
-          <Box onClick={() => selectTab(1)} sty={{ width: tabButtonWidth, height: grow() }} />
-          <Box onClick={() => selectTab(2)} sty={{ width: tabButtonWidth, height: grow() }} />
+          <Box onClick={() => selectTab(0)} width={tabButtonWidth} height={grow()} />
+          <Box onClick={() => selectTab(1)} width={tabButtonWidth} height={grow()} />
+          <Box onClick={() => selectTab(2)} width={tabButtonWidth} height={grow()} />
         </Box>
       </Box>
     </Column>
