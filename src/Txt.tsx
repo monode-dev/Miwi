@@ -3,15 +3,15 @@ import { AllowOne, compute } from './utils'
 
 export function Txt(
   props: AllowOne<{
-    heading: boolean
-    title: boolean
+    h1: boolean
+    h2: boolean
   }> & {
     hint?: boolean
   } & {
     singleLine?: boolean
   } & BoxProps,
 ) {
-  const scale = compute(() => props.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : undefined))
+  const scale = compute(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : undefined))
   const overflowX = props.overflowX ?? (props.singleLine ?? false ? $Overflow.crop : $Overflow.wrap)
 
   return (
