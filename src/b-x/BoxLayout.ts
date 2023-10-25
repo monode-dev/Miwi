@@ -10,29 +10,29 @@ export type LayoutSty = PadStyProps &
     overflowY: Overflow
   }
 
-type PartSty = {
-  width: -1
-  /**
-   * @deprecated When width is shrink, this is ignored.
-   */
-  align: Align
-}
-function test(part: PartSty) {}
-test({ width: -1, align: `center` })
-const myVal: PartSty = { width: -1, align: `center` }
-console.log(myVal)
+// type PartSty = {
+//   width: -1
+//   /**
+//    * @deprecated When width is shrink, this is ignored.
+//    */
+//   align: Align
+// }
+// function test(part: PartSty) {}
+// test({ width: -1, align: `center` })
+// const myVal: PartSty = { width: -1, align: `center` }
+// console.log(myVal)
 type UserProps = {
-  name: string;
+  name: string
   /**
    * @deprecated Use `lastName` instead.
    */
-  surname: string;
-  lastName: string;
+  surname: string
+  lastName: string
 }
 const user: UserProps = {
-  name: "John",
-  surname: "Doe",  // VSCode will show a strike-through here
-  lastName: "Smith"
+  name: 'John',
+  surname: 'Doe', // VSCode will show a strike-through here
+  lastName: 'Smith',
 }
 
 // Pad
