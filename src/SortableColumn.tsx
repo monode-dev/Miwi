@@ -83,7 +83,7 @@ export function SortableColumn(props: {
     dragElement.style.width = `${sourceWidth}px`
     dragElement.style.height = `${sourceHeight}px`
     const dragElementOffsetX = mousePos.x - dragElementX
-    let dragElementOffsetY = mousePos.y - dragElementY
+    const dragElementOffsetY = mousePos.y - dragElementY
     dragElement.style.pointerEvents = 'none' // to ensure it doesn't interfere with mouse events
     dragElement.style.zIndex = '1000' // to ensure it renders on top of everything else
     dragElement.style.scale = '1.025'
@@ -125,8 +125,8 @@ export function SortableColumn(props: {
         const distanceFromBottomEdge = Math.max(0, scrollRect.bottom - mousePos.y)
         const distanceLeftToBottom =
           scrollableContainer.scrollHeight - (scrollableContainer.scrollTop + scrollRect.height)
-        let shouldScrollUp = distanceFromTopEdge < scrollThreshold
-        let shouldScrollDown = distanceFromBottomEdge < scrollThreshold
+        const shouldScrollUp = distanceFromTopEdge < scrollThreshold
+        const shouldScrollDown = distanceFromBottomEdge < scrollThreshold
         // TODO: Make this be based off of timeSinceLastFrame and rem
         let scrollAmount = 0
         if (shouldScrollUp) {
