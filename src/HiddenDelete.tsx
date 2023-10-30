@@ -4,7 +4,7 @@ import { Icon } from './Icon'
 import { Modal } from './Modal'
 import { Row } from './Row'
 import { Txt } from './Txt'
-import { mdiClose, mdiDotsVertical } from '@mdi/js'
+import { mdiClose, mdiDelete, mdiDotsVertical } from '@mdi/js'
 
 export function HiddenDelete(
   props: {
@@ -35,7 +35,7 @@ export function HiddenDelete(
         textColor={$theme.colors.error}
       >
         <Txt widthGrows>Delete</Txt>
-        {/* <Icon icon="delete" /> */}
+        <Icon iconPath={mdiDelete} />
       </Row>
     </Modal>
   )
