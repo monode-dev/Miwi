@@ -11,6 +11,7 @@ export function Modal<T>(
     openButtonHeight: Size
     isOpenSig?: Sig<boolean>
     modalWidth?: Size
+    pad?: number
   } & BoxProps,
 ) {
   // Modal
@@ -59,6 +60,7 @@ export function Modal<T>(
   //
   return (
     <Stack
+      pad={props.pad ?? 0}
       width={props.openButtonWidth ?? -1}
       height={props.openButtonHeight}
       align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}

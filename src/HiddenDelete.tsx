@@ -1,5 +1,5 @@
 import { sig } from './utils'
-import { Box, BoxProps, grow, parseSty } from './Box'
+import { Box, BoxProps, parseSty } from './Box'
 import { Icon } from './Icon'
 import { Modal } from './Modal'
 import { Row } from './Row'
@@ -21,8 +21,8 @@ export function HiddenDelete(
       openButtonHeight={scale}
       isOpenSig={isOpen}
     >
-      <Row scale={scale} onClick={() => (isOpen.value = false)} width={grow()}>
-        <Txt width={grow()}>Cancel</Txt>
+      <Row widthGrows scale={scale} onClick={() => (isOpen.value = false)}>
+        <Txt widthGrows>Cancel</Txt>
         <Icon iconPath={mdiClose} />
       </Row>
       {props.children}
@@ -34,7 +34,7 @@ export function HiddenDelete(
         }}
         textColor={$theme.colors.error}
       >
-        <Txt width={grow()}>Delete</Txt>
+        <Txt widthGrows>Delete</Txt>
         {/* <Icon icon="delete" /> */}
       </Row>
     </Modal>
