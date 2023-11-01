@@ -53,49 +53,50 @@ export function NumField(
     return true
   }
 
+  function formatInput(text: string, event: any) {
+    // Track original text for comparison against formatted text
+    const ogText = text
+    // Format Text for only numbers, decimals, and negatives
+    text = text.replace(/[^0-9\.\-]+/g, '')
+
+    // Remove extra decimal points
+    if (text.includes('.')) {
+      const indexOfDot = text.indexOf('.')
+      text = text.slice(0, indexOfDot + 1) + text.slice(indexOfDot).replaceAll('.', '')
+    }
+
+    // Remove extra negative signs
+    if (text.includes('-')) {
+      text = props.negativesAreAllowed
+        ? text.slice(0, 1) + text.slice(1).replaceAll('-', '')
+        : text.replaceAll('-', '')
+    }
+
+    // Compare against original text to adjust selection
+    const adjustSelection = ogText.length == text.length ? 0 : -1
+
+    return {
+      input: text,
+      caret: event.target?.selectionStart + adjustSelection,
+    }
+  }
+
   return (
-    <div>
-      <Field
-        valueSig={_stringValue}
-        hasFocusSig={props.hasFocusSig}
-        hintText={props.hint}
-        hintColor={props.hintColor}
-        iconPath={props.icon}
-        underlined={props.underlined}
-        title={props.title}
-        heading={props.heading}
-        validateNextInput={validateInput}
-        keyboard={keyboard}
-        padBetweenX={props.padBetweenX ?? 0.0}
-        padBetweenY={props.padBetweenY ?? 0.0}
-        formatInput={(text, event) => {
-          // Track original text for comparison against formatted text
-          const ogText = text
-          // Format Text for only numbers, decimals, and negatives
-          text = text.replace(/[^0-9\.\-]+/g, '')
-
-          // Remove extra decimal points
-          if (text.includes('.')) {
-            const indexOfDot = text.indexOf('.')
-            text = text.slice(0, indexOfDot + 1) + text.slice(indexOfDot).replaceAll('.', '')
-          }
-
-          // Remove extra negative signs
-          if (text.includes('-')) {
-            text = props.negativesAreAllowed
-              ? text.slice(0, 1) + text.slice(1).replaceAll('-', '')
-              : text.replaceAll('-', '')
-          }
-
-          // Compare against original text to adjust selection
-          const adjustSelection = ogText.length == text.length ? 0 : -1
-
-          return {
-            input: text,
-            caret: event.target?.selectionStart + adjustSelection,
-          }
-        }}
-      />
-    </div>
+    <Field
+      align={props.align ?? $Align.centerLeft}
+      valueSig={_stringValue}
+      hasFocusSig={props.hasFocusSig}
+      hintText={props.hint}
+      hintColor={props.hintColor}
+      iconPath={props.icon}
+      underlined={props.underlined}
+      title={props.title}
+      heading={props.heading}
+      validateNextInput={validateInput}
+      keyboard={keyboard}
+      padBetweenX={props.padBetweenX ?? 0.0}
+      padBetweenY={props.padBetweenY ?? 0.0}
+      formatInput={formatInput}
+    />
   )
 }
