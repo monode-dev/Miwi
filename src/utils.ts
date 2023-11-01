@@ -227,3 +227,9 @@ export type AllowOne<T> = {
 export type DeepPartial<T extends {}> = {
   [K in keyof T]?: T[K] extends {} ? DeepPartial<T[K]> : T[K]
 }
+
+export type OnlyOne<T extends {}> = Partial<
+  {
+    [K in keyof T]: Pick<T, K> & Partial<Record<Exclude<keyof T, K>, never>>
+  }[keyof T]
+>

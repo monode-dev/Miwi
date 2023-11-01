@@ -105,11 +105,7 @@ export type AlignStyProps = {
   spaceEvenlyX: boolean
   spaceEvenlyY: boolean
 }
-function getAlign(
-  sty: Partial<AlignStyProps>,
-  childCount: number,
-  shouldLog: boolean,
-): AlignTwoAxis {
+function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis {
   const alignX = (() => {
     let result = sty.alignX ?? (isString(sty.align) ? sty.align : sty.align?.alignX)
     // Parse flags
@@ -155,9 +151,6 @@ function getAlign(
       if (sty.alignTop) {
         result = Align.topCenter.alignY
       } else if (sty.alignCenterY) {
-        if (shouldLog) {
-          console.log(`sty.alignCenterY`)
-        }
         result = Align.center.alignY
       } else if (sty.alignBottom) {
         result = Align.bottomCenter.alignY
@@ -170,9 +163,6 @@ function getAlign(
       } else if (sty.alignTopLeft || sty.alignTopCenter || sty.alignTopRight) {
         result = Align.topCenter.alignY
       } else if (sty.alignCenterLeft || sty.alignCenter || sty.alignCenterRight) {
-        if (shouldLog) {
-          console.log(`sty.alignCenterLeft || sty.alignCenter || sty.alignCenterRight`)
-        }
         result = Align.center.alignY
       } else if (sty.alignBottomLeft || sty.alignBottomCenter || sty.alignBottomRight) {
         result = Align.bottomCenter.alignY
@@ -183,9 +173,6 @@ function getAlign(
       } else if (sty.spaceEvenly) {
         result = _SpaceAlign.spaceEvenly
       } else {
-        if (shouldLog) {
-          console.log(`else`)
-        }
         result = Align.center.alignY
       }
     }
@@ -272,7 +259,7 @@ export function computeBoxLayout(sty: Partial<LayoutSty>, childCount: number): C
   // Axis
   const axis = sty.axis ?? (sty.row ? Axis.row : sty.stack ? Axis.stack : Axis.column)
   // Align
-  const { alignX, alignY } = getAlign(sty, childCount, (sty as any).shouldLog ?? false)
+  const { alignX, alignY } = getAlign(sty, childCount)
 
   // Overflow
   const overflowX = sty.overflowX ?? defaultOverflowX

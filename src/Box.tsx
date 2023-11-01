@@ -126,12 +126,6 @@ export function grow(flex: number = 1) {
   return `${flex}f`
 }
 
-type OnlyOne<T extends {}> = Partial<
-  {
-    [K in keyof T]: Pick<T, K> & Partial<Record<Exclude<keyof T, K>, never>>
-  }[keyof T]
->
-
 // type FlagSty = OnlyOne<{
 //   width: Sty[`width`]
 //   widthGrows: boolean | number | string
