@@ -151,6 +151,7 @@ function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis
       if (sty.alignTop) {
         result = Align.topCenter.alignY
       } else if (sty.alignCenterY) {
+        console.log(`sty.alignCenterY`)
         result = Align.center.alignY
       } else if (sty.alignBottom) {
         result = Align.bottomCenter.alignY
@@ -163,6 +164,7 @@ function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis
       } else if (sty.alignTopLeft || sty.alignTopCenter || sty.alignTopRight) {
         result = Align.topCenter.alignY
       } else if (sty.alignCenterLeft || sty.alignCenter || sty.alignCenterRight) {
+        console.log(`sty.alignCenterLeft || sty.alignCenter || sty.alignCenterRight`)
         result = Align.center.alignY
       } else if (sty.alignBottomLeft || sty.alignBottomCenter || sty.alignBottomRight) {
         result = Align.bottomCenter.alignY
@@ -173,6 +175,7 @@ function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis
       } else if (sty.spaceEvenly) {
         result = _SpaceAlign.spaceEvenly
       } else {
+        console.log(`else`)
         result = Align.center.alignY
       }
     }
