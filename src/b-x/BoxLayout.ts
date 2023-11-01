@@ -105,7 +105,11 @@ export type AlignStyProps = {
   spaceEvenlyX: boolean
   spaceEvenlyY: boolean
 }
-function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis {
+function getAlign(
+  sty: Partial<AlignStyProps>,
+  childCount: number,
+  shouldLog: boolean,
+): AlignTwoAxis {
   const alignX = (() => {
     let result = sty.alignX ?? (isString(sty.align) ? sty.align : sty.align?.alignX)
     // Parse flags
@@ -151,7 +155,9 @@ function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis
       if (sty.alignTop) {
         result = Align.topCenter.alignY
       } else if (sty.alignCenterY) {
-        console.log(`sty.alignCenterY`)
+        if (shouldLog) {
+          console.log(`sty.alignCenterY`)
+        }
         result = Align.center.alignY
       } else if (sty.alignBottom) {
         result = Align.bottomCenter.alignY
@@ -164,7 +170,9 @@ function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis
       } else if (sty.alignTopLeft || sty.alignTopCenter || sty.alignTopRight) {
         result = Align.topCenter.alignY
       } else if (sty.alignCenterLeft || sty.alignCenter || sty.alignCenterRight) {
-        console.log(`sty.alignCenterLeft || sty.alignCenter || sty.alignCenterRight`)
+        if (shouldLog) {
+          console.log(`sty.alignCenterLeft || sty.alignCenter || sty.alignCenterRight`)
+        }
         result = Align.center.alignY
       } else if (sty.alignBottomLeft || sty.alignBottomCenter || sty.alignBottomRight) {
         result = Align.bottomCenter.alignY
@@ -175,7 +183,9 @@ function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis
       } else if (sty.spaceEvenly) {
         result = _SpaceAlign.spaceEvenly
       } else {
-        console.log(`else`)
+        if (shouldLog) {
+          console.log(`else`)
+        }
         result = Align.center.alignY
       }
     }
@@ -262,7 +272,7 @@ export function computeBoxLayout(sty: Partial<LayoutSty>, childCount: number): C
   // Axis
   const axis = sty.axis ?? (sty.row ? Axis.row : sty.stack ? Axis.stack : Axis.column)
   // Align
-  const { alignX, alignY } = getAlign(sty, childCount)
+  const { alignX, alignY } = getAlign(sty, childCount, (sty as any).shouldLog ?? false)
 
   // Overflow
   const overflowX = sty.overflowX ?? defaultOverflowX
