@@ -1,8 +1,7 @@
-import { exists } from 'src/utils'
 import { CssProps } from './BoxUtils'
 
 export type InteractionSty = {
-  isInteractable: boolean
+  interactable: boolean
   bonusTouchArea: boolean
   cssCursor: 'pointer' | 'default'
   onMouseEnter: () => void
@@ -19,7 +18,7 @@ export function computeBoxInteraction(sty: Partial<InteractionSty>): {
   return {
     cssProps: {
       pointerEvents:
-        sty.isInteractable === undefined ? undefined : sty.isInteractable ? `auto` : `none`,
+        sty.interactable === undefined ? undefined : sty.interactable ? `auto` : `none`,
       cursor: sty.cssCursor,
     },
     elementAttributes: {

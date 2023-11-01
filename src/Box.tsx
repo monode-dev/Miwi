@@ -33,7 +33,7 @@ const styProps = [
   'shadowSize',
   'shadowDirection',
   'zIndex',
-  'isInteractable',
+  'interactable',
   'align',
   'alignX',
   'alignY',
