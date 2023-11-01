@@ -171,7 +171,7 @@ export function Nav(props: { isOnlineSig: Sig<boolean> }) {
     }
   }
   return (
-    <Box width={`100%`} height={`100%`}>
+    <Box asWideAsParent asTallAsParent>
       {/* Openned Pages */}
       <For each={nav.openedPages.value}>
         {(page, index) => (

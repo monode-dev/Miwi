@@ -3,8 +3,8 @@ import { Box, BoxProps } from './Box'
 export function Page(props: BoxProps) {
   return (
     <Box
-      width={`100%`}
-      height={`100%`}
+      asWideAsParent
+      asTallAsParent
       background={$theme.colors.pageBackground}
       alignTopCenter
       overflowX={$Overflow.crop}

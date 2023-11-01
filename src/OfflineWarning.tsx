@@ -31,7 +31,7 @@ export function OfflineWarning(props: { isOnlineSig: SigGet<boolean> }) {
           [`z-index`]: 999999998,
         }}
       >
-        <Box width={`100%`} height={`100%`} pad={1} alignBottomLeft>
+        <Box asWideAsParent asTallAsParent pad={1} alignBottomLeft>
           <Row
             background={$theme.colors.warning}
             textColor={$theme.colors.accent}
