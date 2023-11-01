@@ -98,37 +98,21 @@ export function parseSty(props: BoxProps): Partial<Sty> {
   parsedSty.cssCursor = props.cssCursor ?? (exists(props.onClick) ? `pointer` : `default`)
   parsedSty.width =
     props.width ??
-    (props.widthGrows !== false
-      ? props.widthGrows === true
-        ? grow()
-        : props.widthGrows
-      : undefined) ??
-    (props.widthShrinks !== false
-      ? props.widthShrinks === true
-        ? -1
-        : props.widthShrinks
-      : undefined) ??
-    (props.asWideAsParent !== false
-      ? props.asWideAsParent === true
-        ? `100%`
-        : props.asWideAsParent
+    (props.widthGrows
+      ? grow()
+      : props.widthShrinks
+      ? -1
+      : props.asWideAsParent
+      ? `100%`
       : undefined)
   parsedSty.height =
     props.height ??
-    (props.heightGrows !== false
-      ? props.heightGrows === true
-        ? grow()
-        : props.heightGrows
-      : undefined) ??
-    (props.heightShrinks !== false
-      ? props.heightShrinks === true
-        ? -1
-        : props.heightShrinks
-      : undefined) ??
-    (props.asTallAsParent !== false
-      ? props.asTallAsParent === true
-        ? `100%`
-        : props.asTallAsParent
+    (props.heightGrows
+      ? grow()
+      : props.heightShrinks
+      ? -1
+      : props.asTallAsParent
+      ? `100%`
       : undefined)
   return parsedSty
 }
