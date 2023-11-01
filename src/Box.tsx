@@ -107,6 +107,11 @@ export function parseSty(props: BoxProps): Partial<Sty> {
       ? props.widthShrinks === true
         ? -1
         : props.widthShrinks
+      : undefined) ??
+    (props.asWideAsParent !== false
+      ? props.asWideAsParent === true
+        ? `100%`
+        : props.asWideAsParent
       : undefined)
   parsedSty.height =
     props.height ??
@@ -119,6 +124,11 @@ export function parseSty(props: BoxProps): Partial<Sty> {
       ? props.heightShrinks === true
         ? -1
         : props.heightShrinks
+      : undefined) ??
+    (props.asTallAsParent !== false
+      ? props.asTallAsParent === true
+        ? `100%`
+        : props.asTallAsParent
       : undefined)
   return parsedSty
 }
@@ -142,10 +152,12 @@ type FlagSty = Partial<
     width: Sty[`width`]
     widthGrows: boolean | number | string
     widthShrinks: boolean
+    asWideAsParent: boolean
   } & {
     height: Sty[`height`]
     heightGrows: boolean | number | string
     heightShrinks: boolean
+    asTallAsParent: boolean
   }
 >
 
