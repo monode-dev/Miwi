@@ -123,11 +123,11 @@ function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis
       } else if (sty.spaceEvenlyX) {
         result = _SpaceAlign.spaceEvenly
       } else if (sty.alignTopLeft || sty.alignCenterLeft || sty.alignBottomLeft) {
-        result = Align.center.alignX
+        result = Align.centerLeft.alignX
       } else if (sty.alignTopCenter || sty.alignCenter || sty.alignBottomCenter) {
         result = Align.center.alignX
       } else if (sty.alignTopRight || sty.alignCenterRight || sty.alignBottomRight) {
-        result = Align.center.alignX
+        result = Align.centerRight.alignX
       } else if (sty.spaceBetween) {
         result = _SpaceAlign.spaceBetween
       } else if (sty.spaceAround) {
