@@ -1,9 +1,10 @@
 import { gsap } from 'gsap'
-import { Box, BoxProps, grow } from './Box'
+import { Box, BoxProps } from './Box'
 import { Row } from './Row'
 import { createEffect } from 'solid-js'
 import { Sig, exists } from './utils'
 import { Column } from './Column'
+import { Stack } from './Stack'
 
 export function TabButtons(
   props: BoxProps & {
@@ -13,7 +14,6 @@ export function TabButtons(
 ) {
   const labels = props.labels ?? ['Tab 0', 'Tab 1', 'Tab 2']
   const tabButtonWidth = 5
-  let tab0Ref: HTMLElement | undefined = undefined
   let tab1Ref: HTMLElement | undefined = undefined
   let tab2Ref: HTMLElement | undefined = undefined
   let tabUnderline: HTMLElement | undefined = undefined
@@ -44,14 +44,8 @@ export function TabButtons(
   })
   return (
     <Column>
-      <Box
-        axis={$Axis.row}
-        onClick={props.onClick}
-        width={grow()}
-        alignX={$Align.spaceAround}
-        {...props}
-      >
-        <Box width={tabButtonWidth} ref={el => (tab0Ref = el)} onClick={() => selectTab(0)}>
+      <Row onClick={props.onClick} widthGrows spaceAroundX {...props}>
+        <Box width={tabButtonWidth} onClick={() => selectTab(0)}>
           {labels[0]}
         </Box>
         <Box width={tabButtonWidth} ref={el => (tab1Ref = el)} onClick={() => selectTab(1)}>
@@ -60,15 +54,9 @@ export function TabButtons(
         <Box width={tabButtonWidth} ref={el => (tab2Ref = el)} onClick={() => selectTab(2)}>
           {labels[2]}
         </Box>
-      </Box>
-      <Box width={grow()} height={0.375} axis={$Axis.stack}>
-        <Box
-          width={grow()}
-          height={0.375}
-          axis={$Axis.row}
-          alignX={$Align.spaceAround}
-          alignY={$Align.end}
-        >
+      </Row>
+      <Stack widthGrows height={0.375}>
+        <Row widthGrows height={0.375} spaceAroundX alignBottom>
           <Box width={tabButtonWidth} />
           <Box
             ref={el => (tabUnderline = el)}
@@ -77,19 +65,13 @@ export function TabButtons(
             background={$theme.colors.sameAsText}
           />
           <Box width={tabButtonWidth} />
-        </Box>
-        <Box
-          width={grow()}
-          height={0.375}
-          axis={$Axis.row}
-          alignX={$Align.spaceAround}
-          alignY={$Align.end}
-        >
-          <Box onClick={() => selectTab(0)} width={tabButtonWidth} height={grow()} />
-          <Box onClick={() => selectTab(1)} width={tabButtonWidth} height={grow()} />
-          <Box onClick={() => selectTab(2)} width={tabButtonWidth} height={grow()} />
-        </Box>
-      </Box>
+        </Row>
+        <Row widthGrows height={0.375} spaceAroundX alignBottom>
+          <Box onClick={() => selectTab(0)} width={tabButtonWidth} heightGrows />
+          <Box onClick={() => selectTab(1)} width={tabButtonWidth} heightGrows />
+          <Box onClick={() => selectTab(2)} width={tabButtonWidth} heightGrows />
+        </Row>
+      </Stack>
     </Column>
   )
 }

@@ -3,6 +3,7 @@ import { Sig } from './utils'
 import { onMount, createEffect, JSX } from 'solid-js'
 import { Box, BoxProps, grow } from './Box'
 import { Txt } from './Txt'
+import { Row } from './Row'
 
 export function TabView(
   props: BoxProps & {
@@ -77,25 +78,24 @@ export function TabView(
   })
 
   return (
-    <Box
+    <Row
       ref={tabBodiesParent}
-      axis={$Axis.row}
       width="300%"
       onClick={props.onClick}
-      height={grow()}
-      align={$Align.topCenter}
+      heightGrows
+      alignTopCenter
       overflowX={$Overflow.crop}
       {...props}
     >
-      <Box width={grow()} height={grow()} overflowX={$Overflow.crop}>
+      <Box widthGrows heightGrows overflowX={$Overflow.crop}>
         {props.tab0 ?? <Txt hint>Tab 0</Txt>}
       </Box>
-      <Box width={grow()} height={grow()} overflowX={$Overflow.crop}>
+      <Box widthGrows heightGrows overflowX={$Overflow.crop}>
         {props.tab1 ?? <Txt hint>Tab 1</Txt>}
       </Box>
-      <Box width={grow()} height={grow()} overflowX={$Overflow.crop}>
+      <Box widthGrows heightGrows overflowX={$Overflow.crop}>
         {props.tab2 ?? <Txt hint>Tab 2</Txt>}
       </Box>
-    </Box>
+    </Row>
   )
 }

@@ -1,4 +1,5 @@
-import { Box, BoxProps } from './Box'
+import { BoxProps } from './Box'
+import { Row } from './Row'
 import { compute } from './utils'
 
 export function Button(
@@ -35,15 +36,8 @@ export function Button(
     props.raised ? { shadowSize: 1, shadowDirection: $Align.bottomRight } : {},
   )
   return (
-    <Box
-      align={$Align.center}
-      axis={$Axis.row}
-      {...shapeSty.value}
-      {...colorSty.value}
-      {...shadowSty.value}
-      {...props}
-    >
+    <Row alignCenter {...shapeSty.value} {...colorSty.value} {...shadowSty.value} {...props}>
       {props.children}
-    </Box>
+    </Row>
   )
 }

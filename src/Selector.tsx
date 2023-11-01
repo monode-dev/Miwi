@@ -76,14 +76,14 @@ export function Selector<T>(
               }
             }
           }}
-          width={grow()}
+          widthGrows
           height={sty.scale ?? 1}
-          align={$Align.spaceBetween}
+          spaceBetween
         >
           {' '}
           {!exists(props.filterStringSig) || !_modalIsOpen.value ? (
             <Txt
-              width={grow()}
+              widthGrows
               overflowX={$Overflow.crop}
               textColor={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
             >
@@ -111,7 +111,7 @@ export function Selector<T>(
     >
       {/* SECTION: No Options */}
       {thereAreNoOptions.value ? undefined : (
-        <Txt hint onClick={() => (_modalIsOpen.value = false)} width={grow()}>
+        <Txt hint onClick={() => (_modalIsOpen.value = false)} widthGrows>
           {props.emptyListText}
         </Txt>
       )}
@@ -120,7 +120,7 @@ export function Selector<T>(
       {exists(props.filterStringSig) &&
       props.showCancelOptionForFilter &&
       !thereAreNoOptions.value ? (
-        <Txt hint onClick={() => (_modalIsOpen.value = false)} width={grow()}>
+        <Txt hint onClick={() => (_modalIsOpen.value = false)} widthGrows>
           Cancel
         </Txt>
       ) : undefined}

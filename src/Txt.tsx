@@ -18,7 +18,7 @@ export function Txt(
     <Box
       textColor={props.hint ? $theme.colors.hint : undefined}
       scale={scale.value}
-      align={$Align.topLeft}
+      alignTopLeft
       overflowY={$Overflow.forceStretchParent}
       {...props}
       overflowX={overflowX === $Overflow.crop ? $Overflow.forceStretchParent : overflowX}

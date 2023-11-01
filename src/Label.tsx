@@ -12,10 +12,10 @@ export function Label(
   const shouldShowLabel = compute(() => exists(props.label) && props.label.length > 0)
 
   return shouldShowLabel.value ? (
-    <Box width={grow()} axis={$Axis.row} padBetween={0.25} align={$Align.topLeft} {...props}>
+    <Row widthGrows padBetween={0.25} alignTopLeft {...props}>
       <Txt hint={props.hint ?? false}>{props.label}:</Txt>
       {props.children}
-    </Box>
+    </Row>
   ) : (
     props.children
   )

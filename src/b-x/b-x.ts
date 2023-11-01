@@ -155,7 +155,7 @@ export class Miwi_Box extends HTMLElement {
     }
     for (
       let i = 0;
-      i < this.children.length && (!result.someChildWidthGrows || !result.someChildWidthGrows);
+      i < this.children.length && (!result.someChildWidthGrows || !result.someChildHeightGrows);
       i++
     ) {
       const child = this.children.item(i)
@@ -195,10 +195,7 @@ export class Miwi_Box extends HTMLElement {
         this.sty.shouldLog,
       ),
     )
-    applyStylePart(
-      this.style,
-      computeBoxLayout(this.sty, align, this._parentAxis, this._axis, this._childCount),
-    )
+    applyStylePart(this.style, computeBoxLayout(this.sty, this._childCount))
     applyStylePart(this.style, computeBoxDecoration(this.sty))
     applyStylePart(
       this.style,
@@ -242,7 +239,7 @@ export class Miwi_Box extends HTMLElement {
     super()
     this.classList.add(`b-x`)
     this._parentObserver = new MutationObserver((mutationsList, observer) => {
-      for (let mutation of mutationsList) {
+      for (const mutation of mutationsList) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
           const shouldUpdateStyle = this.computeParentStyle()
           if (shouldUpdateStyle) this.updateStyle()

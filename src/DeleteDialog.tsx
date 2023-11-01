@@ -31,12 +31,12 @@ export function DeleteDialog(props: BoxProps & { onDelete?: () => void; message:
 
   return (
     <>
-      <Box onClick={popOnClickOutside} width={grow()} height={grow()} background={`#00000099`}>
+      <Box onClick={popOnClickOutside} widthGrows heightGrows background={`#00000099`}>
         <Card ref={cardRef} width={`75%`} shadowSize={0}>
-          <Txt height={-1} width={grow()} overflowX={$Overflow.wrap}>
+          <Txt height={-1} widthGrows overflowX={$Overflow.wrap}>
             {props.message}
           </Txt>
-          <Row width={grow()} align={$Align.spaceEvenly}>
+          <Row widthGrows spaceEvenly>
             <Button outlined onClick={handleYes}>
               Yes
             </Button>

@@ -1,6 +1,5 @@
 import { JSX, Show } from 'solid-js'
 import { Box, BoxProps, grow, parseSty } from './Box'
-import { compute } from './utils'
 import { useNav } from './Nav'
 import { Icon } from './Icon'
 import { mdiArrowLeft } from '@mdi/js'
@@ -18,31 +17,30 @@ export function AppBar(
 ) {
   const nav = useNav()
   return (
-    <Column width={grow()}>
+    <Column widthGrows>
       {/* Notch Spacer */}
       <Box
-        width={grow()}
+        widthGrows
         height={`env(safe-area-inset-top)`}
         background={props.background ?? $theme.colors.primary}
         zIndex={2}
       />
 
       {/* AppBar */}
-      <Box
-        width={grow()}
-        axis={$Axis.column}
+      <Column
+        widthGrows
         background={props.background ?? $theme.colors.primary}
         shadowSize={1.25}
         shadowDirection={$Align.bottomCenter}
-        align={$Align.bottomCenter}
+        alignBottomCenter
         textColor={$theme.colors.accent}
         zIndex={1}
         {...props}
       >
         {/* Main Row */}
-        <Row width={grow()} pad={0.5} scale={1.5}>
+        <Row widthGrows pad={0.5} scale={1.5}>
           {/* Left */}
-          <Row width={grow()} align={$Align.centerLeft}>
+          <Row widthGrows alignCenterLeft>
             <Show
               when={
                 (props.shouldShowBackArrowWhenApplicable ?? true) &&
@@ -55,21 +53,21 @@ export function AppBar(
           </Row>
 
           {/* Title / Center */}
-          <Row width={grow(3)} align={$Align.center} textIsBold={true}>
+          <Row width={grow(3)} alignCenter textIsBold={true}>
             {props.children}
           </Row>
 
           {/* Right */}
-          <Row width={grow()} align={$Align.centerRight} scale={1.25}>
+          <Row widthGrows alignCenterRight scale={1.25}>
             {props.right}
           </Row>
         </Row>
 
         {/* Bottom Row */}
-        <Row width={grow()} scale={1}>
+        <Row widthGrows scale={1}>
           {props.bottom}
         </Row>
-      </Box>
+      </Column>
     </Column>
   )
 }

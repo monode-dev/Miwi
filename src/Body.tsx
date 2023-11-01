@@ -1,12 +1,12 @@
-import { grow, Box, BoxProps } from "./Box";
+import { BoxProps } from './Box'
+import { Column } from './Column'
 
 export function Body(props: BoxProps) {
   return (
-    <Box
-      width={grow()}
-      height={grow()}
-      axis={$Axis.column}
-      align={$Align.topCenter}
+    <Column
+      widthGrows
+      heightGrows
+      alignTopCenter
       textColor={$theme.colors.text}
       scale={1}
       pad={1}
@@ -15,6 +15,6 @@ export function Body(props: BoxProps) {
       {...props}
     >
       {props.children}
-    </Box>
-  );
+    </Column>
+  )
 }

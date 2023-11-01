@@ -1,5 +1,5 @@
 import { Show, onMount } from 'solid-js'
-import { Box, BoxProps, grow, parseSty } from './Box'
+import { Box, BoxProps, parseSty } from './Box'
 import { Row } from './Row'
 import { Icon } from './Icon'
 import { compute, sig, Sig, watchDeps, watchEffect, exists } from './utils'
@@ -198,15 +198,14 @@ export function Field(
     return lineCount > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />
   }
   return (
-    <Box
+    <Row
       onClick={props.onClick ?? (() => tryFocus())}
-      width={grow()}
+      widthGrows
       height={exists(lineCount) ? scale.value * lineCount + underlineHeight.value : undefined}
       textColor={$theme.colors.text}
       padBetween={0.25}
       overflowY={$Overflow.forceStretchParent}
-      align={$Align.topLeft}
-      axis={$Axis.row}
+      alignTopLeft
       {...sty}
       scale={scale.value}
     >
@@ -215,11 +214,11 @@ export function Field(
       </Show>
 
       <Show when={props.underlined} fallback={<_Input />}>
-        <Box width={grow()} height={exists(lineCount) ? scale.value * lineCount : undefined}>
-          <Column width={grow()}>
-            <Row width={grow()}>
+        <Box widthGrows height={exists(lineCount) ? scale.value * lineCount : undefined}>
+          <Column widthGrows>
+            <Row widthGrows>
               <Box width={0.25} />
-              <Box width={grow()}>
+              <Box widthGrows>
                 <_Input />
               </Box>
               <Box width={0.25} />
@@ -227,11 +226,11 @@ export function Field(
           </Column>
 
           {/* Underline */}
-          <Box width={grow()} height={underlineHeight.value} align={$Align.bottomLeft}>
-            <Box width={grow()} height={0.0625} background={detailColor.value} />
+          <Box widthGrows height={underlineHeight.value} alignBottomLeft>
+            <Box widthGrows height={0.0625} background={detailColor.value} />
           </Box>
         </Box>
       </Show>
-    </Box>
+    </Row>
   )
 }

@@ -1,20 +1,20 @@
-import { Box, BoxProps } from "./Box";
+import { BoxProps } from './Box'
+import { Column } from './Column'
 
 export function Card(props: BoxProps) {
   return (
-    <Box
+    <Column
       background={$theme.colors.accent}
       cornerRadius={0.5}
       shadowSize={1.5}
       shadowDirection={$Align.bottomRight}
-      axis={$Axis.column}
-      align={$Align.center}
+      alignCenter
       textColor={$theme.colors.text}
       scale={1}
       pad={1}
       {...props}
     >
       {props.children}
-    </Box>
-  );
+    </Column>
+  )
 }

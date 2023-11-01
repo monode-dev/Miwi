@@ -72,7 +72,7 @@ export function Modal<T>(
       <Show when={_isOpen.value}>
         <Box
           width={props.modalWidth ?? -1}
-          align={$Align.topLeft}
+          alignTopLeft
           overflowY={$Overflow.forceStretchParent}
           isInteractable={false}
         >
@@ -82,7 +82,7 @@ export function Modal<T>(
           </Show>
           <div style="z-index: 10000;" ref={el => (modal = el)}>
             <Box
-              width={grow()}
+              widthGrows
               height={{
                 min: 0,
                 flex: -1,
@@ -92,7 +92,7 @@ export function Modal<T>(
               pad={1}
               shadowSize={1}
               background={$theme.colors.accent}
-              align={$Align.topLeft}
+              alignTopLeft
               isInteractable={true}
             >
               {props.children}

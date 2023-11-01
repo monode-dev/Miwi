@@ -1,11 +1,11 @@
-import { CssProps, exists, isNum, isString } from './BoxUtils'
-import { Size, sizeToCss } from './BoxSize'
+import { CssProps, exists, isString } from './BoxUtils'
+import { sizeToCss } from './BoxSize'
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and reorderable lists.
 
 export type LayoutSty = PadStyProps &
-  AlignStyProps & {
-    axis: Axis
+  AlignStyProps &
+  AxisStyProps & {
     overflowX: Overflow
     overflowY: Overflow
   }
@@ -21,19 +21,6 @@ export type LayoutSty = PadStyProps &
 // test({ width: -1, align: `center` })
 // const myVal: PartSty = { width: -1, align: `center` }
 // console.log(myVal)
-type UserProps = {
-  name: string
-  /**
-   * @deprecated Use `lastName` instead.
-   */
-  surname: string
-  lastName: string
-}
-const user: UserProps = {
-  name: 'John',
-  surname: 'Doe', // VSCode will show a strike-through here
-  lastName: 'Smith',
-}
 
 // Pad
 type _PadUnit = number | string
@@ -61,6 +48,13 @@ export const Axis = {
   column: `column`,
   stack: `stack`,
 } as const
+export type AxisStyProps = {
+  axis: Axis
+} & {
+  row: boolean
+  column: boolean
+  stack: boolean
+}
 
 // Overflow
 export type Overflow = (typeof Overflow)[keyof typeof Overflow]
@@ -85,6 +79,111 @@ export type AlignStyProps = {
   align: Align
   alignX: AlignSingleAxis
   alignY: AlignSingleAxis
+  // Flags
+  alignTopLeft: boolean
+  alignTopCenter: boolean
+  alignTopRight: boolean
+  alignCenterLeft: boolean
+  alignCenter: boolean
+  alignCenterRight: boolean
+  alignBottomLeft: boolean
+  alignBottomCenter: boolean
+  alignBottomRight: boolean
+  alignTop: boolean
+  alignCenterY: boolean
+  alignBottom: boolean
+  alignLeft: boolean
+  alignCenterX: boolean
+  alignRight: boolean
+  spaceBetween: boolean
+  spaceBetweenX: boolean
+  spaceBetweenY: boolean
+  spaceAround: boolean
+  spaceAroundX: boolean
+  spaceAroundY: boolean
+  spaceEvenly: boolean
+  spaceEvenlyX: boolean
+  spaceEvenlyY: boolean
+}
+function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis {
+  const alignX = (() => {
+    let result = sty.alignX ?? (isString(sty.align) ? sty.align : sty.align?.alignX)
+    // Parse flags
+    if (!exists(result)) {
+      if (sty.alignLeft) {
+        result = Align.centerLeft.alignX
+      } else if (sty.alignCenterX) {
+        result = Align.center.alignX
+      } else if (sty.alignRight) {
+        result = Align.centerRight.alignX
+      } else if (sty.spaceBetweenX) {
+        result = _SpaceAlign.spaceBetween
+      } else if (sty.spaceAroundX) {
+        result = _SpaceAlign.spaceAround
+      } else if (sty.spaceEvenlyX) {
+        result = _SpaceAlign.spaceEvenly
+      } else if (sty.alignTopLeft || sty.alignCenterLeft || sty.alignBottomLeft) {
+        result = Align.center.alignX
+      } else if (sty.alignTopCenter || sty.alignCenter || sty.alignBottomCenter) {
+        result = Align.center.alignX
+      } else if (sty.alignTopRight || sty.alignCenterRight || sty.alignBottomRight) {
+        result = Align.center.alignX
+      } else if (sty.spaceBetween) {
+        result = _SpaceAlign.spaceBetween
+      } else if (sty.spaceAround) {
+        result = _SpaceAlign.spaceAround
+      } else if (sty.spaceEvenly) {
+        result = _SpaceAlign.spaceEvenly
+      } else {
+        result = Align.center.alignX
+      }
+    }
+    // I've decided that space-between with one child should center it, instead of putting it at the start like CSS does.
+    if (result === _SpaceAlign.spaceBetween && childCount === 1) {
+      result = _FlexAlign.center
+    }
+    return result
+  })()
+  const alignY = (() => {
+    let result = sty.alignY ?? (isString(sty.align) ? sty.align : sty.align?.alignY)
+    // Parse flags
+    if (!exists(result)) {
+      if (sty.alignTop) {
+        result = Align.topCenter.alignY
+      } else if (sty.alignCenterY) {
+        result = Align.center.alignY
+      } else if (sty.alignBottom) {
+        result = Align.bottomCenter.alignY
+      } else if (sty.spaceBetweenY) {
+        result = _SpaceAlign.spaceBetween
+      } else if (sty.spaceAroundY) {
+        result = _SpaceAlign.spaceAround
+      } else if (sty.spaceEvenlyY) {
+        result = _SpaceAlign.spaceEvenly
+      } else if (sty.alignTopLeft || sty.alignTopCenter || sty.alignTopRight) {
+        result = Align.topCenter.alignY
+      } else if (sty.alignCenterLeft || sty.alignCenter || sty.alignCenterRight) {
+        result = Align.center.alignY
+      } else if (sty.alignBottomLeft || sty.alignBottomCenter || sty.alignBottomRight) {
+        result = Align.bottomCenter.alignY
+      } else if (sty.spaceBetween) {
+        result = _SpaceAlign.spaceBetween
+      } else if (sty.spaceAround) {
+        result = _SpaceAlign.spaceAround
+      } else if (sty.spaceEvenly) {
+        result = _SpaceAlign.spaceEvenly
+      } else {
+        result = Align.center.alignY
+      }
+    }
+    // I've decided that space-between with one child should center it, instead of putting it at the start like CSS does.
+    if (result === _SpaceAlign.spaceBetween && childCount === 1) {
+      result = _FlexAlign.center
+    }
+    return result
+  })()
+
+  return { alignX, alignY }
 }
 // NOTE: At some point we probably want to crossout the align property if the size is shrink since it won't do anything.
 // NOTE: We probably eventually want to allow align to be a number between -1 and 1 so that contents can be precisely positioned.
@@ -148,13 +247,7 @@ export const Align = {
 } as const
 
 // Compute
-export function computeBoxLayout(
-  sty: Partial<LayoutSty>,
-  align: Align,
-  parent: any,
-  axis: Axis,
-  childCount: number,
-): CssProps {
+export function computeBoxLayout(sty: Partial<LayoutSty>, childCount: number): CssProps {
   // Pad
   const padTop = sizeToCss(sty.padTop ?? sty.padAroundY ?? sty.padAround ?? sty.pad ?? 0)
   const padRight = sizeToCss(sty.padRight ?? sty.padAroundX ?? sty.padAround ?? sty.pad ?? 0)
@@ -163,21 +256,10 @@ export function computeBoxLayout(
   // NOTE: We want pad between to cascade, but not pad around.
   const padBetweenX = sizeToCss(sty.padBetweenX ?? sty.padBetween ?? sty.pad ?? `inherit`)
   const padBetweenY = sizeToCss(sty.padBetweenY ?? sty.padBetween ?? sty.pad ?? `inherit`)
+  // Axis
+  const axis = sty.axis ?? (sty.row ? Axis.row : sty.stack ? Axis.stack : Axis.column)
   // Align
-  const alignX = (() => {
-    let result = sty.alignX ?? (isString(align) ? align : align.alignX) ?? _FlexAlign.center
-    if (result === _SpaceAlign.spaceBetween && childCount === 1) {
-      result = _FlexAlign.center
-    }
-    return result
-  })()
-  const alignY = (() => {
-    let result = sty.alignY ?? (isString(align) ? align : align.alignY) ?? _FlexAlign.center
-    if (result === _SpaceAlign.spaceBetween && childCount === 1) {
-      result = _FlexAlign.center
-    }
-    return result
-  })()
+  const { alignX, alignY } = getAlign(sty, childCount)
 
   // Overflow
   const overflowX = sty.overflowX ?? defaultOverflowX
@@ -194,7 +276,6 @@ export function computeBoxLayout(
     margin: 0,
 
     // Align: https://css-tricks.com/snippets/css/a-guide-to-flexbox/
-    // I've decided that space-between with one child should center it, instead of putting it at the start like CSS does.
     justifyContent: axis === Axis.column ? alignY : alignX,
     alignItems: axis === Axis.column ? alignX : alignY,
 
