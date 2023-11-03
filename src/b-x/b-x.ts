@@ -7,7 +7,7 @@ import {
   LayoutSty,
 } from './BoxLayout'
 import { CssProps, exists, isString, sizeToCss as _sizeToCss } from './BoxUtils'
-import { SizeSty, computeBoxSize, Size as _Size, isFlexSize, formatRawSize } from './BoxSize'
+import { SizeSty, Size as _Size, isFlexSize, formatRawSize } from './BoxSize'
 import { TextSty, computeTextStyle } from './BoxText'
 import { InteractionSty, computeBoxInteraction } from './BoxInteraction'
 
@@ -50,11 +50,7 @@ function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps) {
 // Cutom Element
 export class Miwi_Box extends HTMLElement {
   private _parentObserver: MutationObserver
-  private _parentAxis: `row` | `column` = `column` // TODO: Add `stack` option. Probably needs to be a class or something of the sort.
-  private _parentPadTop: string = `0px`
-  private _parentPadRight: string = `0px`
-  private _parentPadBottom: string = `0px`
-  private _parentPadLeft: string = `0px`
+  private _parentStyle: CSSStyleDeclaration | undefined = undefined
   // private _selfObserver: MutationObserver;
   // private _childrenObserver: MutationObserver;
   private _childCount: number = 0
@@ -109,26 +105,13 @@ export class Miwi_Box extends HTMLElement {
     let shouldUpdateStyle = false
     if (exists(this.parentElement)) {
       const computedParentStyle = getComputedStyle(this.parentElement)
-      if (this._parentAxis !== computedParentStyle.flexDirection) {
-        this._parentAxis = computedParentStyle.flexDirection as `row` | `column`
-        shouldUpdateStyle = true
-      }
-      if (this._parentPadTop !== computedParentStyle.paddingTop) {
-        this._parentPadTop = computedParentStyle.paddingTop
-        shouldUpdateStyle = true
-      }
-      if (this._parentPadRight !== computedParentStyle.paddingRight) {
-        this._parentPadRight = computedParentStyle.paddingRight
-        shouldUpdateStyle = true
-      }
-      if (this._parentPadBottom !== computedParentStyle.paddingBottom) {
-        this._parentPadBottom = computedParentStyle.paddingBottom
-        shouldUpdateStyle = true
-      }
-      if (this._parentPadLeft !== computedParentStyle.paddingLeft) {
-        this._parentPadLeft = computedParentStyle.paddingLeft
-        shouldUpdateStyle = true
-      }
+      shouldUpdateStyle =
+        computedParentStyle.flexDirection !== this._parentStyle?.flexDirection ||
+        computedParentStyle.paddingTop !== this._parentStyle?.paddingTop ||
+        computedParentStyle.paddingRight !== this._parentStyle?.paddingRight ||
+        computedParentStyle.paddingBottom !== this._parentStyle?.paddingBottom ||
+        computedParentStyle.paddingLeft !== this._parentStyle?.paddingLeft
+      if (shouldUpdateStyle) this._parentStyle = computedParentStyle
     }
     return shouldUpdateStyle
   }
@@ -170,25 +153,11 @@ export class Miwi_Box extends HTMLElement {
     })
 
     decorationStyler.applyStyle(this.sty, this, {
-      parentStyle: getComputedStyle(this.parentElement ?? this),
+      parentStyle: this._parentStyle,
       childCount: this._childCount,
       aChildsWidthGrows: someChildWidthGrows,
       aChildsHeightGrows: someChildHeightGrows,
     })
-    applyStylePart(
-      this.style,
-      computeBoxSize(
-        this.sty,
-        formattedWidth,
-        formattedHeight,
-        this._parentAxis,
-        this._parentPadTop,
-        this._parentPadRight,
-        this._parentPadBottom,
-        this._parentPadLeft,
-        this.sty.shouldLog,
-      ),
-    )
     applyStylePart(
       this.style,
       computeTextStyle(

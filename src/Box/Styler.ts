@@ -8,7 +8,7 @@ type ApplyStyle<
   mySty: Partial<OldAttributes & NewAttributes>,
   htmlElement: HTMLElement,
   bonusConfig: Readonly<{
-    parentStyle: CSSStyleDeclaration
+    parentStyle?: CSSStyleDeclaration
     childCount: number
     aChildsWidthGrows: boolean
     aChildsHeightGrows: boolean

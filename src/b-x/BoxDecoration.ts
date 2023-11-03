@@ -1,5 +1,6 @@
 import { exists, sizeToCss } from './BoxUtils'
-import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign, layoutStyler } from './BoxLayout'
+import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign } from './BoxLayout'
+import { sizeStyler } from './BoxSize'
 
 export type DecorationSty = {
   cornerRadius: number | string
@@ -39,7 +40,7 @@ export const mdColors = {
 } as const
 
 // We might be able to infer everything we need from these compute functions, which could make updates even easier to make. If we did this, then we'd want to use another function to generate these compute functions.
-export const decorationStyler = layoutStyler.addStyler<DecorationSty>((sty, htmlElement) => {
+export const decorationStyler = sizeStyler.addStyler<DecorationSty>((sty, htmlElement) => {
   // Corner Radius
   const cornerRadiuses = [
     sty.cornerRadiusTopLeft ?? sty.cornerRadius ?? 0,

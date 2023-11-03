@@ -1,5 +1,5 @@
-import { exists, isString, CssProps, sizeToCss } from './BoxUtils'
-import { Axis, LayoutSty, Overflow, defaultOverflowX, defaultOverflowY } from './BoxLayout'
+import { exists, isString, sizeToCss } from './BoxUtils'
+import { layoutStyler, Axis } from './BoxLayout'
 
 export type Size = number | string | FlexSize
 export type SizeSty = {
@@ -18,13 +18,9 @@ export function isFlexSize(size: any): size is FlexSize {
 export function computeSizeInfo({
   size,
   isMainAxis,
-  overflow,
-  shouldLog,
 }: {
   size: number | string | FlexSize
   isMainAxis: boolean
-  overflow: Overflow
-  shouldLog?: boolean
 }) {
   const isShrink = size === -1
   const sizeIsFlex = isFlexSize(size)
@@ -62,121 +58,114 @@ export function formatRawSize(props: { someChildGrows: boolean; size: Size | und
   return formattedSize
 }
 
-export function computeBoxSize(
-  sty: Partial<SizeSty & LayoutSty>,
-  formattedWidth: Size,
-  formattedHeight: Size,
-  parentAxis: Axis,
-  parentPadTop: string,
-  parentPadRight: string,
-  parentPadBottom: string,
-  parentPadLeft: string,
-  shouldLog?: boolean,
-): CssProps {
+// Size Styler
+export const sizeStyler = layoutStyler.addStyler<SizeSty>((sty, htmlElement, bonusConfig) => {
+  const formattedWidth = formatRawSize({
+    someChildGrows: bonusConfig.aChildsWidthGrows,
+    size: sty.width,
+  })
+  const formattedHeight = formatRawSize({
+    someChildGrows: bonusConfig.aChildsHeightGrows,
+    size: sty.height,
+  })
+  const parentAxis = bonusConfig.parentStyle?.flexDirection ?? Axis.column
   const [exactWidth, wMin, wMax, widthGrows] = computeSizeInfo({
     size: formattedWidth,
     isMainAxis: parentAxis === Axis.row,
-    overflow: sty.overflowX ?? defaultOverflowX,
-    shouldLog,
   })
   const [exactHeight, hMin, hMax, heightGrows] = computeSizeInfo({
     size: formattedHeight,
     isMainAxis: parentAxis === Axis.column,
-    overflow: sty.overflowY ?? defaultOverflowY,
   })
-  const result = {
-    // Sizing
-    display: `flex`,
-    boxSizing: `border-box`,
-    // Using minWidth and maxWidth tells css to not override the size of this element
-    width: (() => {
-      let size = exactWidth
-      // axis === Axis.stack && width === -1
-      //   ? maxChildWidth
-      //   : exactWidth;
-      if ((parent as any)?.sty?.axis === Axis.stack) {
-        size = `calc(${size} - ${parentPadLeft ?? `0px`} - ${parentPadRight ?? `0px`})`
-      }
-      return size
-    })(),
-    minWidth: (() => {
-      let size = wMin
-      // axis === Axis.stack && width === -1
-      //   ? maxChildWidth
-      //   : wMin;
-      if ((parent as any)?.sty?.axis === Axis.stack) {
-        size = `calc(${size} - ${parentPadLeft ?? `0px`} - ${parentPadRight ?? `0px`})`
-      }
-      return size
-    })(),
-    maxWidth: (() => {
-      let size = wMax
-      // axis === Axis.stack && width === -1
-      //   ? maxChildWidth
-      //   : wMax;
-      if ((parent as any)?.sty?.axis === Axis.stack) {
-        size = `calc(${size} - ${parentPadLeft ?? `0px`} - ${parentPadRight ?? `0px`})`
-      }
-      return size
-    })(),
-    height: (() => {
-      let size = exactHeight
-      // axis === Axis.stack && height === -1
-      //   ? maxChildHeight
-      //   : exactHeight;
-      if ((parent as any)?.sty?.axis === Axis.stack) {
-        size = `calc(${size} - ${parentPadTop ?? `0px`} - ${parentPadBottom ?? `0px`})`
-      }
-      return size
-    })(),
-    minHeight: (() => {
-      let size = hMin
-      // axis === Axis.stack && height === -1
-      //   ? maxChildHeight
-      //   : hMin;
-      if ((parent as any)?.sty?.axis === Axis.stack) {
-        size = `calc(${size} - ${parentPadTop ?? `0px`} - ${parentPadBottom ?? `0px`})`
-      }
-      return size
-    })(),
-    maxHeight: (() => {
-      let size = hMax
-      // axis === Axis.stack && height === -1
-      //   ? maxChildHeight
-      //   : hMax;
-      if ((parent as any)?.sty?.axis === Axis.stack) {
-        size = `calc(${size} - ${parentPadTop ?? `0px`} - ${parentPadBottom ?? `0px`})`
-      }
-      return size
-    })(),
-    flexBasis:
-      parentAxis === Axis.column
-        ? isFlexSize(formattedHeight)
-          ? `${formattedHeight.flex * 100}%`
-          : heightGrows
-          ? `100%`
-          : undefined
-        : parentAxis === Axis.row
-        ? isFlexSize(formattedWidth)
-          ? `${formattedWidth.flex * 100}%`
-          : widthGrows
-          ? `100%`
-          : undefined
-        : undefined,
-    // flexBasis:
-    //   parentAxis === Axis.column
-    //     ? isFlexSize(height)
-    //       ? `calc(${height.flex * 100}% - (4 * ${cssPadding ?? `0px`}))`
-    //       : heightGrows
-    //         ? `calc(100% - (4 * ${cssPadding ?? `0px`}))`
-    //         : undefined
-    //     : parentAxis === Axis.row
-    //       ? isFlexSize(width)
-    //         ? `calc(${width.flex * 100}% - (4 * ${cssPadding ?? `0px`}))`
-    //         : widthGrows
-    //           ? `calc(100% - (4 * ${cssPadding ?? `0px`}))`
-    //           : undefined
-    //       : undefined,
-  }
-  return result
-}
+
+  // Apply
+  htmlElement.style.display = `flex`
+  htmlElement.style.boxSizing = `border-box`
+  htmlElement.style.width = (() => {
+    let size = exactWidth
+    // axis === Axis.stack && width === -1
+    //   ? maxChildWidth
+    //   : exactWidth;
+    if ((parent as any)?.sty?.axis === Axis.stack) {
+      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingLeft ?? `0px`} - ${
+        bonusConfig.parentStyle?.paddingRight ?? `0px`
+      })`
+    }
+    return size ?? ``
+  })()
+  htmlElement.style.minWidth = (() => {
+    let size = wMin
+    // axis === Axis.stack && width === -1
+    //   ? maxChildWidth
+    //   : wMin;
+    if ((parent as any)?.sty?.axis === Axis.stack) {
+      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingLeft ?? `0px`} - ${
+        bonusConfig.parentStyle?.paddingRight ?? `0px`
+      })`
+    }
+    return size ?? ``
+  })()
+  htmlElement.style.maxWidth = (() => {
+    let size = wMax
+    // axis === Axis.stack && width === -1
+    //   ? maxChildWidth
+    //   : wMax;
+    if ((parent as any)?.sty?.axis === Axis.stack) {
+      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingLeft ?? `0px`} - ${
+        bonusConfig.parentStyle?.paddingRight ?? `0px`
+      })`
+    }
+    return size ?? ``
+  })()
+  htmlElement.style.height = (() => {
+    let size = exactHeight
+    // axis === Axis.stack && height === -1
+    //   ? maxChildHeight
+    //   : exactHeight;
+    if ((parent as any)?.sty?.axis === Axis.stack) {
+      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingTop ?? `0px`} - ${
+        bonusConfig.parentStyle?.paddingBottom ?? `0px`
+      })`
+    }
+    return size ?? ``
+  })()
+  htmlElement.style.minHeight = (() => {
+    let size = hMin
+    // axis === Axis.stack && height === -1
+    //   ? maxChildHeight
+    //   : hMin;
+    if ((parent as any)?.sty?.axis === Axis.stack) {
+      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingTop ?? `0px`} - ${
+        bonusConfig.parentStyle?.paddingBottom ?? `0px`
+      })`
+    }
+    return size ?? ``
+  })()
+  htmlElement.style.maxHeight = (() => {
+    let size = hMax
+    // axis === Axis.stack && height === -1
+    //   ? maxChildHeight
+    //   : hMax;
+    if ((parent as any)?.sty?.axis === Axis.stack) {
+      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingTop ?? `0px`} - ${
+        bonusConfig.parentStyle?.paddingBottom ?? `0px`
+      })`
+    }
+    return size ?? ``
+  })()
+  htmlElement.style.flexBasis =
+    parentAxis === Axis.column
+      ? isFlexSize(formattedHeight)
+        ? `${formattedHeight.flex * 100}%`
+        : heightGrows
+        ? `100%`
+        : ``
+      : parentAxis === Axis.row
+      ? isFlexSize(formattedWidth)
+        ? `${formattedWidth.flex * 100}%`
+        : widthGrows
+        ? `100%`
+        : ``
+      : ``
+  return sty
+})
