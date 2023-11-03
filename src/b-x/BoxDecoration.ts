@@ -57,7 +57,7 @@ export const decorationStyler = baseStyler.addStyler<DecorationSty>((sty, htmlEl
   const backgroundIsImage =
     (sty.background?.startsWith(`data:image`) || sty.background?.startsWith(`/`)) ?? false
   htmlElement.style.backgroundColor = backgroundIsImage ? `` : sty.background ?? ``
-  console.log((sty as any).shouldLog)
+  console.log(sty)
   if ((sty as any).shouldLog) {
     console.log(`sty.background`, sty.background)
     console.log(`htmlElement.style.backgroundColor`, htmlElement.style.backgroundColor)
