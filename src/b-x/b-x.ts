@@ -1,15 +1,9 @@
-import { DecorationSty, decorationStyler, mdColors as _mdColors } from './BoxDecoration'
-import {
-  Axis as _Axis,
-  defaultOverflowX,
-  Overflow as _Overflow,
-  Align as _Align,
-  LayoutSty,
-} from './BoxLayout'
-import { CssProps, exists, isString, sizeToCss as _sizeToCss } from './BoxUtils'
-import { SizeSty, Size as _Size, isFlexSize, formatRawSize } from './BoxSize'
-import { TextSty, computeTextStyle } from './BoxText'
-import { InteractionSty, computeBoxInteraction } from './BoxInteraction'
+import { DecorationSty, mdColors as _mdColors } from './BoxDecoration'
+import { Axis as _Axis, Overflow as _Overflow, Align as _Align, LayoutSty, stackClassName, nonStackClassName } from './BoxLayout'
+import { CssProps, exists, sizeToCss as _sizeToCss } from './BoxUtils'
+import { SizeSty, Size as _Size, isFlexSize, formatRawSize, widthGrowsClassName, heightGrowsClassName } from './BoxSize'
+import { TextSty } from './BoxText'
+import { InteractionSty, bonusTouchAreaClassName, interactionStyler } from './BoxInteraction'
 
 export type _Sty = SizeSty &
   DecorationSty &
@@ -28,16 +22,6 @@ export const Overflow = _Overflow
 export const mdColors = _mdColors
 export type Size = _Size
 export const sizeToCss = _sizeToCss
-
-function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps) {
-  for (const key of Object.keys(updates)) {
-    if (key.startsWith(`--`)) {
-      selfStyle.setProperty(key, (updates[key] ?? ``).toString())
-    } else if (updates[key] !== selfStyle[key as keyof CSSStyleDeclaration]) {
-      ;(selfStyle as any)[key] = updates[key] ?? ``
-    }
-  }
-}
 
 // function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps) {
 //   for (const key of Object.keys(updates)) {
@@ -141,8 +125,16 @@ export class Miwi_Box extends HTMLElement {
     return result
   }
   updateStyle() {
-    const align = this.sty.align ?? _Align.center
     const { someChildWidthGrows, someChildHeightGrows } = this.computeSomeChildGrows()
+    interactionStyler.applyStyle(this.sty, this, {
+      parentStyle: this._parentStyle,
+      childCount: this._childCount,
+      aChildsWidthGrows: someChildWidthGrows,
+      aChildsHeightGrows: someChildHeightGrows,
+    })
+
+    // Recompute growth
+    // TODO: Eventually get this from the styler result.
     const formattedWidth = formatRawSize({
       someChildGrows: someChildWidthGrows,
       size: this.sty.width,
@@ -151,31 +143,6 @@ export class Miwi_Box extends HTMLElement {
       someChildGrows: someChildHeightGrows,
       size: this.sty.height,
     })
-
-    decorationStyler.applyStyle(this.sty, this, {
-      parentStyle: this._parentStyle,
-      childCount: this._childCount,
-      aChildsWidthGrows: someChildWidthGrows,
-      aChildsHeightGrows: someChildHeightGrows,
-    })
-    applyStylePart(
-      this.style,
-      computeTextStyle(
-        this.sty,
-        isString(align) ? align : align.alignX,
-        this.sty.overflowX ?? defaultOverflowX,
-      ),
-    )
-    const interactionConfig = computeBoxInteraction(this.sty)
-    this.onmouseenter = interactionConfig.elementAttributes.onMouseEnter ?? null
-    this.onmouseleave = interactionConfig.elementAttributes.onMouseLeave ?? null
-    applyStylePart(this.style, interactionConfig.cssProps)
-
-    this.classList.toggle(stackClassName, (this.sty.axis ?? _Axis.column) === _Axis.stack)
-    this.classList.toggle(nonStackClassName, (this.sty.axis ?? _Axis.column) !== _Axis.stack)
-    this.classList.toggle(bonusTouchAreaClassName, this.sty.bonusTouchArea ?? false)
-
-    // Recompute growth
     const newWidthGrows = isFlexSize(formattedWidth) && formattedWidth.flex > 0
     this.classList.toggle(widthGrowsClassName, newWidthGrows)
     const shouldUpdateWidthGrows = this._widthGrows !== newWidthGrows
@@ -231,11 +198,6 @@ export class Miwi_Box extends HTMLElement {
   }
 }
 
-const widthGrowsClassName = `b-x-width-grows`
-const heightGrowsClassName = `b-x-height-grows`
-const stackClassName = `b-x-stack`
-const nonStackClassName = `b-x-non-stack`
-const bonusTouchAreaClassName = `b-x-bonus-touch-area`
 const style = document.createElement(`style`)
 style.textContent = `
 .${stackClassName} > * {

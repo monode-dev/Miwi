@@ -9,6 +9,7 @@ type ApplyStyle<
   htmlElement: HTMLElement,
   bonusConfig: Readonly<{
     parentStyle?: CSSStyleDeclaration
+    parentElement?: HTMLElement
     childCount: number
     aChildsWidthGrows: boolean
     aChildsHeightGrows: boolean

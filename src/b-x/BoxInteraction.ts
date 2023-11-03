@@ -1,5 +1,5 @@
 import { exists } from 'src/utils'
-import { CssProps } from './BoxUtils'
+import { textStyler } from './BoxText'
 
 export type InteractionSty = {
   role: string
@@ -10,25 +10,16 @@ export type InteractionSty = {
   onMouseLeave: () => void
 }
 
-export function computeBoxInteraction(sty: Partial<InteractionSty>): {
-  cssProps: CssProps
-  elementAttributes: {
-    role?: string
-    onMouseEnter?: () => void
-    onMouseLeave?: () => void
-  }
-} {
+export const bonusTouchAreaClassName = `b-x-bonus-touch-area`
+
+export const interactionStyler = textStyler.addStyler<InteractionSty>((sty, htmlElement) => {
+  htmlElement.role = sty.role ?? ``
   const captureClicks =
     sty.captureClicks ?? (exists((sty as any).background) || exists((sty as any).onClick))
-  return {
-    cssProps: {
-      pointerEvents: captureClicks ? `auto` : `none`,
-      cursor: sty.cssCursor,
-    },
-    elementAttributes: {
-      role: sty.role,
-      onMouseEnter: sty.onMouseEnter,
-      onMouseLeave: sty.onMouseLeave,
-    },
-  }
-}
+  htmlElement.style.pointerEvents = captureClicks ? `auto` : `none`
+  htmlElement.style.cursor = sty.cssCursor ?? ``
+  htmlElement.onmouseenter = sty.onMouseEnter ?? null
+  htmlElement.onmouseleave = sty.onMouseLeave ?? null
+  htmlElement.classList.toggle(bonusTouchAreaClassName, sty.bonusTouchArea ?? false)
+  return sty
+})

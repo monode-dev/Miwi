@@ -58,6 +58,9 @@ export function formatRawSize(props: { someChildGrows: boolean; size: Size | und
   return formattedSize
 }
 
+export const widthGrowsClassName = `b-x-width-grows`
+export const heightGrowsClassName = `b-x-height-grows`
+
 // Size Styler
 export const sizeStyler = layoutStyler.addStyler<SizeSty>((sty, htmlElement, bonusConfig) => {
   const formattedWidth = formatRawSize({
@@ -167,5 +170,25 @@ export const sizeStyler = layoutStyler.addStyler<SizeSty>((sty, htmlElement, bon
         ? `100%`
         : ``
       : ``
+
+  // Recompute growth
+  // const newWidthGrows = isFlexSize(formattedWidth) && formattedWidth.flex > 0
+  // htmlElement.classList.toggle(widthGrowsClassName, newWidthGrows)
+  // const shouldUpdateWidthGrows = this._widthGrows !== newWidthGrows
+  // const newHeightGrows = isFlexSize(formattedHeight) && formattedHeight.flex > 0
+  // htmlElement.classList.toggle(heightGrowsClassName, newHeightGrows)
+  // const shouldUpdateHeightGrows = this._heightGrows !== newHeightGrows
+  // if (shouldUpdateWidthGrows || shouldUpdateHeightGrows) {
+  //   if (exists(bonusConfig.parentElement)) {
+  //     if (bonusConfig.parentElement instanceof Miwi_Box) {
+  //       if (shouldUpdateWidthGrows) this._widthGrows = newWidthGrows
+  //       if (shouldUpdateHeightGrows) this._heightGrows = newHeightGrows
+  //       bonusConfig.parentElement.thisIsAChildTogglingTheFactThatItGrows({
+  //         widthGrows: shouldUpdateWidthGrows ? newWidthGrows : undefined,
+  //         heightGrows: shouldUpdateHeightGrows ? newHeightGrows : undefined,
+  //       })
+  //     }
+  //   }
+  // }
   return sty
 })

@@ -55,6 +55,8 @@ export type AxisStyProps = {
   column: boolean
   stack: boolean
 }
+export const stackClassName = `b-x-stack`
+export const nonStackClassName = `b-x-non-stack`
 
 // Overflow
 export type Overflow = (typeof Overflow)[keyof typeof Overflow]
@@ -268,6 +270,8 @@ export const layoutStyler = baseStyler.addStyler<LayoutSty>((sty, htmlElement, b
   htmlElement.style.justifyContent = axis === Axis.column ? alignY : alignX
   htmlElement.style.alignItems = axis === Axis.column ? alignX : alignY
   htmlElement.style.flexDirection = axis === Axis.stack ? `` : axis
+  htmlElement.classList.toggle(stackClassName, axis === Axis.stack)
+  htmlElement.classList.toggle(nonStackClassName, axis !== Axis.stack)
 
   // Overflow
   const overflowX = sty.overflowX ?? defaultOverflowX

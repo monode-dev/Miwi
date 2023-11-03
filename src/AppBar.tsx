@@ -53,7 +53,7 @@ export function AppBar(
           </Row>
 
           {/* Title / Center */}
-          <Row width={grow(3)} alignCenter textIsBold={true}>
+          <Row width={grow(3)} alignCenter boldText>
             {props.children}
           </Row>
 
