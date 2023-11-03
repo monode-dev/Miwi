@@ -1,9 +1,8 @@
-import { DecorationSty, mdColors } from './BoxDecoration'
-import { Axis, Overflow, Align, LayoutSty, stackClassName, nonStackClassName } from './BoxLayout'
-import { CssProps, exists, sizeToCss } from './BoxUtils'
+import { DecorationSty } from './BoxDecoration'
+import { LayoutSty, stackClassName, nonStackClassName } from './BoxLayout'
+import { exists } from './BoxUtils'
 import {
   SizeSty,
-  Size,
   isFlexSize,
   formatRawSize,
   widthGrowsClassName,
@@ -157,7 +156,7 @@ export class Miwi_Box extends HTMLElement {
   constructor() {
     super()
     this.classList.add(`b-x`)
-    this._parentObserver = new MutationObserver((mutationsList, observer) => {
+    this._parentObserver = new MutationObserver(mutationsList => {
       for (const mutation of mutationsList) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
           const shouldUpdateStyle = this.computeParentStyle()
