@@ -29,7 +29,6 @@ export function AppBar(
       {/* AppBar */}
       <Column
         widthGrows
-        shouldLog
         background={props.background ?? $theme.colors.primary}
         shadowSize={1.25}
         shadowDirection={$Align.bottomCenter}

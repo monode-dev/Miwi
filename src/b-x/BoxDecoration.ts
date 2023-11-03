@@ -1,14 +1,14 @@
-import { CssProps, exists } from './BoxUtils'
+import { exists } from './BoxUtils'
 import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign } from './BoxLayout'
 import { sizeToCss } from './BoxSize'
 import { baseStyler } from 'src/Box/Styler'
 
 export type DecorationSty = {
   cornerRadius: number | string
-  // cornerRadiusTopLeft: number | string
-  // cornerRadiusTopRight: number | string
-  // cornerRadiusBottomRight: number | string
-  // cornerRadiusBottomLeft: number | string
+  cornerRadiusTopLeft: number | string
+  cornerRadiusTopRight: number | string
+  cornerRadiusBottomRight: number | string
+  cornerRadiusBottomLeft: number | string
   outlineColor: string
   outlineSize: number
   background: string
@@ -42,12 +42,18 @@ export const mdColors = {
 
 // We might be able to infer everything we need from these compute functions, which could make updates even easier to make. If we did this, then we'd want to use another function to generate these compute functions.
 export const decorationStyler = baseStyler.addStyler<DecorationSty>((sty, htmlElement) => {
+  // Corner Radius
+  const cornerRadiuses = [
+    sty.cornerRadiusTopLeft ?? sty.cornerRadius ?? 0,
+    sty.cornerRadiusTopRight ?? sty.cornerRadius ?? 0,
+    sty.cornerRadiusBottomRight ?? sty.cornerRadius ?? 0,
+    sty.cornerRadiusBottomLeft ?? sty.cornerRadius ?? 0,
+  ]
+  htmlElement.style.borderRadius = cornerRadiuses.every(r => r === 0)
+    ? ``
+    : cornerRadiuses.map(sizeToCss).join(` `)
+
   // Outline
-  htmlElement.style.borderRadius = exists(sty.cornerRadius)
-    ? Array.isArray(sty.cornerRadius)
-      ? sty.cornerRadius.map(sizeToCss).join(` `)
-      : sizeToCss(sty.cornerRadius)
-    : ``
   htmlElement.style.outline = exists(sty.outlineSize)
     ? `${sizeToCss(sty.outlineSize)} solid ${sty.outlineColor}`
     : ``

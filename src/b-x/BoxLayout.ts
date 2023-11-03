@@ -1,5 +1,6 @@
 import { CssProps, exists, isString } from './BoxUtils'
 import { sizeToCss } from './BoxSize'
+import { decorationStyler } from './BoxDecoration'
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and reorderable lists.
 
@@ -246,67 +247,63 @@ export const Align = {
   },
 } as const
 
-// Compute
-export function computeBoxLayout(sty: Partial<LayoutSty>, childCount: number): CssProps {
-  // Pad
-  const padTop = sizeToCss(sty.padTop ?? sty.padAroundY ?? sty.padAround ?? sty.pad ?? 0)
-  const padRight = sizeToCss(sty.padRight ?? sty.padAroundX ?? sty.padAround ?? sty.pad ?? 0)
-  const padBottom = sizeToCss(sty.padBottom ?? sty.padAroundY ?? sty.padAround ?? sty.pad ?? 0)
-  const padLeft = sizeToCss(sty.padLeft ?? sty.padAroundX ?? sty.padAround ?? sty.pad ?? 0)
-  // NOTE: We want pad between to cascade, but not pad around.
-  const padBetweenX = sizeToCss(sty.padBetweenX ?? sty.padBetween ?? sty.pad ?? `inherit`)
-  const padBetweenY = sizeToCss(sty.padBetweenY ?? sty.padBetween ?? sty.pad ?? `inherit`)
-  // Axis
-  const axis = sty.axis ?? (sty.row ? Axis.row : sty.stack ? Axis.stack : Axis.column)
-  // Align
-  const { alignX, alignY } = getAlign(sty, childCount)
-
-  // Overflow
-  const overflowX = sty.overflowX ?? defaultOverflowX
-  const overflowY = sty.overflowY ?? defaultOverflowY
-  return {
-    // position: parent?.props?.sty?.axis === Axis.stack ? `absolute` : `relative`,
-
+// Layout Styler
+export const layoutStyler = decorationStyler.addStyler<LayoutSty>(
+  (sty, htmlElement, bonusConfig) => {
     // Pad
-    // NOTE: Default could maybe be based off of font size.
-    // NOTE: We might consider making padding and spacing cascade. I'm not sure if we want to, but it might reduce developer code.
-    padding: `${padTop} ${padRight} ${padBottom} ${padLeft}`,
-    rowGap: padBetweenX,
-    columnGap: padBetweenY,
-    margin: 0,
+    const padEachSide = [
+      sty.padTop ?? sty.padAroundY ?? sty.padAround ?? sty.pad ?? 0,
+      sty.padRight ?? sty.padAroundX ?? sty.padAround ?? sty.pad ?? 0,
+      sty.padBottom ?? sty.padAroundY ?? sty.padAround ?? sty.pad ?? 0,
+      sty.padLeft ?? sty.padAroundX ?? sty.padAround ?? sty.pad ?? 0,
+    ]
+    htmlElement.style.padding = padEachSide.every(x => x === 0)
+      ? ``
+      : padEachSide.map(sizeToCss).join(` `)
+    // NOTE: We want pad between to cascade, but not pad around.
+    htmlElement.style.rowGap = sizeToCss(sty.padBetweenY ?? sty.padBetween ?? sty.pad ?? `inherit`)
+    htmlElement.style.columnGap = sizeToCss(
+      sty.padBetweenX ?? sty.padBetween ?? sty.pad ?? `inherit`,
+    )
 
-    // Align: https://css-tricks.com/snippets/css/a-guide-to-flexbox/
-    justifyContent: axis === Axis.column ? alignY : alignX,
-    alignItems: axis === Axis.column ? alignX : alignY,
-
-    // Axis
-    flexDirection: axis === Axis.stack ? undefined : axis,
+    // Align & Axis
+    const { alignX, alignY } = getAlign(sty, bonusConfig.childCount)
+    const axis = sty.axis ?? (sty.row ? Axis.row : sty.stack ? Axis.stack : Axis.column)
+    htmlElement.style.justifyContent = axis === Axis.column ? alignY : alignX
+    htmlElement.style.alignItems = axis === Axis.column ? alignX : alignY
+    htmlElement.style.flexDirection = axis === Axis.stack ? `` : axis
 
     // Overflow
-    flexWrap:
+    const overflowX = sty.overflowX ?? defaultOverflowX
+    const overflowY = sty.overflowY ?? defaultOverflowY
+    htmlElement.style.flexWrap =
       axis === Axis.row
         ? overflowX === Overflow.wrap
           ? `wrap`
-          : undefined
+          : ``
         : overflowY === Overflow.wrap
         ? `wrap`
-        : undefined,
-    overflowX:
+        : ``
+    htmlElement.style.overflowX =
       overflowX === Overflow.scroll
         ? `auto` // Scroll when nesscary, and float above contents so we can make it invisible
         : overflowX === Overflow.crop
         ? `hidden`
-        : `visible`,
-    overflowY:
+        : `visible`
+    htmlElement.style.overflowY =
       overflowY === Overflow.scroll
         ? `auto` // Scroll when nesscary, and float above contents so we can make it invisible
         : overflowY === Overflow.crop
         ? `hidden`
-        : `visible`,
+        : `visible`
     // Scroll bar should be invisible
-    scrollbarWidth: [overflowX, overflowY].includes(Overflow.scroll) ? `thin` : undefined,
-    scrollbarColor: [overflowX, overflowY].includes(Overflow.scroll)
+    ;(htmlElement.style as any).scrollbarWidth = [overflowX, overflowY].includes(Overflow.scroll)
+      ? `thin`
+      : ``
+    ;(htmlElement.style as any).scrollbarColor = [overflowX, overflowY].includes(Overflow.scroll)
       ? `#e3e3e3 transparent`
-      : undefined,
-  }
-}
+      : ``
+
+    return sty
+  },
+)

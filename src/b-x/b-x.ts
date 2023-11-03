@@ -1,10 +1,10 @@
-import { DecorationSty, decorationStyler, mdColors as _mdColors } from './BoxDecoration'
+import { DecorationSty, mdColors as _mdColors } from './BoxDecoration'
 import {
   Axis as _Axis,
   defaultOverflowX,
   Overflow as _Overflow,
   Align as _Align,
-  computeBoxLayout,
+  layoutStyler,
   LayoutSty,
 } from './BoxLayout'
 import { CssProps, exists, isString } from './BoxUtils'
@@ -177,6 +177,12 @@ export class Miwi_Box extends HTMLElement {
       size: this.sty.height,
     })
 
+    layoutStyler.applyStyle(this.sty, this, {
+      parentStyle: getComputedStyle(this.parentElement ?? this),
+      childCount: this._childCount,
+      aChildsWidthGrows: someChildWidthGrows,
+      aChildsHeightGrows: someChildHeightGrows,
+    })
     applyStylePart(
       this.style,
       computeBoxSize(
@@ -191,13 +197,6 @@ export class Miwi_Box extends HTMLElement {
         this.sty.shouldLog,
       ),
     )
-    applyStylePart(this.style, computeBoxLayout(this.sty, this._childCount))
-    decorationStyler.applyStyle(this.sty, this, {
-      parentStyle: getComputedStyle(this.parentElement ?? this),
-      childCount: this._childCount,
-      aChildsWidthGrows: someChildWidthGrows,
-      aChildsHeightGrows: someChildHeightGrows,
-    })
     applyStylePart(
       this.style,
       computeTextStyle(
