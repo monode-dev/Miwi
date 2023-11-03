@@ -31,7 +31,7 @@ function combineStyleAppliers<
     htmlElement,
     bonusConfig,
   ) => {
-    const oldSty = oldStyleApplier?.(sty, htmlElement, bonusConfig) ?? {}
+    const oldSty = oldStyleApplier?.(sty, htmlElement, bonusConfig) ?? sty
     return newStyleApplier(oldSty as OldAttributes & NewAttributes, htmlElement, bonusConfig)
   }
   return {
