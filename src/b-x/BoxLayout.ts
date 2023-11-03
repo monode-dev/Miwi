@@ -1,5 +1,4 @@
-import { exists, isString } from './BoxUtils'
-import { sizeToCss } from './BoxSize'
+import { exists, isString, sizeToCss } from './BoxUtils'
 import { baseStyler } from 'src/Box/Styler'
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and reorderable lists.

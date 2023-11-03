@@ -1,32 +1,10 @@
-import { isNum, exists, isString, CssProps } from './BoxUtils'
+import { exists, isString, CssProps, sizeToCss } from './BoxUtils'
 import { Axis, LayoutSty, Overflow, defaultOverflowX, defaultOverflowY } from './BoxLayout'
 
 export type Size = number | string | FlexSize
 export type SizeSty = {
   width: Size
   height: Size
-}
-
-// scale: [positive-space, negative-space]
-// const muToRem = 1.125; //1.0625;
-export const muToRem = 1.125 //1.0625;
-export function sizeToCss<Num extends number | string | undefined>(
-  num: Num,
-): Num extends number ? string : Num {
-  if (isNum(num)) {
-    const remValue = num * muToRem
-    const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
-    const pixelValue = remValue * fontSize
-    return `${roundToString(pixelValue)}px` as any
-  } else {
-    return num as any
-  }
-}
-function roundToString(num: number, digits: number = 0): string {
-  // Sometimes there are rouding errors. adding a 0.000..01 on the end seems to reduce these.
-  const significantDecimals = num.toString().split(`.`)[1]?.length ?? 0
-  const roundingOffset = Math.pow(10, -significantDecimals - 1)
-  return (num + roundingOffset).toFixed(digits)
 }
 
 export interface FlexSize {

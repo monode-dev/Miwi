@@ -1,6 +1,5 @@
-import { exists } from './BoxUtils'
+import { exists, sizeToCss } from './BoxUtils'
 import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign, layoutStyler } from './BoxLayout'
-import { sizeToCss } from './BoxSize'
 
 export type DecorationSty = {
   cornerRadius: number | string

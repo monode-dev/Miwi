@@ -6,15 +6,8 @@ import {
   Align as _Align,
   LayoutSty,
 } from './BoxLayout'
-import { CssProps, exists, isString } from './BoxUtils'
-import {
-  SizeSty,
-  computeBoxSize,
-  Size as _Size,
-  sizeToCss as _sizeToCss,
-  isFlexSize,
-  formatRawSize,
-} from './BoxSize'
+import { CssProps, exists, isString, sizeToCss as _sizeToCss } from './BoxUtils'
+import { SizeSty, computeBoxSize, Size as _Size, isFlexSize, formatRawSize } from './BoxSize'
 import { TextSty, computeTextStyle } from './BoxText'
 import { InteractionSty, computeBoxInteraction } from './BoxInteraction'
 

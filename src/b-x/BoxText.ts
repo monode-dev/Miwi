@@ -1,6 +1,5 @@
-import { isNum, exists, CssProps } from './BoxUtils'
-import { Align, AlignSingleAxis, Overflow, _FlexAlign } from './BoxLayout'
-import { sizeToCss } from './BoxSize'
+import { exists, CssProps, sizeToCss } from './BoxUtils'
+import { AlignSingleAxis, Overflow, _FlexAlign } from './BoxLayout'
 import { sizeScaleCssVarName } from 'src/theme'
 
 export type TextSty = {
