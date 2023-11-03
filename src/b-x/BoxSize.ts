@@ -10,14 +10,16 @@ export type SizeSty = {
 // scale: [positive-space, negative-space]
 // const muToRem = 1.125; //1.0625;
 export const muToRem = 1.125 //1.0625;
-export function sizeToCss(num: number | string | undefined) {
+export function sizeToCss<Num extends number | string | undefined>(
+  num: Num,
+): Num extends number ? string : Num {
   if (isNum(num)) {
     const remValue = num * muToRem
     const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
     const pixelValue = remValue * fontSize
-    return `${roundToString(pixelValue)}px`
+    return `${roundToString(pixelValue)}px` as any
   } else {
-    return num
+    return num as any
   }
 }
 function roundToString(num: number, digits: number = 0): string {

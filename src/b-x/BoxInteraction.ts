@@ -2,6 +2,7 @@ import { exists } from 'src/utils'
 import { CssProps } from './BoxUtils'
 
 export type InteractionSty = {
+  role: string
   captureClicks: boolean
   bonusTouchArea: boolean
   cssCursor: 'pointer' | 'default'
@@ -12,6 +13,7 @@ export type InteractionSty = {
 export function computeBoxInteraction(sty: Partial<InteractionSty>): {
   cssProps: CssProps
   elementAttributes: {
+    role?: string
     onMouseEnter?: () => void
     onMouseLeave?: () => void
   }
@@ -24,6 +26,7 @@ export function computeBoxInteraction(sty: Partial<InteractionSty>): {
       cursor: sty.cssCursor,
     },
     elementAttributes: {
+      role: sty.role,
       onMouseEnter: sty.onMouseEnter,
       onMouseLeave: sty.onMouseLeave,
     },

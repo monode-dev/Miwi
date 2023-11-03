@@ -14,12 +14,12 @@ _window.miwi_globalVars = {}
 _window.miwi_globalVars.$Align = Align
 _window.miwi_globalVars.$Axis = Axis
 _window.miwi_globalVars.$Overflow = Overflow
-const globalScipt = document.createElement(`script`)
-globalScipt.innerHTML = `
+const globalScript = document.createElement(`script`)
+globalScript.innerHTML = `
 const $Align = window.miwi_globalVars.$Align;
 const $Axis = window.miwi_globalVars.$Axis;
 const $Overflow = window.miwi_globalVars.$Overflow;`
-document.body.appendChild(globalScipt)
+document.body.appendChild(globalScript)
 
 // SECTION: Theme
 declare global {
@@ -38,7 +38,7 @@ declare global {
     }
   }
 }
-const themeSciptElement = document.createElement(`script`)
+const themeScriptElement = document.createElement(`script`)
 /** TODO: Implement h1, h2, and bodyText
  * h1: {
  *   scale: `var(--miwi-h1-scale)`,
@@ -47,7 +47,7 @@ const themeSciptElement = document.createElement(`script`)
  * --miwi-h1-scale: 1.5;
  * --miwi-h1-color: var(--miwi-color-text);
  */
-themeSciptElement.innerHTML = `
+themeScriptElement.innerHTML = `
 const $theme = ${JSON.stringify({
   scale: `var(${sizeScaleCssVarName})` as any,
   colors: {
@@ -62,7 +62,7 @@ const $theme = ${JSON.stringify({
     sameAsText: `currentColor`,
   },
 } satisfies typeof $theme)};`
-document.body.appendChild(themeSciptElement)
+document.body.appendChild(themeScriptElement)
 const themeStyleElement = document.createElement(`style`)
 setTheme({})
 document.body.appendChild(themeStyleElement)

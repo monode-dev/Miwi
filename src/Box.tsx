@@ -145,6 +145,8 @@ type FlagSty = Partial<
   }
 >
 
+// TODO: Rather than parsing all props and applying defaults where needed, we should instead
+//       provide an overrideSty prop and only check and apply overrides.
 export type BoxProps = Partial<Omit<Sty, `width` | `height`>> &
   FlagSty &
   ParentProps &
