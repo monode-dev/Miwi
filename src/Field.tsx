@@ -3,8 +3,8 @@ import { Box, BoxProps, parseSty } from './Box'
 import { Row } from './Row'
 import { Icon } from './Icon'
 import { compute, sig, Sig, watchDeps, watchEffect, exists } from './utils'
-import { sizeToCss } from './b-x/b-x'
 import { Column } from './Column'
+import { sizeToCss } from './b-x/BoxUtils';
 
 export type KeyboardType =
   | 'none'

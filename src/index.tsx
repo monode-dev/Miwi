@@ -1,7 +1,7 @@
-import { Axis, Align, Overflow } from './b-x/b-x'
 import { DeepPartial } from './utils'
 import { sizeScaleCssVarName } from './theme'
 import { sizeToCss } from './b-x/BoxUtils'
+import { Align, Axis, Overflow } from './b-x/BoxLayout'
 
 // SECTION: Global variables
 declare global {

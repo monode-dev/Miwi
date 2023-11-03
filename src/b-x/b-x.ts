@@ -1,37 +1,28 @@
-import { DecorationSty, mdColors as _mdColors } from './BoxDecoration'
-import { Axis as _Axis, Overflow as _Overflow, Align as _Align, LayoutSty, stackClassName, nonStackClassName } from './BoxLayout'
-import { CssProps, exists, sizeToCss as _sizeToCss } from './BoxUtils'
-import { SizeSty, Size as _Size, isFlexSize, formatRawSize, widthGrowsClassName, heightGrowsClassName } from './BoxSize'
+import { DecorationSty, mdColors } from './BoxDecoration'
+import { Axis, Overflow, Align, LayoutSty, stackClassName, nonStackClassName } from './BoxLayout'
+import { CssProps, exists, sizeToCss } from './BoxUtils'
+import {
+  SizeSty,
+  Size,
+  isFlexSize,
+  formatRawSize,
+  widthGrowsClassName,
+  heightGrowsClassName,
+} from './BoxSize'
 import { TextSty } from './BoxText'
 import { InteractionSty, bonusTouchAreaClassName, interactionStyler } from './BoxInteraction'
 
-export type _Sty = SizeSty &
-  DecorationSty &
-  LayoutSty &
-  TextSty &
-  InteractionSty & {
-    shouldLog?: boolean
-  }
-export type Sty = Partial<_Sty>
-export type Align = _Align
-export const Align = _Align
-export type Axis = _Axis
-export const Axis = _Axis
-export type Overflow = _Overflow
-export const Overflow = _Overflow
-export const mdColors = _mdColors
-export type Size = _Size
-export const sizeToCss = _sizeToCss
+export type Sty = Partial<
+  SizeSty &
+    DecorationSty &
+    LayoutSty &
+    TextSty &
+    InteractionSty & {
+      shouldLog?: boolean
+    }
+>
 
-// function applyStylePart(selfStyle: CSSStyleDeclaration, updates: CssProps) {
-//   for (const key of Object.keys(updates)) {
-//     if (updates[key] !== selfStyle.getPropertyValue(key)) {
-//       selfStyle.setProperty(key, (updates[key] ?? ``).toString())
-//     }
-//   }
-// }
-
-// Cutom Element
+// Custom Element
 export class Miwi_Box extends HTMLElement {
   private _parentObserver: MutationObserver
   private _parentStyle: CSSStyleDeclaration | undefined = undefined
