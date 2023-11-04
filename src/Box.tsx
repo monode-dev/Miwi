@@ -157,7 +157,7 @@ export function Box(props: BoxProps) {
       {...props}
       onClick={e => {
         if (exists(props.onClick)) {
-          e.preventDefault()
+          e.stopPropagation()
           ;(props as any).onClick?.()
         }
       }}
