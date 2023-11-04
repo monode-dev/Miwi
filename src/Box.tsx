@@ -158,6 +158,7 @@ export function Box(props: BoxProps) {
       onClick={e => {
         if (exists(props.onClick)) {
           e.stopPropagation()
+          console.log(`stopping event`)
           ;(props as any).onClick?.()
         }
       }}
