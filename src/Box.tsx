@@ -152,5 +152,16 @@ export type BoxProps = Partial<Omit<Sty, `width` | `height`>> &
   ParentProps &
   JSX.DOMAttributes<HTMLDivElement>
 export function Box(props: BoxProps) {
-  return <b-x {...props} sty={parseSty(props)} />
+  return (
+    <b-x
+      {...props}
+      onClick={e => {
+        if (exists(props.onClick)) {
+          e.preventDefault()
+          ;(props as any).onClick?.()
+        }
+      }}
+      sty={parseSty(props)}
+    />
+  )
 }
