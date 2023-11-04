@@ -108,6 +108,11 @@ fieldStyleElement.innerHTML = `
 document.body.appendChild(fieldStyleElement)
 
 export * from './b-x/b-x'
+export * from './b-x/BoxDecoration'
+export * from './b-x/BoxInteraction'
+export * from './b-x/BoxLayout'
+export * from './b-x/BoxSize'
+export * from './b-x/BoxText'
 export * from './AppBar'
 export * from './Body'
 export * from './Box'
