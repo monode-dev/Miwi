@@ -4,7 +4,7 @@ import { Row } from './Row'
 import { Icon } from './Icon'
 import { compute, sig, Sig, watchDeps, watchEffect, exists } from './utils'
 import { Column } from './Column'
-import { sizeToCss } from './b-x/BoxUtils';
+import { sizeToCss } from './b-x/BoxUtils'
 
 export type KeyboardType =
   | 'none'
@@ -199,7 +199,13 @@ export function Field(
   }
   return (
     <Row
-      onClick={props.onClick ?? (() => tryFocus())}
+      onClick={
+        props.onClick ??
+        (() => {
+          tryFocus()
+          console.log(`Field clicked!`)
+        })
+      }
       widthGrows
       height={exists(lineCount) ? scale.value * lineCount + underlineHeight.value : undefined}
       textColor={$theme.colors.text}
