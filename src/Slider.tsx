@@ -1,7 +1,6 @@
 import { Sig, sig } from './utils'
-import { Box, BoxProps, grow } from './Box'
+import { Box, BoxProps } from './Box'
 import { Row } from './Row'
-import { Stack } from './Stack';
 
 export function Slider(
   props: {
@@ -45,15 +44,15 @@ export function Slider(
   }
 
   return (
-    <div ref={slider}>
-      <Stack width={grow(1)} height={thumbHeight} alignCenterLeft>
+    <Box ref={slider}>
+      <Box alignCenterLeft widthGrows height={thumbHeight} axis={$Axis.stack}>
         <Box
-          width={grow(1)}
+          width={'100%'}
           height={trackHeight}
           cornerRadius={0.25}
           background={$theme.colors.lightHint}
         />
-        <Row width={grow(1)} height={grow(1)} alignCenterLeft>
+        <Row width={'100%'} heightGrows alignCenterLeft>
           <Box
             width={`${Math.min(
               100,
@@ -79,7 +78,7 @@ export function Slider(
             />
           </Box>
         </Row>
-      </Stack>
-    </div>
+      </Box>
+    </Box>
   )
 }
