@@ -1,5 +1,5 @@
 import { Show, onMount } from 'solid-js'
-import { Box, BoxProps, parseSty } from './Box'
+import { Box, BoxProps } from './Box'
 import { Row } from './Row'
 import { Icon } from './Icon'
 import { compute, sig, Sig, watchDeps, watchEffect, exists } from './utils'
@@ -196,13 +196,7 @@ export function Field(
   return (
     <Row
       background="red"
-      onClick={
-        props.onClick ??
-        (() => {
-          tryFocus()
-          // console.log(`Field clicked!`)
-        })
-      }
+      onClick={() => tryFocus()}
       widthGrows
       height={exists(lineCount) ? scale.value * lineCount + underlineHeight.value : undefined}
       textColor={$theme.colors.text}
