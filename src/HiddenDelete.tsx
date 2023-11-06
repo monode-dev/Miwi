@@ -29,20 +29,22 @@ export function HiddenDelete(
       openButtonHeight={scale}
       isOpenSig={isOpen}
     >
-      <Row widthGrows scale={scale} onClick={() => (isOpen.value = false)}>
-        <Txt widthGrows>Cancel</Txt>
+      <Row widthGrows scale={scale} alignCenterLeft onClick={() => (isOpen.value = false)}>
+        <Txt>Cancel</Txt>
         <Icon iconPath={mdiClose} />
       </Row>
       {props.children}
       <Row
+        widthGrows
         scale={scale}
+        alignCenterLeft
         onClick={() => {
           isOpen.value = false
           props.onDelete?.()
         }}
         textColor={$theme.colors.error}
       >
-        <Txt widthGrows>Delete</Txt>
+        <Txt>Delete</Txt>
         <Icon iconPath={mdiDelete} />
       </Row>
     </Modal>

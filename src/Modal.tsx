@@ -1,7 +1,7 @@
 import { Sig, exists, sig, watchDeps } from './utils'
 import { Box, BoxProps } from './Box'
 import { Stack } from './Stack'
-import { JSX, Show, on, onCleanup, onMount } from 'solid-js'
+import { JSX, Show, onCleanup, onMount } from 'solid-js'
 import { Size } from './b-x/BoxSize'
 
 export function Modal<T>(
@@ -15,7 +15,7 @@ export function Modal<T>(
   } & BoxProps,
 ) {
   // Modal
-  const openButton = (<div>{props.openButton}</div>) as HTMLElement
+  const openButton = props.openButton as HTMLElement
   let modal: HTMLElement | undefined = undefined
 
   //
