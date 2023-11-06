@@ -1,7 +1,7 @@
 import { Sig, exists, sig, watchDeps } from './utils'
 import { Box, BoxProps } from './Box'
 import { Stack } from './Stack'
-import { JSX, Show } from 'solid-js'
+import { JSX, Show, on, onCleanup, onMount } from 'solid-js'
 import { Size } from './b-x/BoxSize'
 
 export function Modal<T>(
@@ -51,12 +51,19 @@ export function Modal<T>(
 
   // Close the dropdown when the user clicks outside of it
   function closeOnClickOutside(e: MouseEvent) {
-    console.log(`checking click outside`)
+    if (!_isOpen.value) return
     if (modal?.contains(e.target as any) ?? false) return
     if (openButton.contains(e.target as any)) return
     closeDropDown()
     e.stopPropagation()
   }
+
+  onMount(() => {
+    document.addEventListener(`click`, closeOnClickOutside)
+    onCleanup(() => {
+      document.removeEventListener(`click`, closeOnClickOutside)
+    })
+  })
 
   //
   return (
@@ -104,23 +111,6 @@ export function Modal<T>(
             <Box height={props.openButtonHeight} captureClicks={false} />
           </Show>
         </Box>
-      </Show>
-
-      {/* Detect Outside Click */}
-      <Show when={_isOpen.value}>
-        <div
-          onClick={closeOnClickOutside}
-          style={{
-            position: `fixed`,
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            width: `100vw`,
-            height: `100vh`,
-            ['z-index']: 4,
-          }}
-        />
       </Show>
     </Stack>
   )
