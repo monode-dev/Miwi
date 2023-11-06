@@ -90,9 +90,9 @@ const styProps = [
 //   return parsedSty
 // }
 export function parseSty(props: BoxProps): Partial<Sty> {
-  if (props.background === 'red') {
-    console.log(props.onClick)
-  }
+  // if (props.background === 'red') {
+  //   console.log(props.onClick)
+  // }
   const parsedSty: Partial<Sty> = {}
   for (const key of styProps) {
     ;(parsedSty as any)[key] = (props as any)?.[key]
