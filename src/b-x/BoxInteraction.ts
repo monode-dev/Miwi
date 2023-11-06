@@ -20,6 +20,7 @@ export const interactionStyler = textStyler.addStyler<InteractionSty>((sty, html
   htmlElement.onclick = captureClicks
     ? (e: any) => {
         e.stopPropagation()
+        console.log(`clicked!`, htmlElement)
         ;(sty as any).onClick?.()
       }
     : null
