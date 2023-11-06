@@ -14,14 +14,16 @@ export const bonusTouchAreaClassName = `b-x-bonus-touch-area`
 
 export const interactionStyler = textStyler.addStyler<InteractionSty>((sty, htmlElement) => {
   htmlElement.role = sty.role ?? ``
-  const isClickable = exists((sty as any).onClick)
-  htmlElement.style.pointerEvents = isClickable || sty.preventClickPropagation ? `auto` : `none`
-  htmlElement.onclick = sty.preventClickPropagation
+  const onClick: null | (() => void) = (sty as any).onClick ?? null
+  const isClickable = exists(onClick)
+  const preventClickPropagation = sty.preventClickPropagation ?? isClickable
+  htmlElement.style.pointerEvents = preventClickPropagation ? `auto` : `none`
+  htmlElement.onclick = preventClickPropagation
     ? (e: any) => {
         e.stopPropagation()
-        ;(sty as any).onClick?.()
+        onClick?.()
       }
-    : (sty as any).onClick ?? null
+    : onClick
   htmlElement.style.cursor = sty.cssCursor ?? isClickable ? `pointer` : `default`
   htmlElement.onmouseenter = sty.onMouseEnter ?? null
   htmlElement.onmouseleave = sty.onMouseLeave ?? null
