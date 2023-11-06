@@ -195,7 +195,6 @@ export function Field(
   }
   return (
     <Row
-      background="red"
       onClick={() => tryFocus()}
       widthGrows
       height={exists(lineCount) ? scale.value * lineCount + underlineHeight.value : undefined}
