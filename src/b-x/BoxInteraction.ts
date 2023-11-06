@@ -20,6 +20,7 @@ export const interactionStyler = textStyler.addStyler<InteractionSty>((sty, html
   htmlElement.style.pointerEvents = preventClickPropagation ? `auto` : `none`
   htmlElement.onclick = preventClickPropagation
     ? (e: MouseEvent) => {
+        console.log(e)
         e.stopPropagation()
         onClick?.(e)
       }
