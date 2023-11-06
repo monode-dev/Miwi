@@ -17,6 +17,12 @@ export const interactionStyler = textStyler.addStyler<InteractionSty>((sty, html
   const captureClicks =
     sty.captureClicks ?? (exists((sty as any).background) || exists((sty as any).onClick))
   htmlElement.style.pointerEvents = captureClicks ? `auto` : `none`
+  htmlElement.onclick = captureClicks
+    ? (e: any) => {
+        e.stopPropagation()
+        ;(sty as any).onClick?.()
+      }
+    : null
   htmlElement.style.cursor = sty.cssCursor ?? ``
   htmlElement.onmouseenter = sty.onMouseEnter ?? null
   htmlElement.onmouseleave = sty.onMouseLeave ?? null
