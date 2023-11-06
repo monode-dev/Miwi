@@ -30,7 +30,7 @@ export function AppBar(
       <Column
         widthGrows
         background={props.background ?? $theme.colors.primary}
-        shadowSize={1.25}
+        shadowSize={props.shadowSize ?? 1.25}
         shadowDirection={$Align.bottomCenter}
         alignBottomCenter
         textColor={$theme.colors.accent}
