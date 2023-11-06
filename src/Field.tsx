@@ -37,14 +37,10 @@ export function Field(
     formatInput?: (nextInput: string, event: InputEvent) => FormattedResult
   } & BoxProps,
 ) {
-  const sty = parseSty(props)
-
   const value = props.valueSig ?? sig(``)
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined
   const inputElementHasFocus = sig(props.hasFocusSig ?? false)
-  const scale = compute(
-    () => (sty.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : 1)) as number,
-  )
+  const scale = compute(() => props.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : 1))
 
   // Input
   function setTempValue(newValue: string | undefined | null) {
@@ -199,7 +195,6 @@ export function Field(
   }
   return (
     <Row
-      {...sty}
       background="red"
       onClick={
         props.onClick ??
@@ -214,6 +209,7 @@ export function Field(
       padBetween={0.25}
       overflowY={$Overflow.forceStretchParent}
       alignTopLeft
+      {...props}
       scale={scale.value}
     >
       <Show when={exists(props.iconPath) && props.iconPath !== ``}>
