@@ -61,7 +61,7 @@ export function Modal<T>(
   }
 
   onMount(() => {
-    document.addEventListener(`click`, closeOnClickOutside)
+    document.addEventListener(`click`, closeOnClickOutside, true)
     onCleanup(() => {
       document.removeEventListener(`click`, closeOnClickOutside)
     })
