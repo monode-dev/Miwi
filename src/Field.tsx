@@ -199,7 +199,7 @@ export function Field(
   }
   return (
     <Row
-      // {...sty}
+      {...sty}
       background="red"
       onClick={
         props.onClick ??
