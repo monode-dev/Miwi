@@ -197,10 +197,9 @@ export function Field(
     }
     return lineCount > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />
   }
-  console.log((sty as any).onClick)
   return (
     <Row
-      {...sty}
+      // {...sty}
       background="red"
       onClick={
         props.onClick ??
