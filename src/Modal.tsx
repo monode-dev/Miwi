@@ -51,12 +51,10 @@ export function Modal<T>(
 
   // Close the dropdown when the user clicks outside of it
   function closeOnClickOutside(e: MouseEvent) {
-    console.log(`checking closeOnClickOutside`)
     if (!_isOpen.value) return
     if (modal?.contains(e.target as any) ?? false) return
     if (openButton.contains(e.target as any)) return
     e.stopPropagation()
-    console.log(`about to close`)
     closeDropDown()
   }
 
