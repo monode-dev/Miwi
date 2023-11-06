@@ -96,6 +96,7 @@ export function Modal<T>(
               shadowSize={1}
               background={$theme.colors.accent}
               alignTopLeft
+              preventClickPropagation
             >
               {props.children}
             </Box>
