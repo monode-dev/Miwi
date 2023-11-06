@@ -200,6 +200,7 @@ export function Field(
   console.log((sty as any).onClick)
   return (
     <Row
+      {...sty}
       background="red"
       onClick={
         props.onClick ??
@@ -214,7 +215,6 @@ export function Field(
       padBetween={0.25}
       overflowY={$Overflow.forceStretchParent}
       alignTopLeft
-      {...sty}
       scale={scale.value}
     >
       <Show when={exists(props.iconPath) && props.iconPath !== ``}>
