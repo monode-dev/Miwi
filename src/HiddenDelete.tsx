@@ -17,7 +17,13 @@ export function HiddenDelete(
   return (
     <Modal
       openButton={
-        <Icon iconPath={mdiDotsVertical} onClick={() => (isOpen.value = !isOpen.value)} />
+        <Icon
+          iconPath={mdiDotsVertical}
+          onClick={() => {
+            console.log(`clicked`)
+            isOpen.value = !isOpen.value
+          }}
+        />
       }
       openButtonWidth={scale}
       openButtonHeight={scale}
