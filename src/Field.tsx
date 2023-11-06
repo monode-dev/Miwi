@@ -43,7 +43,7 @@ export function Field(
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined
   const inputElementHasFocus = sig(props.hasFocusSig ?? false)
   const scale = compute(
-    () => (sty.scale as number) ?? (props.heading ? 1.5 : props.title ? 1.25 : 1),
+    () => (sty.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : 1)) as number,
   )
 
   // Input
@@ -56,7 +56,7 @@ export function Field(
     }
   }
   function getTempValue() {
-    return props.tempValueSig?.value ?? value.value ?? ``
+    return props.tempValueSig?.value ?? value.value
   }
   watchDeps([value], () => {
     if (!props.hasFocusSig) {
@@ -69,7 +69,7 @@ export function Field(
     let position = null
 
     if (exists(props.formatInput)) {
-      let formattedResult = props.formatInput(newInput, event)
+      const formattedResult = props.formatInput(newInput, event)
       newInput = formattedResult.input
       position = formattedResult.caret
     }
@@ -108,7 +108,7 @@ export function Field(
 
   // Focus
   let valueOnFocus = value.value
-  const handleFocus = (e: FocusEvent) => {
+  const handleFocus = () => {
     valueOnFocus = value.value
     inputElementHasFocus.value = true
     if (exists(props.hasFocusSig)) {
@@ -116,7 +116,7 @@ export function Field(
     }
   }
 
-  const handleBlur = (e: FocusEvent) => {
+  const handleBlur = () => {
     const tempValueIsDifferentThanProp = getTempValue() !== value.value
     const haveTypedSomething = getTempValue() !== valueOnFocus
     if (haveTypedSomething && tempValueIsDifferentThanProp) {
@@ -198,6 +198,7 @@ export function Field(
     return lineCount > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />
   }
   // console.log(props.onClick)
+  console.log('Hello World')
   return (
     <Row
       background="red"
@@ -205,7 +206,7 @@ export function Field(
         props.onClick ??
         (() => {
           tryFocus()
-          console.log(`Field clicked!`)
+          // console.log(`Field clicked!`)
         })
       }
       widthGrows
