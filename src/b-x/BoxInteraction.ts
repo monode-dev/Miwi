@@ -19,7 +19,7 @@ export const interactionStyler = textStyler.addStyler<InteractionSty>((sty, html
   htmlElement.style.pointerEvents = captureClicks ? `auto` : `none`
   htmlElement.onclick = captureClicks
     ? (e: any) => {
-        e.stopPropagation()
+        // e.stopPropagation()
         ;(sty as any).onClick?.()
       }
     : null
