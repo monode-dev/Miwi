@@ -197,6 +197,7 @@ export function Field(
     }
     return lineCount > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />
   }
+  console.log(props.onClick)
   return (
     <Row
       background="red"
