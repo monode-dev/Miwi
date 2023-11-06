@@ -1,5 +1,5 @@
 import { sig } from './utils'
-import { Box, BoxProps, parseSty } from './Box'
+import { BoxProps } from './Box'
 import { Icon } from './Icon'
 import { Modal } from './Modal'
 import { Row } from './Row'
@@ -11,33 +11,30 @@ export function HiddenDelete(
     onDelete?: () => void
   } & BoxProps,
 ) {
-  const sty = parseSty(props)
-  const scale = sty.scale ?? 1
+  const scale = props.scale ?? 1
   const isOpen = sig(false)
   return (
     <Modal
       openButton={
         <Icon
+          size={scale}
           iconPath={mdiDotsVertical}
-          onClick={() => {
-            console.log(`clicked`)
-            isOpen.value = !isOpen.value
-          }}
+          onClick={() => (isOpen.value = !isOpen.value)}
         />
       }
       openButtonWidth={scale}
       openButtonHeight={scale}
       isOpenSig={isOpen}
     >
-      <Row widthGrows scale={scale} alignCenterLeft onClick={() => (isOpen.value = false)}>
+      <Row scale={scale} alignCenterLeft padBetween={0.25} onClick={() => (isOpen.value = false)}>
         <Txt>Cancel</Txt>
         <Icon iconPath={mdiClose} />
       </Row>
       {props.children}
       <Row
-        widthGrows
         scale={scale}
         alignCenterLeft
+        padBetween={0.25}
         onClick={() => {
           isOpen.value = false
           props.onDelete?.()
