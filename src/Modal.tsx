@@ -78,15 +78,10 @@ export function Modal<T>(
 
       {/* Modal */}
       <Show when={_isOpen.value}>
-        <Box
-          width={props.modalWidth ?? -1}
-          alignTopLeft
-          overflowY={$Overflow.forceStretchParent}
-          captureClicks={false}
-        >
+        <Box width={props.modalWidth ?? -1} alignTopLeft overflowY={$Overflow.forceStretchParent}>
           <Show when={!shouldOpenUpwards.value}>
-            <Box height={props.openButtonHeight} captureClicks={false} />
-            <Box height={0.5} captureClicks={false} />
+            <Box height={props.openButtonHeight} />
+            <Box height={0.5} />
           </Show>
           <div style="z-index: 10000;" ref={el => (modal = el)}>
             <Box
@@ -101,14 +96,13 @@ export function Modal<T>(
               shadowSize={1}
               background={$theme.colors.accent}
               alignTopLeft
-              captureClicks={true}
             >
               {props.children}
             </Box>
           </div>
           <Show when={shouldOpenUpwards.value}>
-            <Box height={0.5} captureClicks={false} />
-            <Box height={props.openButtonHeight} captureClicks={false} />
+            <Box height={0.5} />
+            <Box height={props.openButtonHeight} />
           </Show>
         </Box>
       </Show>

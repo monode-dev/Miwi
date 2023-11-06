@@ -33,7 +33,7 @@ const styProps = [
   'shadowSize',
   'shadowDirection',
   'zIndex',
-  'captureClicks',
+  'preventClickPropagation',
   'onClick',
   'align',
   'alignX',
