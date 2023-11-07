@@ -40,35 +40,37 @@ export const mdColors = {
 } as const
 
 // We might be able to infer everything we need from these compute functions, which could make updates even easier to make. If we did this, then we'd want to use another function to generate these compute functions.
-export const decorationStyler = sizeStyler.addStyler<DecorationSty>((sty, htmlElement) => {
+export const decorationStyler = sizeStyler.addStyler<DecorationSty>((rawProps, htmlElement) => {
   // Corner Radius
   const cornerRadiuses = [
-    sty.cornerRadiusTopLeft ?? sty.cornerRadius ?? 0,
-    sty.cornerRadiusTopRight ?? sty.cornerRadius ?? 0,
-    sty.cornerRadiusBottomRight ?? sty.cornerRadius ?? 0,
-    sty.cornerRadiusBottomLeft ?? sty.cornerRadius ?? 0,
+    rawProps.cornerRadiusTopLeft ?? rawProps.cornerRadius ?? 0,
+    rawProps.cornerRadiusTopRight ?? rawProps.cornerRadius ?? 0,
+    rawProps.cornerRadiusBottomRight ?? rawProps.cornerRadius ?? 0,
+    rawProps.cornerRadiusBottomLeft ?? rawProps.cornerRadius ?? 0,
   ]
   htmlElement.style.borderRadius = cornerRadiuses.every(r => r === 0)
     ? ``
     : cornerRadiuses.map(sizeToCss).join(` `)
 
   // Outline
-  htmlElement.style.outline = exists(sty.outlineSize)
-    ? `${sizeToCss(sty.outlineSize)} solid ${sty.outlineColor}`
+  htmlElement.style.outline = exists(rawProps.outlineSize)
+    ? `${sizeToCss(rawProps.outlineSize)} solid ${rawProps.outlineColor}`
     : ``
-  htmlElement.style.outlineOffset = exists(sty.outlineSize) ? `-${sizeToCss(sty.outlineSize)}` : ``
+  htmlElement.style.outlineOffset = exists(rawProps.outlineSize)
+    ? `-${sizeToCss(rawProps.outlineSize)}`
+    : ``
 
   // Background
   const backgroundIsImage =
-    (sty.background?.startsWith(`data:image`) || sty.background?.startsWith(`/`)) ?? false
-  htmlElement.style.backgroundColor = backgroundIsImage ? `` : sty.background ?? ``
-  htmlElement.style.backgroundImage = backgroundIsImage ? `url('${sty.background}')` : ``
+    (rawProps.background?.startsWith(`data:image`) || rawProps.background?.startsWith(`/`)) ?? false
+  htmlElement.style.backgroundColor = backgroundIsImage ? `` : rawProps.background ?? ``
+  htmlElement.style.backgroundImage = backgroundIsImage ? `url('${rawProps.background}')` : ``
   htmlElement.style.backgroundSize = `cover`
   htmlElement.style.backgroundPosition = `center`
   htmlElement.style.backgroundRepeat = `no-repeat`
 
   // Shadow
-  const alignShadowDirection: ShadowDirection = sty.shadowDirection ?? Align.bottomRight
+  const alignShadowDirection: ShadowDirection = rawProps.shadowDirection ?? Align.bottomRight
   const shadowDirection = {
     x:
       alignShadowDirection.alignX === _FlexAlign.start
@@ -83,13 +85,12 @@ export const decorationStyler = sizeStyler.addStyler<DecorationSty>((sty, htmlEl
         ? 0
         : -1,
   }
-  htmlElement.style.boxShadow = exists(sty.shadowSize)
-    ? `${sizeToCss(0.09 * sty.shadowSize * shadowDirection.x)} ${sizeToCss(
-        -0.09 * sty.shadowSize * shadowDirection.y,
-      )} ${sizeToCss(0.4 * sty.shadowSize)} 0 #00000045`
+  htmlElement.style.boxShadow = exists(rawProps.shadowSize)
+    ? `${sizeToCss(0.09 * rawProps.shadowSize * shadowDirection.x)} ${sizeToCss(
+        -0.09 * rawProps.shadowSize * shadowDirection.y,
+      )} ${sizeToCss(0.4 * rawProps.shadowSize)} 0 #00000045`
     : ``
 
   // Z-Index
-  htmlElement.style.zIndex = sty.zIndex?.toString() ?? ``
-  return sty
+  htmlElement.style.zIndex = rawProps.zIndex?.toString() ?? ``
 })

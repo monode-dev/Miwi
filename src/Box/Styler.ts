@@ -1,44 +1,60 @@
 type CustomHtmlAttributes = {
   [key: string]: any
 }
+// TODO: overrideProps
 type ApplyStyle<
-  NewAttributes extends CustomHtmlAttributes,
-  OldAttributes extends CustomHtmlAttributes,
+  RawProps extends CustomHtmlAttributes,
+  OldNormalizedProps extends CustomHtmlAttributes,
+  NewNormalizedProps extends CustomHtmlAttributes | void,
 > = (
-  mySty: Partial<OldAttributes & NewAttributes>,
+  rawProps: Partial<RawProps>,
   htmlElement: HTMLElement,
-  bonusConfig: Readonly<{
-    parentStyle?: CSSStyleDeclaration
-    parentElement?: HTMLElement
-    childCount: number
-    aChildsWidthGrows: boolean
-    aChildsHeightGrows: boolean
-  }>,
-) => Partial<NewAttributes & OldAttributes>
+  bonusConfig: {
+    readonly parentStyle?: CSSStyleDeclaration
+    readonly parentElement?: HTMLElement
+    readonly childCount: number
+    readonly aChildsWidthGrows: boolean
+    readonly aChildsHeightGrows: boolean
+    normalizedProps: OldNormalizedProps
+  },
+) => NewNormalizedProps
 
-export const baseStyler = combineStyleAppliers<{}, {}>(mySty => {
-  return mySty
+export const baseStyler = combineStyleAppliers<{}, {}, {}, {}>(unparsedAttributes => {
+  return unparsedAttributes
 })
 
 function combineStyleAppliers<
-  NewAttributes extends CustomHtmlAttributes,
-  OldAttributes extends CustomHtmlAttributes,
+  OldRawProps extends CustomHtmlAttributes,
+  NewRawProps extends CustomHtmlAttributes,
+  OldNormalizedProps extends CustomHtmlAttributes,
+  NewNormalizedProps extends CustomHtmlAttributes | void,
 >(
-  newStyleApplier: ApplyStyle<NewAttributes, OldAttributes>,
-  oldStyleApplier?: ApplyStyle<OldAttributes, {}>,
+  newStyleApplier: ApplyStyle<NewRawProps, OldNormalizedProps, NewNormalizedProps>,
+  oldStyleApplier?: ApplyStyle<OldRawProps, {}, OldNormalizedProps>,
 ) {
-  const combinedStyleApplier: ApplyStyle<NewAttributes & OldAttributes, {}> = (
-    sty,
-    htmlElement,
-    bonusConfig,
-  ) => {
-    const oldSty = oldStyleApplier?.(sty, htmlElement, bonusConfig) ?? sty
-    return newStyleApplier(oldSty as OldAttributes & NewAttributes, htmlElement, bonusConfig)
+  const combinedStyleApplier: ApplyStyle<
+    OldRawProps & NewRawProps,
+    {},
+    OldNormalizedProps & (NewNormalizedProps extends void ? {} : NewNormalizedProps)
+  > = (rawProps, htmlElement, bonusConfig) => {
+    const oldNormalizedProps =
+      oldStyleApplier?.(rawProps, htmlElement, bonusConfig) ?? bonusConfig.normalizedProps
+    for (const key in oldNormalizedProps) {
+      ;(bonusConfig as any).normalizedProps[key] = (oldNormalizedProps as any)[key]
+    }
+    return newStyleApplier(rawProps, htmlElement, bonusConfig as any) as any
   }
   return {
     applyStyle: combinedStyleApplier,
-    addStyler: <SubAttributes extends CustomHtmlAttributes>(
-      subStyleApplier: ApplyStyle<SubAttributes, NewAttributes & OldAttributes>,
+    addStyler: <
+      SubRawProps extends CustomHtmlAttributes,
+      SubNormalizedProps extends CustomHtmlAttributes | void = void,
+    >(
+      subStyleApplier: ApplyStyle<
+        SubRawProps,
+        OldNormalizedProps & (NewNormalizedProps extends void ? {} : NewNormalizedProps),
+        SubNormalizedProps
+      >,
     ) => {
       return combineStyleAppliers(subStyleApplier, combinedStyleApplier)
     },

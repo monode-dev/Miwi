@@ -27,35 +27,41 @@ export type TextSty = {
 }
 
 // Text Styler
-export const textStyler = decorationStyler.addStyler<TextSty>((sty, htmlElement) => {
-  htmlElement.style.fontFamily = `inherit` //`Roboto`;
-  htmlElement.style.setProperty(sizeScaleCssVarName, sizeToCss(sty.scale) ?? ``)
-  htmlElement.style.fontSize = exists(sty.scale) ? `var(${sizeScaleCssVarName})` : ``
-  htmlElement.style.fontWeight = exists(sty.boldText) ? (sty.boldText ? `bold` : `normal`) : ``
-  htmlElement.style.fontStyle = exists(sty.italicizeText)
-    ? sty.italicizeText
-      ? `italic`
-      : `normal`
-    : ``
-  htmlElement.style.textDecoration = exists(sty.underlineText)
-    ? sty.underlineText
-      ? `underline`
-      : `none`
-    : ``
-  htmlElement.style.textAlign =
-    sty.alignX === _FlexAlign.start
-      ? `left`
-      : sty.alignX === _FlexAlign.end
-      ? `right`
-      : // We assume for now that all other aligns cam be treated as center
-        `center`
-  htmlElement.style.lineHeight = sty.scale === undefined ? `` : sizeToCss(sty.scale)
-  // whiteSpace cascades, so we need to explicity set it.
-  htmlElement.style.whiteSpace =
-    sty.overflowX === Overflow.crop || sty.overflowX === Overflow.forceStretchParent
-      ? `nowrap`
-      : `normal`
-  // textOverflow: sty.useEllipsisForOverflow ?? false ? `ellipsis` : undefined,
-  htmlElement.style.color = sty.textColor ?? ``
-  return sty
-})
+export const textStyler = decorationStyler.addStyler<TextSty>(
+  (rawProps, htmlElement, bonusConfig) => {
+    htmlElement.style.fontFamily = `inherit` //`Roboto`;
+    htmlElement.style.setProperty(sizeScaleCssVarName, sizeToCss(rawProps.scale) ?? ``)
+    htmlElement.style.fontSize = exists(rawProps.scale) ? `var(${sizeScaleCssVarName})` : ``
+    htmlElement.style.fontWeight = exists(rawProps.boldText)
+      ? rawProps.boldText
+        ? `bold`
+        : `normal`
+      : ``
+    htmlElement.style.fontStyle = exists(rawProps.italicizeText)
+      ? rawProps.italicizeText
+        ? `italic`
+        : `normal`
+      : ``
+    htmlElement.style.textDecoration = exists(rawProps.underlineText)
+      ? rawProps.underlineText
+        ? `underline`
+        : `none`
+      : ``
+    htmlElement.style.textAlign =
+      bonusConfig.normalizedProps.alignX === _FlexAlign.start
+        ? `left`
+        : bonusConfig.normalizedProps.alignX === _FlexAlign.end
+        ? `right`
+        : // We assume for now that all other aligns cam be treated as center
+          `center`
+    htmlElement.style.lineHeight = rawProps.scale === undefined ? `` : sizeToCss(rawProps.scale)
+    // whiteSpace cascades, so we need to explicity set it.
+    htmlElement.style.whiteSpace =
+      bonusConfig.normalizedProps.overflowX === Overflow.crop ||
+      bonusConfig.normalizedProps.overflowX === Overflow.forceStretchParent
+        ? `nowrap`
+        : `normal`
+    // textOverflow: sty.useEllipsisForOverflow ?? false ? `ellipsis` : undefined,
+    htmlElement.style.color = rawProps.textColor ?? ``
+  },
+)

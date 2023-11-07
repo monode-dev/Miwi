@@ -249,24 +249,35 @@ export const Align = {
 } as const
 
 // Layout Styler
-export const layoutStyler = baseStyler.addStyler<LayoutSty>((sty, htmlElement, bonusConfig) => {
+export const layoutStyler = baseStyler.addStyler<
+  LayoutSty,
+  {
+    alignX: AlignSingleAxis
+    overflowX: Overflow
+  }
+>((rawProps, htmlElement, bonusConfig) => {
   // Pad
   const padEachSide = [
-    sty.padTop ?? sty.padAroundY ?? sty.padAround ?? sty.pad ?? 0,
-    sty.padRight ?? sty.padAroundX ?? sty.padAround ?? sty.pad ?? 0,
-    sty.padBottom ?? sty.padAroundY ?? sty.padAround ?? sty.pad ?? 0,
-    sty.padLeft ?? sty.padAroundX ?? sty.padAround ?? sty.pad ?? 0,
+    rawProps.padTop ?? rawProps.padAroundY ?? rawProps.padAround ?? rawProps.pad ?? 0,
+    rawProps.padRight ?? rawProps.padAroundX ?? rawProps.padAround ?? rawProps.pad ?? 0,
+    rawProps.padBottom ?? rawProps.padAroundY ?? rawProps.padAround ?? rawProps.pad ?? 0,
+    rawProps.padLeft ?? rawProps.padAroundX ?? rawProps.padAround ?? rawProps.pad ?? 0,
   ]
   htmlElement.style.padding = padEachSide.every(x => x === 0)
     ? ``
     : padEachSide.map(sizeToCss).join(` `)
   // NOTE: We want pad between to cascade, but not pad around.
-  htmlElement.style.rowGap = sizeToCss(sty.padBetweenY ?? sty.padBetween ?? sty.pad ?? `inherit`)
-  htmlElement.style.columnGap = sizeToCss(sty.padBetweenX ?? sty.padBetween ?? sty.pad ?? `inherit`)
+  htmlElement.style.rowGap = sizeToCss(
+    rawProps.padBetweenY ?? rawProps.padBetween ?? rawProps.pad ?? `inherit`,
+  )
+  htmlElement.style.columnGap = sizeToCss(
+    rawProps.padBetweenX ?? rawProps.padBetween ?? rawProps.pad ?? `inherit`,
+  )
 
   // Align & Axis
-  const { alignX, alignY } = getAlign(sty, bonusConfig.childCount)
-  const axis = sty.axis ?? (sty.row ? Axis.row : sty.stack ? Axis.stack : Axis.column)
+  const { alignX, alignY } = getAlign(rawProps, bonusConfig.childCount)
+  const axis =
+    rawProps.axis ?? (rawProps.row ? Axis.row : rawProps.stack ? Axis.stack : Axis.column)
   htmlElement.style.justifyContent = axis === Axis.column ? alignY : alignX
   htmlElement.style.alignItems = axis === Axis.column ? alignX : alignY
   htmlElement.style.flexDirection = axis === Axis.stack ? `` : axis
@@ -274,8 +285,8 @@ export const layoutStyler = baseStyler.addStyler<LayoutSty>((sty, htmlElement, b
   htmlElement.classList.toggle(nonStackClassName, axis !== Axis.stack)
 
   // Overflow
-  const overflowX = sty.overflowX ?? defaultOverflowX
-  const overflowY = sty.overflowY ?? defaultOverflowY
+  const overflowX = rawProps.overflowX ?? defaultOverflowX
+  const overflowY = rawProps.overflowY ?? defaultOverflowY
   htmlElement.style.flexWrap =
     axis === Axis.row
       ? overflowX === Overflow.wrap
@@ -304,5 +315,8 @@ export const layoutStyler = baseStyler.addStyler<LayoutSty>((sty, htmlElement, b
     ? `#e3e3e3 transparent`
     : ``
 
-  return sty
+  return {
+    alignX,
+    overflowX,
+  }
 })

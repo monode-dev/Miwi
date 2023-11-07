@@ -62,14 +62,14 @@ export const widthGrowsClassName = `b-x-width-grows`
 export const heightGrowsClassName = `b-x-height-grows`
 
 // Size Styler
-export const sizeStyler = layoutStyler.addStyler<SizeSty>((sty, htmlElement, bonusConfig) => {
+export const sizeStyler = layoutStyler.addStyler<SizeSty>((rawProps, htmlElement, bonusConfig) => {
   const formattedWidth = formatRawSize({
     someChildGrows: bonusConfig.aChildsWidthGrows,
-    size: sty.width,
+    size: rawProps.width,
   })
   const formattedHeight = formatRawSize({
     someChildGrows: bonusConfig.aChildsHeightGrows,
-    size: sty.height,
+    size: rawProps.height,
   })
   const parentAxis = bonusConfig.parentStyle?.flexDirection ?? Axis.column
   const [exactWidth, wMin, wMax, widthGrows] = computeSizeInfo({
@@ -190,5 +190,4 @@ export const sizeStyler = layoutStyler.addStyler<SizeSty>((sty, htmlElement, bon
   //     }
   //   }
   // }
-  return sty
 })
