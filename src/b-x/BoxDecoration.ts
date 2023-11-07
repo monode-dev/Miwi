@@ -1,6 +1,5 @@
 import { exists, sizeToCss } from './BoxUtils'
 import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign } from './BoxLayout'
-import { sizeStyler } from './BoxSize'
 
 export type DecorationSty = {
   cornerRadius: number | string
@@ -27,7 +26,7 @@ export const mdColors = {
   red: `#f44336ff`,
   orange: `#ff9800ff`,
   yellow: `#ffea00ff`,
-  dataplateyellow: '#f2b212', // Added by Jorge to Dataplate project.
+  dataplateyellow: '#f2b212',
   green: `#4caf50ff`,
   teal: `#009688ff`,
   blue: `#2196f3ff`,
@@ -40,37 +39,37 @@ export const mdColors = {
 } as const
 
 // We might be able to infer everything we need from these compute functions, which could make updates even easier to make. If we did this, then we'd want to use another function to generate these compute functions.
-export const decorationStyler = sizeStyler.addStyler<DecorationSty>((attributes, htmlElement) => {
+export function applyDecorationStyle(props: Partial<DecorationSty>, htmlElement: HTMLElement) {
   // Corner Radius
   const cornerRadiuses = [
-    attributes.cornerRadiusTopLeft ?? attributes.cornerRadius ?? 0,
-    attributes.cornerRadiusTopRight ?? attributes.cornerRadius ?? 0,
-    attributes.cornerRadiusBottomRight ?? attributes.cornerRadius ?? 0,
-    attributes.cornerRadiusBottomLeft ?? attributes.cornerRadius ?? 0,
+    props.cornerRadiusTopLeft ?? props.cornerRadius ?? 0,
+    props.cornerRadiusTopRight ?? props.cornerRadius ?? 0,
+    props.cornerRadiusBottomRight ?? props.cornerRadius ?? 0,
+    props.cornerRadiusBottomLeft ?? props.cornerRadius ?? 0,
   ]
   htmlElement.style.borderRadius = cornerRadiuses.every(r => r === 0)
     ? ``
     : cornerRadiuses.map(sizeToCss).join(` `)
 
   // Outline
-  htmlElement.style.outline = exists(attributes.outlineSize)
-    ? `${sizeToCss(attributes.outlineSize)} solid ${attributes.outlineColor}`
+  htmlElement.style.outline = exists(props.outlineSize)
+    ? `${sizeToCss(props.outlineSize)} solid ${props.outlineColor}`
     : ``
-  htmlElement.style.outlineOffset = exists(attributes.outlineSize)
-    ? `-${sizeToCss(attributes.outlineSize)}`
+  htmlElement.style.outlineOffset = exists(props.outlineSize)
+    ? `-${sizeToCss(props.outlineSize)}`
     : ``
 
   // Background
   const backgroundIsImage =
-    (attributes.background?.startsWith(`data:image`) || attributes.background?.startsWith(`/`)) ?? false
-  htmlElement.style.backgroundColor = backgroundIsImage ? `` : attributes.background ?? ``
-  htmlElement.style.backgroundImage = backgroundIsImage ? `url('${attributes.background}')` : ``
+    (props.background?.startsWith(`data:image`) || props.background?.startsWith(`/`)) ?? false
+  htmlElement.style.backgroundColor = backgroundIsImage ? `` : props.background ?? ``
+  htmlElement.style.backgroundImage = backgroundIsImage ? `url('${props.background}')` : ``
   htmlElement.style.backgroundSize = `cover`
   htmlElement.style.backgroundPosition = `center`
   htmlElement.style.backgroundRepeat = `no-repeat`
 
   // Shadow
-  const alignShadowDirection: ShadowDirection = attributes.shadowDirection ?? Align.bottomRight
+  const alignShadowDirection: ShadowDirection = props.shadowDirection ?? Align.bottomRight
   const shadowDirection = {
     x:
       alignShadowDirection.alignX === _FlexAlign.start
@@ -85,12 +84,12 @@ export const decorationStyler = sizeStyler.addStyler<DecorationSty>((attributes,
         ? 0
         : -1,
   }
-  htmlElement.style.boxShadow = exists(attributes.shadowSize)
-    ? `${sizeToCss(0.09 * attributes.shadowSize * shadowDirection.x)} ${sizeToCss(
-        -0.09 * attributes.shadowSize * shadowDirection.y,
-      )} ${sizeToCss(0.4 * attributes.shadowSize)} 0 #00000045`
+  htmlElement.style.boxShadow = exists(props.shadowSize)
+    ? `${sizeToCss(0.09 * props.shadowSize * shadowDirection.x)} ${sizeToCss(
+        -0.09 * props.shadowSize * shadowDirection.y,
+      )} ${sizeToCss(0.4 * props.shadowSize)} 0 #00000045`
     : ``
 
   // Z-Index
-  htmlElement.style.zIndex = attributes.zIndex?.toString() ?? ``
-})
+  htmlElement.style.zIndex = props.zIndex?.toString() ?? ``
+}

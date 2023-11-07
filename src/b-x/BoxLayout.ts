@@ -1,5 +1,4 @@
 import { exists, isString, sizeToCss } from './BoxUtils'
-import { baseStyler } from 'src/Box/BoxStyler'
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and reorderable lists.
 
@@ -247,29 +246,32 @@ export const Align = {
 } as const
 
 // Layout Styler
-export const layoutStyler = baseStyler.addStyler<LayoutSty>((attributes, htmlElement, context) => {
+export function applyLayoutStyle(
+  props: Partial<LayoutSty>,
+  htmlElement: HTMLElement,
+  context: { childCount: number },
+) {
   // Pad
   const padEachSide = [
-    attributes.padTop ?? attributes.padAroundY ?? attributes.padAround ?? attributes.pad ?? 0,
-    attributes.padRight ?? attributes.padAroundX ?? attributes.padAround ?? attributes.pad ?? 0,
-    attributes.padBottom ?? attributes.padAroundY ?? attributes.padAround ?? attributes.pad ?? 0,
-    attributes.padLeft ?? attributes.padAroundX ?? attributes.padAround ?? attributes.pad ?? 0,
+    props.padTop ?? props.padAroundY ?? props.padAround ?? props.pad ?? 0,
+    props.padRight ?? props.padAroundX ?? props.padAround ?? props.pad ?? 0,
+    props.padBottom ?? props.padAroundY ?? props.padAround ?? props.pad ?? 0,
+    props.padLeft ?? props.padAroundX ?? props.padAround ?? props.pad ?? 0,
   ]
   htmlElement.style.padding = padEachSide.every(x => x === 0)
     ? ``
     : padEachSide.map(sizeToCss).join(` `)
   // NOTE: We want pad between to cascade, but not pad around.
   htmlElement.style.rowGap = sizeToCss(
-    attributes.padBetweenY ?? attributes.padBetween ?? attributes.pad ?? `inherit`,
+    props.padBetweenY ?? props.padBetween ?? props.pad ?? `inherit`,
   )
   htmlElement.style.columnGap = sizeToCss(
-    attributes.padBetweenX ?? attributes.padBetween ?? attributes.pad ?? `inherit`,
+    props.padBetweenX ?? props.padBetween ?? props.pad ?? `inherit`,
   )
 
   // Align & Axis
-  const { alignX, alignY } = getAlign(attributes, context.childCount)
-  const axis =
-    attributes.axis ?? (attributes.row ? Axis.row : attributes.stack ? Axis.stack : Axis.column)
+  const { alignX, alignY } = getAlign(props, context.childCount)
+  const axis = props.axis ?? (props.row ? Axis.row : props.stack ? Axis.stack : Axis.column)
   htmlElement.style.justifyContent = axis === Axis.column ? alignY : alignX
   htmlElement.style.alignItems = axis === Axis.column ? alignX : alignY
   htmlElement.style.flexDirection = axis === Axis.stack ? `` : axis
@@ -284,8 +286,8 @@ export const layoutStyler = baseStyler.addStyler<LayoutSty>((attributes, htmlEle
         `center`
 
   // Overflow
-  const overflowX = attributes.overflowX ?? Overflow.forceStretchParent
-  const overflowY = attributes.overflowY ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
+  const overflowX = props.overflowX ?? Overflow.forceStretchParent
+  const overflowY = props.overflowY ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
   htmlElement.style.flexWrap =
     axis === Axis.row
       ? overflowX === Overflow.wrap
@@ -316,4 +318,4 @@ export const layoutStyler = baseStyler.addStyler<LayoutSty>((attributes, htmlEle
   // whiteSpace cascades, so we need to explicity set it.
   htmlElement.style.whiteSpace =
     overflowX === Overflow.crop || overflowX === Overflow.forceStretchParent ? `nowrap` : `normal`
-})
+}

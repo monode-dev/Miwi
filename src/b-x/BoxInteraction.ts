@@ -1,5 +1,4 @@
 import { exists } from 'src/utils'
-import { textStyler } from './BoxText'
 
 export type InteractionSty = {
   role: string
@@ -13,11 +12,11 @@ export type InteractionSty = {
 
 export const bonusTouchAreaClassName = `b-x-bonus-touch-area`
 
-export const interactionStyler = textStyler.addStyler<InteractionSty>((attributes, htmlElement) => {
-  htmlElement.role = attributes.role ?? ``
-  const onClick = attributes.onClick ?? null
+export function applyInteractionStyle(props: Partial<InteractionSty>, htmlElement: HTMLElement) {
+  htmlElement.role = props.role ?? ``
+  const onClick = props.onClick ?? null
   const isClickable = exists(onClick)
-  const preventClickPropagation = attributes.preventClickPropagation ?? isClickable
+  const preventClickPropagation = props.preventClickPropagation ?? isClickable
   htmlElement.style.pointerEvents = preventClickPropagation ? `auto` : `none`
   htmlElement.onclick = preventClickPropagation
     ? (e: MouseEvent) => {
@@ -25,8 +24,8 @@ export const interactionStyler = textStyler.addStyler<InteractionSty>((attribute
         onClick?.(e)
       }
     : onClick
-  htmlElement.style.cursor = attributes.cssCursor ?? isClickable ? `pointer` : `default`
-  htmlElement.onmouseenter = attributes.onMouseEnter ?? null
-  htmlElement.onmouseleave = attributes.onMouseLeave ?? null
-  htmlElement.classList.toggle(bonusTouchAreaClassName, attributes.bonusTouchArea ?? false)
-})
+  htmlElement.style.cursor = props.cssCursor ?? isClickable ? `pointer` : `default`
+  htmlElement.onmouseenter = props.onMouseEnter ?? null
+  htmlElement.onmouseleave = props.onMouseLeave ?? null
+  htmlElement.classList.toggle(bonusTouchAreaClassName, props.bonusTouchArea ?? false)
+}

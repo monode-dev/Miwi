@@ -1,5 +1,5 @@
 import { exists, isString, sizeToCss } from './BoxUtils'
-import { layoutStyler, Axis } from './BoxLayout'
+import { Axis } from './BoxLayout'
 
 export type Size = number | string | FlexSize
 export type SizeSty = {
@@ -62,14 +62,22 @@ export const widthGrowsClassName = `b-x-width-grows`
 export const heightGrowsClassName = `b-x-height-grows`
 
 // Size Styler
-export const sizeStyler = layoutStyler.addStyler<SizeSty>((attributes, htmlElement, context) => {
+export function applySizeStyle(
+  props: Partial<SizeSty>,
+  htmlElement: HTMLElement,
+  context: {
+    aChildsWidthGrows: boolean
+    aChildsHeightGrows: boolean
+    parentStyle?: CSSStyleDeclaration
+  },
+) {
   const formattedWidth = formatRawSize({
     someChildGrows: context.aChildsWidthGrows,
-    size: attributes.width,
+    size: props.width,
   })
   const formattedHeight = formatRawSize({
     someChildGrows: context.aChildsHeightGrows,
-    size: attributes.height,
+    size: props.height,
   })
   const parentAxis = context.parentStyle?.flexDirection ?? Axis.column
   const [exactWidth, wMin, wMax, widthGrows] = computeSizeInfo({
@@ -190,4 +198,4 @@ export const sizeStyler = layoutStyler.addStyler<SizeSty>((attributes, htmlEleme
   //     }
   //   }
   // }
-})
+}

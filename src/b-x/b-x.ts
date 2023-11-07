@@ -1,5 +1,5 @@
-import { DecorationSty } from './BoxDecoration'
-import { LayoutSty, stackClassName, nonStackClassName } from './BoxLayout'
+import { DecorationSty, applyDecorationStyle } from './BoxDecoration'
+import { LayoutSty, stackClassName, nonStackClassName, applyLayoutStyle } from './BoxLayout'
 import { exists } from './BoxUtils'
 import {
   SizeSty,
@@ -7,9 +7,10 @@ import {
   formatRawSize,
   widthGrowsClassName,
   heightGrowsClassName,
+  applySizeStyle,
 } from './BoxSize'
-import { TextSty } from './BoxText'
-import { InteractionSty, bonusTouchAreaClassName, interactionStyler } from './BoxInteraction'
+import { TextSty, applyTextStyle } from './BoxText'
+import { InteractionSty, applyInteractionStyle, bonusTouchAreaClassName } from './BoxInteraction'
 
 export type Sty = Partial<
   SizeSty &
@@ -116,12 +117,17 @@ export class Miwi_Box extends HTMLElement {
   }
   updateStyle() {
     const { someChildWidthGrows, someChildHeightGrows } = this.computeSomeChildGrows()
-    interactionStyler.applyStyle(this.sty, this, {
-      parentStyle: this._parentStyle,
+    applyLayoutStyle(this.sty, this, {
       childCount: this._childCount,
+    })
+    applySizeStyle(this.sty, this, {
+      parentStyle: this._parentStyle,
       aChildsWidthGrows: someChildWidthGrows,
       aChildsHeightGrows: someChildHeightGrows,
     })
+    applyDecorationStyle(this.sty, this)
+    applyTextStyle(this.sty, this)
+    applyInteractionStyle(this.sty, this)
 
     // Recompute growth
     // TODO: Eventually get this from the styler result.

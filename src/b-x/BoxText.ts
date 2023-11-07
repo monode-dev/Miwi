@@ -1,7 +1,6 @@
 import { exists, sizeToCss } from './BoxUtils'
 import { _FlexAlign } from './BoxLayout'
 import { sizeScaleCssVarName } from 'src/theme'
-import { decorationStyler } from './BoxDecoration'
 
 export type TextSty = {
   scale: number | string
@@ -27,26 +26,22 @@ export type TextSty = {
 }
 
 // Text Styler
-export const textStyler = decorationStyler.addStyler<TextSty>((attributes, htmlElement) => {
+export function applyTextStyle(props: Partial<TextSty>, htmlElement: HTMLElement) {
   htmlElement.style.fontFamily = `inherit` //`Roboto`;
-  htmlElement.style.setProperty(sizeScaleCssVarName, sizeToCss(attributes.scale) ?? ``)
-  htmlElement.style.fontSize = exists(attributes.scale) ? `var(${sizeScaleCssVarName})` : ``
-  htmlElement.style.fontWeight = exists(attributes.boldText)
-    ? attributes.boldText
-      ? `bold`
-      : `normal`
-    : ``
-  htmlElement.style.fontStyle = exists(attributes.italicizeText)
-    ? attributes.italicizeText
+  htmlElement.style.setProperty(sizeScaleCssVarName, sizeToCss(props.scale) ?? ``)
+  htmlElement.style.fontSize = exists(props.scale) ? `var(${sizeScaleCssVarName})` : ``
+  htmlElement.style.fontWeight = exists(props.boldText) ? (props.boldText ? `bold` : `normal`) : ``
+  htmlElement.style.fontStyle = exists(props.italicizeText)
+    ? props.italicizeText
       ? `italic`
       : `normal`
     : ``
-  htmlElement.style.textDecoration = exists(attributes.underlineText)
-    ? attributes.underlineText
+  htmlElement.style.textDecoration = exists(props.underlineText)
+    ? props.underlineText
       ? `underline`
       : `none`
     : ``
-  htmlElement.style.lineHeight = attributes.scale === undefined ? `` : sizeToCss(attributes.scale)
+  htmlElement.style.lineHeight = props.scale === undefined ? `` : sizeToCss(props.scale)
   // textOverflow: sty.useEllipsisForOverflow ?? false ? `ellipsis` : undefined,
-  htmlElement.style.color = attributes.textColor ?? ``
-})
+  htmlElement.style.color = props.textColor ?? ``
+}
