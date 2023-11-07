@@ -37,9 +37,8 @@ function combineStyleAppliers<
     {},
     OldNormalizedProps & (NewNormalizedProps extends void ? {} : NewNormalizedProps)
   > = (rawProps, htmlElement, bonusConfig) => {
-    const oldNormalizedProps =
-      oldStyleApplier?.(rawProps, htmlElement, bonusConfig) ?? bonusConfig.normalizedProps
-    for (const key in oldNormalizedProps) {
+    const oldNormalizedProps = oldStyleApplier?.(rawProps, htmlElement, bonusConfig) ?? {}
+    for (const key of Object.keys(oldNormalizedProps)) {
       ;(bonusConfig as any).normalizedProps[key] = (oldNormalizedProps as any)[key]
     }
     return newStyleApplier(rawProps, htmlElement, bonusConfig as any) as any

@@ -72,8 +72,6 @@ export const Overflow = {
   wrap: `wrap`,
   scroll: `scroll`,
 } as const
-export const defaultOverflowX = Overflow.forceStretchParent // Overflow.crop;
-export const defaultOverflowY = Overflow.forceStretchParent // Overflow.crop; // This is because otherwise text gets cut off.
 
 // Align
 // NOTE: Align only makes sense if the size on this axis is not "shrink"
@@ -285,8 +283,8 @@ export const layoutStyler = baseStyler.addStyler<
   htmlElement.classList.toggle(nonStackClassName, axis !== Axis.stack)
 
   // Overflow
-  const overflowX = rawProps.overflowX ?? defaultOverflowX
-  const overflowY = rawProps.overflowY ?? defaultOverflowY
+  const overflowX = rawProps.overflowX ?? Overflow.forceStretchParent
+  const overflowY = rawProps.overflowY ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
   htmlElement.style.flexWrap =
     axis === Axis.row
       ? overflowX === Overflow.wrap

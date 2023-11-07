@@ -81,10 +81,10 @@ export class Miwi_Box extends HTMLElement {
       const computedParentStyle = getComputedStyle(this.parentElement)
       shouldUpdateStyle =
         computedParentStyle.flexDirection !== this._parentStyle?.flexDirection ||
-        computedParentStyle.paddingTop !== this._parentStyle?.paddingTop ||
-        computedParentStyle.paddingRight !== this._parentStyle?.paddingRight ||
-        computedParentStyle.paddingBottom !== this._parentStyle?.paddingBottom ||
-        computedParentStyle.paddingLeft !== this._parentStyle?.paddingLeft
+        computedParentStyle.paddingTop !== this._parentStyle.paddingTop ||
+        computedParentStyle.paddingRight !== this._parentStyle.paddingRight ||
+        computedParentStyle.paddingBottom !== this._parentStyle.paddingBottom ||
+        computedParentStyle.paddingLeft !== this._parentStyle.paddingLeft
       if (shouldUpdateStyle) this._parentStyle = computedParentStyle
     }
     return shouldUpdateStyle
