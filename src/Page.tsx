@@ -6,7 +6,7 @@ export function Page(props: BoxProps) {
       asWideAsParent
       asTallAsParent
       background={$theme.colors.pageBackground}
-      alignTopCenter
+      alignCenter
       overflowX={$Overflow.crop}
       overflowY={$Overflow.crop}
       preventClickPropagation
