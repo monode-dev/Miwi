@@ -121,7 +121,6 @@ export class Miwi_Box extends HTMLElement {
       childCount: this._childCount,
       aChildsWidthGrows: someChildWidthGrows,
       aChildsHeightGrows: someChildHeightGrows,
-      normalizedProps: {},
     })
 
     // Recompute growth

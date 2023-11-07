@@ -4,18 +4,16 @@ type CustomHtmlAttributes = {
 // TODO: overrideProps
 type ApplyStyle<
   RawProps extends CustomHtmlAttributes,
-  OldNormalizedProps extends CustomHtmlAttributes,
   NewNormalizedProps extends CustomHtmlAttributes | void,
 > = (
-  rawProps: Partial<RawProps>,
+  attributes: Partial<RawProps>,
   htmlElement: HTMLElement,
-  bonusConfig: {
+  context: {
     readonly parentStyle?: CSSStyleDeclaration
     readonly parentElement?: HTMLElement
     readonly childCount: number
     readonly aChildsWidthGrows: boolean
     readonly aChildsHeightGrows: boolean
-    normalizedProps: OldNormalizedProps
   },
 ) => NewNormalizedProps
 
@@ -29,19 +27,15 @@ function combineStyleAppliers<
   OldNormalizedProps extends CustomHtmlAttributes,
   NewNormalizedProps extends CustomHtmlAttributes | void,
 >(
-  newStyleApplier: ApplyStyle<NewRawProps, OldNormalizedProps, NewNormalizedProps>,
-  oldStyleApplier?: ApplyStyle<OldRawProps, {}, OldNormalizedProps>,
+  newStyleApplier: ApplyStyle<NewRawProps, NewNormalizedProps>,
+  oldStyleApplier?: ApplyStyle<OldRawProps, OldNormalizedProps>,
 ) {
   const combinedStyleApplier: ApplyStyle<
     OldRawProps & NewRawProps,
-    {},
     OldNormalizedProps & (NewNormalizedProps extends void ? {} : NewNormalizedProps)
-  > = (rawProps, htmlElement, bonusConfig) => {
-    const oldNormalizedProps = oldStyleApplier?.(rawProps, htmlElement, bonusConfig) ?? {}
-    for (const key of Object.keys(oldNormalizedProps)) {
-      ;(bonusConfig as any).normalizedProps[key] = (oldNormalizedProps as any)[key]
-    }
-    return newStyleApplier(rawProps, htmlElement, bonusConfig as any) as any
+  > = (attributes, htmlElement, context) => {
+    oldStyleApplier?.(attributes, htmlElement, context) ?? {}
+    return newStyleApplier(attributes, htmlElement, context as any) as any
   }
   return {
     applyStyle: combinedStyleApplier,
@@ -49,11 +43,7 @@ function combineStyleAppliers<
       SubRawProps extends CustomHtmlAttributes,
       SubNormalizedProps extends CustomHtmlAttributes | void = void,
     >(
-      subStyleApplier: ApplyStyle<
-        SubRawProps,
-        OldNormalizedProps & (NewNormalizedProps extends void ? {} : NewNormalizedProps),
-        SubNormalizedProps
-      >,
+      subStyleApplier: ApplyStyle<SubRawProps, SubNormalizedProps>,
     ) => {
       return combineStyleAppliers(subStyleApplier, combinedStyleApplier)
     },

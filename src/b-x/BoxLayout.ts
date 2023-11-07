@@ -1,5 +1,5 @@
 import { exists, isString, sizeToCss } from './BoxUtils'
-import { baseStyler } from 'src/Box/Styler'
+import { baseStyler } from 'src/Box/BoxStyler'
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and reorderable lists.
 
@@ -247,44 +247,45 @@ export const Align = {
 } as const
 
 // Layout Styler
-export const layoutStyler = baseStyler.addStyler<
-  LayoutSty,
-  {
-    alignX: AlignSingleAxis
-    overflowX: Overflow
-  }
->((rawProps, htmlElement, bonusConfig) => {
+export const layoutStyler = baseStyler.addStyler<LayoutSty>((attributes, htmlElement, context) => {
   // Pad
   const padEachSide = [
-    rawProps.padTop ?? rawProps.padAroundY ?? rawProps.padAround ?? rawProps.pad ?? 0,
-    rawProps.padRight ?? rawProps.padAroundX ?? rawProps.padAround ?? rawProps.pad ?? 0,
-    rawProps.padBottom ?? rawProps.padAroundY ?? rawProps.padAround ?? rawProps.pad ?? 0,
-    rawProps.padLeft ?? rawProps.padAroundX ?? rawProps.padAround ?? rawProps.pad ?? 0,
+    attributes.padTop ?? attributes.padAroundY ?? attributes.padAround ?? attributes.pad ?? 0,
+    attributes.padRight ?? attributes.padAroundX ?? attributes.padAround ?? attributes.pad ?? 0,
+    attributes.padBottom ?? attributes.padAroundY ?? attributes.padAround ?? attributes.pad ?? 0,
+    attributes.padLeft ?? attributes.padAroundX ?? attributes.padAround ?? attributes.pad ?? 0,
   ]
   htmlElement.style.padding = padEachSide.every(x => x === 0)
     ? ``
     : padEachSide.map(sizeToCss).join(` `)
   // NOTE: We want pad between to cascade, but not pad around.
   htmlElement.style.rowGap = sizeToCss(
-    rawProps.padBetweenY ?? rawProps.padBetween ?? rawProps.pad ?? `inherit`,
+    attributes.padBetweenY ?? attributes.padBetween ?? attributes.pad ?? `inherit`,
   )
   htmlElement.style.columnGap = sizeToCss(
-    rawProps.padBetweenX ?? rawProps.padBetween ?? rawProps.pad ?? `inherit`,
+    attributes.padBetweenX ?? attributes.padBetween ?? attributes.pad ?? `inherit`,
   )
 
   // Align & Axis
-  const { alignX, alignY } = getAlign(rawProps, bonusConfig.childCount)
+  const { alignX, alignY } = getAlign(attributes, context.childCount)
   const axis =
-    rawProps.axis ?? (rawProps.row ? Axis.row : rawProps.stack ? Axis.stack : Axis.column)
+    attributes.axis ?? (attributes.row ? Axis.row : attributes.stack ? Axis.stack : Axis.column)
   htmlElement.style.justifyContent = axis === Axis.column ? alignY : alignX
   htmlElement.style.alignItems = axis === Axis.column ? alignX : alignY
   htmlElement.style.flexDirection = axis === Axis.stack ? `` : axis
   htmlElement.classList.toggle(stackClassName, axis === Axis.stack)
   htmlElement.classList.toggle(nonStackClassName, axis !== Axis.stack)
+  htmlElement.style.textAlign =
+    alignX === _FlexAlign.start
+      ? `left`
+      : alignX === _FlexAlign.end
+      ? `right`
+      : // We assume for now that all other aligns cam be treated as center
+        `center`
 
   // Overflow
-  const overflowX = rawProps.overflowX ?? Overflow.forceStretchParent
-  const overflowY = rawProps.overflowY ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
+  const overflowX = attributes.overflowX ?? Overflow.forceStretchParent
+  const overflowY = attributes.overflowY ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
   htmlElement.style.flexWrap =
     axis === Axis.row
       ? overflowX === Overflow.wrap
@@ -312,9 +313,7 @@ export const layoutStyler = baseStyler.addStyler<
   ;(htmlElement.style as any).scrollbarColor = [overflowX, overflowY].includes(Overflow.scroll)
     ? `#e3e3e3 transparent`
     : ``
-
-  return {
-    alignX,
-    overflowX,
-  }
+  // whiteSpace cascades, so we need to explicity set it.
+  htmlElement.style.whiteSpace =
+    overflowX === Overflow.crop || overflowX === Overflow.forceStretchParent ? `nowrap` : `normal`
 })

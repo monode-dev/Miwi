@@ -1,5 +1,5 @@
 import { exists, sizeToCss } from './BoxUtils'
-import { Overflow, _FlexAlign } from './BoxLayout'
+import { _FlexAlign } from './BoxLayout'
 import { sizeScaleCssVarName } from 'src/theme'
 import { decorationStyler } from './BoxDecoration'
 
@@ -27,41 +27,26 @@ export type TextSty = {
 }
 
 // Text Styler
-export const textStyler = decorationStyler.addStyler<TextSty>(
-  (rawProps, htmlElement, bonusConfig) => {
-    htmlElement.style.fontFamily = `inherit` //`Roboto`;
-    htmlElement.style.setProperty(sizeScaleCssVarName, sizeToCss(rawProps.scale) ?? ``)
-    htmlElement.style.fontSize = exists(rawProps.scale) ? `var(${sizeScaleCssVarName})` : ``
-    htmlElement.style.fontWeight = exists(rawProps.boldText)
-      ? rawProps.boldText
-        ? `bold`
-        : `normal`
-      : ``
-    htmlElement.style.fontStyle = exists(rawProps.italicizeText)
-      ? rawProps.italicizeText
-        ? `italic`
-        : `normal`
-      : ``
-    htmlElement.style.textDecoration = exists(rawProps.underlineText)
-      ? rawProps.underlineText
-        ? `underline`
-        : `none`
-      : ``
-    htmlElement.style.textAlign =
-      bonusConfig.normalizedProps.alignX === _FlexAlign.start
-        ? `left`
-        : bonusConfig.normalizedProps.alignX === _FlexAlign.end
-        ? `right`
-        : // We assume for now that all other aligns cam be treated as center
-          `center`
-    htmlElement.style.lineHeight = rawProps.scale === undefined ? `` : sizeToCss(rawProps.scale)
-    // whiteSpace cascades, so we need to explicity set it.
-    htmlElement.style.whiteSpace =
-      bonusConfig.normalizedProps.overflowX === Overflow.crop ||
-      bonusConfig.normalizedProps.overflowX === Overflow.forceStretchParent
-        ? `nowrap`
-        : `normal`
-    // textOverflow: sty.useEllipsisForOverflow ?? false ? `ellipsis` : undefined,
-    htmlElement.style.color = rawProps.textColor ?? ``
-  },
-)
+export const textStyler = decorationStyler.addStyler<TextSty>((attributes, htmlElement) => {
+  htmlElement.style.fontFamily = `inherit` //`Roboto`;
+  htmlElement.style.setProperty(sizeScaleCssVarName, sizeToCss(attributes.scale) ?? ``)
+  htmlElement.style.fontSize = exists(attributes.scale) ? `var(${sizeScaleCssVarName})` : ``
+  htmlElement.style.fontWeight = exists(attributes.boldText)
+    ? attributes.boldText
+      ? `bold`
+      : `normal`
+    : ``
+  htmlElement.style.fontStyle = exists(attributes.italicizeText)
+    ? attributes.italicizeText
+      ? `italic`
+      : `normal`
+    : ``
+  htmlElement.style.textDecoration = exists(attributes.underlineText)
+    ? attributes.underlineText
+      ? `underline`
+      : `none`
+    : ``
+  htmlElement.style.lineHeight = attributes.scale === undefined ? `` : sizeToCss(attributes.scale)
+  // textOverflow: sty.useEllipsisForOverflow ?? false ? `ellipsis` : undefined,
+  htmlElement.style.color = attributes.textColor ?? ``
+})

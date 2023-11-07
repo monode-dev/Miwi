@@ -62,16 +62,16 @@ export const widthGrowsClassName = `b-x-width-grows`
 export const heightGrowsClassName = `b-x-height-grows`
 
 // Size Styler
-export const sizeStyler = layoutStyler.addStyler<SizeSty>((rawProps, htmlElement, bonusConfig) => {
+export const sizeStyler = layoutStyler.addStyler<SizeSty>((attributes, htmlElement, context) => {
   const formattedWidth = formatRawSize({
-    someChildGrows: bonusConfig.aChildsWidthGrows,
-    size: rawProps.width,
+    someChildGrows: context.aChildsWidthGrows,
+    size: attributes.width,
   })
   const formattedHeight = formatRawSize({
-    someChildGrows: bonusConfig.aChildsHeightGrows,
-    size: rawProps.height,
+    someChildGrows: context.aChildsHeightGrows,
+    size: attributes.height,
   })
-  const parentAxis = bonusConfig.parentStyle?.flexDirection ?? Axis.column
+  const parentAxis = context.parentStyle?.flexDirection ?? Axis.column
   const [exactWidth, wMin, wMax, widthGrows] = computeSizeInfo({
     size: formattedWidth,
     isMainAxis: parentAxis === Axis.row,
@@ -90,8 +90,8 @@ export const sizeStyler = layoutStyler.addStyler<SizeSty>((rawProps, htmlElement
     //   ? maxChildWidth
     //   : exactWidth;
     if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingLeft ?? `0px`} - ${
-        bonusConfig.parentStyle?.paddingRight ?? `0px`
+      size = `calc(${size} - ${context.parentStyle?.paddingLeft ?? `0px`} - ${
+        context.parentStyle?.paddingRight ?? `0px`
       })`
     }
     return size ?? ``
@@ -102,8 +102,8 @@ export const sizeStyler = layoutStyler.addStyler<SizeSty>((rawProps, htmlElement
     //   ? maxChildWidth
     //   : wMin;
     if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingLeft ?? `0px`} - ${
-        bonusConfig.parentStyle?.paddingRight ?? `0px`
+      size = `calc(${size} - ${context.parentStyle?.paddingLeft ?? `0px`} - ${
+        context.parentStyle?.paddingRight ?? `0px`
       })`
     }
     return size ?? ``
@@ -114,8 +114,8 @@ export const sizeStyler = layoutStyler.addStyler<SizeSty>((rawProps, htmlElement
     //   ? maxChildWidth
     //   : wMax;
     if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingLeft ?? `0px`} - ${
-        bonusConfig.parentStyle?.paddingRight ?? `0px`
+      size = `calc(${size} - ${context.parentStyle?.paddingLeft ?? `0px`} - ${
+        context.parentStyle?.paddingRight ?? `0px`
       })`
     }
     return size ?? ``
@@ -126,8 +126,8 @@ export const sizeStyler = layoutStyler.addStyler<SizeSty>((rawProps, htmlElement
     //   ? maxChildHeight
     //   : exactHeight;
     if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingTop ?? `0px`} - ${
-        bonusConfig.parentStyle?.paddingBottom ?? `0px`
+      size = `calc(${size} - ${context.parentStyle?.paddingTop ?? `0px`} - ${
+        context.parentStyle?.paddingBottom ?? `0px`
       })`
     }
     return size ?? ``
@@ -138,8 +138,8 @@ export const sizeStyler = layoutStyler.addStyler<SizeSty>((rawProps, htmlElement
     //   ? maxChildHeight
     //   : hMin;
     if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingTop ?? `0px`} - ${
-        bonusConfig.parentStyle?.paddingBottom ?? `0px`
+      size = `calc(${size} - ${context.parentStyle?.paddingTop ?? `0px`} - ${
+        context.parentStyle?.paddingBottom ?? `0px`
       })`
     }
     return size ?? ``
@@ -150,8 +150,8 @@ export const sizeStyler = layoutStyler.addStyler<SizeSty>((rawProps, htmlElement
     //   ? maxChildHeight
     //   : hMax;
     if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${bonusConfig.parentStyle?.paddingTop ?? `0px`} - ${
-        bonusConfig.parentStyle?.paddingBottom ?? `0px`
+      size = `calc(${size} - ${context.parentStyle?.paddingTop ?? `0px`} - ${
+        context.parentStyle?.paddingBottom ?? `0px`
       })`
     }
     return size ?? ``
@@ -179,11 +179,11 @@ export const sizeStyler = layoutStyler.addStyler<SizeSty>((rawProps, htmlElement
   // htmlElement.classList.toggle(heightGrowsClassName, newHeightGrows)
   // const shouldUpdateHeightGrows = this._heightGrows !== newHeightGrows
   // if (shouldUpdateWidthGrows || shouldUpdateHeightGrows) {
-  //   if (exists(bonusConfig.parentElement)) {
-  //     if (bonusConfig.parentElement instanceof Miwi_Box) {
+  //   if (exists(context.parentElement)) {
+  //     if (context.parentElement instanceof Miwi_Box) {
   //       if (shouldUpdateWidthGrows) this._widthGrows = newWidthGrows
   //       if (shouldUpdateHeightGrows) this._heightGrows = newHeightGrows
-  //       bonusConfig.parentElement.thisIsAChildTogglingTheFactThatItGrows({
+  //       context.parentElement.thisIsAChildTogglingTheFactThatItGrows({
   //         widthGrows: shouldUpdateWidthGrows ? newWidthGrows : undefined,
   //         heightGrows: shouldUpdateHeightGrows ? newHeightGrows : undefined,
   //       })

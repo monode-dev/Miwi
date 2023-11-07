@@ -13,11 +13,11 @@ export type InteractionSty = {
 
 export const bonusTouchAreaClassName = `b-x-bonus-touch-area`
 
-export const interactionStyler = textStyler.addStyler<InteractionSty>((rawProps, htmlElement) => {
-  htmlElement.role = rawProps.role ?? ``
-  const onClick = rawProps.onClick ?? null
+export const interactionStyler = textStyler.addStyler<InteractionSty>((attributes, htmlElement) => {
+  htmlElement.role = attributes.role ?? ``
+  const onClick = attributes.onClick ?? null
   const isClickable = exists(onClick)
-  const preventClickPropagation = rawProps.preventClickPropagation ?? isClickable
+  const preventClickPropagation = attributes.preventClickPropagation ?? isClickable
   htmlElement.style.pointerEvents = preventClickPropagation ? `auto` : `none`
   htmlElement.onclick = preventClickPropagation
     ? (e: MouseEvent) => {
@@ -25,8 +25,8 @@ export const interactionStyler = textStyler.addStyler<InteractionSty>((rawProps,
         onClick?.(e)
       }
     : onClick
-  htmlElement.style.cursor = rawProps.cssCursor ?? isClickable ? `pointer` : `default`
-  htmlElement.onmouseenter = rawProps.onMouseEnter ?? null
-  htmlElement.onmouseleave = rawProps.onMouseLeave ?? null
-  htmlElement.classList.toggle(bonusTouchAreaClassName, rawProps.bonusTouchArea ?? false)
+  htmlElement.style.cursor = attributes.cssCursor ?? isClickable ? `pointer` : `default`
+  htmlElement.onmouseenter = attributes.onMouseEnter ?? null
+  htmlElement.onmouseleave = attributes.onMouseLeave ?? null
+  htmlElement.classList.toggle(bonusTouchAreaClassName, attributes.bonusTouchArea ?? false)
 })
