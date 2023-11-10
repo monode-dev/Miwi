@@ -12,9 +12,6 @@ export type Sty = Partial<
     TextSty &
     InteractionSty & {
       overrideProps: Partial<Sty>
-      classList: {
-        [key: string]: boolean
-      }
       getElement: (e: HTMLElement) => void
       shouldLog?: boolean
     }
