@@ -1,7 +1,7 @@
 import './b-x/b-x'
 import { Sty } from './b-x/b-x'
 import { type JSX, type ParentProps } from 'solid-js'
-import { watchEffect } from './utils'
+import { compute, watchEffect } from './utils'
 
 type BDashXProps = ParentProps & {
   sty?: Sty
@@ -21,8 +21,8 @@ export function grow(flex: number = 1) {
 
 export type BoxProps = Partial<Sty> & ParentProps & JSX.DOMAttributes<HTMLDivElement>
 export function Box(props: BoxProps) {
-  watchEffect(() => {
-    console.log(props.background)
+  const sty = compute(() => {
+    return { ...props }
   })
-  return <b-x {...props} sty={props} />
+  return <b-x {...props} sty={sty.value} />
 }
