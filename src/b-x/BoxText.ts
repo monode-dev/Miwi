@@ -52,7 +52,7 @@ export function applyTextStyle(
   // textOverflow: sty.useEllipsisForOverflow ?? false ? `ellipsis` : undefined,
   htmlElement.style.color = parseProp({ textColor: v => v }) ?? ``
   htmlElement.style.textAlign =
-    context.alignX === _FlexAlign.start
+  context.alignX === _FlexAlign.start
       ? `left`
       : context.alignX === _FlexAlign.end
       ? `right`
