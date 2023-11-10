@@ -214,11 +214,26 @@ export const Align = {
   },
 } as const
 
+// Classes
+const stackClassName = `miwi-stack`
+const nonStackClassName = `miwi-non-stack`
+const style = document.createElement(`style`)
+style.textContent = `
+.${stackClassName} > * {
+  position: absolute;
+}
+
+.${nonStackClassName} > * {
+  position: relative;
+}
+`
+document.body.appendChild(style)
+
 // Layout Styler
 export function applyLayoutStyle(
   parseProp: ParseProp<LayoutSty>,
   htmlElement: HTMLElement,
-  context: { childCount: number },
+  context: { childCount: number; parentStyle?: CSSStyleDeclaration },
 ) {
   // Pad
   const padEachSide = [
@@ -278,7 +293,8 @@ export function applyLayoutStyle(
   htmlElement.style.justifyContent = axis === Axis.column ? alignY : alignX
   htmlElement.style.alignItems = axis === Axis.column ? alignX : alignY
   htmlElement.style.flexDirection = axis === Axis.stack ? `` : axis
-  htmlElement.style.position = axis === Axis.stack ? `absolute` : `relative`
+  htmlElement.classList.toggle(stackClassName, axis === Axis.stack)
+  htmlElement.classList.toggle(nonStackClassName, axis !== Axis.stack)
 
   // Overflow
   const overflowX =
