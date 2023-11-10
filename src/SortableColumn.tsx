@@ -10,7 +10,7 @@ export function SortableColumn(props: {
   onSort: (props: { from: number; to: number }) => void
   children: any
 }) {
-  let columnElement: HTMLDivElement | null = null
+  let columnElement: HTMLElement | null = null
   const doOnCleanUp = new Set<() => void>()
 
   // SECTION: Detect Long Press
@@ -245,7 +245,7 @@ export function SortableColumn(props: {
 
   // SECTION: Component HTML
   return (
-    <Column ref={el => (columnElement = el)} classList={{ 'miwi-sortable': true }}>
+    <Column getElement={el => (columnElement = el)} classList={{ 'miwi-sortable': true }}>
       {props.children}
     </Column>
   )

@@ -20,8 +20,5 @@ export function grow(flex: number = 1) {
 
 export type BoxProps = Partial<Sty> & ParentProps & JSX.DOMAttributes<HTMLDivElement>
 export function Box(props: BoxProps) {
-  if (props.ref ?? (props.overrideProps as any)?.ref) {
-    console.log(props.ref ?? (props.overrideProps as any)?.ref)
-  }
-  return <b-x {...props} ref={props.ref ?? (props.overrideProps as any)?.ref} sty={props} />
+  return <b-x {...props} sty={props} />
 }

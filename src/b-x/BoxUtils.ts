@@ -12,15 +12,20 @@ export type ParseProp<Obj extends {}> = <
     | {
         [Key in keyof Obj]?: (value: Obj[Key]) => any
       },
+  ParseAll extends boolean = false,
 >(
   parsers: Parsers,
-) =>
+  parseAll?: ParseAll,
+) => ReturnBasedOnParseAll<
   | undefined
   | (Parsers extends keyof Obj
       ? Obj[Parsers]
       : Parsers[keyof Parsers] extends (...args: any[]) => infer T
       ? T
-      : undefined)
+      : undefined),
+  ParseAll
+>
+type ReturnBasedOnParseAll<T, IsList extends boolean> = IsList extends true ? NonNullable<T>[] : T
 export function makePropParser<
   Obj extends {
     overrideProps?: Partial<Obj>
@@ -29,21 +34,33 @@ export function makePropParser<
 >(obj: Obj) {
   /** Some props have multiple aliases, like `width` and `widthGrows`. This function helps parse
    * aliased props in both the current obj and any overrides. */
-  return (parsers => {
+  return ((parsers, parseAll) => {
     // First try parsing the override
-    const overridenValue: any = exists(obj.overrideProps)
-      ? makePropParser(obj.overrideProps)(parsers as any)
+    const parsedOverrides: any = exists(obj.overrideProps)
+      ? makePropParser(obj.overrideProps)(parsers as any, parseAll)
       : undefined
-    if (exists(overridenValue)) return overridenValue
+    if (exists(parsedOverrides) && !parseAll) return parsedOverrides
 
     // If this prop has not been overriden, then try parsing the prop
     if (typeof parsers === `string`) {
-      return obj[parsers]
+      if (parseAll) {
+        ;(parsedOverrides as any[]).splice(0, 0, obj[parsers])
+        return parsedOverrides.filter(exists)
+      } else {
+        return obj[parsers]
+      }
     } else {
       for (const key of Object.keys(parsers)) {
         if (exists(obj[key])) {
           const parsedValue = (parsers as any)[key]?.(obj[key])
-          if (exists(parsedValue)) return parsedValue
+          if (exists(parsedValue)) {
+            if (parseAll) {
+              ;(parsedOverrides as any[]).splice(0, 0, parsedValue)
+              return parsedOverrides.filter(exists)
+            } else {
+              return parsedValue
+            }
+          }
         }
       }
     }

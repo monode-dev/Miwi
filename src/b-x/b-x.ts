@@ -12,6 +12,7 @@ export type Sty = Partial<
     TextSty &
     InteractionSty & {
       overrideProps: Partial<Sty>
+      getElement: (e: HTMLElement) => void
       shouldLog?: boolean
     }
 >
@@ -168,6 +169,12 @@ export class Miwi_Box extends HTMLElement {
     if (exists(this.parentElement)) {
       this._parentObserver.observe(this.parentElement, { attributes: true })
     }
+
+    const parseProp = makePropParser(this.sty)
+    const elementGetters: any[] = parseProp(`getElement`, true)
+    elementGetters.forEach(getter => {
+      getter(this)
+    })
   }
 
   disconnectedCallback() {

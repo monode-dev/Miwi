@@ -79,7 +79,7 @@ export function TabView(
 
   return (
     <Row
-      ref={el => {
+      getElement={el => {
         tabBodiesParent.value = el
         console.log(`hello from ref`)
       }}

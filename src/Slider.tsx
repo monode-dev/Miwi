@@ -1,7 +1,7 @@
 import { Sig, sig } from './utils'
 import { Box, BoxProps } from './Box'
 import { Row } from './Row'
-import { Stack } from './Stack';
+import { Stack } from './Stack'
 
 export function Slider(
   props: {
@@ -45,7 +45,7 @@ export function Slider(
   }
 
   return (
-    <Box ref={slider}>
+    <Box getElement={slider}>
       <Stack alignCenterLeft widthGrows height={thumbHeight}>
         <Box
           width={'100%'}

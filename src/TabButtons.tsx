@@ -48,10 +48,10 @@ export function TabButtons(
         <Box width={tabButtonWidth} onClick={() => selectTab(0)}>
           {labels[0]}
         </Box>
-        <Box width={tabButtonWidth} ref={el => (tab1Ref = el)} onClick={() => selectTab(1)}>
+        <Box width={tabButtonWidth} getElement={el => (tab1Ref = el)} onClick={() => selectTab(1)}>
           {labels[1]}
         </Box>
-        <Box width={tabButtonWidth} ref={el => (tab2Ref = el)} onClick={() => selectTab(2)}>
+        <Box width={tabButtonWidth} getElement={el => (tab2Ref = el)} onClick={() => selectTab(2)}>
           {labels[2]}
         </Box>
       </Row>
@@ -59,7 +59,7 @@ export function TabButtons(
         <Row widthGrows height={0.375} spaceAroundX alignBottom>
           <Box width={tabButtonWidth} />
           <Box
-            ref={el => (tabUnderline = el)}
+            getElement={el => (tabUnderline = el)}
             width={tabButtonWidth}
             height={0.125}
             background={$theme.colors.sameAsText}

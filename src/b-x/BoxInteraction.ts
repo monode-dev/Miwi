@@ -31,18 +31,28 @@ export function applyInteractionStyle(
   htmlElement: HTMLElement,
 ) {
   htmlElement.role = parseProp(`role`) ?? ``
-  const onClick = parseProp(`onClick`) ?? null
-  const isClickable = exists(onClick)
+  const onClickListeners = parseProp(`onClick`, true)
+  const isClickable = exists(onClickListeners.length > 0)
   const preventClickPropagation = parseProp(`preventClickPropagation`) ?? isClickable
   htmlElement.style.pointerEvents = preventClickPropagation ? `auto` : `none`
   htmlElement.onclick = preventClickPropagation
     ? (e: MouseEvent) => {
         e.stopPropagation()
-        onClick?.(e)
+        onClickListeners.forEach(listener => listener(e))
       }
-    : onClick
+    : isClickable
+    ? (e: MouseEvent) => onClickListeners.forEach(listener => listener(e))
+    : null
   htmlElement.style.cursor = parseProp(`cssCursor`) ?? isClickable ? `pointer` : `default`
-  htmlElement.onmouseenter = parseProp(`onMouseEnter`) ?? null
-  htmlElement.onmouseleave = parseProp(`onMouseLeave`) ?? null
+  const onMouseEnterListeners = parseProp(`onMouseEnter`, true)
+  htmlElement.onmouseenter =
+    onMouseEnterListeners.length > 0
+      ? () => onMouseEnterListeners.forEach(listener => listener())
+      : null
+  const onMouseLeaveListeners = parseProp(`onMouseLeave`, true)
+  htmlElement.onmouseleave =
+    onMouseLeaveListeners.length > 0
+      ? () => onMouseLeaveListeners.forEach(listener => listener())
+      : null
   htmlElement.classList.toggle(bonusTouchAreaClassName, parseProp(`bonusTouchArea`) ?? false)
 }
