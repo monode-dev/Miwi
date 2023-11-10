@@ -26,9 +26,7 @@ export function TabView(
 
   createEffect(() => {
     const newTabPosition = [`100vw`, 0, `-100vw`][props.selectedTabSig.value]
-    console.log(tabBodiesParent.value)
     if (tabBodiesParent.value) {
-      // TODO: UPDATE THIS
       gsap.to(tabBodiesParent.value, {
         duration: 0.15,
         x: newTabPosition,
@@ -81,7 +79,6 @@ export function TabView(
     <Row
       getElement={el => {
         tabBodiesParent.value = el
-        console.log(`hello from ref`)
       }}
       width="300%"
       onClick={props.onClick}
