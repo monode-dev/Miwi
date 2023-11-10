@@ -41,8 +41,10 @@ export function makePropParser<
       return obj[parsers]
     } else {
       for (const key of Object.keys(parsers)) {
-        const parsedValue = (parsers as any)[key]?.(obj[key])
-        if (exists(parsedValue)) return parsedValue
+        if (exists(obj[key])) {
+          const parsedValue = (parsers as any)[key]?.(obj[key])
+          if (exists(parsedValue)) return parsedValue
+        }
       }
     }
 
