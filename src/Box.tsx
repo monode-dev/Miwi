@@ -20,6 +20,6 @@ export function grow(flex: number = 1) {
 
 export type BoxProps = Partial<Sty> & ParentProps & JSX.DOMAttributes<HTMLDivElement>
 export function Box(props: BoxProps) {
-  const test = props.background
+  console.log(props.background)
   return <b-x {...props} sty={props} />
 }
