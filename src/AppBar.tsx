@@ -27,7 +27,8 @@ export function AppBar(
       />
 
       {/* AppBar */}
-      <Column
+      <Box
+        column
         widthGrows
         background={props.background ?? $theme.colors.primary}
         shadowSize={props.shadowSize ?? 1.25}
@@ -67,7 +68,7 @@ export function AppBar(
         <Row widthGrows scale={1}>
           {props.bottom}
         </Row>
-      </Column>
+      </Box>
     </Column>
   )
 }
