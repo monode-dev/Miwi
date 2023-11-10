@@ -79,7 +79,10 @@ export function TabView(
 
   return (
     <Row
-      ref={el => (tabBodiesParent.value = el)}
+      ref={el => {
+        tabBodiesParent.value = el
+        console.log(el)
+      }}
       width="300%"
       onClick={props.onClick}
       heightGrows
