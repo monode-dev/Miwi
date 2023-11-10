@@ -40,12 +40,13 @@ export function makePropParser<
       ? makePropParser(obj.overrideProps)(parsers as any, parseAll)
       : undefined
     if (exists(parsedOverrides) && !parseAll) return parsedOverrides
+    const allParsers: any[] = parseAll ? parsedOverrides ?? [] : []
 
     // If this prop has not been overriden, then try parsing the prop
     if (typeof parsers === `string`) {
       if (parseAll) {
-        ;(parsedOverrides as any[]).splice(0, 0, obj[parsers])
-        return parsedOverrides.filter(exists)
+        allParsers.splice(0, 0, obj[parsers])
+        return allParsers.filter(exists)
       } else {
         return obj[parsers]
       }
@@ -55,8 +56,8 @@ export function makePropParser<
           const parsedValue = (parsers as any)[key]?.(obj[key])
           if (exists(parsedValue)) {
             if (parseAll) {
-              ;(parsedOverrides as any[]).splice(0, 0, parsedValue)
-              return parsedOverrides.filter(exists)
+              allParsers.splice(0, 0, parsedValue)
+              return allParsers.filter(exists)
             } else {
               return parsedValue
             }
