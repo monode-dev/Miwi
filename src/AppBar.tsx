@@ -31,12 +31,12 @@ export function AppBar(
         column
         widthGrows
         background={props.background ?? $theme.colors.primary}
-        shadowSize={props.shadowSize ?? 1.25}
+        // shadowSize={props.shadowSize ?? 1.25}
         shadowDirection={$Align.bottomCenter}
         alignBottomCenter
         textColor={$theme.colors.accent}
         zIndex={1}
-        //overrideProps={props}
+        overrideProps={{ ...props }}
       >
         {/* Main Row */}
         <Row widthGrows pad={0.5} scale={1.5}>
