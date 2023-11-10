@@ -1,5 +1,5 @@
 import { JSX, Show } from 'solid-js'
-import { Box, BoxProps, grow, parseSty } from './Box'
+import { Box, BoxProps, grow } from './Box'
 import { useNav } from './Nav'
 import { Icon } from './Icon'
 import { mdiArrowLeft } from '@mdi/js'

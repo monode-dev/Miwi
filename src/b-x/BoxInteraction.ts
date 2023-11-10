@@ -1,4 +1,5 @@
 import { exists } from 'src/utils'
+import { ParseProp } from './BoxUtils'
 
 export type InteractionSty = {
   role: string
@@ -10,13 +11,29 @@ export type InteractionSty = {
   onClick: (e: MouseEvent) => void
 }
 
-export const bonusTouchAreaClassName = `b-x-bonus-touch-area`
+const bonusTouchAreaClassName = `b-x-bonus-touch-area`
+const style = document.createElement(`style`)
+style.textContent = `
+.${bonusTouchAreaClassName}::before {
+  content: '';
+  position: absolute;
+  top: -1rem;
+  right: -1rem;
+  bottom: -1rem;
+  left: -1rem;
+  z-index: -1;
+}
+`
+document.body.appendChild(style)
 
-export function applyInteractionStyle(props: Partial<InteractionSty>, htmlElement: HTMLElement) {
-  htmlElement.role = props.role ?? ``
-  const onClick = props.onClick ?? null
+export function applyInteractionStyle(
+  parseProp: ParseProp<InteractionSty>,
+  htmlElement: HTMLElement,
+) {
+  htmlElement.role = parseProp(`role`) ?? ``
+  const onClick = parseProp(`onClick`) ?? null
   const isClickable = exists(onClick)
-  const preventClickPropagation = props.preventClickPropagation ?? isClickable
+  const preventClickPropagation = parseProp(`preventClickPropagation`) ?? isClickable
   htmlElement.style.pointerEvents = preventClickPropagation ? `auto` : `none`
   htmlElement.onclick = preventClickPropagation
     ? (e: MouseEvent) => {
@@ -24,8 +41,8 @@ export function applyInteractionStyle(props: Partial<InteractionSty>, htmlElemen
         onClick?.(e)
       }
     : onClick
-  htmlElement.style.cursor = props.cssCursor ?? isClickable ? `pointer` : `default`
-  htmlElement.onmouseenter = props.onMouseEnter ?? null
-  htmlElement.onmouseleave = props.onMouseLeave ?? null
-  htmlElement.classList.toggle(bonusTouchAreaClassName, props.bonusTouchArea ?? false)
+  htmlElement.style.cursor = parseProp(`cssCursor`) ?? isClickable ? `pointer` : `default`
+  htmlElement.onmouseenter = parseProp(`onMouseEnter`) ?? null
+  htmlElement.onmouseleave = parseProp(`onMouseLeave`) ?? null
+  htmlElement.classList.toggle(bonusTouchAreaClassName, parseProp(`bonusTouchArea`) ?? false)
 }

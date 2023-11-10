@@ -1,11 +1,17 @@
-import { exists, isString, sizeToCss } from './BoxUtils'
+import { ParseProp, exists, isString, sizeToCss } from './BoxUtils'
 import { Axis } from './BoxLayout'
 
 export type Size = number | string | FlexSize
-export type SizeSty = {
+export type SizeSty = Partial<{
   width: Size
+  widthGrows: boolean
+  widthShrinks: boolean
+  asWideAsParent: boolean
   height: Size
-}
+  heightGrows: boolean
+  heightShrinks: boolean
+  asTallAsParent: boolean
+}>
 
 export interface FlexSize {
   flex: number
@@ -63,7 +69,7 @@ export const heightGrowsClassName = `b-x-height-grows`
 
 // Size Styler
 export function applySizeStyle(
-  props: Partial<SizeSty>,
+  parseProp: ParseProp<SizeSty>,
   htmlElement: HTMLElement,
   context: {
     aChildsWidthGrows: boolean
@@ -73,11 +79,21 @@ export function applySizeStyle(
 ) {
   const formattedWidth = formatRawSize({
     someChildGrows: context.aChildsWidthGrows,
-    size: props.width,
+    size: parseProp({
+      width: v => v,
+      widthGrows: () => `1f`,
+      widthShrinks: () => -1,
+      asWideAsParent: () => `100%`,
+    }),
   })
   const formattedHeight = formatRawSize({
     someChildGrows: context.aChildsHeightGrows,
-    size: props.height,
+    size: parseProp({
+      height: v => v,
+      heightGrows: () => `1f`,
+      heightShrinks: () => -1,
+      asTallAsParent: () => `100%`,
+    }),
   })
   const parentAxis = context.parentStyle?.flexDirection ?? Axis.column
   const [exactWidth, wMin, wMax, widthGrows] = computeSizeInfo({
@@ -198,4 +214,11 @@ export function applySizeStyle(
   //     }
   //   }
   // }
+
+  return {
+    formattedWidth,
+    formattedHeight,
+    widthGrows: isFlexSize(formattedWidth) && formattedWidth.flex > 0,
+    heightGrows: isFlexSize(formattedHeight) && formattedHeight.flex > 0,
+  }
 }

@@ -1,5 +1,5 @@
 import { Sig, compute, exists, injectDefaults, sig, watchDeps } from './utils'
-import { BoxProps, grow, parseSty } from './Box'
+import { BoxProps, grow } from './Box'
 import { Txt } from './Txt'
 import { Row } from './Row'
 import { Icon } from './Icon'
@@ -24,7 +24,6 @@ export function Selector<T>(
     emptyListText: `No Options`,
     isWide: false,
   })
-  const sty = parseSty(props)
   const selectedLabel = compute(() => {
     return props.getLabelForData(props.value) ?? props.noneLabel
   })
@@ -77,7 +76,7 @@ export function Selector<T>(
             }
           }}
           widthGrows
-          height={sty.scale ?? 1}
+          height={props.scale ?? 1}
           spaceBetween
         >
           {' '}
@@ -105,7 +104,7 @@ export function Selector<T>(
         </Row>
       }
       openButtonWidth={grow()}
-      openButtonHeight={sty.scale ?? 1}
+      openButtonHeight={props.scale ?? 1}
       isOpenSig={_modalIsOpen}
       modalWidth={props.isWide ? `100%` : undefined}
     >

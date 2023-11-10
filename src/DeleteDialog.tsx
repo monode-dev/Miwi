@@ -1,4 +1,4 @@
-import { grow, Box, BoxProps } from './Box'
+import { Box, BoxProps } from './Box'
 import { Card } from './Card'
 import { Button } from './Button'
 import { Row } from './Row'

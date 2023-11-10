@@ -1,13 +1,14 @@
-import { exists, isString, sizeToCss } from './BoxUtils'
+import { ParseProp, sizeToCss } from './BoxUtils'
 
-// NOTE: Look into https://solid-dnd.com/ for drag and drop, and reorderable lists.
+// NOTE: Look into https://solid-dnd.com/ for drag and drop, and re-orderable lists.
 
 export type LayoutSty = PadStyProps &
   AlignStyProps &
-  AxisStyProps & {
+  AxisStyProps &
+  Partial<{
     overflowX: Overflow
     overflowY: Overflow
-  }
+  }>
 
 // type PartSty = {
 //   width: -1
@@ -47,15 +48,12 @@ export const Axis = {
   column: `column`,
   stack: `stack`,
 } as const
-export type AxisStyProps = {
+export type AxisStyProps = Partial<{
   axis: Axis
-} & {
   row: boolean
   column: boolean
   stack: boolean
-}
-export const stackClassName = `b-x-stack`
-export const nonStackClassName = `b-x-non-stack`
+}>
 
 // Overflow
 export type Overflow = (typeof Overflow)[keyof typeof Overflow]
@@ -74,7 +72,7 @@ export const Overflow = {
 
 // Align
 // NOTE: Align only makes sense if the size on this axis is not "shrink"
-export type AlignStyProps = {
+export type AlignStyProps = Partial<{
   align: Align
   alignX: AlignSingleAxis
   alignY: AlignSingleAxis
@@ -103,86 +101,57 @@ export type AlignStyProps = {
   spaceEvenly: boolean
   spaceEvenlyX: boolean
   spaceEvenlyY: boolean
-}
-function getAlign(sty: Partial<AlignStyProps>, childCount: number): AlignTwoAxis {
-  const alignX = (() => {
-    let result = sty.alignX ?? (isString(sty.align) ? sty.align : sty.align?.alignX)
-    // Parse flags
-    if (!exists(result)) {
-      if (sty.alignLeft) {
-        result = Align.centerLeft.alignX
-      } else if (sty.alignCenterX) {
-        result = Align.center.alignX
-      } else if (sty.alignRight) {
-        result = Align.centerRight.alignX
-      } else if (sty.spaceBetweenX) {
-        result = _SpaceAlign.spaceBetween
-      } else if (sty.spaceAroundX) {
-        result = _SpaceAlign.spaceAround
-      } else if (sty.spaceEvenlyX) {
-        result = _SpaceAlign.spaceEvenly
-      } else if (sty.alignTopLeft || sty.alignCenterLeft || sty.alignBottomLeft) {
-        result = Align.centerLeft.alignX
-      } else if (sty.alignTopCenter || sty.alignCenter || sty.alignBottomCenter) {
-        result = Align.center.alignX
-      } else if (sty.alignTopRight || sty.alignCenterRight || sty.alignBottomRight) {
-        result = Align.centerRight.alignX
-      } else if (sty.spaceBetween) {
-        result = _SpaceAlign.spaceBetween
-      } else if (sty.spaceAround) {
-        result = _SpaceAlign.spaceAround
-      } else if (sty.spaceEvenly) {
-        result = _SpaceAlign.spaceEvenly
-      } else {
-        result = Align.center.alignX
-      }
-    }
-    // I've decided that space-between with one child should center it, instead of putting it at the start like CSS does.
-    if (result === _SpaceAlign.spaceBetween && childCount === 1) {
-      result = _FlexAlign.center
-    }
-    return result
-  })()
-  const alignY = (() => {
-    let result = sty.alignY ?? (isString(sty.align) ? sty.align : sty.align?.alignY)
-    // Parse flags
-    if (!exists(result)) {
-      if (sty.alignTop) {
-        result = Align.topCenter.alignY
-      } else if (sty.alignCenterY) {
-        result = Align.center.alignY
-      } else if (sty.alignBottom) {
-        result = Align.bottomCenter.alignY
-      } else if (sty.spaceBetweenY) {
-        result = _SpaceAlign.spaceBetween
-      } else if (sty.spaceAroundY) {
-        result = _SpaceAlign.spaceAround
-      } else if (sty.spaceEvenlyY) {
-        result = _SpaceAlign.spaceEvenly
-      } else if (sty.alignTopLeft || sty.alignTopCenter || sty.alignTopRight) {
-        result = Align.topCenter.alignY
-      } else if (sty.alignCenterLeft || sty.alignCenter || sty.alignCenterRight) {
-        result = Align.center.alignY
-      } else if (sty.alignBottomLeft || sty.alignBottomCenter || sty.alignBottomRight) {
-        result = Align.bottomCenter.alignY
-      } else if (sty.spaceBetween) {
-        result = _SpaceAlign.spaceBetween
-      } else if (sty.spaceAround) {
-        result = _SpaceAlign.spaceAround
-      } else if (sty.spaceEvenly) {
-        result = _SpaceAlign.spaceEvenly
-      } else {
-        result = Align.center.alignY
-      }
-    }
-    // I've decided that space-between with one child should center it, instead of putting it at the start like CSS does.
-    if (result === _SpaceAlign.spaceBetween && childCount === 1) {
-      result = _FlexAlign.center
-    }
-    return result
-  })()
-
-  return { alignX, alignY }
+}>
+function parseAlignProps(parseProp: ParseProp<LayoutSty>, childCount: number): AlignTwoAxis {
+  const spaceBetweenAsCss = childCount === 1 ? Align.center.alignX : _SpaceAlign.spaceBetween
+  return {
+    alignX:
+      parseProp({
+        alignX: v => v,
+        align: v => (typeof v === `string` ? v : v?.alignX),
+        alignLeft: () => Align.centerLeft.alignX,
+        alignCenterX: () => Align.center.alignX,
+        alignRight: () => Align.centerRight.alignX,
+        spaceBetweenX: () => spaceBetweenAsCss,
+        spaceAroundX: () => _SpaceAlign.spaceAround,
+        spaceEvenlyX: () => _SpaceAlign.spaceEvenly,
+        alignTopLeft: () => Align.topLeft.alignX,
+        alignTopCenter: () => Align.topCenter.alignX,
+        alignTopRight: () => Align.topRight.alignX,
+        alignCenterLeft: () => Align.centerLeft.alignX,
+        alignCenter: () => Align.center.alignX,
+        alignCenterRight: () => Align.centerRight.alignX,
+        alignBottomLeft: () => Align.bottomLeft.alignX,
+        alignBottomCenter: () => Align.bottomCenter.alignX,
+        alignBottomRight: () => Align.bottomRight.alignX,
+        spaceBetween: () => spaceBetweenAsCss,
+        spaceAround: () => _SpaceAlign.spaceAround,
+        spaceEvenly: () => _SpaceAlign.spaceEvenly,
+      }) ?? Align.center.alignX,
+    alignY:
+      parseProp({
+        alignY: v => v,
+        align: v => (typeof v === `string` ? v : v?.alignY),
+        alignTop: () => Align.topCenter.alignY,
+        alignCenterY: () => Align.center.alignY,
+        alignBottom: () => Align.bottomCenter.alignY,
+        spaceBetweenY: () => spaceBetweenAsCss,
+        spaceAroundY: () => _SpaceAlign.spaceAround,
+        spaceEvenlyY: () => _SpaceAlign.spaceEvenly,
+        alignTopLeft: () => Align.topLeft.alignY,
+        alignTopCenter: () => Align.topCenter.alignY,
+        alignTopRight: () => Align.topRight.alignY,
+        alignCenterLeft: () => Align.centerLeft.alignY,
+        alignCenter: () => Align.center.alignY,
+        alignCenterRight: () => Align.centerRight.alignY,
+        alignBottomLeft: () => Align.bottomLeft.alignY,
+        alignBottomCenter: () => Align.bottomCenter.alignY,
+        alignBottomRight: () => Align.bottomRight.alignY,
+        spaceBetween: () => spaceBetweenAsCss,
+        spaceAround: () => _SpaceAlign.spaceAround,
+        spaceEvenly: () => _SpaceAlign.spaceEvenly,
+      }) ?? Align.center.alignY,
+  }
 }
 // NOTE: At some point we probably want to crossout the align property if the size is shrink since it won't do anything.
 // NOTE: We probably eventually want to allow align to be a number between -1 and 1 so that contents can be precisely positioned.
@@ -247,47 +216,79 @@ export const Align = {
 
 // Layout Styler
 export function applyLayoutStyle(
-  props: Partial<LayoutSty>,
+  parseProp: ParseProp<LayoutSty>,
   htmlElement: HTMLElement,
   context: { childCount: number },
 ) {
   // Pad
   const padEachSide = [
-    props.padTop ?? props.padAroundY ?? props.padAround ?? props.pad ?? 0,
-    props.padRight ?? props.padAroundX ?? props.padAround ?? props.pad ?? 0,
-    props.padBottom ?? props.padAroundY ?? props.padAround ?? props.pad ?? 0,
-    props.padLeft ?? props.padAroundX ?? props.padAround ?? props.pad ?? 0,
+    parseProp({
+      padTop: v => v,
+      padAroundY: v => v,
+      padAround: v => v,
+      pad: v => v,
+    }) ?? 0,
+    parseProp({
+      padRight: v => v,
+      padAroundX: v => v,
+      padAround: v => v,
+      pad: v => v,
+    }) ?? 0,
+    parseProp({
+      padBottom: v => v,
+      padAroundY: v => v,
+      padAround: v => v,
+      pad: v => v,
+    }) ?? 0,
+    parseProp({
+      padLeft: v => v,
+      padAroundX: v => v,
+      padAround: v => v,
+      pad: v => v,
+    }) ?? 0,
   ]
   htmlElement.style.padding = padEachSide.every(x => x === 0)
     ? ``
     : padEachSide.map(sizeToCss).join(` `)
   // NOTE: We want pad between to cascade, but not pad around.
   htmlElement.style.rowGap = sizeToCss(
-    props.padBetweenY ?? props.padBetween ?? props.pad ?? `inherit`,
+    parseProp({
+      padBetweenY: v => v,
+      padBetween: v => v,
+      pad: v => v,
+    }) ?? `inherit`,
   )
   htmlElement.style.columnGap = sizeToCss(
-    props.padBetweenX ?? props.padBetween ?? props.pad ?? `inherit`,
+    parseProp({
+      padBetweenX: v => v,
+      padBetween: v => v,
+      pad: v => v,
+    }) ?? `inherit`,
   )
 
   // Align & Axis
-  const { alignX, alignY } = getAlign(props, context.childCount)
-  const axis = props.axis ?? (props.row ? Axis.row : props.stack ? Axis.stack : Axis.column)
+  const { alignX, alignY } = parseAlignProps(parseProp, context.childCount)
+  const axis =
+    parseProp({
+      axis: v => v,
+      row: () => Axis.row,
+      column: () => Axis.column,
+      stack: () => Axis.stack,
+    }) ?? Axis.column
   htmlElement.style.justifyContent = axis === Axis.column ? alignY : alignX
   htmlElement.style.alignItems = axis === Axis.column ? alignX : alignY
   htmlElement.style.flexDirection = axis === Axis.stack ? `` : axis
-  htmlElement.classList.toggle(stackClassName, axis === Axis.stack)
-  htmlElement.classList.toggle(nonStackClassName, axis !== Axis.stack)
-  htmlElement.style.textAlign =
-    alignX === _FlexAlign.start
-      ? `left`
-      : alignX === _FlexAlign.end
-      ? `right`
-      : // We assume for now that all other aligns cam be treated as center
-        `center`
+  htmlElement.style.position = axis === Axis.stack ? `absolute` : `relative`
 
   // Overflow
-  const overflowX = props.overflowX ?? Overflow.forceStretchParent
-  const overflowY = props.overflowY ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
+  const overflowX =
+    parseProp({
+      overflowX: v => v,
+    }) ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
+  const overflowY =
+    parseProp({
+      overflowY: v => v,
+    }) ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
   htmlElement.style.flexWrap =
     axis === Axis.row
       ? overflowX === Overflow.wrap
@@ -315,7 +316,6 @@ export function applyLayoutStyle(
   ;(htmlElement.style as any).scrollbarColor = [overflowX, overflowY].includes(Overflow.scroll)
     ? `#e3e3e3 transparent`
     : ``
-  // whiteSpace cascades, so we need to explicity set it.
-  htmlElement.style.whiteSpace =
-    overflowX === Overflow.crop || overflowX === Overflow.forceStretchParent ? `nowrap` : `normal`
+
+  return { alignX, overflowX }
 }

@@ -1,16 +1,9 @@
 import { DecorationSty, applyDecorationStyle } from './BoxDecoration'
-import { LayoutSty, stackClassName, nonStackClassName, applyLayoutStyle } from './BoxLayout'
-import { exists } from './BoxUtils'
-import {
-  SizeSty,
-  isFlexSize,
-  formatRawSize,
-  widthGrowsClassName,
-  heightGrowsClassName,
-  applySizeStyle,
-} from './BoxSize'
+import { LayoutSty, applyLayoutStyle } from './BoxLayout'
+import { exists, makePropParser } from './BoxUtils'
+import { SizeSty, widthGrowsClassName, heightGrowsClassName, applySizeStyle } from './BoxSize'
 import { TextSty, applyTextStyle } from './BoxText'
-import { InteractionSty, applyInteractionStyle, bonusTouchAreaClassName } from './BoxInteraction'
+import { InteractionSty, applyInteractionStyle } from './BoxInteraction'
 
 export type Sty = Partial<
   SizeSty &
@@ -18,6 +11,7 @@ export type Sty = Partial<
     LayoutSty &
     TextSty &
     InteractionSty & {
+      overrideProps: Partial<Sty>
       shouldLog?: boolean
     }
 >
@@ -117,42 +111,36 @@ export class Miwi_Box extends HTMLElement {
   }
   updateStyle() {
     const { someChildWidthGrows, someChildHeightGrows } = this.computeSomeChildGrows()
-    applyLayoutStyle(this.sty, this, {
+    const parseProp: (...args: any[]) => any = makePropParser(this.sty)
+    const { alignX, overflowX } = applyLayoutStyle(parseProp, this, {
       childCount: this._childCount,
     })
-    applySizeStyle(this.sty, this, {
+    const { widthGrows, heightGrows } = applySizeStyle(parseProp, this, {
       parentStyle: this._parentStyle,
       aChildsWidthGrows: someChildWidthGrows,
       aChildsHeightGrows: someChildHeightGrows,
     })
-    applyDecorationStyle(this.sty, this)
-    applyTextStyle(this.sty, this)
-    applyInteractionStyle(this.sty, this)
+    applyDecorationStyle(parseProp, this)
+    applyTextStyle(parseProp, this, {
+      alignX,
+      overflowX,
+    })
+    applyInteractionStyle(parseProp, this)
 
     // Recompute growth
-    // TODO: Eventually get this from the styler result.
-    const formattedWidth = formatRawSize({
-      someChildGrows: someChildWidthGrows,
-      size: this.sty.width,
-    })
-    const formattedHeight = formatRawSize({
-      someChildGrows: someChildHeightGrows,
-      size: this.sty.height,
-    })
-    const newWidthGrows = isFlexSize(formattedWidth) && formattedWidth.flex > 0
-    this.classList.toggle(widthGrowsClassName, newWidthGrows)
-    const shouldUpdateWidthGrows = this._widthGrows !== newWidthGrows
-    const newHeightGrows = isFlexSize(formattedHeight) && formattedHeight.flex > 0
-    this.classList.toggle(heightGrowsClassName, newHeightGrows)
-    const shouldUpdateHeightGrows = this._heightGrows !== newHeightGrows
+    // TODO: Eventually Handle this in applySizeStyle
+    this.classList.toggle(widthGrowsClassName, widthGrows)
+    const shouldUpdateWidthGrows = this._widthGrows !== widthGrows
+    this.classList.toggle(heightGrowsClassName, heightGrows)
+    const shouldUpdateHeightGrows = this._heightGrows !== heightGrows
     if (shouldUpdateWidthGrows || shouldUpdateHeightGrows) {
       if (exists(this.parentElement)) {
         if (this.parentElement instanceof Miwi_Box) {
-          if (shouldUpdateWidthGrows) this._widthGrows = newWidthGrows
-          if (shouldUpdateHeightGrows) this._heightGrows = newHeightGrows
+          if (shouldUpdateWidthGrows) this._widthGrows = widthGrows
+          if (shouldUpdateHeightGrows) this._heightGrows = heightGrows
           this.parentElement.thisIsAChildTogglingTheFactThatItGrows({
-            widthGrows: shouldUpdateWidthGrows ? newWidthGrows : undefined,
-            heightGrows: shouldUpdateHeightGrows ? newHeightGrows : undefined,
+            widthGrows: shouldUpdateWidthGrows ? widthGrows : undefined,
+            heightGrows: shouldUpdateHeightGrows ? heightGrows : undefined,
           })
         }
       }
@@ -194,25 +182,4 @@ export class Miwi_Box extends HTMLElement {
   }
 }
 
-const style = document.createElement(`style`)
-style.textContent = `
-.${stackClassName} > * {
-  position: absolute;
-}
-
-.${nonStackClassName} > * {
-  position: relative;
-}
-
-.${bonusTouchAreaClassName}::before {
-  content: '';
-  position: absolute;
-  top: -1rem;
-  right: -1rem;
-  bottom: -1rem;
-  left: -1rem;
-  z-index: -1;
-}
-`
-document.body.appendChild(style)
 customElements.define('b-x', Miwi_Box)
