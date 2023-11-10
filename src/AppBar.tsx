@@ -35,7 +35,7 @@ export function AppBar(
         alignBottomCenter
         textColor={$theme.colors.accent}
         zIndex={1}
-        overrideProps={props}
+        overrideProps={{ ...props }}
       >
         {/* Main Row */}
         <Row widthGrows pad={0.5} scale={1.5}>
