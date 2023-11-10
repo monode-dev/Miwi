@@ -12,7 +12,7 @@ export function Label(
   const shouldShowLabel = compute(() => exists(props.label) && props.label.length > 0)
 
   return shouldShowLabel.value ? (
-    <Row widthGrows padBetween={0.25} alignTopLeft {...props}>
+    <Row widthGrows padBetween={0.25} alignTopLeft overrideProps={props}>
       <Txt hint={props.hint ?? false}>{props.label}:</Txt>
       {props.children}
     </Row>

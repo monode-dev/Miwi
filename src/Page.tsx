@@ -10,7 +10,7 @@ export function Page(props: BoxProps) {
       overflowX={$Overflow.crop}
       overflowY={$Overflow.crop}
       preventClickPropagation
-      {...props}
+      overrideProps={props}
     >
       {props.children}
     </Box>

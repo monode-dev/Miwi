@@ -36,7 +36,13 @@ export function Button(
     props.raised ? { shadowSize: 1, shadowDirection: $Align.bottomRight } : {},
   )
   return (
-    <Row alignCenter {...shapeSty.value} {...colorSty.value} {...shadowSty.value} {...props}>
+    <Row
+      alignCenter
+      {...shapeSty.value}
+      {...colorSty.value}
+      {...shadowSty.value}
+      overrideProps={props}
+    >
       {props.children}
     </Row>
   )

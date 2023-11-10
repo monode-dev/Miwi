@@ -12,7 +12,7 @@ export function Card(props: BoxProps) {
       textColor={$theme.colors.text}
       scale={1}
       pad={1}
-      {...props}
+      overrideProps={props}
     >
       {props.children}
     </Column>

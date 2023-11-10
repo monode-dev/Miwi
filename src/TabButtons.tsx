@@ -44,7 +44,7 @@ export function TabButtons(
   })
   return (
     <Column>
-      <Row onClick={props.onClick} widthGrows spaceAroundX {...props}>
+      <Row onClick={props.onClick} widthGrows spaceAroundX overrideProps={props}>
         <Box width={tabButtonWidth} onClick={() => selectTab(0)}>
           {labels[0]}
         </Box>

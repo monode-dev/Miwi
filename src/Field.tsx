@@ -202,7 +202,7 @@ export function Field(
       padBetween={0.25}
       overflowY={$Overflow.forceStretchParent}
       alignTopLeft
-      {...props}
+      overrideProps={props}
       scale={scale.value}
     >
       <Show when={exists(props.iconPath) && props.iconPath !== ``}>

@@ -20,7 +20,7 @@ export function Txt(
       scale={scale.value}
       alignTopLeft
       overflowY={$Overflow.forceStretchParent}
-      {...props}
+      overrideProps={props}
       overflowX={overflowX === $Overflow.crop ? $Overflow.forceStretchParent : overflowX}
     >
       {overflowX === $Overflow.crop ? (
