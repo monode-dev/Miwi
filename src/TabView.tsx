@@ -1,7 +1,7 @@
 import { gsap } from 'gsap'
 import { Sig } from './utils'
 import { onMount, createEffect, JSX } from 'solid-js'
-import { Box, BoxProps, grow } from './Box'
+import { Box, BoxProps } from './Box'
 import { Txt } from './Txt'
 import { Row } from './Row'
 
@@ -25,8 +25,8 @@ export function TabView(
   let tabBodiesParent: HTMLElement | undefined = undefined
 
   createEffect(() => {
-    const newTab = props.selectedTabSig.value
-    const newTabPosition = [`100vw`, 0, `-100vw`][newTab]
+    const newTabPosition = [`100vw`, 0, `-100vw`][props.selectedTabSig.value]
+    console.log(newTabPosition)
     if (tabBodiesParent) {
       // TODO: UPDATE THIS
       gsap.to(tabBodiesParent, {
