@@ -19,10 +19,12 @@ export function grow(flex: number = 1) {
   return `${flex}f`
 }
 
-export type BoxProps = Partial<Sty> & ParentProps & JSX.DOMAttributes<HTMLDivElement>
+export type BoxProps = Partial<Sty> & {
+  children?: JSX.Element
+}
 export function Box(props: BoxProps) {
   const sty = compute(() => {
     return { ...props }
   })
-  return <b-x {...props} sty={sty.value} />
+  return <b-x classList={props.classList} sty={sty.value} />
 }

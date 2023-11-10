@@ -8,6 +8,10 @@ export type InteractionSty = {
   cssCursor: 'pointer' | 'default'
   onMouseEnter: () => void
   onMouseLeave: () => void
+  onMouseDown: (e: MouseEvent) => void
+  onMouseUp: (e: MouseEvent) => void
+  onTouchStart: (e: TouchEvent) => void
+  onTouchEnd: (e: TouchEvent) => void
   onClick: (e: MouseEvent) => void
 }
 
@@ -53,6 +57,24 @@ export function applyInteractionStyle(
   htmlElement.onmouseleave =
     onMouseLeaveListeners.length > 0
       ? () => onMouseLeaveListeners.forEach(listener => listener())
+      : null
+  const onMouseDownListeners = parseProp(`onMouseDown`, true)
+  htmlElement.onmousedown =
+    onMouseDownListeners.length > 0
+      ? (e) => onMouseDownListeners.forEach(listener => listener(e))
+      : null
+  const onMouseUpListeners = parseProp(`onMouseUp`, true)
+  htmlElement.onmouseup =
+    onMouseUpListeners.length > 0 ? (e) => onMouseUpListeners.forEach(listener => listener(e)) : null
+  const onTouchStartListeners = parseProp(`onTouchStart`, true)
+  htmlElement.ontouchstart =
+    onTouchStartListeners.length > 0
+      ? (e) => onTouchStartListeners.forEach(listener => listener(e))
+      : null
+  const onTouchEndListeners = parseProp(`onTouchEnd`, true)
+  htmlElement.ontouchend =
+    onTouchEndListeners.length > 0
+      ? (e) => onTouchEndListeners.forEach(listener => listener(e))
       : null
   htmlElement.classList.toggle(bonusTouchAreaClassName, parseProp(`bonusTouchArea`) ?? false)
 }
