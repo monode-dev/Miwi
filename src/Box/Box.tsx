@@ -7,37 +7,23 @@ import { applyDecorationStyle, DecorationSty } from './BoxDecoration'
 import { TextSty, applyTextStyle } from './BoxText'
 import { InteractionSty, applyInteractionStyle } from './BoxInteraction'
 
-type BDashXProps = ParentProps & {
-  sty?: Sty
-} & JSX.DOMAttributes<HTMLDivElement>
-declare module 'solid-js' {
-  const element: HTMLElement
-  namespace JSX {
-    interface IntrinsicElements {
-      'b-x': BDashXProps
-    }
-  }
+export function grow(flex: number = 1) {
+  return `${flex}f`
 }
 
-export type Sty = Partial<
+export type BoxProps = BoxStyleProps & ParentProps & JSX.DOMAttributes<HTMLDivElement>
+export type BoxStyleProps = Partial<
   LayoutSty &
     SizeSty &
     DecorationSty &
     TextSty &
     InteractionSty & {
-      overrideProps: Partial<Sty>
+      overrideProps: Partial<BoxStyleProps>
       getElement: (e: HTMLElement) => void
       shouldLog?: boolean
     }
 >
-
-export function grow(flex: number = 1) {
-  return `${flex}f`
-}
-
-export type BoxProps = Partial<Sty> & ParentProps & JSX.DOMAttributes<HTMLDivElement>
 export function Box(props: BoxProps) {
-  if (props.shouldLog) console.log('Box', props)
   const element = sig<HTMLElement | undefined>(undefined)
   const parseProp: (...args: any[]) => any = makePropParser(props)
 
@@ -71,7 +57,7 @@ export function Box(props: BoxProps) {
       if (!exists(element.value)) return
       const { alignX: newAlignX, overflowX: newOverflowX } = applyLayoutStyle(
         parseProp,
-        element.value!,
+        element.value,
         {
           // TODO: Use mutation observers to observe this, or see if we can do it with a CSS class
           hasMoreThanOneChild: element.value.children.length > 1,
