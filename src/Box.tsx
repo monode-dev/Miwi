@@ -62,7 +62,7 @@ export function Box(props: BoxProps) {
       parseProp,
       element.value!,
       {
-        hasMoreThanOneChild: true, //Array.isArray(props.children) && props.children.length > 1,
+        hasMoreThanOneChild: element.value.children.length > 1,
       },
     )
     // alignX.value = newAlignX
