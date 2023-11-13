@@ -102,5 +102,5 @@ export function Box(props: BoxProps) {
   })
 
   // TODO: Toggle element type based on "tag" prop.
-  return <div /*{...props}*/ ref={el => (element.value = el)}>{props.children}</div>
+  return <div {...props} ref={el => (element.value = el)} />
 }
