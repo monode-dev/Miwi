@@ -1,7 +1,7 @@
 import { onMount, type JSX, type ParentProps } from 'solid-js'
 import { exists, sig, watchEffect } from '../utils'
 import { makePropParser } from './BoxUtils'
-import { Overflow, _FlexAlign, applyLayoutStyle, AlignSingleAxis, LayoutSty } from './BoxLayout'
+import { Overflow, _FlexAlign, watchBoxLayout, AlignSingleAxis, LayoutSty } from './BoxLayout'
 import { SizeSty, applySizeStyle, heightGrowsClassName, widthGrowsClassName } from './BoxSize'
 import { applyDecorationStyle, DecorationSty } from './BoxDecoration'
 import { TextSty, applyTextStyle } from './BoxText'
@@ -53,18 +53,11 @@ export function Box(props: BoxProps) {
     // Compute Layout
     const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
     const overflowX = sig<Overflow>(Overflow.forceStretchParent)
-    watchEffect(() => {
-      if (!exists(element.value)) return
-      const { alignX: newAlignX, overflowX: newOverflowX } = applyLayoutStyle(
-        parseProp,
-        element.value,
-        {
-          // TODO: Use mutation observers to observe this, or see if we can do it with a CSS class
-          hasMoreThanOneChild: element.value.children.length > 1,
-        },
-      )
-      alignX.value = newAlignX
-      overflowX.value = newOverflowX
+    watchBoxLayout(parseProp, element, {
+      // TODO: Use mutation observers to observe this, or see if we can do it with a CSS class
+      hasMoreThanOneChild: sig(element.value.children.length > 1),
+      alignX,
+      overflowX,
     })
 
     // Compute Size

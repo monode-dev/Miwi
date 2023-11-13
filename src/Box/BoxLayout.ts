@@ -1,3 +1,4 @@
+import { Sig, exists, sig, watchEffect } from 'src/utils'
 import { ParseProp, sizeToCss } from './BoxUtils'
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and re-orderable lists.
@@ -233,108 +234,121 @@ style.textContent = `
 document.body.appendChild(style)
 
 // Layout Styler
-export function applyLayoutStyle(
+export function watchBoxLayout(
   parseProp: ParseProp<LayoutSty>,
-  htmlElement: HTMLElement,
-  context: { hasMoreThanOneChild: boolean },
+  element: Sig<HTMLElement | undefined>,
+  context: {
+    hasMoreThanOneChild: Sig<boolean>
+    alignX: Sig<AlignSingleAxis>
+    overflowX: Sig<Overflow>
+  },
 ) {
   // Pad
-  const padEachSide = [
-    parseProp({
-      padTop: v => v,
-      padAroundY: v => v,
-      padAround: v => v,
-      pad: v => v,
-    }) ?? 0,
-    parseProp({
-      padRight: v => v,
-      padAroundX: v => v,
-      padAround: v => v,
-      pad: v => v,
-    }) ?? 0,
-    parseProp({
-      padBottom: v => v,
-      padAroundY: v => v,
-      padAround: v => v,
-      pad: v => v,
-    }) ?? 0,
-    parseProp({
-      padLeft: v => v,
-      padAroundX: v => v,
-      padAround: v => v,
-      pad: v => v,
-    }) ?? 0,
-  ]
-  htmlElement.style.padding = padEachSide.every(x => x === 0)
-    ? ``
-    : padEachSide.map(sizeToCss).join(` `)
-  // NOTE: We want pad between to cascade, but not pad around.
-  htmlElement.style.rowGap = sizeToCss(
-    parseProp({
-      padBetweenY: v => v,
-      padBetween: v => v,
-      pad: v => v,
-    }) ?? `inherit`,
-  )
-  htmlElement.style.columnGap = sizeToCss(
-    parseProp({
-      padBetweenX: v => v,
-      padBetween: v => v,
-      pad: v => v,
-    }) ?? `inherit`,
-  )
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const padEachSide = [
+      parseProp({
+        padTop: v => v,
+        padAroundY: v => v,
+        padAround: v => v,
+        pad: v => v,
+      }) ?? 0,
+      parseProp({
+        padRight: v => v,
+        padAroundX: v => v,
+        padAround: v => v,
+        pad: v => v,
+      }) ?? 0,
+      parseProp({
+        padBottom: v => v,
+        padAroundY: v => v,
+        padAround: v => v,
+        pad: v => v,
+      }) ?? 0,
+      parseProp({
+        padLeft: v => v,
+        padAroundX: v => v,
+        padAround: v => v,
+        pad: v => v,
+      }) ?? 0,
+    ]
+    element.value.style.padding = padEachSide.every(x => x === 0)
+      ? ``
+      : padEachSide.map(sizeToCss).join(` `)
+    // NOTE: We want pad between to cascade, but not pad around.
+    element.value.style.rowGap = sizeToCss(
+      parseProp({
+        padBetweenY: v => v,
+        padBetween: v => v,
+        pad: v => v,
+      }) ?? `inherit`,
+    )
+    element.value.style.columnGap = sizeToCss(
+      parseProp({
+        padBetweenX: v => v,
+        padBetween: v => v,
+        pad: v => v,
+      }) ?? `inherit`,
+    )
+  })
 
   // Align & Axis
-  const { alignX, alignY } = parseAlignProps(parseProp, context.hasMoreThanOneChild)
-  const axis =
-    parseProp({
-      axis: v => v,
-      row: () => Axis.row,
-      column: () => Axis.column,
-      stack: () => Axis.stack,
-    }) ?? Axis.column
-  htmlElement.style.justifyContent = axis === Axis.column ? alignY : alignX
-  htmlElement.style.alignItems = axis === Axis.column ? alignX : alignY
-  htmlElement.style.flexDirection = axis === Axis.stack ? `` : axis
-  htmlElement.classList.toggle(stackClassName, axis === Axis.stack)
-  htmlElement.classList.toggle(nonStackClassName, axis !== Axis.stack)
+  const axis = sig<Axis>(Axis.column)
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const { alignX, alignY } = parseAlignProps(parseProp, context.hasMoreThanOneChild.value)
+    context.alignX.value = alignX
+    const _axis =
+      parseProp({
+        axis: v => v,
+        row: () => Axis.row,
+        column: () => Axis.column,
+        stack: () => Axis.stack,
+      }) ?? Axis.column
+    axis.value = _axis
+    element.value.style.justifyContent = _axis === Axis.column ? alignY : context.alignX.value
+    element.value.style.alignItems = _axis === Axis.column ? context.alignX.value : alignY
+    element.value.style.flexDirection = _axis === Axis.stack ? `` : _axis
+    element.value.classList.toggle(stackClassName, _axis === Axis.stack)
+  })
 
   // Overflow
-  const overflowX =
-    parseProp({
-      overflowX: v => v,
-    }) ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
-  const overflowY =
-    parseProp({
-      overflowY: v => v,
-    }) ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
-  htmlElement.style.flexWrap =
-    axis === Axis.row
-      ? overflowX === Overflow.wrap
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const overflowX =
+      parseProp({
+        overflowX: v => v,
+      }) ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
+    const overflowY =
+      parseProp({
+        overflowY: v => v,
+      }) ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
+    /* NOTE: And-ing the axis check after the overflow check means we'll only watch row
+     * when it is absolutely necessary. */
+    element.value.style.flexWrap =
+      overflowX === Overflow.wrap && axis.value === Axis.row
+        ? `wrap`
+        : overflowY === Overflow.wrap && axis.value === Axis.row
         ? `wrap`
         : ``
-      : overflowY === Overflow.wrap
-      ? `wrap`
+    element.value.style.overflowX =
+      overflowX === Overflow.scroll
+        ? `auto` // Scroll when necessary, and float above contents so we can make it invisible
+        : overflowX === Overflow.crop
+        ? `hidden`
+        : `visible`
+    element.value.style.overflowY =
+      overflowY === Overflow.scroll
+        ? `auto` // Scroll when necessary, and float above contents so we can make it invisible
+        : overflowY === Overflow.crop
+        ? `hidden`
+        : `visible`
+    // Scroll bar should be invisible
+    ;(element.value.style as any).scrollbarWidth = [overflowX, overflowY].includes(Overflow.scroll)
+      ? `thin`
       : ``
-  htmlElement.style.overflowX =
-    overflowX === Overflow.scroll
-      ? `auto` // Scroll when nesscary, and float above contents so we can make it invisible
-      : overflowX === Overflow.crop
-      ? `hidden`
-      : `visible`
-  htmlElement.style.overflowY =
-    overflowY === Overflow.scroll
-      ? `auto` // Scroll when nesscary, and float above contents so we can make it invisible
-      : overflowY === Overflow.crop
-      ? `hidden`
-      : `visible`
-  // Scroll bar should be invisible
-  ;(htmlElement.style as any).scrollbarWidth = [overflowX, overflowY].includes(Overflow.scroll)
-    ? `thin`
-    : ``
-  ;(htmlElement.style as any).scrollbarColor = [overflowX, overflowY].includes(Overflow.scroll)
-    ? `#e3e3e3 transparent`
-    : ``
-
-  return { alignX, overflowX }
+    ;(element.value.style as any).scrollbarColor = [overflowX, overflowY].includes(Overflow.scroll)
+      ? `#e3e3e3 transparent`
+      : ``
+  })
 }
