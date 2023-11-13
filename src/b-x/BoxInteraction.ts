@@ -2,7 +2,7 @@ import { exists } from 'src/utils'
 import { ParseProp } from './BoxUtils'
 
 export type InteractionSty = {
-  role: string
+  // role: string
   bonusTouchArea: boolean
   preventClickPropagation: boolean
   cssCursor: 'pointer' | 'default'
@@ -34,7 +34,7 @@ export function applyInteractionStyle(
   parseProp: ParseProp<InteractionSty>,
   htmlElement: HTMLElement,
 ) {
-  htmlElement.role = parseProp(`role`) ?? ``
+  // htmlElement.role = parseProp(`role`) ?? ``
   const onClickListeners = parseProp(`onClick`, true)
   const isClickable = exists(onClickListeners.length > 0)
   const preventClickPropagation = parseProp(`preventClickPropagation`) ?? isClickable
@@ -61,20 +61,20 @@ export function applyInteractionStyle(
   const onMouseDownListeners = parseProp(`onMouseDown`, true)
   htmlElement.onmousedown =
     onMouseDownListeners.length > 0
-      ? (e) => onMouseDownListeners.forEach(listener => listener(e))
+      ? e => onMouseDownListeners.forEach(listener => listener(e))
       : null
   const onMouseUpListeners = parseProp(`onMouseUp`, true)
   htmlElement.onmouseup =
-    onMouseUpListeners.length > 0 ? (e) => onMouseUpListeners.forEach(listener => listener(e)) : null
+    onMouseUpListeners.length > 0 ? e => onMouseUpListeners.forEach(listener => listener(e)) : null
   const onTouchStartListeners = parseProp(`onTouchStart`, true)
   htmlElement.ontouchstart =
     onTouchStartListeners.length > 0
-      ? (e) => onTouchStartListeners.forEach(listener => listener(e))
+      ? e => onTouchStartListeners.forEach(listener => listener(e))
       : null
   const onTouchEndListeners = parseProp(`onTouchEnd`, true)
   htmlElement.ontouchend =
     onTouchEndListeners.length > 0
-      ? (e) => onTouchEndListeners.forEach(listener => listener(e))
+      ? e => onTouchEndListeners.forEach(listener => listener(e))
       : null
   htmlElement.classList.toggle(bonusTouchAreaClassName, parseProp(`bonusTouchArea`) ?? false)
 }

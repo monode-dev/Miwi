@@ -1,6 +1,7 @@
 import { ParseProp, exists, isString, sizeToCss } from './BoxUtils'
 import { Axis } from './BoxLayout'
 
+// TODO: Add min and max size for all options.
 export type Size = number | string | FlexSize
 export type SizeSty = Partial<{
   width: Size
