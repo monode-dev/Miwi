@@ -63,6 +63,7 @@ export function Box(props: BoxProps) {
         parseProp,
         element.value!,
         {
+          // TODO: Use mutation observers to observe this, or see if we can do it with a CSS class
           hasMoreThanOneChild: element.value.children.length > 1,
         },
       )
@@ -107,5 +108,15 @@ export function Box(props: BoxProps) {
   })
 
   // TODO: Toggle element type based on "tag" prop.
-  return <div {...props} ref={el => (element.value = el)} />
+  return (
+    <div
+      {...props}
+      ref={el => {
+        element.value = el
+        if (typeof props.ref === `function`) {
+          props.ref(el)
+        }
+      }}
+    />
+  )
 }
