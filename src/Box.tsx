@@ -54,24 +54,24 @@ export function Box(props: BoxProps) {
         childElement.classList.contains(widthGrowsClassName),
       )
     })()
-    //   // Compute Layout
-    //   const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
-    //   const overflowX = sig<Overflow>(Overflow.forceStretchParent)
-    //   // watchEffect(() => {
-    //   const { alignX: newAlignX, overflowX: newOverflowX } = applyLayoutStyle(
-    //     parseProp,
-    //     element.value!,
-    //     {
-    //       childCount: !exists(props.children)
-    //         ? 0
-    //         : Array.isArray(props.children)
-    //         ? props.children.length
-    //         : 1,
-    //     },
-    //   )
-    //   alignX.value = newAlignX
-    //   overflowX.value = newOverflowX
-    //   // })
+    // Compute Layout
+    const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
+    const overflowX = sig<Overflow>(Overflow.forceStretchParent)
+    // watchEffect(() => {
+    const { alignX: newAlignX, overflowX: newOverflowX } = applyLayoutStyle(
+      parseProp,
+      element.value!,
+      {
+        childCount: !exists(props.children)
+          ? 0
+          : Array.isArray(props.children)
+          ? props.children.length
+          : 1,
+      },
+    )
+    alignX.value = newAlignX
+    overflowX.value = newOverflowX
+    // })
     //   // Compute Size
     //   // watchEffect(() => {
     //   applySizeStyle(parseProp, element.value!, {
