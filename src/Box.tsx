@@ -39,21 +39,21 @@ export function Box(props: BoxProps) {
       if (!exists(parentElement)) return
       parentStyle.value = getComputedStyle(parentElement)
     })()
-    //   // TODO: Use Mutations observers to watch this base it on classes in the children
-    //   const aChildsWidthGrows = sig(false)
-    //   const aChildsHeightGrows = sig(false)
-    //   ;(() => {
-    //     const childElements = element.value.children
-    //     if (!exists(childElements)) return
-    //     const childElementsArray = Array.from(childElements)
-    //     if (childElementsArray.length === 0) return
-    //     aChildsWidthGrows.value = childElementsArray.some(childElement =>
-    //       childElement.classList.contains(heightGrowsClassName),
-    //     )
-    //     aChildsWidthGrows.value = childElementsArray.some(childElement =>
-    //       childElement.classList.contains(widthGrowsClassName),
-    //     )
-    //   })()
+    // TODO: Use Mutations observers to watch this base it on classes in the children
+    const aChildsWidthGrows = sig(false)
+    const aChildsHeightGrows = sig(false)
+    ;(() => {
+      const childElements = element.value.children
+      if (!exists(childElements)) return
+      const childElementsArray = Array.from(childElements)
+      if (childElementsArray.length === 0) return
+      aChildsHeightGrows.value = childElementsArray.some(childElement =>
+        childElement.classList.contains(heightGrowsClassName),
+      )
+      aChildsWidthGrows.value = childElementsArray.some(childElement =>
+        childElement.classList.contains(widthGrowsClassName),
+      )
+    })()
     //   // Compute Layout
     //   const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
     //   const overflowX = sig<Overflow>(Overflow.forceStretchParent)
