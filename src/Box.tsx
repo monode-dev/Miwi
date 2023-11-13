@@ -27,6 +27,7 @@ export function grow(flex: number = 1) {
 
 export type BoxProps = Partial<Sty> & ParentProps & JSX.DOMAttributes<HTMLDivElement>
 export function Box(props: BoxProps) {
+  if (props.shouldLog) console.log('Box', props)
   const element = sig<HTMLElement | undefined>(undefined)
   const parseProp: (...args: any[]) => any = makePropParser(props)
 
