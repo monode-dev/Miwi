@@ -69,6 +69,7 @@ export function Box(props: BoxProps) {
       alignX.value = newAlignX
       overflowX.value = newOverflowX
     })
+
     // Compute Size
     watchEffect(() => {
       if (!exists(element.value)) return
@@ -83,21 +84,26 @@ export function Box(props: BoxProps) {
       })
     })
 
-    //   // Compute Decoration
-    //   // watchEffect(() => {
-    //   applyDecorationStyle(parseProp, element.value!)
-    //   // })
-    //   // Compute Text Styling
-    //   // watchEffect(() => {
-    //   applyTextStyle(parseProp, element.value!, {
-    //     alignX: alignX.value,
-    //     overflowX: overflowX.value,
-    //   })
-    //   // })
-    //   // Computer Interactivity
-    //   // watchEffect(() => {
-    //   applyInteractionStyle(parseProp, element.value!)
-    //   // })
+    // Compute Decoration
+    watchEffect(() => {
+      if (!exists(element.value)) return
+      applyDecorationStyle(parseProp, element.value)
+    })
+
+    // Compute Text Styling
+    watchEffect(() => {
+      if (!exists(element.value)) return
+      applyTextStyle(parseProp, element.value, {
+        alignX: alignX.value,
+        overflowX: overflowX.value,
+      })
+    })
+
+    // Computer Interactivity
+    watchEffect(() => {
+      if (!exists(element.value)) return
+      applyInteractionStyle(parseProp, element.value)
+    })
   })
 
   // TODO: Toggle element type based on "tag" prop.
