@@ -1,5 +1,6 @@
 import { ParseProp, exists, isString, sizeToCss } from './BoxUtils'
 import { Axis } from './BoxLayout'
+import { Sig, sig, watchEffect } from 'src/utils'
 
 // TODO: Add min and max size for all options.
 export type Size = number | string | FlexSize
@@ -68,140 +69,149 @@ export function formatRawSize(props: { someChildGrows: boolean; size: Size | und
 export const widthGrowsClassName = `b-x-width-grows`
 export const heightGrowsClassName = `b-x-height-grows`
 
-// Size Styler
-export function applySizeStyle(
+// Box Size
+export function watchBoxSize(
   parseProp: ParseProp<SizeSty>,
-  htmlElement: HTMLElement,
+  element: Sig<HTMLElement | undefined>,
   context: {
-    aChildsWidthGrows: boolean
-    aChildsHeightGrows: boolean
-    parentStyle?: CSSStyleDeclaration
+    aChildsWidthGrows: Sig<boolean>
+    aChildsHeightGrows: Sig<boolean>
+    parentAxis: Sig<Axis>
+    parentPaddingLeft: Sig<string>
+    parentPaddingTop: Sig<string>
+    parentPaddingRight: Sig<string>
+    parentPaddingBottom: Sig<string>
   },
 ) {
-  const formattedWidth = formatRawSize({
-    someChildGrows: context.aChildsWidthGrows,
-    size: parseProp({
-      width: v => v,
-      widthGrows: () => `1f`,
-      widthShrinks: () => -1,
-      asWideAsParent: () => `100%`,
-    }),
-  })
-  const formattedHeight = formatRawSize({
-    someChildGrows: context.aChildsHeightGrows,
-    size: parseProp({
-      height: v => v,
-      heightGrows: () => `1f`,
-      heightShrinks: () => -1,
-      asTallAsParent: () => `100%`,
-    }),
-  })
-  const parentAxis = context.parentStyle?.flexDirection ?? Axis.column
-  const [exactWidth, wMin, wMax, widthGrows] = computeSizeInfo({
-    size: formattedWidth,
-    isMainAxis: parentAxis === Axis.row,
-  })
-  const [exactHeight, hMin, hMax, heightGrows] = computeSizeInfo({
-    size: formattedHeight,
-    isMainAxis: parentAxis === Axis.column,
+  // SECTION: Basics
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    element.value.style.display = `flex`
+    element.value.style.boxSizing = `border-box`
   })
 
-  // Apply
-  htmlElement.style.display = `flex`
-  htmlElement.style.boxSizing = `border-box`
-  htmlElement.classList.toggle(widthGrowsClassName, widthGrows)
-  htmlElement.classList.toggle(heightGrowsClassName, heightGrows)
-  htmlElement.style.width = (() => {
-    let size = exactWidth
-    // axis === Axis.stack && width === -1
-    //   ? maxChildWidth
-    //   : exactWidth;
-    if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${context.parentStyle?.paddingLeft ?? `0px`} - ${
-        context.parentStyle?.paddingRight ?? `0px`
-      })`
-    }
-    return size ?? ``
-  })()
-  htmlElement.style.minWidth = (() => {
-    let size = wMin
-    // axis === Axis.stack && width === -1
-    //   ? maxChildWidth
-    //   : wMin;
-    if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${context.parentStyle?.paddingLeft ?? `0px`} - ${
-        context.parentStyle?.paddingRight ?? `0px`
-      })`
-    }
-    return size ?? ``
-  })()
-  htmlElement.style.maxWidth = (() => {
-    let size = wMax
-    // axis === Axis.stack && width === -1
-    //   ? maxChildWidth
-    //   : wMax;
-    if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${context.parentStyle?.paddingLeft ?? `0px`} - ${
-        context.parentStyle?.paddingRight ?? `0px`
-      })`
-    }
-    return size ?? ``
-  })()
-  htmlElement.style.height = (() => {
-    let size = exactHeight
-    // axis === Axis.stack && height === -1
-    //   ? maxChildHeight
-    //   : exactHeight;
-    if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${context.parentStyle?.paddingTop ?? `0px`} - ${
-        context.parentStyle?.paddingBottom ?? `0px`
-      })`
-    }
-    return size ?? ``
-  })()
-  htmlElement.style.minHeight = (() => {
-    let size = hMin
-    // axis === Axis.stack && height === -1
-    //   ? maxChildHeight
-    //   : hMin;
-    if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${context.parentStyle?.paddingTop ?? `0px`} - ${
-        context.parentStyle?.paddingBottom ?? `0px`
-      })`
-    }
-    return size ?? ``
-  })()
-  htmlElement.style.maxHeight = (() => {
-    let size = hMax
-    // axis === Axis.stack && height === -1
-    //   ? maxChildHeight
-    //   : hMax;
-    if ((parent as any)?.sty?.axis === Axis.stack) {
-      size = `calc(${size} - ${context.parentStyle?.paddingTop ?? `0px`} - ${
-        context.parentStyle?.paddingBottom ?? `0px`
-      })`
-    }
-    return size ?? ``
-  })()
-  htmlElement.style.flexBasis =
-    parentAxis === Axis.column
-      ? isFlexSize(formattedHeight)
-        ? `${formattedHeight.flex * 100}%`
-        : heightGrows
-        ? `100%`
-        : ``
-      : parentAxis === Axis.row
-      ? isFlexSize(formattedWidth)
-        ? `${formattedWidth.flex * 100}%`
-        : widthGrows
-        ? `100%`
-        : ``
-      : ``
+  // SECTION: Width
+  const formattedWidth = sig<Size>(-1)
+  const widthGrows = sig(false)
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const _formattedWidth = formatRawSize({
+      someChildGrows: context.aChildsWidthGrows.value,
+      size: parseProp({
+        width: v => v,
+        widthGrows: () => `1f`,
+        widthShrinks: () => -1,
+        asWideAsParent: () => `100%`,
+      }),
+    })
+    formattedWidth.value = _formattedWidth
+    const [exactWidth, wMin, wMax, _widthGrows] = computeSizeInfo({
+      size: _formattedWidth,
+      isMainAxis: context.parentAxis.value === Axis.row,
+    })
+    widthGrows.value = _widthGrows
+    element.value.classList.toggle(widthGrowsClassName, _widthGrows)
+    element.value.style.width = (() => {
+      let size = exactWidth
+      // axis === Axis.stack && width === -1
+      //   ? maxChildWidth
+      //   : exactWidth;
+      if (context.parentAxis.value === Axis.stack) {
+        size = `calc(${size} - ${context.parentPaddingLeft.value} - ${context.parentPaddingRight.value})`
+      }
+      return size ?? ``
+    })()
+    element.value.style.minWidth = (() => {
+      let size = wMin
+      // axis === Axis.stack && width === -1
+      //   ? maxChildWidth
+      //   : wMin;
+      if (context.parentAxis.value === Axis.stack) {
+        size = `calc(${size} - ${context.parentPaddingLeft.value} - ${context.parentPaddingRight.value})`
+      }
+      return size ?? ``
+    })()
+    element.value.style.maxWidth = (() => {
+      let size = wMax
+      // axis === Axis.stack && width === -1
+      //   ? maxChildWidth
+      //   : wMax;
+      if (context.parentAxis.value === Axis.stack) {
+        size = `calc(${size} - ${context.parentPaddingLeft.value} - ${context.parentPaddingRight.value})`
+      }
+      return size ?? ``
+    })()
+  })
 
-  return {
-    formattedWidth,
-    formattedHeight,
-    widthGrows: isFlexSize(formattedWidth) && formattedWidth.flex > 0,
-    heightGrows: isFlexSize(formattedHeight) && formattedHeight.flex > 0,
-  }
+  // Height
+  const formattedHeight = sig<Size>(-1)
+  const heightGrows = sig(false)
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const _formattedHeight = formatRawSize({
+      someChildGrows: context.aChildsHeightGrows.value,
+      size: parseProp({
+        height: v => v,
+        heightGrows: () => `1f`,
+        heightShrinks: () => -1,
+        asTallAsParent: () => `100%`,
+      }),
+    })
+    formattedHeight.value = _formattedHeight
+    const [exactHeight, hMin, hMax, _heightGrows] = computeSizeInfo({
+      size: _formattedHeight,
+      isMainAxis: context.parentAxis.value === Axis.column,
+    })
+    heightGrows.value = _heightGrows
+    element.value.classList.toggle(heightGrowsClassName, _heightGrows)
+    element.value.style.height = (() => {
+      let size = exactHeight
+      // axis === Axis.stack && width === -1
+      //   ? maxChildWidth
+      //   : exactWidth;
+      if (context.parentAxis.value === Axis.stack) {
+        size = `calc(${size} - ${context.parentPaddingTop.value} - ${context.parentPaddingBottom.value})`
+      }
+      return size ?? ``
+    })()
+    element.value.style.minHeight = (() => {
+      let size = hMin
+      // axis === Axis.stack && width === -1
+      //   ? maxChildWidth
+      //   : wMin;
+      if (context.parentAxis.value === Axis.stack) {
+        size = `calc(${size} - ${context.parentPaddingTop.value} - ${context.parentPaddingBottom.value})`
+      }
+      return size ?? ``
+    })()
+    element.value.style.maxHeight = (() => {
+      let size = hMax
+      // axis === Axis.stack && width === -1
+      //   ? maxChildWidth
+      //   : wMax;
+      if (context.parentAxis.value === Axis.stack) {
+        size = `calc(${size} - ${context.parentPaddingTop.value} - ${context.parentPaddingBottom.value})`
+      }
+      return size ?? ``
+    })()
+  })
+
+  // SECTION: Flex Basis
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    element.value.style.flexBasis =
+      context.parentAxis.value === Axis.column
+        ? isFlexSize(formattedHeight.value)
+          ? `${formattedHeight.value.flex * 100}%`
+          : heightGrows.value
+          ? `100%`
+          : ``
+        : context.parentAxis.value === Axis.row
+        ? isFlexSize(formattedWidth.value)
+          ? `${formattedWidth.value.flex * 100}%`
+          : widthGrows.value
+          ? `100%`
+          : ``
+        : ``
+  })
 }

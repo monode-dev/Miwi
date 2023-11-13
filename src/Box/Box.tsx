@@ -1,8 +1,16 @@
 import { onMount, type JSX, type ParentProps } from 'solid-js'
 import { exists, sig, watchEffect } from '../utils'
 import { makePropParser } from './BoxUtils'
-import { Overflow, _FlexAlign, watchBoxLayout, AlignSingleAxis, LayoutSty } from './BoxLayout'
-import { SizeSty, applySizeStyle, heightGrowsClassName, widthGrowsClassName } from './BoxSize'
+import {
+  Overflow,
+  _FlexAlign,
+  watchBoxLayout,
+  AlignSingleAxis,
+  LayoutSty,
+  stackClassName,
+  Axis,
+} from './BoxLayout'
+import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from './BoxSize'
 import { applyDecorationStyle, DecorationSty } from './BoxDecoration'
 import { TextSty, applyTextStyle } from './BoxText'
 import { InteractionSty, applyInteractionStyle } from './BoxInteraction'
@@ -61,17 +69,24 @@ export function Box(props: BoxProps) {
     })
 
     // Compute Size
-    watchEffect(() => {
-      if (!exists(element.value)) return
-      applySizeStyle(parseProp, element.value, {
-        // TODO: Use mutation observers to observe this.
-        // TODO: We will recompute size when anything changes, this is overkill.
-        // Ideally we only care about parent axis, and only care about parent padding
-        // If the parent is a stack. We should pass sigs in, so that we only watch what matters for a recompute.
-        parentStyle: parentStyle.value,
-        aChildsWidthGrows: aChildsWidthGrows.value,
-        aChildsHeightGrows: aChildsHeightGrows.value,
-      })
+    watchBoxSize(parseProp, element, {
+      // TODO: Use mutation observers to observe this.
+      // TODO: We will recompute size when anything changes, this is overkill.
+      // Ideally we only care about parent axis, and only care about parent padding
+      // If the parent is a stack. We should pass sigs in, so that we only watch what matters for a recompute.
+      parentAxis: sig(
+        element.value.parentElement?.classList.contains(stackClassName) ?? false
+          ? Axis.stack
+          : parentStyle.value?.flexDirection === Axis.column
+          ? Axis.column
+          : Axis.row,
+      ),
+      parentPaddingLeft: sig(parentStyle.value?.paddingLeft ?? `0px`),
+      parentPaddingRight: sig(parentStyle.value?.paddingRight ?? `0px`),
+      parentPaddingTop: sig(parentStyle.value?.paddingTop ?? `0px`),
+      parentPaddingBottom: sig(parentStyle.value?.paddingBottom ?? `0px`),
+      aChildsWidthGrows,
+      aChildsHeightGrows,
     })
 
     // Compute Decoration
@@ -98,6 +113,7 @@ export function Box(props: BoxProps) {
     // Notify element getters
     const elementGetters: any[] = parseProp(`getElement`, true)
     elementGetters.forEach(getter => {
+      if (typeof getter !== `function`) return
       getter(element.value)
     })
   })

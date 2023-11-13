@@ -219,7 +219,7 @@ export const Align = {
 } as const
 
 // Classes
-const stackClassName = `miwi-stack`
+export const stackClassName = `miwi-stack`
 const nonStackClassName = `miwi-non-stack`
 const style = document.createElement(`style`)
 style.textContent = `
