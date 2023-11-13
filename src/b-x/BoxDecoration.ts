@@ -81,9 +81,9 @@ export function applyDecorationStyle(
   const backgroundIsImage = background.startsWith(`data:image`) || background.startsWith(`/`)
   htmlElement.style.backgroundColor = backgroundIsImage ? `` : background
   htmlElement.style.backgroundImage = backgroundIsImage ? `url('${background}')` : ``
-  htmlElement.style.backgroundSize = `cover`
-  htmlElement.style.backgroundPosition = `center`
-  htmlElement.style.backgroundRepeat = `no-repeat`
+  htmlElement.style.backgroundSize = backgroundIsImage ? `cover` : ``
+  htmlElement.style.backgroundPosition = backgroundIsImage ? `center` : ``
+  htmlElement.style.backgroundRepeat = backgroundIsImage ? `no-repeat` : ``
 
   // Shadow
   const alignShadowDirection = parseProp({ shadowDirection: v => v }) ?? Align.bottomRight

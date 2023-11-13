@@ -17,7 +17,7 @@ export function NumField(
   } & BoxProps,
 ) {
   const keyboard = props.keyboard ?? 'decimal'
-  const _stringValue = sig(props.valueSig?.toString() ?? '')
+  const _stringValue = sig(props.valueSig?.value?.toString() ?? '')
 
   if (exists(props.valueSig)) {
     watchDeps([props.valueSig], () => {
