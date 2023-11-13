@@ -27,15 +27,16 @@ export function AppBar(
       />
 
       {/* AppBar */}
-      <Column
+      <Box
+        column
         widthGrows
-        background={props.background ?? $theme.colors.primary}
-        // shadowSize={props.shadowSize ?? 1.25}
+        background={$theme.colors.primary}
+        shadowSize={1.25}
         shadowDirection={$Align.bottomCenter}
         alignBottomCenter
         textColor={$theme.colors.accent}
         zIndex={1}
-        overrideProps={{ ...props }}
+        overrideProps={props}
       >
         {/* Main Row */}
         <Row widthGrows pad={0.5} scale={1.5}>
@@ -67,7 +68,7 @@ export function AppBar(
         <Row widthGrows scale={1}>
           {props.bottom}
         </Row>
-      </Column>
+      </Box>
     </Column>
   )
 }
