@@ -32,13 +32,13 @@ export function Box(props: BoxProps) {
   const parseProp: (...args: any[]) => any = makePropParser(props)
 
   onMount(() => {
-    //   if (!exists(element.value)) return
-    //   const parentStyle = sig<CSSStyleDeclaration | undefined>(undefined)
-    //   ;(() => {
-    //     const parentElement = element.value.parentElement
-    //     if (!exists(parentElement)) return
-    //     parentStyle.value = getComputedStyle(parentElement)
-    //   })()
+    if (!exists(element.value)) return
+    const parentStyle = sig<CSSStyleDeclaration | undefined>(undefined)
+    ;(() => {
+      const parentElement = element.value.parentElement
+      if (!exists(parentElement)) return
+      parentStyle.value = getComputedStyle(parentElement)
+    })()
     //   // TODO: Use Mutations observers to watch this base it on classes in the children
     //   const aChildsWidthGrows = sig(false)
     //   const aChildsHeightGrows = sig(false)
