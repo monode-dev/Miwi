@@ -109,6 +109,8 @@ export function applySizeStyle(
   // Apply
   htmlElement.style.display = `flex`
   htmlElement.style.boxSizing = `border-box`
+  htmlElement.classList.toggle(widthGrowsClassName, widthGrows)
+  htmlElement.classList.toggle(heightGrowsClassName, heightGrows)
   htmlElement.style.width = (() => {
     let size = exactWidth
     // axis === Axis.stack && width === -1

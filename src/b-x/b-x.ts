@@ -130,9 +130,7 @@ export class Miwi_Box extends HTMLElement {
 
     // Recompute growth
     // TODO: Eventually Handle this in applySizeStyle
-    this.classList.toggle(widthGrowsClassName, widthGrows)
     const shouldUpdateWidthGrows = this._widthGrows !== widthGrows
-    this.classList.toggle(heightGrowsClassName, heightGrows)
     const shouldUpdateHeightGrows = this._heightGrows !== heightGrows
     if (shouldUpdateWidthGrows || shouldUpdateHeightGrows) {
       if (exists(this.parentElement)) {
