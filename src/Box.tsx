@@ -69,18 +69,20 @@ export function Box(props: BoxProps) {
       alignX.value = newAlignX
       overflowX.value = newOverflowX
     })
-    //   // Compute Size
-    //   // watchEffect(() => {
-    //   applySizeStyle(parseProp, element.value!, {
-    //     // TODO: Use mutation observers to observe this.
-    //     // TODO: We will recompute size when anything changes, this is overkill.
-    //     // Ideally we only care about parent axis, and only care about parent padding
-    //     // If the parent is a stack. We should pass sigs in, so that we only watch what matters for a recompute.
-    //     parentStyle: parentStyle.value,
-    //     aChildsWidthGrows: aChildsWidthGrows.value,
-    //     aChildsHeightGrows: aChildsHeightGrows.value,
-    //   })
-    //   // })
+    // Compute Size
+    watchEffect(() => {
+      if (!exists(element.value)) return
+      applySizeStyle(parseProp, element.value, {
+        // TODO: Use mutation observers to observe this.
+        // TODO: We will recompute size when anything changes, this is overkill.
+        // Ideally we only care about parent axis, and only care about parent padding
+        // If the parent is a stack. We should pass sigs in, so that we only watch what matters for a recompute.
+        parentStyle: parentStyle.value,
+        aChildsWidthGrows: aChildsWidthGrows.value,
+        aChildsHeightGrows: aChildsHeightGrows.value,
+      })
+    })
+
     //   // Compute Decoration
     //   // watchEffect(() => {
     //   applyDecorationStyle(parseProp, element.value!)
