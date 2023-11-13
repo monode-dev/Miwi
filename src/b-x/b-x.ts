@@ -114,7 +114,7 @@ export class Miwi_Box extends HTMLElement {
     const { someChildWidthGrows, someChildHeightGrows } = this.computeSomeChildGrows()
     const parseProp: (...args: any[]) => any = makePropParser(this.sty)
     const { alignX, overflowX } = applyLayoutStyle(parseProp, this, {
-      childCount: this._childCount,
+      hasMoreThanOneChild: this._childCount > 1,
     })
     const { widthGrows, heightGrows } = applySizeStyle(parseProp, this, {
       parentStyle: this._parentStyle,

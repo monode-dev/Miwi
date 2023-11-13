@@ -102,8 +102,11 @@ export type AlignStyProps = Partial<{
   spaceEvenlyX: boolean
   spaceEvenlyY: boolean
 }>
-function parseAlignProps(parseProp: ParseProp<LayoutSty>, childCount: number): AlignTwoAxis {
-  const spaceBetweenAsCss = childCount === 1 ? Align.center.alignX : _SpaceAlign.spaceBetween
+function parseAlignProps(
+  parseProp: ParseProp<LayoutSty>,
+  hasMoreThanOneChild: boolean,
+): AlignTwoAxis {
+  const spaceBetweenAsCss = hasMoreThanOneChild ? _SpaceAlign.spaceBetween : Align.center.alignX
   return {
     alignX:
       parseProp({
@@ -233,7 +236,7 @@ document.body.appendChild(style)
 export function applyLayoutStyle(
   parseProp: ParseProp<LayoutSty>,
   htmlElement: HTMLElement,
-  context: { childCount: number; parentStyle?: CSSStyleDeclaration },
+  context: { hasMoreThanOneChild: boolean },
 ) {
   // Pad
   const padEachSide = [
@@ -282,7 +285,7 @@ export function applyLayoutStyle(
   )
 
   // Align & Axis
-  const { alignX, alignY } = parseAlignProps(parseProp, context.childCount)
+  const { alignX, alignY } = parseAlignProps(parseProp, context.hasMoreThanOneChild)
   const axis =
     parseProp({
       axis: v => v,
