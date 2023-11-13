@@ -57,52 +57,52 @@ export function Box(props: BoxProps) {
     // Compute Layout
     const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
     const overflowX = sig<Overflow>(Overflow.forceStretchParent)
-    watchEffect(() => {
-      const { alignX: newAlignX, overflowX: newOverflowX } = applyLayoutStyle(
-        parseProp,
-        element.value!,
-        {
-          childCount: !exists(props.children)
-            ? 0
-            : Array.isArray(props.children)
-            ? props.children.length
-            : 1,
-        },
-      )
-      alignX.value = newAlignX
-      overflowX.value = newOverflowX
-    })
+    // watchEffect(() => {
+    const { alignX: newAlignX, overflowX: newOverflowX } = applyLayoutStyle(
+      parseProp,
+      element.value!,
+      {
+        childCount: !exists(props.children)
+          ? 0
+          : Array.isArray(props.children)
+          ? props.children.length
+          : 1,
+      },
+    )
+    alignX.value = newAlignX
+    overflowX.value = newOverflowX
+    // })
 
     // Compute Size
-    watchEffect(() => {
-      applySizeStyle(parseProp, element.value!, {
-        // TODO: Use mutation observers to observe this.
-        // TODO: We will recompute size when anything changes, this is overkill.
-        // Ideally we only care about parent axis, and only care about parent padding
-        // If the parent is a stack. We should pass sigs in, so that we only watch what matters for a recompute.
-        parentStyle: parentStyle.value,
-        aChildsWidthGrows: aChildsWidthGrows.value,
-        aChildsHeightGrows: aChildsHeightGrows.value,
-      })
+    // watchEffect(() => {
+    applySizeStyle(parseProp, element.value!, {
+      // TODO: Use mutation observers to observe this.
+      // TODO: We will recompute size when anything changes, this is overkill.
+      // Ideally we only care about parent axis, and only care about parent padding
+      // If the parent is a stack. We should pass sigs in, so that we only watch what matters for a recompute.
+      parentStyle: parentStyle.value,
+      aChildsWidthGrows: aChildsWidthGrows.value,
+      aChildsHeightGrows: aChildsHeightGrows.value,
     })
+    // })
 
     // Compute Decoration
-    watchEffect(() => {
-      applyDecorationStyle(parseProp, element.value!)
-    })
+    // watchEffect(() => {
+    applyDecorationStyle(parseProp, element.value!)
+    // })
 
     // Compute Text Styling
-    watchEffect(() => {
-      applyTextStyle(parseProp, element.value!, {
-        alignX: alignX.value,
-        overflowX: overflowX.value,
-      })
+    // watchEffect(() => {
+    applyTextStyle(parseProp, element.value!, {
+      alignX: alignX.value,
+      overflowX: overflowX.value,
     })
+    // })
 
     // Computer Interactivity
-    watchEffect(() => {
-      applyInteractionStyle(parseProp, element.value!)
-    })
+    // watchEffect(() => {
+    applyInteractionStyle(parseProp, element.value!)
+    // })
   })
 
   // TODO: Toggle element type based on "tag" prop.
