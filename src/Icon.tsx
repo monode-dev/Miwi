@@ -1,6 +1,6 @@
 // https://pictogrammers.com/library/mdi/
-import { Box } from './Box'
-import { Size } from './b-x/BoxSize';
+import { Box } from './Box/Box'
+import { Size } from './Box/BoxSize'
 
 // From: https://github.com/therufa/mdi-vue/blob/master/src/shared.js
 function ucFirst(str: string) {

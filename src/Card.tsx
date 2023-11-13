@@ -1,4 +1,4 @@
-import { BoxProps } from './Box'
+import { BoxProps } from './Box/Box'
 import { Column } from './Column'
 
 export function Card(props: BoxProps) {

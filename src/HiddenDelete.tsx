@@ -1,5 +1,5 @@
 import { sig } from './utils'
-import { BoxProps } from './Box'
+import { BoxProps } from './Box/Box'
 import { Icon } from './Icon'
 import { Modal } from './Modal'
 import { Row } from './Row'

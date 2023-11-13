@@ -1,7 +1,7 @@
 import { Component, For, JSX, Show, onMount } from 'solid-js'
 import { compute, sig, sessionStore, Sig, watchDeps, exists } from './utils'
 import { gsap } from 'gsap'
-import { Box } from './Box'
+import { Box } from './Box/Box'
 import { OfflineWarning } from './OfflineWarning'
 
 // SECTION: Transitions

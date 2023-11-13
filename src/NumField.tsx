@@ -1,4 +1,4 @@
-import { BoxProps } from './Box'
+import { BoxProps } from './Box/Box'
 import { sig, Sig, watchDeps, exists } from './utils'
 import { Field, KeyboardType } from './Field'
 

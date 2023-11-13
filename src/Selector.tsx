@@ -1,5 +1,5 @@
 import { Sig, compute, exists, injectDefaults, sig, watchDeps } from './utils'
-import { BoxProps, grow } from './Box'
+import { BoxProps, grow } from './Box/Box'
 import { Txt } from './Txt'
 import { Row } from './Row'
 import { Icon } from './Icon'

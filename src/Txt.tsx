@@ -1,4 +1,4 @@
-import { Box, BoxProps } from './Box'
+import { Box, BoxProps } from './Box/Box'
 import { AllowOne, compute } from './utils'
 
 export function Txt(

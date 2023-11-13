@@ -1,8 +1,8 @@
 import { Sig, exists, sig, watchDeps } from './utils'
-import { Box, BoxProps } from './Box'
+import { Box, BoxProps } from './Box/Box'
 import { Stack } from './Stack'
 import { JSX, Show, onCleanup, onMount } from 'solid-js'
-import { Size } from './b-x/BoxSize'
+import { Size } from './Box/BoxSize'
 
 export function Modal<T>(
   props: {

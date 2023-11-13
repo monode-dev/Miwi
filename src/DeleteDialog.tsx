@@ -1,4 +1,4 @@
-import { Box, BoxProps } from './Box'
+import { Box, BoxProps } from './Box/Box'
 import { Card } from './Card'
 import { Button } from './Button'
 import { Row } from './Row'

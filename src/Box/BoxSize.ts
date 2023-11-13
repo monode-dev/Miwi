@@ -198,26 +198,6 @@ export function applySizeStyle(
         : ``
       : ``
 
-  // Recompute growth
-  // const newWidthGrows = isFlexSize(formattedWidth) && formattedWidth.flex > 0
-  // htmlElement.classList.toggle(widthGrowsClassName, newWidthGrows)
-  // const shouldUpdateWidthGrows = this._widthGrows !== newWidthGrows
-  // const newHeightGrows = isFlexSize(formattedHeight) && formattedHeight.flex > 0
-  // htmlElement.classList.toggle(heightGrowsClassName, newHeightGrows)
-  // const shouldUpdateHeightGrows = this._heightGrows !== newHeightGrows
-  // if (shouldUpdateWidthGrows || shouldUpdateHeightGrows) {
-  //   if (exists(context.parentElement)) {
-  //     if (context.parentElement instanceof Miwi_Box) {
-  //       if (shouldUpdateWidthGrows) this._widthGrows = newWidthGrows
-  //       if (shouldUpdateHeightGrows) this._heightGrows = newHeightGrows
-  //       context.parentElement.thisIsAChildTogglingTheFactThatItGrows({
-  //         widthGrows: shouldUpdateWidthGrows ? newWidthGrows : undefined,
-  //         heightGrows: shouldUpdateHeightGrows ? newHeightGrows : undefined,
-  //       })
-  //     }
-  //   }
-  // }
-
   return {
     formattedWidth,
     formattedHeight,

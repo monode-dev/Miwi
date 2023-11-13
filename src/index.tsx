@@ -1,7 +1,7 @@
 import { DeepPartial } from './utils'
 import { sizeScaleCssVarName } from './theme'
-import { sizeToCss } from './b-x/BoxUtils'
-import { Align, Axis, Overflow } from './b-x/BoxLayout'
+import { sizeToCss } from './Box/BoxUtils'
+import { Align, Axis, Overflow } from './Box/BoxLayout'
 
 // SECTION: Global variables
 declare global {
@@ -107,15 +107,15 @@ fieldStyleElement.innerHTML = `
 }`
 document.body.appendChild(fieldStyleElement)
 
-export * from './b-x/b-x'
-export * from './b-x/BoxDecoration'
-export * from './b-x/BoxInteraction'
-export * from './b-x/BoxLayout'
-export * from './b-x/BoxSize'
-export * from './b-x/BoxText'
 export * from './AppBar'
 export * from './Body'
-export * from './Box'
+// export * from './Box/b-x'
+export * from './Box/Box'
+export * from './Box/BoxDecoration'
+export * from './Box/BoxInteraction'
+export * from './Box/BoxLayout'
+export * from './Box/BoxSize'
+export * from './Box/BoxText'
 export * from './Button'
 export * from './Card'
 export * from './CircularProgressIndicator'

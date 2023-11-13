@@ -1,10 +1,10 @@
 import { SigGet } from './utils'
 import { pageTransitions } from './Nav'
-import { Box } from './Box'
+import { Box } from './Box/Box'
 import { Row } from './Row'
 import { Icon } from './Icon'
 import { mdiWifiOff } from '@mdi/js'
-import { sizeToCss } from './b-x/BoxUtils'
+import { sizeToCss } from './Box/BoxUtils'
 
 export function OfflineWarning(props: { isOnlineSig: SigGet<boolean> }) {
   const offlineWarningTransitions = pageTransitions.from({

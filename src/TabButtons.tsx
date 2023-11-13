@@ -1,5 +1,5 @@
 import { gsap } from 'gsap'
-import { Box, BoxProps } from './Box'
+import { Box, BoxProps } from './Box/Box'
 import { Row } from './Row'
 import { createEffect } from 'solid-js'
 import { Sig, exists } from './utils'

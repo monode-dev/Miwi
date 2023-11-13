@@ -1,13 +1,11 @@
-import './b-x/b-x'
-import { Sty } from './b-x/b-x'
 import { onMount, type JSX, type ParentProps } from 'solid-js'
-import { exists, sig, watchEffect } from './utils'
-import { Overflow, _FlexAlign, applyLayoutStyle, AlignSingleAxis } from './b-x/BoxLayout'
-import { applySizeStyle, heightGrowsClassName, widthGrowsClassName } from './b-x/BoxSize'
-import { makePropParser } from './b-x/BoxUtils'
-import { applyDecorationStyle } from './b-x/BoxDecoration'
-import { applyTextStyle } from './b-x/BoxText'
-import { applyInteractionStyle } from './b-x/BoxInteraction'
+import { exists, sig, watchEffect } from '../utils'
+import { makePropParser } from './BoxUtils'
+import { Overflow, _FlexAlign, applyLayoutStyle, AlignSingleAxis, LayoutSty } from './BoxLayout'
+import { SizeSty, applySizeStyle, heightGrowsClassName, widthGrowsClassName } from './BoxSize'
+import { applyDecorationStyle, DecorationSty } from './BoxDecoration'
+import { TextSty, applyTextStyle } from './BoxText'
+import { InteractionSty, applyInteractionStyle } from './BoxInteraction'
 
 type BDashXProps = ParentProps & {
   sty?: Sty
@@ -20,6 +18,18 @@ declare module 'solid-js' {
     }
   }
 }
+
+export type Sty = Partial<
+  LayoutSty &
+    SizeSty &
+    DecorationSty &
+    TextSty &
+    InteractionSty & {
+      overrideProps: Partial<Sty>
+      getElement: (e: HTMLElement) => void
+      shouldLog?: boolean
+    }
+>
 
 export function grow(flex: number = 1) {
   return `${flex}f`

@@ -1,10 +1,10 @@
 import { Show, onMount } from 'solid-js'
-import { Box, BoxProps } from './Box'
+import { Box, BoxProps } from './Box/Box'
 import { Row } from './Row'
 import { Icon } from './Icon'
 import { compute, sig, Sig, watchDeps, watchEffect, exists } from './utils'
 import { Column } from './Column'
-import { sizeToCss } from './b-x/BoxUtils'
+import { sizeToCss } from './Box/BoxUtils'
 
 export type KeyboardType =
   | 'none'

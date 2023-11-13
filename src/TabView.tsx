@@ -1,7 +1,7 @@
 import { gsap } from 'gsap'
 import { Sig, sig } from './utils'
 import { onMount, createEffect, JSX } from 'solid-js'
-import { Box, BoxProps } from './Box'
+import { Box, BoxProps } from './Box/Box'
 import { Txt } from './Txt'
 import { Row } from './Row'
 

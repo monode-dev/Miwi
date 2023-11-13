@@ -1,4 +1,4 @@
-import { BoxProps } from './Box'
+import { BoxProps } from './Box/Box'
 import { Row } from './Row'
 import { compute } from './utils'
 

@@ -1,4 +1,4 @@
-import { sizeToCss } from './b-x/BoxUtils'
+import { sizeToCss } from './Box/BoxUtils'
 import { createSignal } from 'solid-js'
 
 export function CircularProgressIndicator(props: {

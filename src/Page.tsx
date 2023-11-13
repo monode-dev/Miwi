@@ -1,4 +1,4 @@
-import { Box, BoxProps } from './Box'
+import { Box, BoxProps } from './Box/Box'
 
 export function Page(props: BoxProps) {
   return (

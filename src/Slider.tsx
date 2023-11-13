@@ -1,5 +1,5 @@
 import { Sig, sig } from './utils'
-import { Box, BoxProps } from './Box'
+import { Box, BoxProps } from './Box/Box'
 import { Row } from './Row'
 import { Stack } from './Stack'
 
