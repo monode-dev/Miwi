@@ -55,22 +55,22 @@ export function Box(props: BoxProps) {
       )
     })()
     // Compute Layout
-    const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
-    const overflowX = sig<Overflow>(Overflow.forceStretchParent)
+    // const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
+    // const overflowX = sig<Overflow>(Overflow.forceStretchParent)
     // watchEffect(() => {
-    const { alignX: newAlignX, overflowX: newOverflowX } = applyLayoutStyle(
+    /**const { alignX: newAlignX, overflowX: newOverflowX } = */ applyLayoutStyle(
       parseProp,
       element.value!,
       {
-        childCount: !exists(props.children)
-          ? 0
-          : Array.isArray(props.children)
-          ? props.children.length
-          : 1,
+        childCount: 0 /**!exists(props.children)
+        ? 0
+        : Array.isArray(props.children)
+        ? props.children.length
+        : 1, */,
       },
     )
-    alignX.value = newAlignX
-    overflowX.value = newOverflowX
+    // alignX.value = newAlignX
+    // overflowX.value = newOverflowX
     // })
     //   // Compute Size
     //   // watchEffect(() => {
