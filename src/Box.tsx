@@ -105,18 +105,14 @@ export function Box(props: BoxProps) {
       if (!exists(element.value)) return
       applyInteractionStyle(parseProp, element.value)
     })
+
+    // Notify element getters
+    const elementGetters: any[] = parseProp(`getElement`, true)
+    elementGetters.forEach(getter => {
+      getter(element.value)
+    })
   })
 
   // TODO: Toggle element type based on "tag" prop.
-  return (
-    <div
-      {...props}
-      ref={el => {
-        element.value = el
-        if (typeof props.ref === `function`) {
-          props.ref(el)
-        }
-      }}
-    />
-  )
+  return <div {...props} ref={el => (element.value = el)} />
 }
