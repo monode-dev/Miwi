@@ -21,8 +21,8 @@ export function grow(flex: number = 1) {
 
 export type BoxProps = Partial<Sty> & ParentProps & JSX.DOMAttributes<HTMLDivElement>
 export function Box(props: BoxProps) {
-  console.log(props?.overrideProps?.shadowSize)
   const sty = compute(() => {
+    console.log(props.overrideProps?.shadowSize)
     return { ...props }
   })
   return <b-x {...props} sty={sty.value} />
