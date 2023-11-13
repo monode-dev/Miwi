@@ -11,9 +11,9 @@ import {
   Axis,
 } from './BoxLayout'
 import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from './BoxSize'
-import { applyDecorationStyle, DecorationSty } from './BoxDecoration'
-import { TextSty, applyTextStyle } from './BoxText'
-import { InteractionSty, applyInteractionStyle } from './BoxInteraction'
+import { DecorationSty, watchBoxDecoration } from './BoxDecoration'
+import { TextSty, watchBoxText } from './BoxText'
+import { InteractionSty, watchBoxInteraction } from './BoxInteraction'
 
 export function grow(flex: number = 1) {
   return `${flex}f`
@@ -36,10 +36,20 @@ export function Box(props: BoxProps) {
   const parseProp: (...args: any[]) => any = makePropParser(props)
 
   onMount(() => {
-    if (!exists(element.value)) return
+    // Compute Layout
+    const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
+    const overflowX = sig<Overflow>(Overflow.forceStretchParent)
+    watchBoxLayout(parseProp, element, {
+      // TODO: Use mutation observers to observe this, or see if we can do it with a CSS class
+      hasMoreThanOneChild: sig((element.value?.children.length ?? 0) > 1),
+      alignX,
+      overflowX,
+    })
+
+    // Compute Size
     const parentStyle = sig<CSSStyleDeclaration | undefined>(undefined)
     ;(() => {
-      const parentElement = element.value.parentElement
+      const parentElement = element.value!.parentElement
       if (!exists(parentElement)) return
       parentStyle.value = getComputedStyle(parentElement)
     })()
@@ -47,7 +57,7 @@ export function Box(props: BoxProps) {
     const aChildsWidthGrows = sig(false)
     const aChildsHeightGrows = sig(false)
     ;(() => {
-      const childElements = element.value.children
+      const childElements = element.value!.children
       if (!exists(childElements)) return
       const childElementsArray = Array.from(childElements)
       if (childElementsArray.length === 0) return
@@ -58,24 +68,13 @@ export function Box(props: BoxProps) {
         childElement.classList.contains(widthGrowsClassName),
       )
     })()
-    // Compute Layout
-    const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
-    const overflowX = sig<Overflow>(Overflow.forceStretchParent)
-    watchBoxLayout(parseProp, element, {
-      // TODO: Use mutation observers to observe this, or see if we can do it with a CSS class
-      hasMoreThanOneChild: sig(element.value.children.length > 1),
-      alignX,
-      overflowX,
-    })
-
-    // Compute Size
     watchBoxSize(parseProp, element, {
       // TODO: Use mutation observers to observe this.
       // TODO: We will recompute size when anything changes, this is overkill.
       // Ideally we only care about parent axis, and only care about parent padding
       // If the parent is a stack. We should pass sigs in, so that we only watch what matters for a recompute.
       parentAxis: sig(
-        element.value.parentElement?.classList.contains(stackClassName) ?? false
+        element.value?.parentElement?.classList.contains(stackClassName) ?? false
           ? Axis.stack
           : parentStyle.value?.flexDirection === Axis.column
           ? Axis.column
@@ -90,31 +89,25 @@ export function Box(props: BoxProps) {
     })
 
     // Compute Decoration
-    watchEffect(() => {
-      if (!exists(element.value)) return
-      applyDecorationStyle(parseProp, element.value)
-    })
+    watchBoxDecoration(parseProp, element)
 
     // Compute Text Styling
-    watchEffect(() => {
-      if (!exists(element.value)) return
-      applyTextStyle(parseProp, element.value, {
-        alignX: alignX.value,
-        overflowX: overflowX.value,
-      })
+    watchBoxText(parseProp, element, {
+      alignX,
+      overflowX,
     })
 
     // Computer Interactivity
-    watchEffect(() => {
-      if (!exists(element.value)) return
-      applyInteractionStyle(parseProp, element.value)
-    })
+    watchBoxInteraction(parseProp, element)
 
     // Notify element getters
-    const elementGetters: any[] = parseProp(`getElement`, true)
-    elementGetters.forEach(getter => {
-      if (typeof getter !== `function`) return
-      getter(element.value)
+    watchEffect(() => {
+      if (!exists(element.value)) return
+      const elementGetters: any[] = parseProp(`getElement`, true)
+      elementGetters.forEach(getter => {
+        if (typeof getter !== `function`) return
+        getter(element.value)
+      })
     })
   })
 

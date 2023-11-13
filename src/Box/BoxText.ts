@@ -1,6 +1,7 @@
 import { ParseProp, exists, sizeToCss } from './BoxUtils'
 import { AlignSingleAxis, Overflow, _FlexAlign } from './BoxLayout'
 import { sizeScaleCssVarName } from 'src/theme'
+import { Sig, watchEffect } from 'src/utils'
 
 export type TextSty = {
   scale: number | string
@@ -26,41 +27,82 @@ export type TextSty = {
 }
 
 // Text Styler
-export function applyTextStyle(
+export function watchBoxText(
   parseProp: ParseProp<TextSty>,
-  htmlElement: HTMLElement,
+  element: Sig<HTMLElement | undefined>,
   context: {
-    alignX: AlignSingleAxis
-    overflowX: Overflow
+    alignX: Sig<AlignSingleAxis>
+    overflowX: Sig<Overflow>
   },
 ) {
-  htmlElement.style.fontFamily = `inherit` //`Roboto`;
-  const scale = parseProp({ scale: v => v })
-  htmlElement.style.setProperty(sizeScaleCssVarName, sizeToCss(scale) ?? ``)
-  htmlElement.style.fontSize = exists(scale) ? `var(${sizeScaleCssVarName})` : ``
-  const textIsBold = parseProp({ boldText: v => v })
-  htmlElement.style.fontWeight = exists(textIsBold) ? (textIsBold ? `bold` : `normal`) : ``
-  const textIsItalic = parseProp({ italicizeText: v => v })
-  htmlElement.style.fontStyle = exists(textIsItalic) ? (textIsItalic ? `italic` : `normal`) : ``
-  const textIsUnderlined = parseProp({ underlineText: v => v })
-  htmlElement.style.textDecoration = exists(textIsUnderlined)
-    ? textIsUnderlined
-      ? `underline`
-      : `none`
-    : ``
-  htmlElement.style.lineHeight = exists(scale) ? `var(${sizeScaleCssVarName})` : ``
+  // Basics
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    element.value.style.fontFamily = `inherit` //`Roboto`;
+  })
+
+  // Scale / Font Size
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const scale = parseProp({ scale: v => v })
+    element.value.style.setProperty(sizeScaleCssVarName, sizeToCss(scale) ?? ``)
+    element.value.style.fontSize = exists(scale) ? `var(${sizeScaleCssVarName})` : ``
+    element.value.style.lineHeight = exists(scale) ? `var(${sizeScaleCssVarName})` : ``
+  })
+
+  // Bold
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const textIsBold = parseProp({ boldText: v => v })
+    element.value.style.fontWeight = exists(textIsBold) ? (textIsBold ? `bold` : `normal`) : ``
+  })
+
+  // Italic
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const textIsItalic = parseProp({ italicizeText: v => v })
+    element.value.style.fontStyle = exists(textIsItalic) ? (textIsItalic ? `italic` : `normal`) : ``
+  })
+
+  // Underline
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const textIsUnderlined = parseProp({ underlineText: v => v })
+    element.value.style.textDecoration = exists(textIsUnderlined)
+      ? textIsUnderlined
+        ? `underline`
+        : `none`
+      : ``
+  })
+
   // textOverflow: sty.useEllipsisForOverflow ?? false ? `ellipsis` : undefined,
-  htmlElement.style.color = parseProp({ textColor: v => v }) ?? ``
-  htmlElement.style.textAlign =
-  context.alignX === _FlexAlign.start
-      ? `left`
-      : context.alignX === _FlexAlign.end
-      ? `right`
-      : // We assume for now that all other aligns cam be treated as center
-        `center`
-  // whiteSpace cascades, so we need to explicity set it.
-  htmlElement.style.whiteSpace =
-    context.overflowX === Overflow.crop || context.overflowX === Overflow.forceStretchParent
-      ? `nowrap`
-      : `normal`
+
+  // Text Color
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    element.value.style.color = parseProp({ textColor: v => v }) ?? ``
+  })
+
+  // Text Align
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    element.value.style.textAlign =
+      context.alignX.value === _FlexAlign.start
+        ? `left`
+        : context.alignX.value === _FlexAlign.end
+        ? `right`
+        : // We assume for now that all other aligns cam be treated as center
+          `center`
+  })
+
+  // Text Wrap
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    // whiteSpace cascades, so we need to explicity set it.
+    element.value.style.whiteSpace =
+      context.overflowX.value === Overflow.crop ||
+      context.overflowX.value === Overflow.forceStretchParent
+        ? `nowrap`
+        : `normal`
+  })
 }

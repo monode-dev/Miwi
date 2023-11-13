@@ -111,21 +111,21 @@ export function watchBoxSize(
     })
     widthGrows.value = _widthGrows
     element.value.classList.toggle(widthGrowsClassName, _widthGrows)
-    element.value.style.width = (() => {
-      let size = exactWidth
-      // axis === Axis.stack && width === -1
-      //   ? maxChildWidth
-      //   : exactWidth;
-      if (context.parentAxis.value === Axis.stack) {
-        size = `calc(${size} - ${context.parentPaddingLeft.value} - ${context.parentPaddingRight.value})`
-      }
-      return size ?? ``
-    })()
     element.value.style.minWidth = (() => {
       let size = wMin
       // axis === Axis.stack && width === -1
       //   ? maxChildWidth
       //   : wMin;
+      if (context.parentAxis.value === Axis.stack) {
+        size = `calc(${size} - ${context.parentPaddingLeft.value} - ${context.parentPaddingRight.value})`
+      }
+      return size ?? ``
+    })()
+    element.value.style.width = (() => {
+      let size = exactWidth
+      // axis === Axis.stack && width === -1
+      //   ? maxChildWidth
+      //   : exactWidth;
       if (context.parentAxis.value === Axis.stack) {
         size = `calc(${size} - ${context.parentPaddingLeft.value} - ${context.parentPaddingRight.value})`
       }
@@ -164,21 +164,15 @@ export function watchBoxSize(
     })
     heightGrows.value = _heightGrows
     element.value.classList.toggle(heightGrowsClassName, _heightGrows)
-    element.value.style.height = (() => {
-      let size = exactHeight
-      // axis === Axis.stack && width === -1
-      //   ? maxChildWidth
-      //   : exactWidth;
+    element.value.style.minHeight = (() => {
+      let size = hMin
       if (context.parentAxis.value === Axis.stack) {
         size = `calc(${size} - ${context.parentPaddingTop.value} - ${context.parentPaddingBottom.value})`
       }
       return size ?? ``
     })()
-    element.value.style.minHeight = (() => {
-      let size = hMin
-      // axis === Axis.stack && width === -1
-      //   ? maxChildWidth
-      //   : wMin;
+    element.value.style.height = (() => {
+      let size = exactHeight
       if (context.parentAxis.value === Axis.stack) {
         size = `calc(${size} - ${context.parentPaddingTop.value} - ${context.parentPaddingBottom.value})`
       }
@@ -186,9 +180,6 @@ export function watchBoxSize(
     })()
     element.value.style.maxHeight = (() => {
       let size = hMax
-      // axis === Axis.stack && width === -1
-      //   ? maxChildWidth
-      //   : wMax;
       if (context.parentAxis.value === Axis.stack) {
         size = `calc(${size} - ${context.parentPaddingTop.value} - ${context.parentPaddingBottom.value})`
       }

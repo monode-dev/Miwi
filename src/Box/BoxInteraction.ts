@@ -1,4 +1,4 @@
-import { exists } from 'src/utils'
+import { Sig, exists, watchEffect } from 'src/utils'
 import { ParseProp } from './BoxUtils'
 
 export type InteractionSty = {
@@ -30,51 +30,91 @@ style.textContent = `
 `
 document.body.appendChild(style)
 
-export function applyInteractionStyle(
+export function watchBoxInteraction(
   parseProp: ParseProp<InteractionSty>,
-  htmlElement: HTMLElement,
+  element: Sig<HTMLElement | undefined>,
 ) {
   // htmlElement.role = parseProp(`role`) ?? ``
-  const onClickListeners = parseProp(`onClick`, true)
-  const isClickable = exists(onClickListeners.length > 0)
-  const preventClickPropagation = parseProp(`preventClickPropagation`) ?? isClickable
-  htmlElement.style.pointerEvents = preventClickPropagation ? `auto` : `none`
-  htmlElement.onclick = preventClickPropagation
-    ? (e: MouseEvent) => {
-        e.stopPropagation()
-        onClickListeners.forEach(listener => listener(e))
-      }
-    : isClickable
-    ? (e: MouseEvent) => onClickListeners.forEach(listener => listener(e))
-    : null
-  htmlElement.style.cursor = parseProp(`cssCursor`) ?? isClickable ? `pointer` : `default`
-  const onMouseEnterListeners = parseProp(`onMouseEnter`, true)
-  htmlElement.onmouseenter =
-    onMouseEnterListeners.length > 0
-      ? () => onMouseEnterListeners.forEach(listener => listener())
+
+  // Click
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const onClickListeners = parseProp(`onClick`, true)
+    const isClickable = exists(onClickListeners.length > 0)
+    const preventClickPropagation = parseProp(`preventClickPropagation`) ?? isClickable
+    element.value.style.pointerEvents = preventClickPropagation ? `auto` : `none`
+    element.value.onclick = preventClickPropagation
+      ? (e: MouseEvent) => {
+          e.stopPropagation()
+          onClickListeners.forEach(listener => listener(e))
+        }
+      : isClickable
+      ? (e: MouseEvent) => onClickListeners.forEach(listener => listener(e))
       : null
-  const onMouseLeaveListeners = parseProp(`onMouseLeave`, true)
-  htmlElement.onmouseleave =
-    onMouseLeaveListeners.length > 0
-      ? () => onMouseLeaveListeners.forEach(listener => listener())
-      : null
-  const onMouseDownListeners = parseProp(`onMouseDown`, true)
-  htmlElement.onmousedown =
-    onMouseDownListeners.length > 0
-      ? e => onMouseDownListeners.forEach(listener => listener(e))
-      : null
-  const onMouseUpListeners = parseProp(`onMouseUp`, true)
-  htmlElement.onmouseup =
-    onMouseUpListeners.length > 0 ? e => onMouseUpListeners.forEach(listener => listener(e)) : null
-  const onTouchStartListeners = parseProp(`onTouchStart`, true)
-  htmlElement.ontouchstart =
-    onTouchStartListeners.length > 0
-      ? e => onTouchStartListeners.forEach(listener => listener(e))
-      : null
-  const onTouchEndListeners = parseProp(`onTouchEnd`, true)
-  htmlElement.ontouchend =
-    onTouchEndListeners.length > 0
-      ? e => onTouchEndListeners.forEach(listener => listener(e))
-      : null
-  htmlElement.classList.toggle(bonusTouchAreaClassName, parseProp(`bonusTouchArea`) ?? false)
+    element.value.style.cursor = parseProp(`cssCursor`) ?? isClickable ? `pointer` : `default`
+    element.value.classList.toggle(
+      bonusTouchAreaClassName,
+      parseProp(`bonusTouchArea`) ?? isClickable,
+    )
+  })
+
+  // On Mouse Enter
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const onMouseEnterListeners = parseProp(`onMouseEnter`, true)
+    element.value.onmouseenter =
+      onMouseEnterListeners.length > 0
+        ? () => onMouseEnterListeners.forEach(listener => listener())
+        : null
+  })
+
+  // On Mouse Leave
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const onMouseLeaveListeners = parseProp(`onMouseLeave`, true)
+    element.value.onmouseleave =
+      onMouseLeaveListeners.length > 0
+        ? () => onMouseLeaveListeners.forEach(listener => listener())
+        : null
+  })
+
+  // On Mouse Down
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const onMouseDownListeners = parseProp(`onMouseDown`, true)
+    element.value.onmousedown =
+      onMouseDownListeners.length > 0
+        ? e => onMouseDownListeners.forEach(listener => listener(e))
+        : null
+  })
+
+  // On Mouse Up
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const onMouseUpListeners = parseProp(`onMouseUp`, true)
+    element.value.onmouseup =
+      onMouseUpListeners.length > 0
+        ? e => onMouseUpListeners.forEach(listener => listener(e))
+        : null
+  })
+
+  // On Touch Start
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const onTouchStartListeners = parseProp(`onTouchStart`, true)
+    element.value.ontouchstart =
+      onTouchStartListeners.length > 0
+        ? e => onTouchStartListeners.forEach(listener => listener(e))
+        : null
+  })
+
+  // On Touch End
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const onTouchEndListeners = parseProp(`onTouchEnd`, true)
+    element.value.ontouchend =
+      onTouchEndListeners.length > 0
+        ? e => onTouchEndListeners.forEach(listener => listener(e))
+        : null
+  })
 }
