@@ -39,8 +39,8 @@ export function watchBoxInteraction(
   // Click
   watchEffect(() => {
     if (!exists(element.value)) return
-    const onClickListeners = parseProp(`onClick`, true)
-    const isClickable = exists(onClickListeners.length > 0)
+    const onClickListeners = parseProp(`onClick`, true).filter(exists)
+    const isClickable = onClickListeners.length > 0
     const preventClickPropagation = parseProp(`preventClickPropagation`) ?? isClickable
     element.value.style.pointerEvents = preventClickPropagation ? `auto` : `none`
     element.value.onclick = preventClickPropagation
@@ -52,7 +52,6 @@ export function watchBoxInteraction(
       ? (e: MouseEvent) => onClickListeners.forEach(listener => listener(e))
       : null
     element.value.style.cursor = parseProp(`cssCursor`) ?? (isClickable ? `pointer` : `default`)
-    console.log(`isClickable: ${isClickable}`)
     element.value.classList.toggle(
       bonusTouchAreaClassName,
       parseProp(`bonusTouchArea`) ?? isClickable,
