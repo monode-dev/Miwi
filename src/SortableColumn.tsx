@@ -1,6 +1,7 @@
 import { onCleanup, onMount } from 'solid-js'
 import { Column } from './Column'
 import { sig, exists, SigGet, compute } from './utils'
+import { observeElement } from './Box/BoxUtils';
 
 const elementsBeingSorted = sig<HTMLElement[]>([])
 
@@ -216,7 +217,9 @@ export function SortableColumn(props: {
       child.addEventListener('mousedown', watchForLongPress as any)
       child.addEventListener('touchstart', watchForLongPress as any)
     })
-    const childrenObserver = new MutationObserver(mutations => {
+    const childrenObserver = observeElement(columnElement!, {
+      childList: true,
+    }, mutations => {
       mutations.forEach(mutation => {
         if (mutation.type === 'childList') {
           mutation.addedNodes.forEach(child => {
@@ -229,9 +232,6 @@ export function SortableColumn(props: {
           })
         }
       })
-    })
-    childrenObserver.observe(columnElement!, {
-      childList: true,
     })
     doOnCleanUp.add(() => {
       Array.from(columnElement!.children).forEach(child => {

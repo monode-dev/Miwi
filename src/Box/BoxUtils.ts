@@ -92,3 +92,15 @@ function roundToString(num: number, digits: number = 0): string {
   const roundingOffset = Math.pow(10, -significantDecimals - 1)
   return (num + roundingOffset).toFixed(digits)
 }
+
+// SECTION: Observer
+export function observeElement(
+  element: HTMLElement,
+  options: MutationObserverInit,
+  callback: (mutations: MutationRecord[], observer: MutationObserver) => void,
+) {
+  const observer = new MutationObserver(callback)
+  observer.observe(element, options)
+  callback([], observer)
+  return observer
+}

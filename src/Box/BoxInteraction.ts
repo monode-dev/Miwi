@@ -15,7 +15,7 @@ export type InteractionSty = {
   onClick: (e: MouseEvent) => void
 }
 
-const bonusTouchAreaClassName = `b-x-bonus-touch-area`
+const bonusTouchAreaClassName = `miwi-bonus-touch-area`
 const style = document.createElement(`style`)
 style.textContent = `
 .${bonusTouchAreaClassName}::before {

@@ -70,8 +70,8 @@ export function formatRawSize(props: { someChildGrows: boolean; size: Size | und
   return formattedSize
 }
 
-export const widthGrowsClassName = `b-x-width-grows`
-export const heightGrowsClassName = `b-x-height-grows`
+export const widthGrowsClassName = `miwi-width-grows`
+export const heightGrowsClassName = `miwi-height-grows`
 
 // Box Size
 export function watchBoxSize(

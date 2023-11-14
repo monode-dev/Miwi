@@ -1,6 +1,6 @@
 import { onMount, type JSX, type ParentProps, onCleanup } from 'solid-js'
 import { Sig, exists, sig, watchEffect } from '../utils'
-import { makePropParser } from './BoxUtils'
+import { makePropParser, observeElement } from './BoxUtils'
 import {
   Overflow,
   _FlexAlign,
@@ -119,41 +119,44 @@ function _watchParent(props: {
   } = props
   // TODO: We might ned to watch element if there is any chance of it becoming null at some point.
   if (exists(element.value) && exists(element.value.parentElement)) {
-    const parentObserver = new MutationObserver(() => {
-      const parentElement = element.value!.parentElement
-      if (!exists(parentElement)) return
-      const parentStyle = getComputedStyle(parentElement)
-      // Parent Axis
-      const newParentAxis = parentElement.classList.contains(stackClassName)
-        ? Axis.stack
-        : parentStyle.flexDirection === Axis.column
-        ? Axis.column
-        : Axis.row
-      if (parentAxis.value !== newParentAxis) {
-        parentAxis.value = newParentAxis
-      }
-      // Parent Padding
-      const newParentPaddingLeft = parentStyle.paddingLeft
-      if (parentPaddingLeft.value !== newParentPaddingLeft) {
-        parentPaddingLeft.value = newParentPaddingLeft
-      }
-      const newParentPaddingTop = parentStyle.paddingTop
-      if (parentPaddingTop.value !== newParentPaddingTop) {
-        parentPaddingTop.value = newParentPaddingTop
-      }
-      const newParentPaddingRight = parentStyle.paddingRight
-      if (parentPaddingRight.value !== newParentPaddingRight) {
-        parentPaddingRight.value = newParentPaddingRight
-      }
-      const newParentPaddingBottom = parentStyle.paddingBottom
-      if (parentPaddingBottom.value !== newParentPaddingBottom) {
-        parentPaddingBottom.value = newParentPaddingBottom
-      }
-    })
-    parentObserver.observe(element.value.parentElement, {
-      attributes: true,
-      attributeFilter: [`style`, `class`],
-    })
+    const parentObserver = observeElement(
+      element.value.parentElement,
+      {
+        attributes: true,
+        attributeFilter: [`style`, `class`],
+      },
+      () => {
+        const parentElement = element.value!.parentElement
+        if (!exists(parentElement)) return
+        const parentStyle = getComputedStyle(parentElement)
+        // Parent Axis
+        const newParentAxis = parentElement.classList.contains(stackClassName)
+          ? Axis.stack
+          : parentStyle.flexDirection === Axis.column
+          ? Axis.column
+          : Axis.row
+        if (parentAxis.value !== newParentAxis) {
+          parentAxis.value = newParentAxis
+        }
+        // Parent Padding
+        const newParentPaddingLeft = parentStyle.paddingLeft
+        if (parentPaddingLeft.value !== newParentPaddingLeft) {
+          parentPaddingLeft.value = newParentPaddingLeft
+        }
+        const newParentPaddingTop = parentStyle.paddingTop
+        if (parentPaddingTop.value !== newParentPaddingTop) {
+          parentPaddingTop.value = newParentPaddingTop
+        }
+        const newParentPaddingRight = parentStyle.paddingRight
+        if (parentPaddingRight.value !== newParentPaddingRight) {
+          parentPaddingRight.value = newParentPaddingRight
+        }
+        const newParentPaddingBottom = parentStyle.paddingBottom
+        if (parentPaddingBottom.value !== newParentPaddingBottom) {
+          parentPaddingBottom.value = newParentPaddingBottom
+        }
+      },
+    )
     onCleanup(() => parentObserver.disconnect())
   }
 }
@@ -167,45 +170,54 @@ function _watchChildren(props: {
 }) {
   const { element, hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows } = props
   const activeChildObservers: MutationObserver[] = []
-  const childListObserver = new MutationObserver(() => {
-    if (!exists(element.value)) return
-    const childElementsArray = Array.from(element.value.childNodes)
-    // Has More Than One Child
-    const newHasMoreThanOneChild = childElementsArray.length > 1
-    if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
-      hasMoreThanOneChild.value = newHasMoreThanOneChild
-    }
-    // A Child Size Grows
-    activeChildObservers.forEach(observer => observer.disconnect())
-    childElementsArray.forEach(child => {
-      const childObserver = new MutationObserver(() => {
-        if (!exists(element.value)) return
-        const childElementsArray = Array.from(element.value.childNodes).filter(
-          child => child instanceof HTMLElement,
-        ) as HTMLElement[]
-        const newAChildsWidthGrows = childElementsArray.some(childElement =>
-          childElement.classList.contains(widthGrowsClassName),
+  const childListObserver = observeElement(
+    element.value!,
+    {
+      childList: true,
+    },
+    () => {
+      if (!exists(element.value)) return
+      const childElementsArray = Array.from(element.value.childNodes).filter(
+        child => child instanceof HTMLElement,
+      ) as HTMLElement[]
+      // Has More Than One Child
+      const newHasMoreThanOneChild = childElementsArray.length > 1
+      if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
+        hasMoreThanOneChild.value = newHasMoreThanOneChild
+      }
+      // A Child Size Grows
+      activeChildObservers.forEach(observer => observer.disconnect())
+      childElementsArray.forEach(child => {
+        activeChildObservers.push(
+          observeElement(
+            child,
+            {
+              attributes: true,
+              attributeFilter: [`class`],
+            },
+            () => {
+              if (!exists(element.value)) return
+              const childElementsArray = Array.from(element.value.childNodes).filter(
+                child => child instanceof HTMLElement,
+              ) as HTMLElement[]
+              const newAChildsWidthGrows = childElementsArray.some(childElement =>
+                childElement.classList.contains(widthGrowsClassName),
+              )
+              if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
+                aChildsWidthGrows.value = newAChildsWidthGrows
+              }
+              const newAChildsHeightGrows = childElementsArray.some(childElement =>
+                childElement.classList.contains(heightGrowsClassName),
+              )
+              if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
+                aChildsHeightGrows.value = newAChildsHeightGrows
+              }
+            },
+          ),
         )
-        if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
-          aChildsWidthGrows.value = newAChildsWidthGrows
-        }
-        const newAChildsHeightGrows = childElementsArray.some(childElement =>
-          childElement.classList.contains(heightGrowsClassName),
-        )
-        if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
-          aChildsHeightGrows.value = newAChildsHeightGrows
-        }
       })
-      childObserver.observe(child, {
-        attributes: true,
-        attributeFilter: [`class`],
-      })
-      activeChildObservers.push(childObserver)
-    })
-  })
-  childListObserver.observe(element.value!, {
-    childList: true,
-  })
+    },
+  )
   onCleanup(() => {
     childListObserver.disconnect()
     activeChildObservers.forEach(observer => observer.disconnect())
