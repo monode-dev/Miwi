@@ -61,7 +61,10 @@ export function TabButtons(
         <Row widthGrows height={0.375} spaceAroundX alignBottom>
           <Box width={tabButtonWidth} />
           <Box
-            getElement={el => (tabUnderline = el)}
+            getElement={el => {
+              tabUnderline = el
+              console.log('tabUnderline', el)
+            }}
             width={tabButtonWidth}
             height={0.125}
             background={$theme.colors.sameAsText}
