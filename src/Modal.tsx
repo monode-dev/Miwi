@@ -86,11 +86,9 @@ export function Modal<T>(
           <div style="z-index: 10000;" ref={el => (modal = el)}>
             <Box
               widthGrows
-              height={{
-                min: 0,
-                flex: -1,
-                max: 16.65,
-              }}
+              minHeight={0}
+              heightShrinks
+              maxHeight={16.65}
               overflowY={$Overflow.scroll}
               pad={1}
               shadowSize={1}
