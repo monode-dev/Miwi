@@ -57,6 +57,8 @@ export function computeSizeInfo(props: {
     ? typeof props.minSize === `string`
       ? props.minSize
       : sizeToCss(props.minSize)
+    : isShrink
+    ? ``
     : exactSize
   // TODO: If your parent's overflow is `hidden`, then max size should be `100%`
   const maxSize = exists(props.maxSize)
@@ -65,7 +67,7 @@ export function computeSizeInfo(props: {
       : props.maxSize === Infinity
       ? undefined
       : sizeToCss(props.maxSize)
-    : exactSize
+    : isShrink ? `` : exactSize
   return [exactSize, minSize, maxSize, sizeIsFlex ? size.flex : undefined] as const
 }
 
@@ -112,9 +114,6 @@ export function watchBoxSize(
     })
     flexWidth.value = _flexWidth
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth))
-    if (context.shouldLog) {
-      console.log(exists(_flexWidth), element.value.classList)
-    }
     element.value.style.minWidth = (() => {
       let size = wMin
       // axis === Axis.stack && width === -1
