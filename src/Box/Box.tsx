@@ -166,7 +166,7 @@ function _watchChildren(props: {
   const activeChildObservers: MutationObserver[] = []
   const childListObserver = new MutationObserver(() => {
     if (!exists(element.value)) return
-    const childElementsArray = Array.from(element.value.children)
+    const childElementsArray = Array.from(element.value.childNodes)
     // Has More Than One Child
     const newHasMoreThanOneChild = childElementsArray.length > 1
     if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
@@ -177,7 +177,9 @@ function _watchChildren(props: {
     childElementsArray.forEach(child => {
       const childObserver = new MutationObserver(() => {
         if (!exists(element.value)) return
-        const childElementsArray = Array.from(element.value.children)
+        const childElementsArray = Array.from(element.value.childNodes).filter(
+          child => child instanceof HTMLElement,
+        ) as HTMLElement[]
         const newAChildsWidthGrows = childElementsArray.some(childElement =>
           childElement.classList.contains(widthGrowsClassName),
         )
