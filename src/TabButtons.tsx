@@ -30,7 +30,6 @@ export function TabButtons(
         0,
         (tab2Ref?.offsetLeft ?? 0) - (tab1Ref?.offsetLeft ?? 0),
       ][props.selectedTab.value]
-      console.log(props.selectedTab.value)
 
       // Animate
       gsap.to(tabUnderline.value, {

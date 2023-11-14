@@ -1,4 +1,4 @@
-import { type JSX, type ParentProps, onCleanup, onMount } from 'solid-js'
+import { type JSX, type ParentProps, onCleanup } from 'solid-js'
 import { Sig, exists, sig, watchEffect } from '../utils'
 import { makePropParser, observeElement } from './BoxUtils'
 import { _FlexAlign, watchBoxLayout, LayoutSty, stackClassName, Axis } from './BoxLayout'
@@ -24,45 +24,43 @@ export function Box(props: BoxProps) {
   const element = sig<HTMLElement | undefined>(undefined)
   const parseProp: (...args: any[]) => any = makePropParser(props)
 
-  onMount(() => {
-    // Observe Parent
-    const {
-      parentAxis,
-      parentPaddingLeft,
-      parentPaddingTop,
-      parentPaddingRight,
-      parentPaddingBottom,
-    } = _watchParent(element)
+  // Observe Parent
+  const {
+    parentAxis,
+    parentPaddingLeft,
+    parentPaddingTop,
+    parentPaddingRight,
+    parentPaddingBottom,
+  } = _watchParent(element)
 
-    // Observe Children
-    const { hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows } = _watchChildren(element)
+  // Observe Children
+  const { hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows } = _watchChildren(element)
 
-    // Compute Layout
-    const { alignX, overflowX } = watchBoxLayout(parseProp, element, { hasMoreThanOneChild })
+  // Compute Layout
+  const { alignX, overflowX } = watchBoxLayout(parseProp, element, { hasMoreThanOneChild })
 
-    // Compute Size
-    watchBoxSize(parseProp, element, {
-      parentAxis,
-      parentPaddingLeft,
-      parentPaddingRight,
-      parentPaddingTop,
-      parentPaddingBottom,
-      aChildsWidthGrows,
-      aChildsHeightGrows,
-    })
-
-    // Compute Decoration
-    watchBoxDecoration(parseProp, element)
-
-    // Compute Text Styling
-    watchBoxText(parseProp, element, {
-      alignX,
-      overflowX,
-    })
-
-    // Computer Interactivity
-    watchBoxInteraction(parseProp, element)
+  // Compute Size
+  watchBoxSize(parseProp, element, {
+    parentAxis,
+    parentPaddingLeft,
+    parentPaddingRight,
+    parentPaddingTop,
+    parentPaddingBottom,
+    aChildsWidthGrows,
+    aChildsHeightGrows,
   })
+
+  // Compute Decoration
+  watchBoxDecoration(parseProp, element)
+
+  // Compute Text Styling
+  watchBoxText(parseProp, element, {
+    alignX,
+    overflowX,
+  })
+
+  // Computer Interactivity
+  watchBoxInteraction(parseProp, element)
 
   // TODO: Toggle element type based on "tag" prop.
   return (
@@ -87,8 +85,9 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
   const parentPaddingTop = sig(`0px`)
   const parentPaddingRight = sig(`0px`)
   const parentPaddingBottom = sig(`0px`)
-  // TODO: Don't assume this exists
-  if (exists(element.value) && exists(element.value.parentElement)) {
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    if (!exists(element.value.parentElement)) return
     const parentObserver = observeElement(
       element.value.parentElement,
       {
@@ -96,8 +95,8 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
         attributeFilter: [`style`, `class`],
       },
       () => {
-        // TODO: Don't assume this exists
-        const parentElement = element.value!.parentElement
+        if (!exists(element.value)) return
+        const parentElement = element.value.parentElement
         if (!exists(parentElement)) return
         const parentStyle = getComputedStyle(parentElement)
         // Parent Axis
@@ -129,7 +128,7 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
       },
     )
     onCleanup(() => parentObserver.disconnect())
-  }
+  })
 
   return {
     parentAxis,
@@ -146,58 +145,60 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
   const aChildsHeightGrows = sig(false)
   const hasMoreThanOneChild = sig(false)
   const activeChildObservers: MutationObserver[] = []
-  const childListObserver = observeElement(
-    // TODO: Don't assume this exists
-    element.value!,
-    {
-      childList: true,
-    },
-    () => {
-      if (!exists(element.value)) return
-      const childElementsArray = Array.from(element.value.childNodes).filter(
-        child => child instanceof HTMLElement,
-      ) as HTMLElement[]
-      // Has More Than One Child
-      const newHasMoreThanOneChild = childElementsArray.length > 1
-      if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
-        hasMoreThanOneChild.value = newHasMoreThanOneChild
-      }
-      // A Child Size Grows
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const childListObserver = observeElement(
+      element.value,
+      {
+        childList: true,
+      },
+      () => {
+        if (!exists(element.value)) return
+        const childElementsArray = Array.from(element.value.childNodes).filter(
+          child => child instanceof HTMLElement,
+        ) as HTMLElement[]
+        // Has More Than One Child
+        const newHasMoreThanOneChild = childElementsArray.length > 1
+        if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
+          hasMoreThanOneChild.value = newHasMoreThanOneChild
+        }
+        // A Child Size Grows
+        activeChildObservers.forEach(observer => observer.disconnect())
+        childElementsArray.forEach(child => {
+          activeChildObservers.push(
+            observeElement(
+              child,
+              {
+                attributes: true,
+                attributeFilter: [`class`],
+              },
+              () => {
+                if (!exists(element.value)) return
+                const childElementsArray = Array.from(element.value.childNodes).filter(
+                  child => child instanceof HTMLElement,
+                ) as HTMLElement[]
+                const newAChildsWidthGrows = childElementsArray.some(childElement =>
+                  childElement.classList.contains(widthGrowsClassName),
+                )
+                if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
+                  aChildsWidthGrows.value = newAChildsWidthGrows
+                }
+                const newAChildsHeightGrows = childElementsArray.some(childElement =>
+                  childElement.classList.contains(heightGrowsClassName),
+                )
+                if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
+                  aChildsHeightGrows.value = newAChildsHeightGrows
+                }
+              },
+            ),
+          )
+        })
+      },
+    )
+    onCleanup(() => {
+      childListObserver.disconnect()
       activeChildObservers.forEach(observer => observer.disconnect())
-      childElementsArray.forEach(child => {
-        activeChildObservers.push(
-          observeElement(
-            child,
-            {
-              attributes: true,
-              attributeFilter: [`class`],
-            },
-            () => {
-              if (!exists(element.value)) return
-              const childElementsArray = Array.from(element.value.childNodes).filter(
-                child => child instanceof HTMLElement,
-              ) as HTMLElement[]
-              const newAChildsWidthGrows = childElementsArray.some(childElement =>
-                childElement.classList.contains(widthGrowsClassName),
-              )
-              if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
-                aChildsWidthGrows.value = newAChildsWidthGrows
-              }
-              const newAChildsHeightGrows = childElementsArray.some(childElement =>
-                childElement.classList.contains(heightGrowsClassName),
-              )
-              if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
-                aChildsHeightGrows.value = newAChildsHeightGrows
-              }
-            },
-          ),
-        )
-      })
-    },
-  )
-  onCleanup(() => {
-    childListObserver.disconnect()
-    activeChildObservers.forEach(observer => observer.disconnect())
+    })
   })
   return { element, hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows }
 }
