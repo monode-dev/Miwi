@@ -28,7 +28,7 @@ export function Txt(
       {overflowX === $Overflow.crop ? (
         <div
           style="
-          position: absolute;
+          position: relative;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
