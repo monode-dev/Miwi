@@ -3,13 +3,14 @@ import { ParseProp, sizeToCss } from './BoxUtils'
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and re-orderable lists.
 
-export type LayoutSty = PadStyProps &
-  AlignStyProps &
-  AxisStyProps &
-  Partial<{
-    overflowX: Overflow
-    overflowY: Overflow
-  }>
+export type LayoutSty = Partial<
+  PadStyProps &
+    AlignStyProps &
+    AxisStyProps & {
+      overflowX: Overflow
+      overflowY: Overflow
+    }
+>
 
 // type PartSty = {
 //   width: -1

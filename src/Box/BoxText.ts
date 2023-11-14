@@ -3,7 +3,7 @@ import { AlignSingleAxis, Overflow, _FlexAlign } from './BoxLayout'
 import { sizeScaleCssVarName } from 'src/theme'
 import { Sig, watchEffect } from 'src/utils'
 
-export type TextSty = {
+export type TextSty = Partial<{
   scale: number | string
   textColor: string
   // NOTE: Eventually we might want to make this a number so it can be granularly controlled. With presets for thin, normal, and bold.
@@ -24,7 +24,7 @@ export type TextSty = {
    * This should give you the desired behavior: text that is too long to fit inside
    * the inner div will be truncated and an ellipsis will be added at the end. */
   // useEllipsisForOverflow: boolean;
-}
+}>
 
 // Text Styler
 export function watchBoxText(

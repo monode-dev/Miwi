@@ -2,7 +2,7 @@ import { ParseProp, exists, sizeToCss } from './BoxUtils'
 import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign } from './BoxLayout'
 import { Sig, watchEffect } from 'src/utils'
 
-export type DecorationSty = {
+export type DecorationSty = Partial<{
   cornerRadius: number | string
   cornerRadiusTopLeft: number | string
   cornerRadiusTopRight: number | string
@@ -14,7 +14,7 @@ export type DecorationSty = {
   shadowSize: number
   shadowDirection: ShadowDirection
   zIndex: number
-}
+}>
 
 export type ShadowDirection = {
   [Key in keyof AlignTwoAxis]: Exclude<AlignTwoAxis[Key], _SpaceAlign>

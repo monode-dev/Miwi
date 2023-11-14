@@ -1,7 +1,7 @@
 import { Sig, exists, watchEffect } from 'src/utils'
 import { ParseProp } from './BoxUtils'
 
-export type InteractionSty = {
+export type InteractionSty = Partial<{
   // role: string
   bonusTouchArea: boolean
   preventClickPropagation: boolean
@@ -13,7 +13,7 @@ export type InteractionSty = {
   onTouchStart: (e: TouchEvent) => void
   onTouchEnd: (e: TouchEvent) => void
   onClick: (e: MouseEvent) => void
-}
+}>
 
 const bonusTouchAreaClassName = `miwi-bonus-touch-area`
 const style = document.createElement(`style`)

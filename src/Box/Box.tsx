@@ -16,13 +16,21 @@ export type BoxStyleProps = Partial<
     TextSty &
     InteractionSty & {
       overrideProps: Partial<BoxStyleProps>
+      tag: keyof JSX.IntrinsicElements
       getElement: (e: HTMLElement) => void
       shouldLog?: boolean
     }
 >
 export function Box(props: BoxProps) {
-  const element = sig<HTMLElement | undefined>(undefined)
-  const parseProp: (...args: any[]) => any = makePropParser(props)
+  const parseProp = makePropParser(props)
+
+  // Create Element from Tag
+  const element = sig<HTMLElement>(undefined as any)
+  watchEffect(() => {
+    const tag: keyof JSX.IntrinsicElements = parseProp(`tag`) ?? `div`
+    if (exists(element.value) && element.value.tagName.toLowerCase() === tag) return
+    element.value = document.createElement(tag)
+  })
 
   // Observe Parent
   const {

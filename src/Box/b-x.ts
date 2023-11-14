@@ -1,179 +1,204 @@
-// import { applyDecorationStyle } from './BoxDecoration'
-// import { applyLayoutStyle } from './BoxLayout'
-// import { exists, makePropParser } from './BoxUtils'
-// import { widthGrowsClassName, heightGrowsClassName, applySizeStyle } from './BoxSize'
-// import { applyTextStyle } from './BoxText'
-// import { applyInteractionStyle } from './BoxInteraction'
-// import { Sty } from 'src/Box';
+// import { type JSX, type ParentProps, onCleanup } from 'solid-js'
+// import { Sig, exists, sig, watchEffect } from '../utils'
+// import { makePropParser, observeElement } from './BoxUtils'
+// import { _FlexAlign, watchBoxLayout, LayoutSty, stackClassName, Axis } from './BoxLayout'
+// import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from './BoxSize'
+// import { DecorationSty, watchBoxDecoration } from './BoxDecoration'
+// import { TextSty, watchBoxText } from './BoxText'
+// import { InteractionSty, watchBoxInteraction } from './BoxInteraction'
 
-// // Custom Element
-// export class Miwi_Box extends HTMLElement {
-//   private _parentObserver: MutationObserver
-//   private _parentStyle: CSSStyleDeclaration | undefined = undefined
-//   // private _selfObserver: MutationObserver;
-//   // private _childrenObserver: MutationObserver;
-//   private _childCount: number = 0
-//   // private _anyChildIsABoxWithAGrowingWidth: boolean = false;
-//   // private _anyChildIsABoxWithAGrowingHeight: boolean = false;
-
-//   static get observedAttributes() {
-//     return ['sty']
-//   }
-//   private _sty: Sty = {}
-//   get sty() {
-//     return this._sty
-//   }
-//   set sty(value) {
-//     this._sty = value
-//     this.updateStyle()
-//   }
-
-//   private _widthGrows: boolean | undefined = undefined
-//   private _heightGrows: boolean | undefined = undefined
-//   private _numChildrenWithGrowingWidths: number = 0
-//   private _numChildrenWithGrowingHeights: number = 0
-//   private get _someChildWidthGrows() {
-//     return this._numChildrenWithGrowingWidths > 0
-//   }
-//   private get _someChildHeightGrows() {
-//     return this._numChildrenWithGrowingHeights > 0
-//   }
-//   public thisIsAChildTogglingTheFactThatItGrows(props: {
-//     widthGrows?: boolean
-//     heightGrows?: boolean
-//   }) {
-//     let shouldUpdateStyle = false
-//     if (exists(props.widthGrows)) {
-//       const oldSomeChildGrows = this._someChildWidthGrows
-//       this._numChildrenWithGrowingWidths += props.widthGrows ? 1 : -1
-//       if (oldSomeChildGrows !== this._someChildWidthGrows) {
-//         shouldUpdateStyle = true
-//       }
+// // SECTION: Box Component
+// export type BoxProps = BoxStyleProps & ParentProps & JSX.DOMAttributes<HTMLDivElement>
+// export type BoxStyleProps = Partial<
+//   LayoutSty &
+//     SizeSty &
+//     DecorationSty &
+//     TextSty &
+//     InteractionSty & {
+//       overrideProps: Partial<BoxStyleProps>
+//       getElement: (e: HTMLElement) => void
+//       shouldLog?: boolean
 //     }
-//     if (exists(props.heightGrows)) {
-//       const oldSomeChildGrows = this._someChildHeightGrows
-//       this._numChildrenWithGrowingHeights += props.heightGrows ? 1 : -1
-//       if (oldSomeChildGrows !== this._someChildHeightGrows) {
-//         shouldUpdateStyle = true
-//       }
-//     }
-//     if (shouldUpdateStyle) this.updateStyle()
-//   }
+// >
+// export function Box(props: BoxProps) {
+//   const element = sig<HTMLElement | undefined>(undefined)
+//   const parseProp: (...args: any[]) => any = makePropParser(props)
 
-//   computeParentStyle() {
-//     let shouldUpdateStyle = false
-//     if (exists(this.parentElement)) {
-//       const computedParentStyle = getComputedStyle(this.parentElement)
-//       shouldUpdateStyle =
-//         computedParentStyle.flexDirection !== this._parentStyle?.flexDirection ||
-//         computedParentStyle.paddingTop !== this._parentStyle.paddingTop ||
-//         computedParentStyle.paddingRight !== this._parentStyle.paddingRight ||
-//         computedParentStyle.paddingBottom !== this._parentStyle.paddingBottom ||
-//         computedParentStyle.paddingLeft !== this._parentStyle.paddingLeft
-//       if (shouldUpdateStyle) this._parentStyle = computedParentStyle
-//     }
-//     return shouldUpdateStyle
-//   }
+//   // Observe Parent
+//   const {
+//     parentAxis,
+//     parentPaddingLeft,
+//     parentPaddingTop,
+//     parentPaddingRight,
+//     parentPaddingBottom,
+//   } = _watchParent(element)
 
-//   computeSomeChildGrows(): {
-//     someChildWidthGrows: boolean
-//     someChildHeightGrows: boolean
-//   } {
-//     const result = {
-//       someChildWidthGrows: false,
-//       someChildHeightGrows: false,
-//     }
-//     for (
-//       let i = 0;
-//       i < this.children.length && (!result.someChildWidthGrows || !result.someChildHeightGrows);
-//       i++
-//     ) {
-//       const child = this.children.item(i)
-//       if (!(child instanceof Miwi_Box)) continue
-//       if (child.classList.contains(widthGrowsClassName)) {
-//         result.someChildWidthGrows = true
-//       }
-//       if (child.classList.contains(heightGrowsClassName)) {
-//         result.someChildHeightGrows = true
-//       }
-//     }
-//     return result
-//   }
-//   updateStyle() {
-//     const { someChildWidthGrows, someChildHeightGrows } = this.computeSomeChildGrows()
-//     const parseProp: (...args: any[]) => any = makePropParser(this.sty)
-//     const { alignX, overflowX } = applyLayoutStyle(parseProp, this, {
-//       hasMoreThanOneChild: this._childCount > 1,
-//     })
-//     const { widthGrows, heightGrows } = applySizeStyle(parseProp, this, {
-//       parentStyle: this._parentStyle,
-//       aChildsWidthGrows: someChildWidthGrows,
-//       aChildsHeightGrows: someChildHeightGrows,
-//     })
-//     applyDecorationStyle(parseProp, this)
-//     applyTextStyle(parseProp, this, {
-//       alignX,
-//       overflowX,
-//     })
-//     applyInteractionStyle(parseProp, this)
+//   // Observe Children
+//   const { hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows } = _watchChildren(element)
 
-//     // Recompute growth
-//     // TODO: Eventually Handle this in applySizeStyle
-//     const shouldUpdateWidthGrows = this._widthGrows !== widthGrows
-//     const shouldUpdateHeightGrows = this._heightGrows !== heightGrows
-//     if (shouldUpdateWidthGrows || shouldUpdateHeightGrows) {
-//       if (exists(this.parentElement)) {
-//         if (this.parentElement instanceof Miwi_Box) {
-//           if (shouldUpdateWidthGrows) this._widthGrows = widthGrows
-//           if (shouldUpdateHeightGrows) this._heightGrows = heightGrows
-//           this.parentElement.thisIsAChildTogglingTheFactThatItGrows({
-//             widthGrows: shouldUpdateWidthGrows ? widthGrows : undefined,
-//             heightGrows: shouldUpdateHeightGrows ? heightGrows : undefined,
-//           })
+//   // Compute Layout
+//   const { alignX, overflowX } = watchBoxLayout(parseProp, element, { hasMoreThanOneChild })
+
+//   // Compute Size
+//   watchBoxSize(parseProp, element, {
+//     parentAxis,
+//     parentPaddingLeft,
+//     parentPaddingRight,
+//     parentPaddingTop,
+//     parentPaddingBottom,
+//     aChildsWidthGrows,
+//     aChildsHeightGrows,
+//   })
+
+//   // Compute Decoration
+//   watchBoxDecoration(parseProp, element)
+
+//   // Compute Text Styling
+//   watchBoxText(parseProp, element, {
+//     alignX,
+//     overflowX,
+//   })
+
+//   // Computer Interactivity
+//   watchBoxInteraction(parseProp, element)
+
+//   // TODO: Toggle element type based on "tag" prop.
+//   return (
+//     <div
+//       {...props}
+//       ref={el => {
+//         element.value = el
+//         // Notify element getters
+//         parseProp(`getElement`, true).forEach((getter: any) => {
+//           if (typeof getter !== `function`) return
+//           getter(element.value)
+//         })
+//       }}
+//     />
+//   )
+// }
+
+// /** SECTION: Helper function to watch parent for Box */
+// function _watchParent(element: Sig<HTMLElement | undefined>) {
+//   const parentAxis = sig<Axis>(Axis.column)
+//   const parentPaddingLeft = sig(`0px`)
+//   const parentPaddingTop = sig(`0px`)
+//   const parentPaddingRight = sig(`0px`)
+//   const parentPaddingBottom = sig(`0px`)
+//   watchEffect(() => {
+//     if (!exists(element.value)) return
+//     if (!exists(element.value.parentElement)) return
+//     const parentObserver = observeElement(
+//       element.value.parentElement,
+//       {
+//         attributes: true,
+//         attributeFilter: [`style`, `class`],
+//       },
+//       () => {
+//         if (!exists(element.value)) return
+//         const parentElement = element.value.parentElement
+//         if (!exists(parentElement)) return
+//         const parentStyle = getComputedStyle(parentElement)
+//         // Parent Axis
+//         const newParentAxis = parentElement.classList.contains(stackClassName)
+//           ? Axis.stack
+//           : parentStyle.flexDirection === Axis.column
+//           ? Axis.column
+//           : Axis.row
+//         if (parentAxis.value !== newParentAxis) {
+//           parentAxis.value = newParentAxis
 //         }
-//       }
-//     }
-//   }
-
-//   constructor() {
-//     super()
-//     this.classList.add(`b-x`)
-//     this._parentObserver = new MutationObserver(mutationsList => {
-//       for (const mutation of mutationsList) {
-//         if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-//           const shouldUpdateStyle = this.computeParentStyle()
-//           if (shouldUpdateStyle) this.updateStyle()
-//           return
+//         // Parent Padding
+//         const newParentPaddingLeft = parentStyle.paddingLeft
+//         if (parentPaddingLeft.value !== newParentPaddingLeft) {
+//           parentPaddingLeft.value = newParentPaddingLeft
 //         }
-//       }
-//     })
-//   }
+//         const newParentPaddingTop = parentStyle.paddingTop
+//         if (parentPaddingTop.value !== newParentPaddingTop) {
+//           parentPaddingTop.value = newParentPaddingTop
+//         }
+//         const newParentPaddingRight = parentStyle.paddingRight
+//         if (parentPaddingRight.value !== newParentPaddingRight) {
+//           parentPaddingRight.value = newParentPaddingRight
+//         }
+//         const newParentPaddingBottom = parentStyle.paddingBottom
+//         if (parentPaddingBottom.value !== newParentPaddingBottom) {
+//           parentPaddingBottom.value = newParentPaddingBottom
+//         }
+//       },
+//     )
+//     onCleanup(() => parentObserver.disconnect())
+//   })
 
-//   connectedCallback() {
-//     this.computeParentStyle()
-//     this.updateStyle()
-
-//     if (exists(this.parentElement)) {
-//       this._parentObserver.observe(this.parentElement, { attributes: true })
-//     }
-
-//     const parseProp = makePropParser(this.sty)
-//     const elementGetters: any[] = parseProp(`getElement`, true)
-//     elementGetters.forEach(getter => {
-//       getter(this)
-//     })
-//   }
-
-//   disconnectedCallback() {
-//     this._parentObserver.disconnect()
-//     this._childCount = 0
-//     if (this.parentElement instanceof Miwi_Box) {
-//       this.parentElement.thisIsAChildTogglingTheFactThatItGrows({
-//         widthGrows: false,
-//         heightGrows: false,
-//       })
-//     }
+//   return {
+//     parentAxis,
+//     parentPaddingLeft,
+//     parentPaddingTop,
+//     parentPaddingRight,
+//     parentPaddingBottom,
 //   }
 // }
 
-// customElements.define('b-x', Miwi_Box)
+// /** SECTION: Helper function to watch children for Box */
+// function _watchChildren(element: Sig<HTMLElement | undefined>) {
+//   const aChildsWidthGrows = sig(false)
+//   const aChildsHeightGrows = sig(false)
+//   const hasMoreThanOneChild = sig(false)
+//   const activeChildObservers: MutationObserver[] = []
+//   watchEffect(() => {
+//     if (!exists(element.value)) return
+//     const childListObserver = observeElement(
+//       element.value,
+//       {
+//         childList: true,
+//       },
+//       () => {
+//         if (!exists(element.value)) return
+//         const childElementsArray = Array.from(element.value.childNodes).filter(
+//           child => child instanceof HTMLElement,
+//         ) as HTMLElement[]
+//         // Has More Than One Child
+//         const newHasMoreThanOneChild = childElementsArray.length > 1
+//         if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
+//           hasMoreThanOneChild.value = newHasMoreThanOneChild
+//         }
+//         // A Child Size Grows
+//         activeChildObservers.forEach(observer => observer.disconnect())
+//         childElementsArray.forEach(child => {
+//           activeChildObservers.push(
+//             observeElement(
+//               child,
+//               {
+//                 attributes: true,
+//                 attributeFilter: [`class`],
+//               },
+//               () => {
+//                 if (!exists(element.value)) return
+//                 const childElementsArray = Array.from(element.value.childNodes).filter(
+//                   child => child instanceof HTMLElement,
+//                 ) as HTMLElement[]
+//                 const newAChildsWidthGrows = childElementsArray.some(childElement =>
+//                   childElement.classList.contains(widthGrowsClassName),
+//                 )
+//                 if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
+//                   aChildsWidthGrows.value = newAChildsWidthGrows
+//                 }
+//                 const newAChildsHeightGrows = childElementsArray.some(childElement =>
+//                   childElement.classList.contains(heightGrowsClassName),
+//                 )
+//                 if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
+//                   aChildsHeightGrows.value = newAChildsHeightGrows
+//                 }
+//               },
+//             ),
+//           )
+//         })
+//       },
+//     )
+//     onCleanup(() => {
+//       childListObserver.disconnect()
+//       activeChildObservers.forEach(observer => observer.disconnect())
+//     })
+//   })
+//   return { element, hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows }
+// }

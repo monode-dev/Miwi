@@ -34,7 +34,7 @@ export function makePropParser<
 >(obj: Obj) {
   /** Some props have multiple aliases, like `width` and `widthGrows`. This function helps parse
    * aliased props in both the current obj and any overrides. */
-  return ((parsers, parseAll) => {
+  return ((parsers, parseAll: boolean = false) => {
     // First try parsing the override
     const parsedOverrides: any = exists(obj.overrideProps)
       ? makePropParser(obj.overrideProps)(parsers as any, parseAll)
