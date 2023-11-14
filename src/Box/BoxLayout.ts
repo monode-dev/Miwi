@@ -266,6 +266,7 @@ export function watchBoxLayout(
     element.value.style.alignItems = _axis === Axis.column ? _alignX : _alignY
     element.value.style.flexDirection = _axis === Axis.stack ? `` : _axis
     element.value.classList.toggle(stackClassName, _axis === Axis.stack)
+    element.value.classList.toggle(nonStackClassName, _axis !== Axis.stack)
   })
 
   // Pad
