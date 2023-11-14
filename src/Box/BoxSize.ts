@@ -115,13 +115,6 @@ export function watchBoxSize(
       someChildGrows: context.aChildsWidthGrows,
     })
     flexWidth.value = _flexWidth
-    if (context.shouldLog) {
-      console.log(
-        `isMainAxis: ${
-          context.parentAxis.value === Axis.row
-        }; width: ${exactWidth}, flex: ${_flexWidth}`,
-      )
-    }
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth))
     element.value.style.minWidth = (() => {
       let size = wMin
