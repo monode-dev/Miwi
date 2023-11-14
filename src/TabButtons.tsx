@@ -50,14 +50,7 @@ export function TabButtons(
         <Box width={tabButtonWidth} getElement={el => (tab1Ref = el)} onClick={() => selectTab(1)}>
           {props.labels?.[1] ?? 'Tab 1'}
         </Box>
-        <Box
-          classList={{
-            ['tab-2-text-box']: true,
-          }}
-          width={tabButtonWidth}
-          getElement={el => (tab2Ref = el)}
-          onClick={() => selectTab(2)}
-        >
+        <Box width={tabButtonWidth} getElement={el => (tab2Ref = el)} onClick={() => selectTab(2)}>
           {props.labels?.[2] ?? 'Tab 2'}
         </Box>
       </Row>
