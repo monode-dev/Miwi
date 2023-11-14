@@ -1,5 +1,5 @@
 import { type JSX, type ParentProps, onCleanup } from 'solid-js'
-import { Sig, evaluate, exists, sig, watchEffect } from '../utils'
+import { Sig, exists, sig, watchEffect } from '../utils'
 import { makePropParser, observeElement } from './BoxUtils'
 import { _FlexAlign, watchBoxLayout, LayoutSty, stackClassName, Axis } from './BoxLayout'
 import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from './BoxSize'
@@ -16,25 +16,14 @@ export type BoxStyleProps = Partial<
     TextSty &
     InteractionSty & {
       overrideProps: Partial<BoxStyleProps>
-      tag: keyof JSX.IntrinsicElements
       getElement: (e: HTMLElement) => void
       shouldLog?: boolean
     }
 >
 export function Box(props: BoxProps) {
-  const parseProp = makePropParser(props)
-
-  // Create Element from Tag
-  const element = evaluate(() => {
-    const initTag = parseProp(`tag`) ?? `div`
-    const element: Sig<HTMLElement> = document.createElement(initTag)
-    watchEffect(() => {
-      const tag = parseProp(`tag`) ?? `div`
-      if (element.value.tagName.toLowerCase() === tag) return
-      element.value = document.createElement(tag)
-    })
-    return element
-  })
+  const parseProp: (...args: any[]) => any = makePropParser(props)
+  // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
+  const element = sig<HTMLElement | undefined>(undefined)
 
   // Observe Parent
   const {

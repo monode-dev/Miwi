@@ -37,7 +37,6 @@ export function Button(
   )
   return (
     <Row
-      tag="button"
       alignCenter
       {...shapeSty.value}
       {...colorSty.value}
