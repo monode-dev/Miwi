@@ -50,6 +50,9 @@ export function Box(props: BoxProps) {
 
     // Observe Children
     const aChildsWidthGrows = sig(false)
+    watchEffect(() => {
+      console.log(`aChildsWidthGrows`, aChildsWidthGrows.value)
+    })
     const aChildsHeightGrows = sig(false)
     const hasMoreThanOneChild = sig(false)
     _watchChildren({ element, hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows })
