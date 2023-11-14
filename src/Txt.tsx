@@ -1,4 +1,5 @@
 import { Box, BoxProps } from './Box/Box'
+import { sizeScaleCssVarName } from './theme'
 import { AllowOne, compute } from './utils'
 
 export function Txt(
@@ -16,7 +17,9 @@ export function Txt(
 
   return (
     <Box
-      height={overflowX === $Overflow.crop ? scale.value : undefined}
+      height={
+        overflowX === $Overflow.crop ? scale.value ?? `var(${sizeScaleCssVarName})` : undefined
+      }
       textColor={props.hint ? $theme.colors.hint : undefined}
       scale={scale.value}
       alignTopLeft
