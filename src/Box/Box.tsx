@@ -24,58 +24,58 @@ export function Box(props: BoxProps) {
   const element = sig<HTMLElement | undefined>(undefined)
   const parseProp: (...args: any[]) => any = makePropParser(props)
 
-  onMount(() => {
-    // Observe Parent
-    const {
-      parentAxis,
-      parentPaddingLeft,
-      parentPaddingTop,
-      parentPaddingRight,
-      parentPaddingBottom,
-    } = _watchParent(element)
+  // Observe Parent
+  const {
+    parentAxis,
+    parentPaddingLeft,
+    parentPaddingTop,
+    parentPaddingRight,
+    parentPaddingBottom,
+  } = _watchParent(element)
 
-    // Observe Children
-    const { hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows } = _watchChildren(element)
+  // Observe Children
+  const { hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows } = _watchChildren(element)
 
-    // Compute Layout
-    const { alignX, overflowX } = watchBoxLayout(parseProp, element, { hasMoreThanOneChild })
+  // Compute Layout
+  const { alignX, overflowX } = watchBoxLayout(parseProp, element, { hasMoreThanOneChild })
 
-    // Compute Size
-    watchBoxSize(parseProp, element, {
-      parentAxis,
-      parentPaddingLeft,
-      parentPaddingRight,
-      parentPaddingTop,
-      parentPaddingBottom,
-      aChildsWidthGrows,
-      aChildsHeightGrows,
-    })
-
-    // Compute Decoration
-    watchBoxDecoration(parseProp, element)
-
-    // Compute Text Styling
-    watchBoxText(parseProp, element, {
-      alignX,
-      overflowX,
-    })
-
-    // Computer Interactivity
-    watchBoxInteraction(parseProp, element)
-
-    // Notify element getters
-    watchEffect(() => {
-      if (!exists(element.value)) return
-      const elementGetters: any[] = parseProp(`getElement`, true)
-      elementGetters.forEach(getter => {
-        if (typeof getter !== `function`) return
-        getter(element.value)
-      })
-    })
+  // Compute Size
+  watchBoxSize(parseProp, element, {
+    parentAxis,
+    parentPaddingLeft,
+    parentPaddingRight,
+    parentPaddingTop,
+    parentPaddingBottom,
+    aChildsWidthGrows,
+    aChildsHeightGrows,
   })
 
+  // Compute Decoration
+  watchBoxDecoration(parseProp, element)
+
+  // Compute Text Styling
+  watchBoxText(parseProp, element, {
+    alignX,
+    overflowX,
+  })
+
+  // Computer Interactivity
+  watchBoxInteraction(parseProp, element)
+
   // TODO: Toggle element type based on "tag" prop.
-  return <div {...props} ref={el => (element.value = el)} />
+  return (
+    <div
+      {...props}
+      ref={el => {
+        element.value = el
+        // Notify element getters
+        parseProp(`getElement`, true).forEach((getter: any) => {
+          if (typeof getter !== `function`) return
+          getter(element.value)
+        })
+      }}
+    />
+  )
 }
 
 /** SECTION: Helper function to watch parent for Box */
