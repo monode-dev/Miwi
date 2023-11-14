@@ -84,6 +84,7 @@ export function watchBoxSize(
     parentPaddingTop: Sig<string>
     parentPaddingRight: Sig<string>
     parentPaddingBottom: Sig<string>
+    shouldLog: boolean
   },
 ) {
   // SECTION: Basics
@@ -111,7 +112,9 @@ export function watchBoxSize(
     })
     flexWidth.value = _flexWidth
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth))
-    console.log(exists(_flexWidth), element.value.classList)
+    if (context.shouldLog) {
+      console.log(exists(_flexWidth), element.value.classList)
+    }
     element.value.style.minWidth = (() => {
       let size = wMin
       // axis === Axis.stack && width === -1

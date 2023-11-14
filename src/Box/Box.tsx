@@ -49,6 +49,7 @@ export function Box(props: BoxProps) {
     parentPaddingBottom,
     aChildsWidthGrows,
     aChildsHeightGrows,
+    shouldLog: parseProp(`shouldLog`),
   })
 
   // Compute Decoration

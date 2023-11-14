@@ -21,6 +21,7 @@ export function AppBar(
     <Column widthGrows>
       {/* Notch Spacer */}
       <Box
+        shouldLog
         widthGrows
         height={`env(safe-area-inset-top)`}
         background={props.background ?? $theme.colors.primary}
