@@ -111,7 +111,7 @@ export function watchBoxSize(
     })
     flexWidth.value = _flexWidth
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth))
-    console.log(`_flexWidth`, _flexWidth)
+    console.log(exists(_flexWidth), element.value.classList)
     element.value.style.minWidth = (() => {
       let size = wMin
       // axis === Axis.stack && width === -1
