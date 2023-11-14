@@ -102,7 +102,7 @@ export function watchBoxSize(
       minSize: parseProp(`minWidth`),
       size: parseProp({
         width: v => v,
-        widthGrows: () => `1f`,
+        widthGrows: () => ({ flex: 1 }),
         widthShrinks: () => -1,
         asWideAsParent: () => `100%`,
       }),
@@ -155,7 +155,7 @@ export function watchBoxSize(
       minSize: parseProp(`minHeight`),
       size: parseProp({
         height: v => v,
-        heightGrows: () => `1f`,
+        heightGrows: () => ({ flex: 1 }),
         heightShrinks: () => -1,
         asTallAsParent: () => `100%`,
       }),
