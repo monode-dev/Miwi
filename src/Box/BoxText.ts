@@ -104,5 +104,6 @@ export function watchBoxText(
       context.overflowX.value === Overflow.forceStretchParent
         ? `nowrap`
         : `normal`
+    element.value.style.textOverflow = context.overflowX.value === Overflow.crop ? `ellipsis` : ``
   })
 }
