@@ -53,7 +53,13 @@ export function Slider(
           cornerRadius={0.25}
           background={$theme.colors.lightHint}
         />
-        <Row width={'100%'} heightGrows alignCenterLeft>
+        <Row
+          width={'100%'}
+          heightGrows
+          padBetween={0}
+          alignCenterLeft
+          preventClickPropagation={true}
+        >
           <Box
             width={`${Math.min(
               100,
