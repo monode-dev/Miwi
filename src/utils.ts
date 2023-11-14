@@ -51,6 +51,10 @@ export function exists<T>(x: T): x is NonNullable<T> {
   return x !== undefined && x !== null
 }
 
+export function evaluate<T>(func: () => T): T {
+  return func()
+}
+
 export function orderDocs<T, K extends string | number | null | undefined>(
   list: Iterable<T>,
   getKey: (obj: T) => K,
