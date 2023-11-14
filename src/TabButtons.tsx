@@ -20,6 +20,7 @@ export function TabButtons(
   function selectTab(newTab: number) {
     if (newTab === props.selectedTab.value) return
     props.selectedTab.value = newTab
+    console.log(`tabUnderline`, tabUnderline)
   }
 
   // Animate Underline
@@ -61,10 +62,7 @@ export function TabButtons(
         <Row widthGrows height={0.375} spaceAroundX alignBottom>
           <Box width={tabButtonWidth} />
           <Box
-            getElement={el => {
-              tabUnderline = el
-              console.log('tabUnderline', el)
-            }}
+            getElement={el => (tabUnderline = el)}
             width={tabButtonWidth}
             height={0.125}
             background={$theme.colors.sameAsText}
