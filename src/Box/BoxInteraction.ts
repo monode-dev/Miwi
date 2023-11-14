@@ -40,6 +40,7 @@ export function watchBoxInteraction(
   watchEffect(() => {
     if (!exists(element.value)) return
     const onClickListeners = parseProp(`onClick`, true)
+    console.log(onClickListeners)
     const isClickable = exists(onClickListeners.length > 0)
     const preventClickPropagation = parseProp(`preventClickPropagation`) ?? isClickable
     element.value.style.pointerEvents = preventClickPropagation ? `auto` : `none`
