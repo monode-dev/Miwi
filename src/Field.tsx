@@ -203,7 +203,9 @@ export function Field(
       overflowY={$Overflow.forceStretchParent}
       alignTopLeft
       overrideProps={props}
-      scale={scale.value}
+      overrideOverrides={{
+        scale: scale.value,
+      }}
     >
       <Show when={exists(props.iconPath) && props.iconPath !== ``}>
         <Icon iconPath={props.iconPath!} color={detailColor.value} size={scale.value} />

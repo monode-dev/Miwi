@@ -29,18 +29,28 @@ type ReturnBasedOnParseAll<T, IsList extends boolean> = IsList extends true ? No
 export function makePropParser<
   Obj extends {
     overrideProps?: Partial<Obj>
+    overrideOverrides?: Partial<Omit<Obj, `overrideProps` | `overrideOverrides`>>
     [key: string]: any
   },
 >(obj: Obj) {
   /** Some props have multiple aliases, like `width` and `widthGrows`. This function helps parse
    * aliased props in both the current obj and any overrides. */
   return ((parsers, parseAll: boolean = false) => {
+    const allParsers: any[] = []
+
+    // Parse the override overrides
+    const parsedOverrideOverrides: any = exists(obj.overrideOverrides)
+      ? makePropParser(obj.overrideOverrides)(parsers as any, parseAll)
+      : undefined
+    if (exists(parsedOverrideOverrides) && !parseAll) return parsedOverrideOverrides
+    if (parseAll) allParsers.push(...(parsedOverrideOverrides ?? []))
+
     // First try parsing the override
     const parsedOverrides: any = exists(obj.overrideProps)
       ? makePropParser(obj.overrideProps)(parsers as any, parseAll)
       : undefined
     if (exists(parsedOverrides) && !parseAll) return parsedOverrides
-    const allParsers: any[] = parseAll ? parsedOverrides ?? [] : []
+    if (parseAll) allParsers.push(...(parsedOverrides ?? []))
 
     // If this prop has not been overriden, then try parsing the prop
     if (typeof parsers === `string`) {

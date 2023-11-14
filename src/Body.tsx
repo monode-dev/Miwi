@@ -13,7 +13,6 @@ export function Body(props: BoxProps) {
       overflowY={$Overflow.scroll}
       overflowX={$Overflow.crop}
       overrideProps={props}
-      // overrideSty={props}
     >
       {props.children}
     </Column>

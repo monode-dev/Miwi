@@ -21,7 +21,9 @@ export function Txt(
       alignTopLeft
       overflowY={$Overflow.forceStretchParent}
       overrideProps={props}
-      overflowX={overflowX === $Overflow.crop ? $Overflow.forceStretchParent : overflowX}
+      overrideOverrides={{
+        overflowX: overflowX === $Overflow.crop ? $Overflow.forceStretchParent : overflowX,
+      }}
     >
       {overflowX === $Overflow.crop ? (
         <div

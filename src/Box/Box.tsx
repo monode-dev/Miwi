@@ -16,6 +16,7 @@ export type BoxStyleProps = Partial<
     TextSty &
     InteractionSty & {
       overrideProps: Partial<BoxStyleProps>
+      overrideOverrides: Partial<Omit<BoxStyleProps, `overrideProps` | `overrideOverrides`>>
       getElement: (e: HTMLElement) => void
       shouldLog?: boolean
     }
