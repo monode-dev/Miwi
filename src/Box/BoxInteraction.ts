@@ -51,7 +51,7 @@ export function watchBoxInteraction(
       : isClickable
       ? (e: MouseEvent) => onClickListeners.forEach(listener => listener(e))
       : null
-    element.value.style.cursor = parseProp(`cssCursor`) ?? isClickable ? `pointer` : `default`
+    element.value.style.cursor = parseProp(`cssCursor`) ?? (isClickable ? `pointer` : `default`)
     element.value.classList.toggle(
       bonusTouchAreaClassName,
       parseProp(`bonusTouchArea`) ?? isClickable,
