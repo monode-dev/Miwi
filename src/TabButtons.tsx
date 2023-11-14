@@ -1,7 +1,7 @@
 import { gsap } from 'gsap'
 import { Box, BoxProps } from './Box/Box'
 import { Row } from './Row'
-import { createEffect } from 'solid-js'
+import { createEffect, onMount } from 'solid-js'
 import { Sig, exists } from './utils'
 import { Column } from './Column'
 import { Stack } from './Stack'
@@ -23,22 +23,24 @@ export function TabButtons(
   }
 
   // Animate Underline
-  createEffect(() => {
-    if (exists(tabUnderline)) {
-      // Find new position
-      const newUnderlinePosition = [
-        (tab1Ref?.offsetLeft ?? 0) - (tab2Ref?.offsetLeft ?? 0),
-        0,
-        (tab2Ref?.offsetLeft ?? 0) - (tab1Ref?.offsetLeft ?? 0),
-      ][props.selectedTab.value]
+  onMount(() => {
+    createEffect(() => {
+      if (exists(tabUnderline)) {
+        // Find new position
+        const newUnderlinePosition = [
+          (tab1Ref?.offsetLeft ?? 0) - (tab2Ref?.offsetLeft ?? 0),
+          0,
+          (tab2Ref?.offsetLeft ?? 0) - (tab1Ref?.offsetLeft ?? 0),
+        ][props.selectedTab.value]
 
-      // Animate
-      gsap.to(tabUnderline, {
-        duration: 0.15,
-        x: newUnderlinePosition,
-        ease: 'power1.out',
-      })
-    }
+        // Animate
+        gsap.to(tabUnderline, {
+          duration: 0.15,
+          x: newUnderlinePosition,
+          ease: 'power1.out',
+        })
+      }
+    })
   })
 
   // Render
