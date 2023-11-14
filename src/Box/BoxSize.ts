@@ -67,7 +67,9 @@ export function computeSizeInfo(props: {
       : props.maxSize === Infinity
       ? undefined
       : sizeToCss(props.maxSize)
-    : isShrink ? `` : exactSize
+    : isShrink
+    ? ``
+    : exactSize
   return [exactSize, minSize, maxSize, sizeIsFlex ? size.flex : undefined] as const
 }
 
@@ -113,6 +115,13 @@ export function watchBoxSize(
       someChildGrows: context.aChildsWidthGrows,
     })
     flexWidth.value = _flexWidth
+    if (context.shouldLog) {
+      console.log(
+        `isMainAxis: ${
+          context.parentAxis.value === Axis.row
+        }; width: ${exactWidth}, flex: ${_flexWidth}`,
+      )
+    }
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth))
     element.value.style.minWidth = (() => {
       let size = wMin
