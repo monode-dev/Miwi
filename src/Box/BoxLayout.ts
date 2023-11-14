@@ -242,6 +242,32 @@ export function watchBoxLayout(
     hasMoreThanOneChild: Sig<boolean>
   },
 ) {
+  // Align & Axis
+  const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
+  const alignY = sig<AlignSingleAxis>(_FlexAlign.center)
+  const axis = sig<Axis>(Axis.column)
+  watchEffect(() => {
+    if (!exists(element.value)) return
+    const { alignX: _alignX, alignY: _alignY } = parseAlignProps(
+      parseProp,
+      context.hasMoreThanOneChild.value,
+    )
+    alignX.value = _alignX
+    alignY.value = _alignY
+    const _axis =
+      parseProp({
+        axis: v => v,
+        row: () => Axis.row,
+        column: () => Axis.column,
+        stack: () => Axis.stack,
+      }) ?? Axis.column
+    axis.value = _axis
+    element.value.style.justifyContent = _axis === Axis.column ? _alignY : _alignX
+    element.value.style.alignItems = _axis === Axis.column ? _alignX : _alignY
+    element.value.style.flexDirection = _axis === Axis.stack ? `` : _axis
+    element.value.classList.toggle(stackClassName, _axis === Axis.stack)
+  })
+
   // Pad
   watchEffect(() => {
     if (!exists(element.value)) return
@@ -275,44 +301,28 @@ export function watchBoxLayout(
       ? ``
       : padEachSide.map(sizeToCss).join(` `)
     // NOTE: We want pad between to cascade, but not pad around.
-    element.value.style.rowGap = sizeToCss(
-      parseProp({
-        padBetweenY: v => v,
-        padBetween: v => v,
-        pad: v => v,
-      }) ?? `inherit`,
-    )
-    element.value.style.columnGap = sizeToCss(
-      parseProp({
-        padBetweenX: v => v,
-        padBetween: v => v,
-        pad: v => v,
-      }) ?? `inherit`,
-    )
-  })
-
-  // Align & Axis
-  const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
-  const axis = sig<Axis>(Axis.column)
-  watchEffect(() => {
-    if (!exists(element.value)) return
-    const { alignX: _alignX, alignY } = parseAlignProps(
-      parseProp,
-      context.hasMoreThanOneChild.value,
-    )
-    alignX.value = _alignX
-    const _axis =
-      parseProp({
-        axis: v => v,
-        row: () => Axis.row,
-        column: () => Axis.column,
-        stack: () => Axis.stack,
-      }) ?? Axis.column
-    axis.value = _axis
-    element.value.style.justifyContent = _axis === Axis.column ? alignY : _alignX
-    element.value.style.alignItems = _axis === Axis.column ? _alignX : alignY
-    element.value.style.flexDirection = _axis === Axis.stack ? `` : _axis
-    element.value.classList.toggle(stackClassName, _axis === Axis.stack)
+    element.value.style.rowGap = (
+      [Align.spaceAround, Align.spaceBetween, Align.spaceEvenly] as AlignSingleAxis[]
+    ).includes(alignY.value)
+      ? ``
+      : sizeToCss(
+          parseProp({
+            padBetweenY: v => v,
+            padBetween: v => v,
+            pad: v => v,
+          }) ?? `inherit`,
+        )
+    element.value.style.columnGap = (
+      [Align.spaceAround, Align.spaceBetween, Align.spaceEvenly] as AlignSingleAxis[]
+    ).includes(alignX.value)
+      ? ``
+      : sizeToCss(
+          parseProp({
+            padBetweenX: v => v,
+            padBetween: v => v,
+            pad: v => v,
+          }) ?? `inherit`,
+        )
   })
 
   // Overflow
