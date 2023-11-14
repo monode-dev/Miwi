@@ -1,8 +1,7 @@
 import { gsap } from 'gsap'
 import { Box, BoxProps } from './Box/Box'
 import { Row } from './Row'
-import { createEffect, onMount } from 'solid-js'
-import { Sig, exists } from './utils'
+import { Sig, exists, sig, watchEffect } from './utils'
 import { Column } from './Column'
 import { Stack } from './Stack'
 
@@ -15,35 +14,31 @@ export function TabButtons(
   const tabButtonWidth = 5
   let tab1Ref: HTMLElement | undefined = undefined
   let tab2Ref: HTMLElement | undefined = undefined
-  let tabUnderline: HTMLElement | undefined = undefined
+  const tabUnderline: Sig<HTMLElement | undefined> = sig(undefined)
 
   function selectTab(newTab: number) {
     if (newTab === props.selectedTab.value) return
     props.selectedTab.value = newTab
-    console.log(`tabUnderline`, tabUnderline)
   }
 
   // Animate Underline
-  onMount(() => {
-    createEffect(() => {
-      if (exists(tabUnderline)) {
-        // Find new position
-        const newUnderlinePosition = [
-          (tab1Ref?.offsetLeft ?? 0) - (tab2Ref?.offsetLeft ?? 0),
-          0,
-          (tab2Ref?.offsetLeft ?? 0) - (tab1Ref?.offsetLeft ?? 0),
-        ][props.selectedTab.value]
+  watchEffect(() => {
+    if (exists(tabUnderline.value)) {
+      // Find new position
+      const newUnderlinePosition = [
+        (tab1Ref?.offsetLeft ?? 0) - (tab2Ref?.offsetLeft ?? 0),
+        0,
+        (tab2Ref?.offsetLeft ?? 0) - (tab1Ref?.offsetLeft ?? 0),
+      ][props.selectedTab.value]
+      console.log(props.selectedTab.value)
 
-        console.log(`newUnderlinePosition`, newUnderlinePosition)
-
-        // Animate
-        gsap.to(tabUnderline, {
-          duration: 0.15,
-          x: newUnderlinePosition,
-          ease: 'power1.out',
-        })
-      }
-    })
+      // Animate
+      gsap.to(tabUnderline.value, {
+        duration: 0.15,
+        x: newUnderlinePosition,
+        ease: 'power1.out',
+      })
+    }
   })
 
   // Render
@@ -64,7 +59,7 @@ export function TabButtons(
         <Row widthGrows height={0.375} spaceAroundX alignBottom>
           <Box width={tabButtonWidth} />
           <Box
-            getElement={el => (tabUnderline = el)}
+            getElement={el => (tabUnderline.value = el)}
             width={tabButtonWidth}
             height={0.125}
             background={$theme.colors.sameAsText}

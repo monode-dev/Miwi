@@ -87,7 +87,7 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
   const parentPaddingTop = sig(`0px`)
   const parentPaddingRight = sig(`0px`)
   const parentPaddingBottom = sig(`0px`)
-  // TODO: We might ned to watch element if there is any chance of it becoming null at some point.
+  // TODO: Don't assume this exists
   if (exists(element.value) && exists(element.value.parentElement)) {
     const parentObserver = observeElement(
       element.value.parentElement,
@@ -96,7 +96,8 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
         attributeFilter: [`style`, `class`],
       },
       () => {
-        const parentElement = (element.value as any).parentElement
+        // TODO: Don't assume this exists
+        const parentElement = element.value!.parentElement
         if (!exists(parentElement)) return
         const parentStyle = getComputedStyle(parentElement)
         // Parent Axis
@@ -146,7 +147,8 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
   const hasMoreThanOneChild = sig(false)
   const activeChildObservers: MutationObserver[] = []
   const childListObserver = observeElement(
-    element.value as any,
+    // TODO: Don't assume this exists
+    element.value!,
     {
       childList: true,
     },
