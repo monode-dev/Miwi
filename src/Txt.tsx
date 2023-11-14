@@ -16,6 +16,7 @@ export function Txt(
 
   return (
     <Box
+      height={overflowX === $Overflow.crop ? scale.value : undefined}
       textColor={props.hint ? $theme.colors.hint : undefined}
       scale={scale.value}
       alignTopLeft
@@ -28,7 +29,7 @@ export function Txt(
       {overflowX === $Overflow.crop ? (
         <div
           style="
-          position: relative;
+          position: absolute;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
