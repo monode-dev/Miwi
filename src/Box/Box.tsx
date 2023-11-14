@@ -1,4 +1,4 @@
-import { onMount, type JSX, type ParentProps } from 'solid-js'
+import { onMount, type JSX, type ParentProps, onCleanup } from 'solid-js'
 import { exists, sig, watchEffect } from '../utils'
 import { makePropParser } from './BoxUtils'
 import {
@@ -36,26 +36,60 @@ export function Box(props: BoxProps) {
   const parseProp: (...args: any[]) => any = makePropParser(props)
 
   onMount(() => {
-    // Compute Layout
-    const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
-    const overflowX = sig<Overflow>(Overflow.forceStretchParent)
-    watchBoxLayout(parseProp, element, {
-      // TODO: Use mutation observers to observe this, or see if we can do it with a CSS class
-      hasMoreThanOneChild: sig((element.value?.children.length ?? 0) > 1),
-      alignX,
-      overflowX,
-    })
-
-    // Compute Size
-    const parentStyle = sig<CSSStyleDeclaration | undefined>(undefined)
-    ;(() => {
+    // Observe Parent
+    const parentAxis = sig<Axis>(Axis.column)
+    const parentPaddingLeft = sig(`0px`)
+    const parentPaddingTop = sig(`0px`)
+    const parentPaddingRight = sig(`0px`)
+    const parentPaddingBottom = sig(`0px`)
+    const parentObserver = new MutationObserver(() => {
       const parentElement = element.value!.parentElement
       if (!exists(parentElement)) return
-      parentStyle.value = getComputedStyle(parentElement)
-    })()
+      const parentStyle = getComputedStyle(parentElement)
+      // Parent Axis
+      const newParentAxis = parentElement.classList.contains(stackClassName)
+        ? Axis.stack
+        : parentStyle.flexDirection === Axis.column
+        ? Axis.column
+        : Axis.row
+      if (parentAxis.value !== newParentAxis) {
+        parentAxis.value = newParentAxis
+      }
+      // Parent Padding
+      const newParentPaddingLeft = parentStyle.paddingLeft
+      if (parentPaddingLeft.value !== newParentPaddingLeft) {
+        parentPaddingLeft.value = newParentPaddingLeft
+      }
+      const newParentPaddingTop = parentStyle.paddingTop
+      if (parentPaddingTop.value !== newParentPaddingTop) {
+        parentPaddingTop.value = newParentPaddingTop
+      }
+      const newParentPaddingRight = parentStyle.paddingRight
+      if (parentPaddingRight.value !== newParentPaddingRight) {
+        parentPaddingRight.value = newParentPaddingRight
+      }
+      const newParentPaddingBottom = parentStyle.paddingBottom
+      if (parentPaddingBottom.value !== newParentPaddingBottom) {
+        parentPaddingBottom.value = newParentPaddingBottom
+      }
+    })
+    onCleanup(() => parentObserver.disconnect())
+
+    // Observe Children
     // TODO: Use Mutations observers to watch this base it on classes in the children
     const aChildsWidthGrows = sig(false)
     const aChildsHeightGrows = sig(false)
+    const hasMoreThanOneChild = sig(false)
+    const childObserver = new MutationObserver(() => {
+      const childElements = element.value!.children
+      if (!exists(childElements)) return
+      const childElementsArray = Array.from(childElements)
+      const newHasMoreThanOneChild = childElementsArray.length > 1
+      if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
+        hasMoreThanOneChild.value = newHasMoreThanOneChild
+      }
+    })
+    onCleanup(() => childObserver.disconnect())
     ;(() => {
       const childElements = element.value!.children
       if (!exists(childElements)) return
@@ -68,22 +102,19 @@ export function Box(props: BoxProps) {
         childElement.classList.contains(widthGrowsClassName),
       )
     })()
+
+    // Compute Layout
+    const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
+    const overflowX = sig<Overflow>(Overflow.forceStretchParent)
+    watchBoxLayout(parseProp, element, { hasMoreThanOneChild, alignX, overflowX })
+
+    // Compute Size
     watchBoxSize(parseProp, element, {
-      // TODO: Use mutation observers to observe this.
-      // TODO: We will recompute size when anything changes, this is overkill.
-      // Ideally we only care about parent axis, and only care about parent padding
-      // If the parent is a stack. We should pass sigs in, so that we only watch what matters for a recompute.
-      parentAxis: sig(
-        element.value?.parentElement?.classList.contains(stackClassName) ?? false
-          ? Axis.stack
-          : parentStyle.value?.flexDirection === Axis.column
-          ? Axis.column
-          : Axis.row,
-      ),
-      parentPaddingLeft: sig(parentStyle.value?.paddingLeft ?? `0px`),
-      parentPaddingRight: sig(parentStyle.value?.paddingRight ?? `0px`),
-      parentPaddingTop: sig(parentStyle.value?.paddingTop ?? `0px`),
-      parentPaddingBottom: sig(parentStyle.value?.paddingBottom ?? `0px`),
+      parentAxis,
+      parentPaddingLeft,
+      parentPaddingRight,
+      parentPaddingTop,
+      parentPaddingBottom,
       aChildsWidthGrows,
       aChildsHeightGrows,
     })
