@@ -1,5 +1,5 @@
 import { onMount, type JSX, type ParentProps, onCleanup } from 'solid-js'
-import { exists, sig, watchEffect } from '../utils'
+import { Sig, exists, sig, watchEffect } from '../utils'
 import { makePropParser } from './BoxUtils'
 import {
   Overflow,
@@ -15,10 +15,7 @@ import { DecorationSty, watchBoxDecoration } from './BoxDecoration'
 import { TextSty, watchBoxText } from './BoxText'
 import { InteractionSty, watchBoxInteraction } from './BoxInteraction'
 
-export function grow(flex: number = 1) {
-  return `${flex}f`
-}
-
+// SECTION: Box Component
 export type BoxProps = BoxStyleProps & ParentProps & JSX.DOMAttributes<HTMLDivElement>
 export type BoxStyleProps = Partial<
   LayoutSty &
@@ -42,66 +39,20 @@ export function Box(props: BoxProps) {
     const parentPaddingTop = sig(`0px`)
     const parentPaddingRight = sig(`0px`)
     const parentPaddingBottom = sig(`0px`)
-    const parentObserver = new MutationObserver(() => {
-      const parentElement = element.value!.parentElement
-      if (!exists(parentElement)) return
-      const parentStyle = getComputedStyle(parentElement)
-      // Parent Axis
-      const newParentAxis = parentElement.classList.contains(stackClassName)
-        ? Axis.stack
-        : parentStyle.flexDirection === Axis.column
-        ? Axis.column
-        : Axis.row
-      if (parentAxis.value !== newParentAxis) {
-        parentAxis.value = newParentAxis
-      }
-      // Parent Padding
-      const newParentPaddingLeft = parentStyle.paddingLeft
-      if (parentPaddingLeft.value !== newParentPaddingLeft) {
-        parentPaddingLeft.value = newParentPaddingLeft
-      }
-      const newParentPaddingTop = parentStyle.paddingTop
-      if (parentPaddingTop.value !== newParentPaddingTop) {
-        parentPaddingTop.value = newParentPaddingTop
-      }
-      const newParentPaddingRight = parentStyle.paddingRight
-      if (parentPaddingRight.value !== newParentPaddingRight) {
-        parentPaddingRight.value = newParentPaddingRight
-      }
-      const newParentPaddingBottom = parentStyle.paddingBottom
-      if (parentPaddingBottom.value !== newParentPaddingBottom) {
-        parentPaddingBottom.value = newParentPaddingBottom
-      }
+    _watchParent({
+      element,
+      parentAxis,
+      parentPaddingLeft,
+      parentPaddingTop,
+      parentPaddingRight,
+      parentPaddingBottom,
     })
-    onCleanup(() => parentObserver.disconnect())
 
     // Observe Children
-    // TODO: Use Mutations observers to watch this base it on classes in the children
     const aChildsWidthGrows = sig(false)
     const aChildsHeightGrows = sig(false)
     const hasMoreThanOneChild = sig(false)
-    const childObserver = new MutationObserver(() => {
-      const childElements = element.value!.children
-      if (!exists(childElements)) return
-      const childElementsArray = Array.from(childElements)
-      const newHasMoreThanOneChild = childElementsArray.length > 1
-      if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
-        hasMoreThanOneChild.value = newHasMoreThanOneChild
-      }
-    })
-    onCleanup(() => childObserver.disconnect())
-    ;(() => {
-      const childElements = element.value!.children
-      if (!exists(childElements)) return
-      const childElementsArray = Array.from(childElements)
-      if (childElementsArray.length === 0) return
-      aChildsHeightGrows.value = childElementsArray.some(childElement =>
-        childElement.classList.contains(heightGrowsClassName),
-      )
-      aChildsWidthGrows.value = childElementsArray.some(childElement =>
-        childElement.classList.contains(widthGrowsClassName),
-      )
-    })()
+    _watchChildren({ element, hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows })
 
     // Compute Layout
     const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
@@ -144,4 +95,114 @@ export function Box(props: BoxProps) {
 
   // TODO: Toggle element type based on "tag" prop.
   return <div {...props} ref={el => (element.value = el)} />
+}
+
+/** SECTION: Helper function to watch parent for Box */
+function _watchParent(props: {
+  element: Sig<HTMLElement | undefined>
+  parentAxis: Sig<Axis>
+  parentPaddingLeft: Sig<string>
+  parentPaddingTop: Sig<string>
+  parentPaddingRight: Sig<string>
+  parentPaddingBottom: Sig<string>
+}) {
+  const {
+    element,
+    parentAxis,
+    parentPaddingLeft,
+    parentPaddingTop,
+    parentPaddingRight,
+    parentPaddingBottom,
+  } = props
+  // TODO: We might ned to watch element if there is any chance of it becoming null at some point.
+  if (exists(element.value) && exists(element.value.parentElement)) {
+    const parentObserver = new MutationObserver(() => {
+      const parentElement = element.value!.parentElement
+      if (!exists(parentElement)) return
+      const parentStyle = getComputedStyle(parentElement)
+      // Parent Axis
+      const newParentAxis = parentElement.classList.contains(stackClassName)
+        ? Axis.stack
+        : parentStyle.flexDirection === Axis.column
+        ? Axis.column
+        : Axis.row
+      if (parentAxis.value !== newParentAxis) {
+        parentAxis.value = newParentAxis
+      }
+      // Parent Padding
+      const newParentPaddingLeft = parentStyle.paddingLeft
+      if (parentPaddingLeft.value !== newParentPaddingLeft) {
+        parentPaddingLeft.value = newParentPaddingLeft
+      }
+      const newParentPaddingTop = parentStyle.paddingTop
+      if (parentPaddingTop.value !== newParentPaddingTop) {
+        parentPaddingTop.value = newParentPaddingTop
+      }
+      const newParentPaddingRight = parentStyle.paddingRight
+      if (parentPaddingRight.value !== newParentPaddingRight) {
+        parentPaddingRight.value = newParentPaddingRight
+      }
+      const newParentPaddingBottom = parentStyle.paddingBottom
+      if (parentPaddingBottom.value !== newParentPaddingBottom) {
+        parentPaddingBottom.value = newParentPaddingBottom
+      }
+    })
+    parentObserver.observe(element.value.parentElement, {
+      attributes: true,
+      attributeFilter: [`style`, `class`],
+    })
+    onCleanup(() => parentObserver.disconnect())
+  }
+}
+
+/** SECTION: Helper function to watch children for Box */
+function _watchChildren(props: {
+  element: Sig<HTMLElement | undefined>
+  hasMoreThanOneChild: Sig<boolean>
+  aChildsWidthGrows: Sig<boolean>
+  aChildsHeightGrows: Sig<boolean>
+}) {
+  const { element, hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows } = props
+  const activeChildObservers: MutationObserver[] = []
+  const childListObserver = new MutationObserver(() => {
+    if (!exists(element.value)) return
+    const childElementsArray = Array.from(element.value.children)
+    // Has More Than One Child
+    const newHasMoreThanOneChild = childElementsArray.length > 1
+    if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
+      hasMoreThanOneChild.value = newHasMoreThanOneChild
+    }
+    // A Child Size Grows
+    activeChildObservers.forEach(observer => observer.disconnect())
+    childElementsArray.forEach(child => {
+      const childObserver = new MutationObserver(() => {
+        if (!exists(element.value)) return
+        const childElementsArray = Array.from(element.value.children)
+        const newAChildsWidthGrows = childElementsArray.some(childElement =>
+          childElement.classList.contains(widthGrowsClassName),
+        )
+        if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
+          aChildsWidthGrows.value = newAChildsWidthGrows
+        }
+        const newAChildsHeightGrows = childElementsArray.some(childElement =>
+          childElement.classList.contains(heightGrowsClassName),
+        )
+        if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
+          aChildsHeightGrows.value = newAChildsHeightGrows
+        }
+      })
+      childObserver.observe(child, {
+        attributes: true,
+        attributeFilter: [`class`],
+      })
+      activeChildObservers.push(childObserver)
+    })
+  })
+  childListObserver.observe(element.value!, {
+    childList: true,
+  })
+  onCleanup(() => {
+    childListObserver.disconnect()
+    activeChildObservers.forEach(observer => observer.disconnect())
+  })
 }

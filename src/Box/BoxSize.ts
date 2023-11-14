@@ -15,6 +15,10 @@ export type SizeSty = Partial<{
   asTallAsParent: boolean
 }>
 
+export function grow(flex: number = 1) {
+  return `${flex}f`
+}
+
 export interface FlexSize {
   flex: number
   min: number

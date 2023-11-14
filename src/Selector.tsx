@@ -1,11 +1,12 @@
 import { Sig, compute, exists, injectDefaults, sig, watchDeps } from './utils'
-import { BoxProps, grow } from './Box/Box'
+import { BoxProps } from './Box/Box'
 import { Txt } from './Txt'
 import { Row } from './Row'
 import { Icon } from './Icon'
 import { Modal } from './Modal'
 import { mdiClose, mdiMenuDown } from '@mdi/js'
 import { Field } from './Field'
+import { grow } from './Box/BoxSize'
 
 export function Selector<T>(
   props: {

@@ -1,4 +1,4 @@
-import { Box, BoxProps, grow } from './Box/Box'
+import { BoxProps } from './Box/Box'
 import { compute, exists } from './utils'
 import { Row } from './Row'
 import { Txt } from './Txt'

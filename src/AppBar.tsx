@@ -1,10 +1,11 @@
 import { JSX, Show } from 'solid-js'
-import { Box, BoxProps, grow } from './Box/Box'
+import { Box, BoxProps } from './Box/Box'
 import { useNav } from './Nav'
 import { Icon } from './Icon'
 import { mdiArrowLeft } from '@mdi/js'
 import { Row } from './Row'
 import { Column } from './Column'
+import { grow } from './Box/BoxSize'
 
 export function AppBar(
   props: {
