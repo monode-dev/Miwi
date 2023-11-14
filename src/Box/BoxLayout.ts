@@ -239,8 +239,6 @@ export function watchBoxLayout(
   element: Sig<HTMLElement | undefined>,
   context: {
     hasMoreThanOneChild: Sig<boolean>
-    alignX: Sig<AlignSingleAxis>
-    overflowX: Sig<Overflow>
   },
 ) {
   // Pad
@@ -293,11 +291,15 @@ export function watchBoxLayout(
   })
 
   // Align & Axis
+  const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
   const axis = sig<Axis>(Axis.column)
   watchEffect(() => {
     if (!exists(element.value)) return
-    const { alignX, alignY } = parseAlignProps(parseProp, context.hasMoreThanOneChild.value)
-    context.alignX.value = alignX
+    const { alignX: _alignX, alignY } = parseAlignProps(
+      parseProp,
+      context.hasMoreThanOneChild.value,
+    )
+    alignX.value = _alignX
     const _axis =
       parseProp({
         axis: v => v,
@@ -306,19 +308,21 @@ export function watchBoxLayout(
         stack: () => Axis.stack,
       }) ?? Axis.column
     axis.value = _axis
-    element.value.style.justifyContent = _axis === Axis.column ? alignY : context.alignX.value
-    element.value.style.alignItems = _axis === Axis.column ? context.alignX.value : alignY
+    element.value.style.justifyContent = _axis === Axis.column ? alignY : _alignX
+    element.value.style.alignItems = _axis === Axis.column ? _alignX : alignY
     element.value.style.flexDirection = _axis === Axis.stack ? `` : _axis
     element.value.classList.toggle(stackClassName, _axis === Axis.stack)
   })
 
   // Overflow
+  const overflowX = sig<Overflow>(Overflow.forceStretchParent)
   watchEffect(() => {
     if (!exists(element.value)) return
-    const overflowX =
+    const _overflowX =
       parseProp({
         overflowX: v => v,
       }) ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
+    overflowX.value = _overflowX
     const overflowY =
       parseProp({
         overflowY: v => v,
@@ -326,15 +330,15 @@ export function watchBoxLayout(
     /* NOTE: And-ing the axis check after the overflow check means we'll only watch row
      * when it is absolutely necessary. */
     element.value.style.flexWrap =
-      overflowX === Overflow.wrap && axis.value === Axis.row
+      _overflowX === Overflow.wrap && axis.value === Axis.row
         ? `wrap`
         : overflowY === Overflow.wrap && axis.value === Axis.row
         ? `wrap`
         : ``
     element.value.style.overflowX =
-      overflowX === Overflow.scroll
+      _overflowX === Overflow.scroll
         ? `auto` // Scroll when necessary, and float above contents so we can make it invisible
-        : overflowX === Overflow.crop
+        : _overflowX === Overflow.crop
         ? `hidden`
         : `visible`
     element.value.style.overflowY =
@@ -344,11 +348,15 @@ export function watchBoxLayout(
         ? `hidden`
         : `visible`
     // Scroll bar should be invisible
-    ;(element.value.style as any).scrollbarWidth = [overflowX, overflowY].includes(Overflow.scroll)
+    ;(element.value.style as any).scrollbarWidth = [_overflowX, overflowY].includes(Overflow.scroll)
       ? `thin`
       : ``
-    ;(element.value.style as any).scrollbarColor = [overflowX, overflowY].includes(Overflow.scroll)
+    ;(element.value.style as any).scrollbarColor = [_overflowX, overflowY].includes(Overflow.scroll)
       ? `#e3e3e3 transparent`
       : ``
   })
+  return {
+    alignX,
+    overflowX,
+  }
 }

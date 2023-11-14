@@ -1,15 +1,7 @@
 import { onMount, type JSX, type ParentProps, onCleanup } from 'solid-js'
 import { Sig, exists, sig, watchEffect } from '../utils'
 import { makePropParser, observeElement } from './BoxUtils'
-import {
-  Overflow,
-  _FlexAlign,
-  watchBoxLayout,
-  AlignSingleAxis,
-  LayoutSty,
-  stackClassName,
-  Axis,
-} from './BoxLayout'
+import { _FlexAlign, watchBoxLayout, LayoutSty, stackClassName, Axis } from './BoxLayout'
 import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from './BoxSize'
 import { DecorationSty, watchBoxDecoration } from './BoxDecoration'
 import { TextSty, watchBoxText } from './BoxText'
@@ -34,33 +26,19 @@ export function Box(props: BoxProps) {
 
   onMount(() => {
     // Observe Parent
-    const parentAxis = sig<Axis>(Axis.column)
-    const parentPaddingLeft = sig(`0px`)
-    const parentPaddingTop = sig(`0px`)
-    const parentPaddingRight = sig(`0px`)
-    const parentPaddingBottom = sig(`0px`)
-    _watchParent({
-      element,
+    const {
       parentAxis,
       parentPaddingLeft,
       parentPaddingTop,
       parentPaddingRight,
       parentPaddingBottom,
-    })
+    } = _watchParent(element)
 
     // Observe Children
-    const aChildsWidthGrows = sig(false)
-    watchEffect(() => {
-      console.log(`aChildsWidthGrows`, aChildsWidthGrows.value)
-    })
-    const aChildsHeightGrows = sig(false)
-    const hasMoreThanOneChild = sig(false)
-    _watchChildren({ element, hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows })
+    const { hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows } = _watchChildren(element)
 
     // Compute Layout
-    const alignX = sig<AlignSingleAxis>(_FlexAlign.center)
-    const overflowX = sig<Overflow>(Overflow.forceStretchParent)
-    watchBoxLayout(parseProp, element, { hasMoreThanOneChild, alignX, overflowX })
+    const { alignX, overflowX } = watchBoxLayout(parseProp, element, { hasMoreThanOneChild })
 
     // Compute Size
     watchBoxSize(parseProp, element, {
@@ -101,22 +79,12 @@ export function Box(props: BoxProps) {
 }
 
 /** SECTION: Helper function to watch parent for Box */
-function _watchParent(props: {
-  element: Sig<HTMLElement | undefined>
-  parentAxis: Sig<Axis>
-  parentPaddingLeft: Sig<string>
-  parentPaddingTop: Sig<string>
-  parentPaddingRight: Sig<string>
-  parentPaddingBottom: Sig<string>
-}) {
-  const {
-    element,
-    parentAxis,
-    parentPaddingLeft,
-    parentPaddingTop,
-    parentPaddingRight,
-    parentPaddingBottom,
-  } = props
+function _watchParent(element: Sig<HTMLElement | undefined>) {
+  const parentAxis = sig<Axis>(Axis.column)
+  const parentPaddingLeft = sig(`0px`)
+  const parentPaddingTop = sig(`0px`)
+  const parentPaddingRight = sig(`0px`)
+  const parentPaddingBottom = sig(`0px`)
   // TODO: We might ned to watch element if there is any chance of it becoming null at some point.
   if (exists(element.value) && exists(element.value.parentElement)) {
     const parentObserver = observeElement(
@@ -159,16 +127,21 @@ function _watchParent(props: {
     )
     onCleanup(() => parentObserver.disconnect())
   }
+
+  return {
+    parentAxis,
+    parentPaddingLeft,
+    parentPaddingTop,
+    parentPaddingRight,
+    parentPaddingBottom,
+  }
 }
 
 /** SECTION: Helper function to watch children for Box */
-function _watchChildren(props: {
-  element: Sig<HTMLElement | undefined>
-  hasMoreThanOneChild: Sig<boolean>
-  aChildsWidthGrows: Sig<boolean>
-  aChildsHeightGrows: Sig<boolean>
-}) {
-  const { element, hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows } = props
+function _watchChildren(element: Sig<HTMLElement | undefined>) {
+  const aChildsWidthGrows = sig(false)
+  const aChildsHeightGrows = sig(false)
+  const hasMoreThanOneChild = sig(false)
   const activeChildObservers: MutationObserver[] = []
   const childListObserver = observeElement(
     element.value!,
@@ -222,4 +195,5 @@ function _watchChildren(props: {
     childListObserver.disconnect()
     activeChildObservers.forEach(observer => observer.disconnect())
   })
+  return { element, hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows }
 }

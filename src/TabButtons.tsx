@@ -8,21 +8,21 @@ import { Stack } from './Stack'
 
 export function TabButtons(
   props: BoxProps & {
-    selectedTabSig: Sig<number>
+    selectedTab: Sig<number>
     labels?: [string, string, string]
   },
 ) {
-  const labels = props.labels ?? ['Tab 0', 'Tab 1', 'Tab 2']
   const tabButtonWidth = 5
   let tab1Ref: HTMLElement | undefined = undefined
   let tab2Ref: HTMLElement | undefined = undefined
   let tabUnderline: HTMLElement | undefined = undefined
 
   function selectTab(newTab: number) {
-    if (newTab === props.selectedTabSig.value) return
-    props.selectedTabSig.value = newTab
+    if (newTab === props.selectedTab.value) return
+    props.selectedTab.value = newTab
   }
 
+  // Animate Underline
   createEffect(() => {
     if (exists(tabUnderline)) {
       // Find new position
@@ -30,9 +30,7 @@ export function TabButtons(
         (tab1Ref?.offsetLeft ?? 0) - (tab2Ref?.offsetLeft ?? 0),
         0,
         (tab2Ref?.offsetLeft ?? 0) - (tab1Ref?.offsetLeft ?? 0),
-      ][props.selectedTabSig.value]
-
-      // console.log(getComputedStyle(tabUnderline));
+      ][props.selectedTab.value]
 
       // Animate
       gsap.to(tabUnderline, {
@@ -42,17 +40,19 @@ export function TabButtons(
       })
     }
   })
+
+  // Render
   return (
     <Column>
       <Row onClick={props.onClick} widthGrows spaceAroundX overrideProps={props}>
         <Box width={tabButtonWidth} onClick={() => selectTab(0)}>
-          {labels[0]}
+          {props.labels?.[0] ?? 'Tab 0'}
         </Box>
         <Box width={tabButtonWidth} getElement={el => (tab1Ref = el)} onClick={() => selectTab(1)}>
-          {labels[1]}
+          {props.labels?.[1] ?? 'Tab 1'}
         </Box>
         <Box width={tabButtonWidth} getElement={el => (tab2Ref = el)} onClick={() => selectTab(2)}>
-          {labels[2]}
+          {props.labels?.[2] ?? 'Tab 2'}
         </Box>
       </Row>
       <Stack widthGrows height={0.375}>
