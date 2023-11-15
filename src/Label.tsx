@@ -18,7 +18,7 @@ export function Label(
       <Txt
         singleLine
         hint={props.hint ?? false}
-        width={props.labelWidth}
+        width={props.labelWidth ?? `fit-content`}
         background={props.labelBackground}
       >
         {props.label}:
