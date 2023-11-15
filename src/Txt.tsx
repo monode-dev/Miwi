@@ -13,6 +13,9 @@ export function Txt(
   } & BoxProps,
 ) {
   const scale = compute(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : undefined))
+  const overflowX = compute(
+    () => props.overflowX ?? (props.singleLine ?? false ? $Overflow.crop : $Overflow.wrap),
+  )
 
   return (
     <Box
@@ -22,8 +25,9 @@ export function Txt(
       overflowY={$Overflow.forceStretchParent}
       overrideProps={props}
       overrideOverrides={{
-        overflowX: props.overflowX ?? (props.singleLine ?? false ? $Overflow.crop : $Overflow.wrap),
+        overflowX: overflowX.value,
       }}
+      isFlexDisplay={overflowX.value === $Overflow.crop ? false : undefined}
     >
       {props.children}
     </Box>

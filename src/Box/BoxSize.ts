@@ -18,6 +18,8 @@ export type SizeSty = Partial<{
   heightShrinks: boolean
   asTallAsParent: boolean
   maxHeight: string | number
+  // Other
+  isFlexDisplay: boolean
 }>
 
 export function grow(flex: number = 1) {
@@ -94,7 +96,7 @@ export function watchBoxSize(
   // SECTION: Basics
   watchEffect(() => {
     if (!exists(element.value)) return
-    element.value.style.display = `flex`
+    element.value.style.display = parseProp(`isFlexDisplay`) ?? true ? `flex` : ``
     element.value.style.boxSizing = `border-box`
   })
 
