@@ -7,6 +7,7 @@ export function Label(
   props: {
     label?: string
     hint?: boolean
+    labelBackground?: string
     labelWidth?: number | string
   } & BoxProps,
 ) {
@@ -14,7 +15,12 @@ export function Label(
 
   return shouldShowLabel.value ? (
     <Row widthGrows padBetween={0.25} alignTopLeft overrideProps={props}>
-      <Txt singleLine hint={props.hint ?? false} width={props.labelWidth}>
+      <Txt
+        singleLine
+        hint={props.hint ?? false}
+        width={props.labelWidth}
+        background={props.labelBackground}
+      >
         {props.label}:
       </Txt>
       {props.children}
