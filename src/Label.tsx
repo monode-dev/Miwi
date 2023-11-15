@@ -7,13 +7,14 @@ export function Label(
   props: {
     label?: string
     hint?: boolean
+    labelWidth?: number | string
   } & BoxProps,
 ) {
   const shouldShowLabel = compute(() => exists(props.label) && props.label.length > 0)
 
   return shouldShowLabel.value ? (
     <Row widthGrows padBetween={0.25} alignTopLeft overrideProps={props}>
-      <Txt singleLine hint={props.hint ?? false}>
+      <Txt singleLine hint={props.hint ?? false} width={props.labelWidth}>
         {props.label}:
       </Txt>
       {props.children}
