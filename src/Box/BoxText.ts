@@ -47,7 +47,7 @@ export function watchBoxText(
     const scale = parseProp({ scale: v => v })
     element.value.style.setProperty(sizeScaleCssVarName, sizeToCss(scale) ?? ``)
     element.value.style.fontSize = exists(scale) ? `var(${sizeScaleCssVarName})` : ``
-    element.value.style.lineHeight = exists(scale) ? `var(${sizeScaleCssVarName})` : ``
+    // element.value.style.lineHeight = exists(scale) ? `var(${sizeScaleCssVarName})` : ``
   })
 
   // Bold
