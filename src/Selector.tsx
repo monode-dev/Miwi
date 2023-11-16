@@ -37,7 +37,7 @@ export function Selector<T>(
   if (exists(props.modalIsOpenSig)) {
     watchDeps([props.modalIsOpenSig], () => {
       if (_modalIsOpen.value === props.modalIsOpenSig!.value) return
-      if (props.modalIsOpenSig) {
+      if (props.modalIsOpenSig!.value) {
         openDropDown()
       } else {
         closeDropDown()
