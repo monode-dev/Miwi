@@ -4,7 +4,7 @@ import { Row } from './Row'
 import { Icon } from './Icon'
 import { compute, sig, Sig, watchDeps, watchEffect, exists } from './utils'
 import { Column } from './Column'
-import { sizeToCss } from './Box/BoxUtils'
+// import { sizeToCss } from './Box/BoxUtils'
 
 export type KeyboardType =
   | 'none'
@@ -129,7 +129,7 @@ export function Field(
   watchEffect(() => {
     if (props.hasFocusSig?.value !== (inputElement === document.activeElement)) {
       if (props.hasFocusSig) {
-        inputElement?.focus()
+        tryFocus()
       } else {
         inputElement?.blur()
       }
@@ -148,12 +148,14 @@ export function Field(
 
   onMount(() => {
     if (exists(props.hasFocusSig) && props.hasFocusSig.value) {
-      inputElement?.focus()
+      tryFocus()
     }
   })
 
   function tryFocus() {
-    inputElement?.focus()
+    setTimeout(() => {
+      inputElement?.focus()
+    }, 0)
   }
 
   const lineCount = props.lineCount ?? 1
