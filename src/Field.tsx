@@ -215,7 +215,11 @@ export function Field(
       <Show when={props.underlined} fallback={<_Input />}>
         <Column>
           {/* Underlined Input */}
-          <Row widthGrows height={exists(lineCount) ? scale.value * lineCount : undefined}>
+          <Row
+            widthGrows
+            alignTopLeft
+            height={exists(lineCount) ? scale.value * lineCount : undefined}
+          >
             <_Input />
             {/* <Box width={0.25} />
             <Box widthGrows>
