@@ -186,7 +186,7 @@ export function Field(
         overflow: 'visible',
         resize: 'none' as const,
         [`overflow-y`]: `visible` as const,
-        [`line-height`]: sizeToCss(scale.value),
+        // [`line-height`]: sizeToCss(scale.value),
         [`caret-color`]: $theme.colors.primary,
         '--miwi-placeholder-color': props.hintColor ?? $theme.colors.hint,
       },
