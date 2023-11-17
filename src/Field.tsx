@@ -1,4 +1,4 @@
-import { Show, onMount } from 'solid-js'
+import { Show, onCleanup, onMount } from 'solid-js'
 import { Box, BoxProps } from './Box/Box'
 import { Row } from './Row'
 import { Icon } from './Icon'
@@ -148,14 +148,14 @@ export function Field(
 
   onMount(() => {
     if (exists(props.hasFocusSig) && props.hasFocusSig.value) {
-      tryFocus()
+      // Focus on next frame
+      const frameId = requestAnimationFrame(() => inputElement?.focus())
+      onCleanup(() => cancelAnimationFrame(frameId))
     }
   })
 
   function tryFocus() {
-    setTimeout(() => {
-      inputElement?.focus()
-    }, 0)
+    inputElement?.focus()
   }
 
   const lineCount = props.lineCount ?? 1
