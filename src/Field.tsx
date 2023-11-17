@@ -207,27 +207,27 @@ export function Field(
         scale: scale.value,
       }}
     >
+      {/* Icon */}
       <Show when={exists(props.iconPath) && props.iconPath !== ``}>
         <Icon iconPath={props.iconPath!} color={detailColor.value} size={scale.value} />
       </Show>
 
       <Show when={props.underlined} fallback={<_Input />}>
-        <Box widthGrows height={exists(lineCount) ? scale.value * lineCount : undefined}>
-          <Column widthGrows>
-            <Row widthGrows>
-              <Box width={0.25} />
-              <Box widthGrows>
-                <_Input />
-              </Box>
-              <Box width={0.25} />
-            </Row>
-          </Column>
+        <Column>
+          {/* Underlined Input */}
+          <Row height={exists(lineCount) ? scale.value * lineCount : undefined}>
+            <Box width={0.25} />
+            <Box widthGrows>
+              <_Input />
+            </Box>
+            <Box width={0.25} />
+          </Row>
 
           {/* Underline */}
-          <Box widthGrows height={underlineHeight.value} alignBottomLeft>
+          <Box height={underlineHeight.value} alignBottomLeft>
             <Box widthGrows height={0.0625} background={detailColor.value} />
           </Box>
-        </Box>
+        </Column>
       </Show>
     </Row>
   )
