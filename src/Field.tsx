@@ -147,7 +147,7 @@ export function Field(
   )
 
   onMount(() => {
-    if (props.hasFocusSig) {
+    if (exists(props.hasFocusSig) && props.hasFocusSig.value) {
       inputElement?.focus()
     }
   })
