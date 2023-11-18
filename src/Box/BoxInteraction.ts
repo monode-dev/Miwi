@@ -21,10 +21,10 @@ style.textContent = `
 .${bonusTouchAreaClassName}::before {
   content: '';
   position: absolute;
-  top: -1rem;
-  right: -1rem;
-  bottom: -1rem;
-  left: -1rem;
+  top: -0.5rem;
+  right: -0.5rem;
+  bottom: -0.5rem;
+  left: -0.5rem;
   z-index: -1;
 }
 `

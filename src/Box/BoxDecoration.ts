@@ -86,7 +86,7 @@ export function watchBoxDecoration(
   // Background
   watchEffect(() => {
     if (!exists(element.value)) return
-    const background = parseProp({ background: v => v }) ?? ``
+    const background = parseProp(`background`) ?? ``
     const backgroundIsImage = background.startsWith(`data:image`) || background.startsWith(`/`)
     element.value.style.backgroundColor = backgroundIsImage ? `` : background
     element.value.style.backgroundImage = backgroundIsImage ? `url('${background}')` : ``
