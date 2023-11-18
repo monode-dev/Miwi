@@ -26,6 +26,7 @@ style.textContent = `
   bottom: -2rem;
   left: -2rem;
   z-index: -1;
+  pointer-events: none;
 }
 `
 document.body.appendChild(style)
