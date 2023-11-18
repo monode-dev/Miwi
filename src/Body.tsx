@@ -7,6 +7,7 @@ export function Body(props: BoxProps) {
       widthGrows
       heightGrows
       alignTopCenter
+      preventClickPropagation
       textColor={$theme.colors.text}
       scale={1}
       pad={1}
