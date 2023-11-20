@@ -1,12 +1,13 @@
-import { Sig, compute, exists, injectDefaults, sig, watchDeps } from './utils'
+import { mdiClose, mdiMenuDown } from '@mdi/js'
+import { Show } from 'solid-js'
 import { BoxProps } from './Box/Box'
-import { Txt } from './Txt'
-import { Row } from './Row'
+import { grow } from './Box/BoxSize'
+import { Field } from './Field'
 import { Icon } from './Icon'
 import { Modal } from './Modal'
-import { mdiClose, mdiMenuDown } from '@mdi/js'
-import { Field } from './Field'
-import { grow } from './Box/BoxSize'
+import { Row } from './Row'
+import { Txt } from './Txt'
+import { Sig, compute, sig, exists, watchDeps } from './utils'
 
 export function Selector<T>(
   props: {
@@ -20,20 +21,33 @@ export function Selector<T>(
     isWide?: boolean
   } & BoxProps,
 ) {
-  props = injectDefaults(props, {
-    noneLabel: `None`,
-    emptyListText: `No Options`,
-    isWide: false,
-  })
-  const selectedLabel = compute(() => {
-    return props.getLabelForData(props.value) ?? props.noneLabel
-  })
+  // DEFAULT PROPERTIES
+  const noneLabel = compute(() => props.noneLabel ?? 'None')
+  const emptyListText = compute(() => props.emptyListText ?? 'No Options')
+  const isWide = compute(() => props.isWide ?? false)
+  const _modalIsOpen = sig(props.modalIsOpenSig?.value ?? false)
+
+  const selectedLabel = compute(() => props.getLabelForData(props.value) ?? noneLabel.value)
+
   const thereAreNoOptions = compute(() => {
     return !exists(props.children) || (Array.isArray(props.children) && props.children.length === 0)
   })
 
-  //
-  const _modalIsOpen = sig(props.modalIsOpenSig?.value ?? false)
+  function openDropDown() {
+    if (_modalIsOpen.value) return
+    _modalIsOpen.value = true
+  }
+
+  function closeDropDown() {
+    if (!_modalIsOpen.value) return
+
+    _modalIsOpen.value = false
+
+    if (exists(props.filterStringSig)) {
+      props.filterStringSig.value = ``
+    }
+  }
+
   if (exists(props.modalIsOpenSig)) {
     watchDeps([props.modalIsOpenSig], () => {
       if (!exists(props.modalIsOpenSig)) return
@@ -50,18 +64,6 @@ export function Selector<T>(
     })
   }
 
-  //
-  function openDropDown() {
-    if (_modalIsOpen.value) return
-    _modalIsOpen.value = true
-  }
-  function closeDropDown() {
-    if (!_modalIsOpen.value) return
-    _modalIsOpen.value = false
-    if (exists(props.filterStringSig)) {
-      props.filterStringSig.value = ``
-    }
-  }
   return (
     <Modal
       openButton={
@@ -108,14 +110,14 @@ export function Selector<T>(
       openButtonWidth={grow()}
       openButtonHeight={props.scale ?? 1}
       isOpenSig={_modalIsOpen}
-      modalWidth={props.isWide ? `100%` : undefined}
+      modalWidth={isWide.value ? `100%` : undefined}
     >
       {/* SECTION: No Options */}
-      {thereAreNoOptions.value ? undefined : (
+      <Show when={thereAreNoOptions.value}>
         <Txt hint onClick={() => (_modalIsOpen.value = false)} widthGrows>
-          {props.emptyListText}
+          {emptyListText.value}
         </Txt>
-      )}
+      </Show>
 
       {/* SECTION: Cancel */}
       {exists(props.filterStringSig) &&
