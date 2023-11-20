@@ -39,7 +39,7 @@ export function Field(
 ) {
   const value = props.valueSig ?? sig(``)
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined
-  const inputElementHasFocus = sig(props.hasFocusSig ?? false)
+  const inputElementHasFocus = props.hasFocusSig ?? sig(false)
   const scale = compute(() => props.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : 1))
 
   // Input
@@ -110,9 +110,6 @@ export function Field(
     }
     valueOnFocus = value.value
     inputElementHasFocus.value = true
-    if (exists(props.hasFocusSig)) {
-      props.hasFocusSig.value = true
-    }
   }
 
   const handleBlur = () => {
@@ -125,13 +122,10 @@ export function Field(
       setTempValue(value.value)
     }
     inputElementHasFocus.value = false
-    if (exists(props.hasFocusSig)) {
-      props.hasFocusSig.value = false
-    }
   }
   watchEffect(() => {
-    if (props.hasFocusSig?.value !== (inputElement === document.activeElement)) {
-      if (props.hasFocusSig) {
+    if (inputElementHasFocus.value !== (inputElement === document.activeElement)) {
+      if (inputElementHasFocus.value) {
         tryFocus()
       } else {
         inputElement?.blur()
@@ -150,7 +144,7 @@ export function Field(
   )
 
   onMount(() => {
-    if (exists(props.hasFocusSig) && props.hasFocusSig.value) {
+    if (inputElementHasFocus.value) {
       // Focus on next frame
       const frameId = requestAnimationFrame(() => inputElement?.focus())
       onCleanup(() => cancelAnimationFrame(frameId))
