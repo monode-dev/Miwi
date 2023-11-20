@@ -156,12 +156,12 @@ export function Field(
   }
 
   const lineCount = props.lineCount ?? 1
-  function _Input() {
+  function _Input(_inputProps: { value: string }) {
     const inputProps = {
       ref: (el: HTMLInputElement | HTMLTextAreaElement) => (inputElement = el),
       // type="text"
       inputmode: props.keyboard,
-      value: value.value,
+      value: _inputProps.value,
       onInput: handleInput,
       onFocus: handleFocus,
       onBlur: handleBlur,
@@ -211,7 +211,7 @@ export function Field(
         <Icon iconPath={props.iconPath!} color={detailColor.value} size={scale.value} />
       </Show>
 
-      <Show when={props.underlined} fallback={<_Input />}>
+      <Show when={props.underlined} fallback={<_Input value={value.value} />}>
         <Column>
           {/* Underlined Input */}
           <Row
@@ -219,7 +219,7 @@ export function Field(
             alignTopLeft
             height={exists(lineCount) ? scale.value * lineCount : undefined}
           >
-            <_Input />
+            <_Input value={value.value} />
             {/* <Box width={0.25} />
             <Box widthGrows>
               <_Input />
