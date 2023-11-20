@@ -55,7 +55,7 @@ export function Field(
     return props.tempValueSig?.value ?? value.value
   }
   watchDeps([value], () => {
-    if (!props.hasFocusSig) {
+    if (!inputElementHasFocus.value) {
       setTempValue(value.value)
     }
   })
