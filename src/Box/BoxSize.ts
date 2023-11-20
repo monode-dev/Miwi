@@ -20,6 +20,10 @@ export type SizeSty = Partial<{
   maxHeight: string | number
   // Other
   isFlexDisplay: boolean
+  /* TODO: Provide an option for aspect ratio using CSS's `aspect-ratio: 3 / 2`. Maybe
+   * this can be implemented as a value for width or height. Which would define it
+   * relative to the other. Maybe we can find a way to pick a reasonable size if both
+   * are set. I'm not 100 % sure yet.*/
 }>
 
 export function grow(flex: number = 1) {
@@ -54,7 +58,7 @@ export function computeSizeInfo(props: {
       ? undefined
       : `fit-content` // This use to be auto, but that was allowing text to be cut off, so I'm trying fit-content again. I'm guessing I swapped to auto because fit-content was causing the parent to grow to fit the child even when we didnt' want it to. It seems to be working now, so I'm going to try it this way for a  bit.
 
-  // const minSizeProp = props.minSize ?? -1
+  // TODO: If maxSize has been set, then maybe minSize should be set to 0.
   const minSize = exists(props.minSize)
     ? typeof props.minSize === `string`
       ? props.minSize
