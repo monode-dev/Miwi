@@ -105,6 +105,9 @@ export function Field(
   // Focus
   let valueOnFocus = value.value
   const handleFocus = () => {
+    if (getTempValue() !== value.value) {
+      setTempValue(value.value)
+    }
     valueOnFocus = value.value
     inputElementHasFocus.value = true
     if (exists(props.hasFocusSig)) {
