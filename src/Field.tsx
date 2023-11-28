@@ -198,7 +198,8 @@ export function Field(
       widthGrows
       height={exists(lineCount) ? scale.value * lineCount + underlineHeight.value : undefined}
       textColor={$theme.colors.text}
-      padBetween={0.25}
+      padBetweenX={0.25}
+      padBetweenY={0}
       overflowY={$Overflow.forceStretchParent}
       alignTopLeft
       overrideProps={props}
