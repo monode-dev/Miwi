@@ -133,7 +133,7 @@ export function Field(
     }
   })
 
-  const underlineHeight = compute(() => (props.underlined ? 0.25 * scale.value : 0))
+  const underlineHeight = compute(() => (props.underlined ? 0.5 * scale.value : 0))
 
   const detailColor = compute(() =>
     inputElementHasFocus.value
