@@ -40,20 +40,35 @@ export function watchEffect(callback: () => void) {
   return createEffect(callback)
 }
 
-export function injectDefaults<T extends {}>(props: T, defaults: Partial<T>): T {
-  return {
-    ...defaults,
-    ...props,
-  }
-}
-
 export function exists<T>(x: T): x is NonNullable<T> {
   return x !== undefined && x !== null
 }
 
-export function evaluate<T>(func: () => T): T {
+export function exec<T>(func: () => T): T {
   return func()
 }
+
+// New Reactivity
+export type Writable<T> = {
+  get(): T
+  set(value: T): void
+}
+export function isProp(x: any): x is Writable<any> {
+  return (
+    x?.get !== undefined &&
+    typeof x.get === `function` &&
+    x?.set !== undefined &&
+    typeof x.set === `function`
+  )
+}
+export function prop<T>(initValue: T): Writable<T> {
+  const [get, set] = createSignal(initValue)
+  return {
+    get,
+    set,
+  }
+}
+export function propFromFuncs<T>(get: () => T, set?: (value: T) => void): Writable<T> {}
 
 export function orderDocs<T, K extends string | number | null | undefined>(
   list: Iterable<T>,
