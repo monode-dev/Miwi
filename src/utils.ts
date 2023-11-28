@@ -68,7 +68,61 @@ export function prop<T>(initValue: T): Writable<T> {
     set,
   }
 }
-export function propFromFuncs<T>(get: () => T, set?: (value: T) => void): Writable<T> {}
+export function propFromFuncs<T, Set extends (value: T) => void | undefined>(
+  get: () => T,
+  set?: Set,
+): Set extends undefined
+  ? {
+      get(): T
+    }
+  : Writable<T> {
+  const getValue = createMemo(get)
+  if (set === undefined) {
+    return {
+      get() {
+        return getValue()
+      },
+    } as any
+  } else {
+    return {
+      get() {
+        return getValue()
+      },
+      set,
+    } as any
+  }
+}
+export function parseProps<T extends {}>(
+  obj: T,
+): {
+  [K in keyof T]: T[K] extends Writable<infer R> ? R : T[K]
+} {
+  return new Proxy(obj, {
+    get(target, prop) {
+      const value = target[prop as keyof typeof target]
+      if (isProp(value)) {
+        return value.get()
+      } else {
+        return value
+      }
+    },
+    set(target, prop, value) {
+      const targetProp = target[prop as keyof typeof target]
+      if (isProp(targetProp)) {
+        targetProp.set(value)
+      } else {
+        target[prop as keyof typeof target] = value
+      }
+      return true
+    },
+    has(target, key) {
+      return key in target
+    },
+    ownKeys(target) {
+      return Reflect.ownKeys(target)
+    },
+  }) as any
+}
 
 export function orderDocs<T, K extends string | number | null | undefined>(
   list: Iterable<T>,
