@@ -92,6 +92,29 @@ export function propFromFuncs<T, Set extends ((value: T) => any) | undefined>(
     } as any
   }
 }
+export function propFromName<T extends {}>(obj: T, propName: keyof T): Writable<T[keyof T]> {
+  return propFromFuncs(
+    () => obj[propName],
+    value => (obj[propName] = value),
+  )
+}
+export function propFromSig<T>(sig: Sig<T>): Writable<T> {
+  return propFromFuncs(
+    () => sig.value,
+    value => (sig.value = value),
+  )
+}
+export function sigFromProp<T>(prop: Writable<T>): Sig<T> {
+  return {
+    _isSig: true,
+    get value(): T {
+      return prop.get()
+    },
+    set value(newValue: T) {
+      prop.set(newValue)
+    },
+  }
+}
 export function parseProps<T extends {}>(
   obj: T,
 ): {
