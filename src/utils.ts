@@ -92,7 +92,7 @@ export function propFromFuncs<T, Set extends ((value: T) => any) | undefined>(
     } as any
   }
 }
-export function propFromName<T extends {}>(obj: T, propName: keyof T): Writable<T[keyof T]> {
+export function propFromName<T extends {}, K extends keyof T>(obj: T, propName: K): Writable<T[K]> {
   return propFromFuncs(
     () => obj[propName],
     value => (obj[propName] = value),
