@@ -155,6 +155,7 @@ export function Field(
     inputElement?.focus()
   }
 
+  // TODO: Tapping on the field does not move the cursor.
   const lineCount = props.lineCount ?? 1
   function _Input(_inputProps: { value: string }) {
     const inputProps = {

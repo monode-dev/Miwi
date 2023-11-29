@@ -68,7 +68,7 @@ export function prop<T>(initValue: T): Writable<T> {
     set,
   }
 }
-export function propFromFuncs<T, Set extends (value: T) => void | undefined>(
+export function propFromFuncs<T, Set extends ((value: T) => any) | undefined>(
   get: () => T,
   set?: Set,
 ): Set extends undefined
