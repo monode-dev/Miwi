@@ -103,7 +103,7 @@ export function watchBoxText(
       context.overflowX.value === Overflow.crop ||
       context.overflowX.value === Overflow.forceStretchParent
         ? `nowrap`
-        : `normal`
+        : `pre-line`
     element.value.style.textOverflow = context.overflowX.value === Overflow.crop ? `ellipsis` : ``
   })
 }
