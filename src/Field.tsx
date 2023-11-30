@@ -80,26 +80,23 @@ export function Field(
     }
   }
   function handleKeyPress(event: KeyboardEvent) {
-    return event.preventDefault()
-    // const nextInput = predictNextInput(event.key)
-    // if (exists(nextInput) && (props.limitLines ?? true)) {
-    //   const nextInputLines = nextInput.split('\n')
-    //   if (nextInputLines.length > (props.lineCount ?? 1)) {
-    //     return false
-    //   }
-    // }
-    // if (exists(nextInput) && exists(props.validateNextInput)) {
-    //   return props.validateNextInput(nextInput)
-    // } else {
-    //   return true
-    // }
+    validateInput(event, event.key)
   }
   function handlePaste(event: ClipboardEvent) {
-    const nextInput = predictNextInput(event.clipboardData?.getData('text') ?? ``)
+    validateInput(event, event.clipboardData?.getData('text') ?? ``)
+  }
+  function validateInput(event: Event, newText: string) {
+    const nextInput = predictNextInput(newText)
+    if (exists(nextInput) && (props.limitLines ?? true)) {
+      const nextInputLines = nextInput.split('\n')
+      if (nextInputLines.length > (props.lineCount ?? 1)) {
+        event.preventDefault()
+      }
+    }
     if (exists(nextInput) && exists(props.validateNextInput)) {
-      return props.validateNextInput(nextInput)
-    } else {
-      return true
+      if (!props.validateNextInput(nextInput)) {
+        event.preventDefault()
+      }
     }
   }
   function predictNextInput(newText: string) {
