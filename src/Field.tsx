@@ -27,6 +27,7 @@ export function Field(
     hintText?: string
     hintColor?: string
     lineCount?: number
+    limitLines?: boolean
     underlined?: boolean
     scale?: number
     iconPath?: string
@@ -80,6 +81,12 @@ export function Field(
   }
   function handleKeyPress(event: KeyboardEvent) {
     const nextInput = predictNextInput(event.key)
+    if (exists(nextInput) && (props.limitLines ?? false)) {
+      const nextInputLines = nextInput.split('\n')
+      if (nextInputLines.length > (props.lineCount ?? 1)) {
+        return false
+      }
+    }
     if (exists(nextInput) && exists(props.validateNextInput)) {
       return props.validateNextInput(nextInput)
     } else {
