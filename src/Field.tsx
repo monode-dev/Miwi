@@ -87,7 +87,6 @@ export function Field(
   }
   function validateInput(event: Event, newText: string) {
     const nextInput = predictNextInput(newText)
-    console.log(nextInput)
     if (exists(nextInput) && (props.limitLines ?? true)) {
       if (nextInput.split('\n').length > (props.lineCount ?? 1)) {
         event.preventDefault()
