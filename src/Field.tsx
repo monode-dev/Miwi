@@ -80,7 +80,7 @@ export function Field(
     }
   }
   function handleKeyPress(event: KeyboardEvent) {
-    validateInput(event, event.key)
+    validateInput(event, event.key === `Enter` ? `\n` : event.key)
   }
   function handlePaste(event: ClipboardEvent) {
     validateInput(event, event.clipboardData?.getData('text') ?? ``)
