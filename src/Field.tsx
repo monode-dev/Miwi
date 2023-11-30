@@ -86,18 +86,19 @@ export function Field(
     validateInput(event, event.clipboardData?.getData('text') ?? ``)
   }
   function validateInput(event: Event, newText: string) {
-    const nextInput = predictNextInput(newText)
-    if (exists(nextInput) && (props.limitLines ?? true)) {
-      const nextInputLines = nextInput.split('\n')
-      if (nextInputLines.length > (props.lineCount ?? 1)) {
-        event.preventDefault()
-      }
-    }
-    if (exists(nextInput) && exists(props.validateNextInput)) {
-      if (!props.validateNextInput(nextInput)) {
-        event.preventDefault()
-      }
-    }
+    event.preventDefault()
+    // const nextInput = predictNextInput(newText)
+    // if (exists(nextInput) && (props.limitLines ?? true)) {
+    //   const nextInputLines = nextInput.split('\n')
+    //   if (nextInputLines.length > (props.lineCount ?? 1)) {
+    //     event.preventDefault()
+    //   }
+    // }
+    // if (exists(nextInput) && exists(props.validateNextInput)) {
+    //   if (!props.validateNextInput(nextInput)) {
+    //     event.preventDefault()
+    //   }
+    // }
   }
   function predictNextInput(newText: string) {
     const input = inputElement
