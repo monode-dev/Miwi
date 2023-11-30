@@ -81,7 +81,7 @@ export function Field(
   }
   function handleKeyPress(event: KeyboardEvent) {
     const nextInput = predictNextInput(event.key)
-    if (exists(nextInput) && (props.limitLines ?? false)) {
+    if (exists(nextInput) && (props.limitLines ?? true)) {
       const nextInputLines = nextInput.split('\n')
       if (nextInputLines.length > (props.lineCount ?? 1)) {
         return false
