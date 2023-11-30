@@ -80,7 +80,7 @@ export function Field(
     }
   }
   function handleKeyPress(event: KeyboardEvent) {
-    return false
+    return event.preventDefault()
     // const nextInput = predictNextInput(event.key)
     // if (exists(nextInput) && (props.limitLines ?? true)) {
     //   const nextInputLines = nextInput.split('\n')
