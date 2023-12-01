@@ -63,10 +63,8 @@ export function isProp(x: any): x is Writable<any> {
 }
 export function prop<T>(initValue: T): Writable<T> {
   const [get, set] = createSignal(initValue)
-  return {
-    get,
-    set,
-  }
+  return { get, set }
+  // return propFromFuncs(get, set)
 }
 export function propFromFuncs<T, Set extends ((value: T) => any) | undefined>(
   get: () => T,
@@ -118,7 +116,9 @@ export function sigFromProp<T>(prop: Writable<T>): Sig<T> {
 export function parseProps<T extends {}>(
   obj: T,
 ): {
-  [K in keyof T]: T[K] extends Writable<infer R> ? R : T[K]
+  [K in keyof T]: T[K] extends Writable<infer R> ? R : never
+} & {
+  readonly [K in keyof T]: T[K] extends Writable<any> ? never : T[K]
 } {
   return new Proxy(obj, {
     get(target, prop) {
