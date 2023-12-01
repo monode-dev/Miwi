@@ -113,12 +113,18 @@ export function sigFromProp<T>(prop: Writable<T>): Sig<T> {
     },
   }
 }
+type WritableProps<T extends {}> = {
+  [K in keyof T]: T[K] extends Writable<any> ? K : never
+}[keyof T]
+type NonWritableProps<T extends {}> = {
+  [K in keyof T]: T[K] extends Writable<any> ? never : K
+}[keyof T]
 export function parseProps<T extends {}>(
   obj: T,
 ): {
-  [K in keyof T]: T[K] extends Writable<infer R> ? R : never
+  [K in WritableProps<T>]: T[K] extends Writable<infer R> ? R : never
 } & {
-  readonly [K in keyof T]: T[K] extends Writable<any> ? never : T[K]
+  readonly [K in NonWritableProps<T>]: T[K] extends Writable<any> ? never : T[K]
 } {
   return new Proxy(obj, {
     get(target, prop) {
