@@ -71,7 +71,7 @@ export function prop<T>(initValue: T): Writable<T> {
   // TODO: Remove this as any
   return propFromFuncs(get, set) as any
 }
-let setterForLastProp: ((value: any) => void) | undefined
+// let setterForLastProp: ((value: any) => void) | undefined
 const isReadableProp = Symbol(`isReadableProp`)
 const isWritableProp = Symbol(`isWritableProp`)
 export function propFromFuncs<T, Set extends ((value: T) => any) | undefined>(
@@ -82,26 +82,20 @@ export function propFromFuncs<T, Set extends ((value: T) => any) | undefined>(
       get(): T
     }
   : Writable<T> {
-  const getValue = createMemo(get)
-  if (set === undefined) {
-    return {
-      [isReadableProp]: true,
-      get() {
-        return getValue()
-      },
-    } as any
-  } else {
-    return {
-      [isReadableProp]: true,
-      [isWritableProp]: true,
-      get() {
-        const value = getValue()
-        setterForLastProp = set
-        return value
-      },
-      set,
-    } as any
+  const result = {
+    [isReadableProp]: true,
+    get: createMemo(get),
   }
+  if (set !== undefined) {
+    ;(result as any)[isWritableProp] = true
+    ;(result as any).set = set
+    // get() {
+    // const value = getValue()
+    // setterForLastProp = set
+    // return value
+    // },
+  }
+  return result as any
 }
 export function propFromName<T extends {}, K extends keyof T>(obj: T, propName: K): Writable<T[K]> {
   return propFromFuncs(
@@ -149,11 +143,12 @@ export function parseProps<T extends {}>(
       }
     },
     set(target, prop, value) {
-      setterForLastProp = undefined
+      // setterForLastProp = undefined
       const targetProp = target[prop as keyof typeof target]
-      if (exists(setterForLastProp)) {
-        ;(setterForLastProp as any)(value)
-      } else if (isProp(targetProp)) {
+      // if (exists(setterForLastProp)) {
+      //   ;(setterForLastProp as any)(value)
+      // } else
+      if (isProp(targetProp)) {
         targetProp.set(value)
       } else {
         target[prop as keyof typeof target] = value
