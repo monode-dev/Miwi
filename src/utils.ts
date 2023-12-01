@@ -50,11 +50,16 @@ export function exec<T>(func: () => T): T {
 
 // New Reactivity
 export type Writable<T> = {
+  [isReadableProp]: true
+  [isWritableProp]: true
   get(): T
   set(value: T): void
 }
 export function isProp(x: any): x is Writable<any> {
   return (
+    // We check this one first since it is the most likely to fail.
+    x?.[isWritableProp] === true &&
+    x?.[isReadableProp] === true &&
     x?.get !== undefined &&
     typeof x.get === `function` &&
     x?.set !== undefined &&
@@ -63,9 +68,12 @@ export function isProp(x: any): x is Writable<any> {
 }
 export function prop<T>(initValue: T): Writable<T> {
   const [get, set] = createSignal(initValue)
-  return { get, set }
-  // return propFromFuncs(get, set)
+  // TODO: Remove this as any
+  return propFromFuncs(get, set) as any
 }
+let setterForLastProp: ((value: any) => void) | undefined
+const isReadableProp = Symbol(`isReadableProp`)
+const isWritableProp = Symbol(`isWritableProp`)
 export function propFromFuncs<T, Set extends ((value: T) => any) | undefined>(
   get: () => T,
   set?: Set,
@@ -77,14 +85,19 @@ export function propFromFuncs<T, Set extends ((value: T) => any) | undefined>(
   const getValue = createMemo(get)
   if (set === undefined) {
     return {
+      [isReadableProp]: true,
       get() {
         return getValue()
       },
     } as any
   } else {
     return {
+      [isReadableProp]: true,
+      [isWritableProp]: true,
       get() {
-        return getValue()
+        const value = getValue()
+        setterForLastProp = set
+        return value
       },
       set,
     } as any
@@ -136,8 +149,11 @@ export function parseProps<T extends {}>(
       }
     },
     set(target, prop, value) {
+      setterForLastProp = undefined
       const targetProp = target[prop as keyof typeof target]
-      if (isProp(targetProp)) {
+      if (exists(setterForLastProp)) {
+        ;(setterForLastProp as any)(value)
+      } else if (isProp(targetProp)) {
         targetProp.set(value)
       } else {
         target[prop as keyof typeof target] = value
