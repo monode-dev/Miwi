@@ -49,7 +49,7 @@ export function AppBar(
                 nav.openedPages.value.length > 1
               }
             >
-              <Icon onClick={nav.popPage} size={1.25} iconPath={mdiArrowLeft} />
+              <Icon onClick={nav.popPage} scale={1.25} iconPath={mdiArrowLeft} />
             </Show>
             {props.left}
           </Row>

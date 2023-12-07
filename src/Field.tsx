@@ -220,7 +220,7 @@ export function Field(
     >
       {/* Icon */}
       <Show when={exists(props.iconPath) && props.iconPath !== ``}>
-        <Icon iconPath={props.iconPath!} color={detailColor.value} size={scale.value} />
+        <Icon iconPath={props.iconPath!} color={detailColor.value} scale={scale.value} />
       </Show>
 
       <Show when={props.underlined} fallback={<_Input value={value.value} />}>
