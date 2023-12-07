@@ -12,7 +12,7 @@ function toMdiName(str: string) {
 
 export function Icon(props: {
   iconPath: string
-  color?: string
+  textColor?: string
   scale?: Size
   onClick?: () => void
 }) {
@@ -20,7 +20,7 @@ export function Icon(props: {
     <Box
       width={props.scale ?? $theme.scale}
       height={props.scale ?? $theme.scale}
-      textColor={props.color ?? `currentColor`}
+      textColor={props.textColor ?? `currentColor`}
       overflowY={$Overflow.crop}
       overflowX={$Overflow.crop}
       onClick={props.onClick}
