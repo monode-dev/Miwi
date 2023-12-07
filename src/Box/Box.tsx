@@ -40,6 +40,8 @@ export function Box(props: BoxProps) {
 
   // Compute Layout
   const { alignX, overflowX } = watchBoxLayout(parseProp, element, { hasMoreThanOneChild })
+  /** TODO: provide a second element sig for a contentWrapperElement. This will be the same as
+   * element, but can be changed by watchLayout if a content wrapper is introduced. */
 
   // Compute Size
   watchBoxSize(parseProp, element, {

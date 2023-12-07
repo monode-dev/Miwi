@@ -15,7 +15,10 @@ export type KeyboardType =
   | 'numeric'
   | 'decimal'
   | 'search'
-type FormattedResult = {
+export type FormatFieldInput = (
+  nextInput: string,
+  event: InputEvent,
+) => {
   input: string
   caret: number
 }
@@ -35,7 +38,7 @@ export function Field(
     heading?: boolean
     title?: boolean
     validateNextInput?: (nextInput: string) => boolean
-    formatInput?: (nextInput: string, event: InputEvent) => FormattedResult
+    formatInput?: FormatFieldInput
   } & BoxProps,
 ) {
   const value = props.valueSig ?? sig(``)
