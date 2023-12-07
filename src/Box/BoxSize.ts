@@ -7,14 +7,14 @@ export type SizeSty = Partial<{
   // Width
   minWidth: string | number
   width: Size
-  widthGrows: boolean
+  widthGrows: boolean | number
   widthShrinks: boolean
   asWideAsParent: boolean
   maxWidth: string | number
   // Height
   minHeight: string | number
   height: Size
-  heightGrows: boolean
+  heightGrows: boolean | number
   heightShrinks: boolean
   asTallAsParent: boolean
   maxHeight: string | number
@@ -112,7 +112,7 @@ export function watchBoxSize(
       minSize: parseProp(`minWidth`),
       size: parseProp({
         width: v => v,
-        widthGrows: () => ({ flex: 1 }),
+        widthGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
         widthShrinks: () => -1,
         asWideAsParent: () => `100%`,
       }),
@@ -162,7 +162,7 @@ export function watchBoxSize(
       minSize: parseProp(`minHeight`),
       size: parseProp({
         height: v => v,
-        heightGrows: () => ({ flex: 1 }),
+        heightGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
         heightShrinks: () => -1,
         asTallAsParent: () => `100%`,
       }),
