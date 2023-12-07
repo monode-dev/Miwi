@@ -15,6 +15,7 @@ export type KeyboardType =
   | 'numeric'
   | 'decimal'
   | 'search'
+export type FieldCapitalization = 'none' | 'sentences' | 'words' | 'characters'
 export type FormatFieldInput = (
   nextInput: string,
   event: InputEvent,
@@ -37,6 +38,7 @@ export function Field(
     keyboard?: KeyboardType
     heading?: boolean
     title?: boolean
+    capitalize?: FieldCapitalization
     validateNextInput?: (nextInput: string) => boolean
     formatInput?: FormatFieldInput
   } & BoxProps,
@@ -179,6 +181,7 @@ export function Field(
       class: 'field',
       rows: exists(lineCount) ? lineCount : undefined,
       wrap: lineCount !== 1 ? (`soft` as const) : undefined,
+      ['auto-capitalize']: props.capitalize ?? 'none',
       style: {
         border: 'none',
         'background-color': 'transparent',
