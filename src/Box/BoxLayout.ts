@@ -9,6 +9,14 @@ export type LayoutSty = Partial<
     AxisStyProps & {
       overflowX: Overflow
       overflowY: Overflow
+      overflowXWraps: boolean
+      overflowYWraps: boolean
+      overflowXScrolls: boolean
+      overflowYScrolls: boolean
+      overflowXCrops: boolean
+      overflowYCrops: boolean
+      overflowXForceStretchParent: boolean
+      overflowYForceStretchParent: boolean
     }
 >
 
@@ -333,11 +341,17 @@ export function watchBoxLayout(
     const _overflowX =
       parseProp({
         overflowX: v => v,
+        overflowXCrops: () => Overflow.crop,
+        overflowXScrolls: () => Overflow.scroll,
+        overflowXWraps: () => Overflow.wrap,
       }) ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
     overflowX.value = _overflowX
     const overflowY =
       parseProp({
         overflowY: v => v,
+        overflowYCrops: () => Overflow.crop,
+        overflowYScrolls: () => Overflow.scroll,
+        overflowYWraps: () => Overflow.wrap,
       }) ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
     /* NOTE: And-ing the axis check after the overflow check means we'll only watch row
      * when it is absolutely necessary. */
