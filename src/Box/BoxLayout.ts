@@ -247,7 +247,8 @@ export function watchBoxLayout(
   parseProp: ParseProp<LayoutSty>,
   element: Sig<HTMLElement | undefined>,
   context: {
-    hasMoreThanOneChild: Sig<boolean>
+    hasMoreThanOneChild: Sig<boolean>,
+    isScrollable: Sig<boolean>,
   },
 ) {
   // Align & Axis
@@ -353,6 +354,7 @@ export function watchBoxLayout(
         overflowYScrolls: () => Overflow.scroll,
         overflowYWraps: () => Overflow.wrap,
       }) ?? Overflow.forceStretchParent // This is because otherwise text gets cut off.
+    context.isScrollable.value = [_overflowX, overflowY].includes(Overflow.scroll)
     /* NOTE: And-ing the axis check after the overflow check means we'll only watch row
      * when it is absolutely necessary. */
     element.value.style.flexWrap =
@@ -381,6 +383,7 @@ export function watchBoxLayout(
       ? `#e3e3e3 transparent`
       : ``
   })
+  // TODO: These should really be signals so that other things can watch if they change.
   return {
     alignX,
     overflowX,

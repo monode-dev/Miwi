@@ -39,7 +39,11 @@ export function Box(props: BoxProps) {
   const { hasMoreThanOneChild, aChildsWidthGrows, aChildsHeightGrows } = _watchChildren(element)
 
   // Compute Layout
-  const { alignX, overflowX } = watchBoxLayout(parseProp, element, { hasMoreThanOneChild })
+  const isScrollable = sig(false)
+  const { alignX, overflowX } = watchBoxLayout(parseProp, element, {
+    hasMoreThanOneChild,
+    isScrollable,
+  })
   /** TODO: provide a second element sig for a contentWrapperElement. This will be the same as
    * element, but can be changed by watchLayout if a content wrapper is introduced. */
 
@@ -65,7 +69,7 @@ export function Box(props: BoxProps) {
   })
 
   // Computer Interactivity
-  watchBoxInteraction(parseProp, element)
+  watchBoxInteraction(parseProp, element, { isScrollable })
 
   // TODO: Toggle element type based on "tag" prop.
   return (

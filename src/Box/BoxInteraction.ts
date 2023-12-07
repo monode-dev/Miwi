@@ -34,6 +34,9 @@ document.body.appendChild(style)
 export function watchBoxInteraction(
   parseProp: ParseProp<InteractionSty>,
   element: Sig<HTMLElement | undefined>,
+  context: {
+    isScrollable: Sig<boolean>
+  },
 ) {
   // htmlElement.role = parseProp(`role`) ?? ``
 
@@ -42,7 +45,8 @@ export function watchBoxInteraction(
     if (!exists(element.value)) return
     const onClickListeners = parseProp(`onClick`, true).filter(exists)
     const isClickable = onClickListeners.length > 0
-    const preventClickPropagation = parseProp(`preventClickPropagation`) ?? isClickable
+    const preventClickPropagation =
+      parseProp(`preventClickPropagation`) ?? (isClickable || context.isScrollable.value)
     element.value.style.pointerEvents = preventClickPropagation ? `auto` : `none`
     element.value.onclick = preventClickPropagation
       ? (e: MouseEvent) => {
