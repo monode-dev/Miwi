@@ -110,6 +110,7 @@ export const useNav = sessionStore('navigator', () => {
       ]
     },
     popPage() {
+      if (this.openedPages.value.length <= 1) return
       _pagesInTransitions.value = [
         ..._pagesInTransitions.value,
         {
