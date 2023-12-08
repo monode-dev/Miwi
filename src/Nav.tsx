@@ -90,9 +90,9 @@ type PageTransitionRecord =
     }
 export const useNav = sessionStore('navigator', () => {
   const _pagesInTransitions = sig<PageTransitionRecord[]>([])
-
+  const openedPages = sig<PageToOpen[]>([])
   return {
-    openedPages: sig<PageToOpen[]>([]),
+    openedPages,
     _pagesInTransitions,
     pagesAreTransitioning: compute(() => _pagesInTransitions.value.length > 0),
     // TODO: Poping a page and then immediately pushing a page seems to fail
@@ -110,7 +110,7 @@ export const useNav = sessionStore('navigator', () => {
       ]
     },
     popPage() {
-      if (this.openedPages.value.length <= 1) return
+      if (openedPages.value.length <= 1) return
       _pagesInTransitions.value = [
         ..._pagesInTransitions.value,
         {
