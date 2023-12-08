@@ -1,4 +1,4 @@
-import { sig } from './utils'
+import { Sig, exec, exists, sig } from './utils'
 import { BoxProps } from './Box/Box'
 import { Icon } from './Icon'
 import { Modal } from './Modal'
@@ -9,10 +9,26 @@ import { mdiClose, mdiDelete, mdiDotsVertical } from '@mdi/js'
 export function HiddenDelete(
   props: {
     onDelete?: () => void
+    isOpen?: Sig<boolean>
   } & BoxProps,
 ) {
   const scale = props.scale ?? 1
-  const isOpen = sig(false)
+  const isOpen = exec(() => {
+    const _fallbackIsOpen = sig(false)
+    return {
+      _isSig: true as const,
+      get value() {
+        return props.isOpen?.value ?? _fallbackIsOpen.value
+      },
+      set value(v) {
+        if (exists(props.isOpen)) {
+          props.isOpen.value = v
+        } else {
+          _fallbackIsOpen.value = v
+        }
+      },
+    }
+  })
   return (
     <Modal
       openButton={

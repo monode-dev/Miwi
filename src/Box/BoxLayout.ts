@@ -247,8 +247,8 @@ export function watchBoxLayout(
   parseProp: ParseProp<LayoutSty>,
   element: Sig<HTMLElement | undefined>,
   context: {
-    hasMoreThanOneChild: Sig<boolean>,
-    isScrollable: Sig<boolean>,
+    hasMoreThanOneChild: Sig<boolean>
+    isScrollable: Sig<boolean>
   },
 ) {
   // Align & Axis
@@ -368,7 +368,7 @@ export function watchBoxLayout(
         ? `auto` // Scroll when necessary, and float above contents so we can make it invisible
         : _overflowX === Overflow.crop
         ? `hidden`
-        : `visible`
+        : `visible` // TODO: This doesn't work with text because FlexBox handles text differently.
     element.value.style.overflowY =
       overflowY === Overflow.scroll
         ? `auto` // Scroll when necessary, and float above contents so we can make it invisible
