@@ -1,7 +1,7 @@
 import { onCleanup, onMount } from 'solid-js'
 import { Column } from './Column'
 import { sig, exists, SigGet, compute } from './utils'
-import { observeElement } from './Box/BoxUtils';
+import { observeElement } from './Box/BoxUtils'
 
 const elementsBeingSorted = sig<HTMLElement[]>([])
 
@@ -194,10 +194,12 @@ export function SortableColumn(props: {
       columnElement!.removeChild(placeholderElement)
       // We have to put it pack in the original place so that solid js doesn't get confused
       columnElement!.insertBefore(sourceElement, columnElement!.children[originalIndex] ?? null)
-      props.onSort({
-        from: originalIndex,
-        to: endIndex,
-      })
+      if (endIndex !== originalIndex) {
+        props.onSort({
+          from: originalIndex,
+          to: endIndex,
+        })
+      }
       elementsBeingSorted.value = elementsBeingSorted.value.filter(
         element => element !== sourceElement,
       )
@@ -217,22 +219,26 @@ export function SortableColumn(props: {
       child.addEventListener('mousedown', watchForLongPress as any)
       child.addEventListener('touchstart', watchForLongPress as any)
     })
-    const childrenObserver = observeElement(columnElement!, {
-      childList: true,
-    }, mutations => {
-      mutations.forEach(mutation => {
-        if (mutation.type === 'childList') {
-          mutation.addedNodes.forEach(child => {
-            child.addEventListener('mousedown', watchForLongPress as any)
-            child.addEventListener('touchstart', watchForLongPress as any)
-          })
-          mutation.removedNodes.forEach(child => {
-            child.removeEventListener('mousedown', watchForLongPress as any)
-            child.removeEventListener('touchstart', watchForLongPress as any)
-          })
-        }
-      })
-    })
+    const childrenObserver = observeElement(
+      columnElement!,
+      {
+        childList: true,
+      },
+      mutations => {
+        mutations.forEach(mutation => {
+          if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach(child => {
+              child.addEventListener('mousedown', watchForLongPress as any)
+              child.addEventListener('touchstart', watchForLongPress as any)
+            })
+            mutation.removedNodes.forEach(child => {
+              child.removeEventListener('mousedown', watchForLongPress as any)
+              child.removeEventListener('touchstart', watchForLongPress as any)
+            })
+          }
+        })
+      },
+    )
     doOnCleanUp.add(() => {
       Array.from(columnElement!.children).forEach(child => {
         child.removeEventListener('mousedown', watchForLongPress as any)
