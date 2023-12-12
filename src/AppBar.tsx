@@ -47,8 +47,8 @@ export function AppBar(
             <Show
               when={
                 (props.shouldShowBackArrowWhenApplicable ?? true) &&
-                nav.openedPages.value.length > 1 //&&
-                // !exists(props.left)
+                nav.openedPages.value.length > 1 &&
+                !exists(props.left)
               }
             >
               <Icon onClick={nav.popPage} scale={1.25} iconPath={mdiArrowLeft} />
