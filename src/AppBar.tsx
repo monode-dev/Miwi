@@ -6,6 +6,7 @@ import { mdiArrowLeft } from '@mdi/js'
 import { Row } from './Row'
 import { Column } from './Column'
 import { grow } from './Box/BoxSize'
+import { exists } from './utils'
 
 export function AppBar(
   props: {
@@ -46,7 +47,8 @@ export function AppBar(
             <Show
               when={
                 (props.shouldShowBackArrowWhenApplicable ?? true) &&
-                nav.openedPages.value.length > 1
+                nav.openedPages.value.length > 1 &&
+                !exists(props.left)
               }
             >
               <Icon onClick={nav.popPage} scale={1.25} iconPath={mdiArrowLeft} />
