@@ -1,4 +1,4 @@
-import { Sig, exec, exists, sig } from './utils'
+import { Sig, doNow, exists, sig } from './utils'
 import { BoxProps } from './Box/Box'
 import { Icon } from './Icon'
 import { Modal } from './Modal'
@@ -13,7 +13,7 @@ export function HiddenDelete(
   } & BoxProps,
 ) {
   const scale = props.scale ?? 1
-  const isOpen = exec(() => {
+  const isOpen = doNow(() => {
     const _fallbackIsOpen = sig(false)
     return {
       _isSig: true as const,

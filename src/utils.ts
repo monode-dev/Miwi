@@ -44,7 +44,7 @@ export function exists<T>(x: T): x is NonNullable<T> {
   return x !== undefined && x !== null
 }
 
-export function exec<T>(func: () => T): T {
+export function doNow<T>(func: () => T): T {
   return func()
 }
 
