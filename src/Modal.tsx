@@ -95,6 +95,7 @@ export function Modal<T>(
             alignTopLeft
             preventClickPropagation
             getElement={el => (modal = el)}
+            zIndex={1000}
           >
             {props.children}
           </Box>
