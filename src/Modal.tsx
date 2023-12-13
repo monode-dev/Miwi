@@ -105,6 +105,18 @@ export function Modal<T>(
           </Show>
         </Box>
       </Show>
+      <div
+        style={{
+          position: `fixed`,
+          top: 0,
+          left: 0,
+          width: `100vh`,
+          height: `100vw`,
+        }}
+        onClick={() => {
+          console.log(`modal-div clicked!`)
+        }}
+      ></div>
     </Stack>
   )
 }
