@@ -83,22 +83,21 @@ export function Modal<T>(
             <Box height={props.openButtonHeight} />
             <Box height={0.5} />
           </Show>
-          <div style="z-index: 10000;" ref={el => (modal = el)}>
-            <Box
-              widthGrows
-              minHeight={0}
-              heightShrinks
-              maxHeight={16.65}
-              overflowY={$Overflow.scroll}
-              pad={1}
-              shadowSize={1}
-              background={$theme.colors.accent}
-              alignTopLeft
-              preventClickPropagation
-            >
-              {props.children}
-            </Box>
-          </div>
+          <Box
+            widthGrows
+            minHeight={0}
+            heightShrinks
+            maxHeight={16.65}
+            overflowY={$Overflow.scroll}
+            pad={1}
+            shadowSize={1}
+            background={$theme.colors.accent}
+            alignTopLeft
+            preventClickPropagation
+            getElement={el => (modal = el)}
+          >
+            {props.children}
+          </Box>
           <Show when={shouldOpenUpwards.value}>
             <Box height={0.5} />
             <Box height={props.openButtonHeight} />

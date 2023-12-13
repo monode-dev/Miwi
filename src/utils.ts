@@ -66,6 +66,7 @@ export function isProp(x: any): x is Writable<any> {
     typeof x.set === `function`
   )
 }
+// TODO: We need to rename this again so that props represent obj.prop and this represents var.value
 export function prop<T>(initValue: T): Writable<T> {
   const [get, set] = createSignal(initValue)
   // TODO: Remove this as any
