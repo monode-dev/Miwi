@@ -97,29 +97,38 @@ export const useNav = sessionStore('navigator', () => {
     pagesAreTransitioning: compute(() => _pagesInTransitions.value.length > 0),
     // TODO: Poping a page and then immediately pushing a page seems to fail
     pushPage<T>(newPage: PageComponent<T>, props: T) {
-      _pagesInTransitions.value = [
-        ..._pagesInTransitions.value,
+      openedPages.value = [
+        ...openedPages.value,
         {
-          page: {
-            component: newPage,
-            props,
-            transitions: newPage.transitions ?? pageTransitions.none,
-          },
-          inOrOut: `in`,
+          component: newPage,
+          props,
+          transitions: newPage.transitions ?? pageTransitions.none,
         },
       ]
-      console.log(_pagesInTransitions.value)
+      // _pagesInTransitions.value = [
+      //   ..._pagesInTransitions.value,
+      //   {
+      //     page: {
+      //       component: newPage,
+      //       props,
+      //       transitions: newPage.transitions ?? pageTransitions.none,
+      //     },
+      //     inOrOut: `in`,
+      //   },
+      // ]
+      // console.log(_pagesInTransitions.value)
     },
     popPage() {
-      if (openedPages.value.length <= 1) return
-      _pagesInTransitions.value = [
-        ..._pagesInTransitions.value,
-        {
-          page: undefined,
-          inOrOut: `out`,
-        },
-      ]
-      console.log(_pagesInTransitions.value)
+      openedPages.value = openedPages.value.slice(0, -1)
+      // if (openedPages.value.length <= 1) return
+      // _pagesInTransitions.value = [
+      //   ..._pagesInTransitions.value,
+      //   {
+      //     page: undefined,
+      //     inOrOut: `out`,
+      //   },
+      // ]
+      // console.log(_pagesInTransitions.value)
       // openedPages.value = openedPages.value.slice(0, -1)
     },
   }
@@ -151,28 +160,28 @@ function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
 export function Nav(props: { isOnlineSig: Sig<boolean> }) {
   // let pageHasAnimatedIn: boolean[] = []
   const nav = useNav()
-  let aPageTransitionIsRunning = false
-  watchDeps([nav._pagesInTransitions], async () => {
-    if (aPageTransitionIsRunning) return
-    aPageTransitionIsRunning = true
-    await pageTransitioner()
-    aPageTransitionIsRunning = false
-  })
-  async function pageTransitioner() {
-    while (nav._pagesInTransitions.value.length > 0) {
-      const transition = nav._pagesInTransitions.value[0]!
-      if (transition.inOrOut === `in`) {
-        // pageHasAnimatedIn.push(false)
-        nav.openedPages.value = [...nav.openedPages.value, transition.page]
-        // await run transition
-      } else {
-        // await run transition
-        nav.openedPages.value = nav.openedPages.value.slice(0, -1)
-        // pageHasAnimatedIn.pop()
-      }
-      nav._pagesInTransitions.value = nav._pagesInTransitions.value.slice(1)
-    }
-  }
+  // let aPageTransitionIsRunning = false
+  // watchDeps([nav._pagesInTransitions], async () => {
+  //   if (aPageTransitionIsRunning) return
+  //   aPageTransitionIsRunning = true
+  //   await pageTransitioner()
+  //   aPageTransitionIsRunning = false
+  // })
+  // async function pageTransitioner() {
+  //   while (nav._pagesInTransitions.value.length > 0) {
+  //     const transition = nav._pagesInTransitions.value[0]!
+  //     if (transition.inOrOut === `in`) {
+  //       // pageHasAnimatedIn.push(false)
+  //       nav.openedPages.value = [...nav.openedPages.value, transition.page]
+  //       // await run transition
+  //     } else {
+  //       // await run transition
+  //       nav.openedPages.value = nav.openedPages.value.slice(0, -1)
+  //       // pageHasAnimatedIn.pop()
+  //     }
+  //     nav._pagesInTransitions.value = nav._pagesInTransitions.value.slice(1)
+  //   }
+  // }
   return (
     <Box asWideAsParent asTallAsParent>
       {/* Openned Pages */}
