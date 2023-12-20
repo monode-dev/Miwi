@@ -13,6 +13,7 @@ export type InteractionSty = Partial<{
   onTouchStart: (e: TouchEvent) => void
   onTouchEnd: (e: TouchEvent) => void
   onClick: (e: MouseEvent) => void
+  onclick: (e: MouseEvent) => void
 }>
 
 const bonusTouchAreaClassName = `miwi-bonus-touch-area`
@@ -43,7 +44,10 @@ export function watchBoxInteraction(
   // Click
   watchEffect(() => {
     if (!exists(element.value)) return
-    const onClickListeners = parseProp(`onClick`, true).filter(exists)
+    const onClickListeners = [
+      ...parseProp(`onClick`, true).filter(exists),
+      ...parseProp(`onclick`, true).filter(exists),
+    ]
     const isClickable = onClickListeners.length > 0
     const preventClickPropagation =
       parseProp(`preventClickPropagation`) ?? (isClickable || context.isScrollable.value)
