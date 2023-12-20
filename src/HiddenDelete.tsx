@@ -42,7 +42,13 @@ export function HiddenDelete(
       openButtonHeight={scale}
       isOpenSig={isOpen}
     >
-      <Row scale={scale} alignCenterLeft padBetween={0.25} onClick={() => (isOpen.value = false)}>
+      <Row
+        textColor={$theme.colors.text}
+        scale={scale}
+        alignCenterLeft
+        padBetween={0.25}
+        onClick={() => (isOpen.value = false)}
+      >
         <Txt>Cancel</Txt>
         <Icon iconPath={mdiClose} />
       </Row>
