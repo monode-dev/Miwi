@@ -84,7 +84,7 @@ export function Modal<T>(
             <Box height={0.5} />
           </Show>
           <Box
-            widthGrows
+            // widthGrows
             minHeight={0}
             heightShrinks
             maxHeight={16.65}
