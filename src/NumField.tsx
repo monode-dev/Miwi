@@ -4,7 +4,7 @@ import { Field, KeyboardType } from './Field'
 
 export function NumField(
   props: {
-    valueSig?: Sig<number | null>
+    valueSig?: Sig<number | null | undefined>
     negativesAreAllowed?: boolean
     hasFocusSig?: Sig<boolean>
     hint?: string
