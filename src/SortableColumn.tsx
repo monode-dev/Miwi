@@ -95,6 +95,11 @@ export function SortableColumn(props: {
     dragElement.style.scale = '1.025'
     dragElement.appendChild(sourceElement)
     columnElement!.appendChild(dragElement)
+    const dragElRect = dragElement.getBoundingClientRect()
+    console.log(`dragElRect.left: ${dragElRect.left}`)
+    console.log(`getComputedStyle(dragElement).left: ${getComputedStyle(dragElement).left}`)
+    console.log(`dragElRect.top: ${dragElRect.top}`)
+    console.log(`getComputedStyle(dragElement).top: ${getComputedStyle(dragElement).top}`)
 
     // Initialize animation variables
     let dragAnimator: number | null = null
