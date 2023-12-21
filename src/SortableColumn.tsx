@@ -64,7 +64,7 @@ export function SortableColumn(props: {
     const originalRect = sourceElement.getBoundingClientRect()
     const sourceWidth = originalRect.width
     const sourceHeight = originalRect.height
-    const dragElementX = originalRect.left
+    const dragElementX = originalRect.left + 200
     const dragElementY = originalRect.top
 
     console.log(`originalRect.left: ${originalRect.left}`)
