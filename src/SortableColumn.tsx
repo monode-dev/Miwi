@@ -65,7 +65,7 @@ export function SortableColumn(props: {
     const sourceWidth = originalRect.width
     const sourceHeight = originalRect.height
     const dragElementX = originalRect.left + window.scrollX
-    const dragElementY = originalRect.top
+    const dragElementY = originalRect.top + window.scrollY
 
     console.log(`originalRect.left: ${originalRect.left + window.scrollX}`)
     console.log(`getComputedStyle(sourceElement).left: ${getComputedStyle(sourceElement).left}`)
@@ -83,7 +83,7 @@ export function SortableColumn(props: {
 
     // Create a floating container and attach to the body
     const dragElement = document.createElement('div')
-    dragElement.style.position = 'fixed'
+    dragElement.style.position = 'absolute' //'fixed'
     dragElement.style.top = `${dragElementY}px`
     dragElement.style.left = `${dragElementX}px`
     dragElement.style.width = `${sourceWidth}px`
