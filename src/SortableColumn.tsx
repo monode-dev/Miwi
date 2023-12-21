@@ -66,6 +66,11 @@ export function SortableColumn(props: {
     const sourceHeight = originalRect.height
     const dragElementX = originalRect.left
     const dragElementY = originalRect.top
+
+    console.log(`originalRect.left: ${originalRect.left}`)
+    console.log(`getComputedStyle(sourceElement).left: ${getComputedStyle(sourceElement).left}`)
+    console.log(`originalRect.top: ${originalRect.top}`)
+    console.log(`getComputedStyle(sourceElement).top: ${getComputedStyle(sourceElement).top}`)
     const { mousePos, stopWatchingMousePos } = watchMousePos(startMousePos)
     const originalIndex = Array.from(columnElement!.children).indexOf(sourceElement)
 

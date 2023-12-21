@@ -146,6 +146,10 @@ export function popPage() {
 
 // SECTION: UI
 const pageIdTag = `_miwi_page_`
+const pageClassTag = `miwi-nav-page`
+function getTouchId(pageId: string) {
+  return `${pageId}-touch`
+}
 function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
   return {
     background: 'transparent',
@@ -155,6 +159,47 @@ function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
     left: '0px',
     position: 'absolute',
     [`z-index`]: zIndex,
+  }
+}
+export function findPageAndDetectClicks(
+  currentElement: HTMLElement,
+  onClick: () => true | undefined,
+): () => void {
+  // Find Touch Element for current page
+  let element: HTMLElement | null = currentElement
+  while (exists(element) && !element.classList.contains(pageClassTag)) {
+    element = element.parentElement
+  }
+  if (!exists(element)) {
+    throw new Error(
+      `It looks like Miwi/Nav.tsx:getPageElement() is being used in a way we` +
+        `haven't accounted for. Encountered a "null" parent before a page element` +
+        `was found.`,
+    )
+  }
+  const touchElement = document.getElementById(getTouchId(element.id))
+  if (!exists(touchElement)) {
+    throw new Error(
+      `It looks like Miwi/Nav.tsx:getPageElement() is being used in a way we` +
+        `haven't accounted for. Found a page element but couldn't find the` +
+        `associated touch element.`,
+    )
+  }
+
+  // Listen for clicks
+  const listenForClicks = (e: Event) => {
+    if (onClick() === true) {
+      e.preventDefault()
+    }
+  }
+  touchElement.addEventListener(`click`, e => {
+    if (onClick() === true) {
+      e.preventDefault()
+    }
+  })
+  // TODO: unsubscribe all on unmount
+  return () => {
+    touchElement.removeEventListener(`click`, listenForClicks)
   }
 }
 export function Nav(props: { isOnlineSig: Sig<boolean> }) {
@@ -187,11 +232,23 @@ export function Nav(props: { isOnlineSig: Sig<boolean> }) {
       {/* Openned Pages */}
       <For each={nav.openedPages.value}>
         {(page, index) => (
-          <div id={`${pageIdTag}${index()}`} style={pageWrapperStyle(10 + index() * 10)}>
-            <_PageWrapper transitions={page.transitions}>
-              <page.component {...page.props} />
-            </_PageWrapper>
-          </div>
+          <>
+            <div
+              classList={{
+                [pageClassTag]: true,
+              }}
+              id={`${pageIdTag}${index()}`}
+              style={pageWrapperStyle(10 + index() * 10)}
+            >
+              <_PageWrapper transitions={page.transitions}>
+                <page.component {...page.props} />
+              </_PageWrapper>
+            </div>
+            <div
+              id={getTouchId(`${pageIdTag}${index()}`)}
+              style={pageWrapperStyle(15 + index() * 10)}
+            />
+          </>
         )}
       </For>
 
