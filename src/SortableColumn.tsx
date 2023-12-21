@@ -67,7 +67,7 @@ export function SortableColumn(props: {
     const dragElementX = originalRect.left + window.scrollX
     const dragElementY = originalRect.top
 
-    console.log(`originalRect.left: ${originalRect.left}`)
+    console.log(`originalRect.left: ${originalRect.left + window.scrollX}`)
     console.log(`getComputedStyle(sourceElement).left: ${getComputedStyle(sourceElement).left}`)
     console.log(`originalRect.top: ${originalRect.top}`)
     console.log(`getComputedStyle(sourceElement).top: ${getComputedStyle(sourceElement).top}`)
