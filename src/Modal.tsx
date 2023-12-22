@@ -3,6 +3,7 @@ import { Box, BoxProps } from './Box/Box'
 import { Stack } from './Stack'
 import { JSX, Show, onCleanup, onMount } from 'solid-js'
 import { Size } from './Box/BoxSize'
+import { findPageInAncestors, isActivePage } from './Nav'
 
 export function Modal<T>(
   props: {
@@ -54,6 +55,9 @@ export function Modal<T>(
     if (!_isOpen.value) return
     if (modal?.contains(e.target as any) ?? false) return
     if (openButton.contains(e.target as any)) return
+    if (!exists(modal)) return
+    const page = findPageInAncestors(modal)
+    if (exists(page) && !isActivePage(page)) return
     e.stopPropagation()
     closeDropDown()
   }
