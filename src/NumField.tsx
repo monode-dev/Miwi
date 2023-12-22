@@ -42,15 +42,17 @@ export function NumField(
   }
 
   function textToNumber(text: string): number | null {
-    const withoutCommas = text.replaceAll(',', '')
-    return withoutCommas.length > 0 ? Number(withoutCommas) : null
+    const withoutCommas = text.replaceAll(',', '').trim()
+    const paddedFront = withoutCommas.startsWith('.') ? `0${withoutCommas}` : withoutCommas
+    const padded = paddedFront.endsWith('.') ? `${paddedFront}0` : paddedFront
+    return padded.length > 0 ? Number(padded) : null
   }
 
   function validateInput(newInput: string) {
     const asNumber = textToNumber(newInput)
     if (!exists(asNumber)) return true
-    if (!props.negativesAreAllowed && asNumber! < 0) return false
-    if (Number.isNaN(asNumber!)) return false
+    if (!props.negativesAreAllowed && asNumber < 0) return false
+    if (Number.isNaN(asNumber)) return false
     return true
   }
 
