@@ -45,6 +45,7 @@ export function NumField(
     const withoutCommas = text.replaceAll(',', '').trim()
     const paddedFront = withoutCommas.startsWith('.') ? `0${withoutCommas}` : withoutCommas
     const padded = paddedFront.endsWith('.') ? `${paddedFront}0` : paddedFront
+    console.log(padded)
     return padded.length > 0 ? Number(padded) : null
   }
 
