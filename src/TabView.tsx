@@ -85,6 +85,7 @@ export function TabView(
       heightGrows
       alignTopCenter
       overflowX={$Overflow.crop}
+      overflowY={$Overflow.crop}
       overrideProps={props}
     >
       <Box widthGrows heightGrows overflowX={$Overflow.crop}>
