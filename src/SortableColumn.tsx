@@ -64,7 +64,7 @@ export function SortableColumn(props: {
     const originalRect = sourceElement.getBoundingClientRect()
     const sourceWidth = originalRect.width
     const sourceHeight = originalRect.height
-    const { top: dragElementX, left: dragElementY } = getOffset(sourceElement)
+    const { top: dragElementY, left: dragElementX } = getOffset(sourceElement)
     // const dragElementX = originalRect.left
     // const dragElementY = originalRect.top
     function getOffset(element: HTMLElement | null) {
