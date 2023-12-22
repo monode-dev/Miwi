@@ -64,10 +64,30 @@ export function SortableColumn(props: {
     const originalRect = sourceElement.getBoundingClientRect()
     const sourceWidth = originalRect.width
     const sourceHeight = originalRect.height
-    const dragElementX = originalRect.left + window.scrollX
-    const dragElementY = originalRect.top + window.scrollY
+    const { top: dragElementX, left: dragElementY } = getOffset(sourceElement)
+    // const dragElementX = originalRect.left
+    // const dragElementY = originalRect.top
+    function getOffset(element: HTMLElement | null) {
+      var offsetTop = 0
+      var offsetLeft = 0
 
-    console.log(`originalRect.left: ${originalRect.left + window.scrollX}`)
+      while (element) {
+        offsetTop += element.offsetTop
+        offsetLeft += element.offsetLeft
+
+        // Move up in the DOM tree
+        element = element.offsetParent as HTMLElement | null
+
+        // If the current offsetParent is transformed, break the loop
+        if (element && window.getComputedStyle(element).transform !== 'none') {
+          break
+        }
+      }
+
+      return { top: offsetTop, left: offsetLeft }
+    }
+
+    console.log(`originalRect.left: ${originalRect.left}`)
     console.log(`sourceElement.offsetLeft: ${sourceElement.offsetLeft}`)
     console.log(`originalRect.top: ${originalRect.top}`)
     console.log(`sourceElement.offsetTop: ${sourceElement.offsetTop}`)
@@ -83,7 +103,7 @@ export function SortableColumn(props: {
 
     // Create a floating container and attach to the body
     const dragElement = document.createElement('div')
-    dragElement.style.position = 'absolute' //'fixed'
+    dragElement.style.position = 'fixed' //'absolute'
     dragElement.style.top = `${dragElementY}px`
     dragElement.style.left = `${dragElementX}px`
     dragElement.style.width = `${sourceWidth}px`
