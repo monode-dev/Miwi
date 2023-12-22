@@ -40,10 +40,7 @@ export function Modal<T>(
   const shouldOpenUpwards = sig(false)
   function openDropDown() {
     if (_isOpen.value) return
-    if (exists(modal)) {
-      shouldOpenUpwards.value = modal.getBoundingClientRect().top > window.innerHeight * 0.6
-      console.log(shouldOpenUpwards.value)
-    }
+    shouldOpenUpwards.value = openButton.getBoundingClientRect().top > window.innerHeight * 0.6
     _isOpen.value = true
   }
   function closeDropDown() {
