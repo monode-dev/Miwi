@@ -7,6 +7,7 @@ export function NumField(
     valueSig?: Sig<number | null | undefined>
     negativesAreAllowed?: boolean
     hasFocusSig?: Sig<boolean>
+    scale?: number
     hint?: string
     hintColor?: string
     icon?: string
@@ -83,6 +84,7 @@ export function NumField(
 
   return (
     <Field
+      {...props}
       align={props.align ?? $Align.centerLeft}
       valueSig={_stringValue}
       hasFocusSig={props.hasFocusSig}
