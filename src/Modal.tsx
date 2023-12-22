@@ -42,6 +42,7 @@ export function Modal<T>(
     if (_isOpen.value) return
     if (exists(modal)) {
       shouldOpenUpwards.value = modal.getBoundingClientRect().top > window.innerHeight * 0.6
+      console.log(shouldOpenUpwards.value)
     }
     _isOpen.value = true
   }

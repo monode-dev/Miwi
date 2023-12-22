@@ -87,10 +87,6 @@ export function SortableColumn(props: {
       return { top: offsetTop, left: offsetLeft }
     }
 
-    console.log(`originalRect.left: ${originalRect.left}`)
-    console.log(`sourceElement.offsetLeft: ${sourceElement.offsetLeft}`)
-    console.log(`originalRect.top: ${originalRect.top}`)
-    console.log(`sourceElement.offsetTop: ${sourceElement.offsetTop}`)
     const { mousePos, stopWatchingMousePos } = watchMousePos(startMousePos)
     const originalIndex = Array.from(columnElement!.children).indexOf(sourceElement)
 
@@ -115,11 +111,6 @@ export function SortableColumn(props: {
     dragElement.style.scale = '1.025'
     dragElement.appendChild(sourceElement)
     columnElement!.appendChild(dragElement)
-    const dragElRect = dragElement.getBoundingClientRect()
-    console.log(`dragElRect.left: ${dragElRect.left}`)
-    console.log(`getComputedStyle(dragElement).left: ${getComputedStyle(dragElement).left}`)
-    console.log(`dragElRect.top: ${dragElRect.top}`)
-    console.log(`getComputedStyle(dragElement).top: ${getComputedStyle(dragElement).top}`)
 
     // Initialize animation variables
     let dragAnimator: number | null = null
