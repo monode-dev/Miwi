@@ -211,11 +211,11 @@ export function watchBoxSize(
     element.value.style.flex =
       context.parentAxis.value === Axis.column
         ? exists(flexHeight.value)
-          ? `${flexHeight.value}`
+          ? `${flexHeight.value} ${flexHeight.value} 0`
           : ``
         : context.parentAxis.value === Axis.row
         ? exists(flexWidth.value)
-          ? `${flexWidth.value}`
+          ? `${flexWidth.value} ${flexWidth.value} 0`
           : ``
         : ``
   })
