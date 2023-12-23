@@ -44,9 +44,12 @@ export function NumField(
 
   function textToNumber(text: string): number | null {
     const withoutCommas = text.replaceAll(',', '').trim()
-    const paddedFront = withoutCommas.startsWith('.') ? `0${withoutCommas}` : withoutCommas
-    const padded = paddedFront.endsWith('.') ? `${paddedFront}0` : paddedFront
-    console.log(padded)
+    const withoutTrailingDot = withoutCommas.endsWith('.')
+      ? withoutCommas.slice(0, -1)
+      : withoutCommas
+    const padded = withoutTrailingDot.startsWith('.')
+      ? `0${withoutTrailingDot}`
+      : withoutTrailingDot
     return padded.length > 0 ? Number(padded) : null
   }
 
@@ -59,10 +62,9 @@ export function NumField(
   }
 
   function formatFinishedInput(text: string) {
-    // Add zeros to ends
     text = text.trim()
+    text = text.endsWith('.') ? text.slice(0, -1) : text
     text = text.startsWith('.') ? `0${text}` : text
-    text = text.endsWith('.') ? text.substring(0, text.length - 1) : text
     return text
   }
 
@@ -99,6 +101,7 @@ export function NumField(
       {...props}
       onBlur={() => {
         _stringValue.value = formatFinishedInput(_stringValue.value)
+        console.log(_stringValue.value)
         props.onBlur?.()
       }}
       align={props.align ?? $Align.centerLeft}
