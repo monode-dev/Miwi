@@ -57,6 +57,9 @@ export function Field(
     } else {
       value.value = stringValue
     }
+    if (exists(inputElement)) {
+      inputElement.value = stringValue
+    }
   }
   function getTempValue() {
     return props.tempValueSig?.value ?? value.value
