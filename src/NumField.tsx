@@ -76,6 +76,11 @@ export function NumField(
         : text.replaceAll('-', '')
     }
 
+    // Add zeros to ends
+    text = text.trim()
+    text = text.startsWith('.') ? `0${text}` : text
+    text = text.endsWith('.') ? `${text}0` : text
+
     // Compare against original text to adjust selection
     const adjustSelection = ogText.length == text.length ? 0 : -1
 
