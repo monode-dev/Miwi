@@ -8,7 +8,7 @@ import { mdiClose, mdiDelete, mdiDotsVertical } from '@mdi/js'
 
 export function HiddenDelete(
   props: {
-    onDelete?: () => void
+    onDelete: () => void
     isOpen?: Sig<boolean>
   } & BoxProps,
 ) {
@@ -59,7 +59,7 @@ export function HiddenDelete(
         padBetween={0.25}
         onClick={() => {
           isOpen.value = false
-          props.onDelete?.()
+          props.onDelete()
         }}
         textColor={$theme.colors.error}
       >
