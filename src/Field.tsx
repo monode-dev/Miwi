@@ -39,6 +39,7 @@ export function Field(
     heading?: boolean
     title?: boolean
     capitalize?: FieldCapitalization
+    onBlur?: () => void
     validateNextInput?: (nextInput: string) => boolean
     formatInput?: FormatFieldInput
   } & BoxProps,
@@ -131,6 +132,7 @@ export function Field(
       setTempValue(value.value)
     }
     inputElementHasFocus.value = false
+    props.onBlur?.()
   }
   watchEffect(() => {
     if (inputElementHasFocus.value !== (inputElement === document.activeElement)) {

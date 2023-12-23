@@ -15,6 +15,7 @@ export function NumField(
     title?: boolean
     heading?: boolean
     keyboard?: KeyboardType
+    onBlur?: () => void
   } & BoxProps,
 ) {
   const keyboard = props.keyboard ?? 'decimal'
@@ -57,6 +58,14 @@ export function NumField(
     return true
   }
 
+  function formatFinishedInput(text: string) {
+    // Add zeros to ends
+    text = text.trim()
+    text = text.startsWith('.') ? `0${text}` : text
+    text = text.endsWith('.') ? `${text}0` : text
+    return text
+  }
+
   function formatInput(text: string, event: any) {
     // Track original text for comparison against formatted text
     const ogText = text
@@ -76,11 +85,6 @@ export function NumField(
         : text.replaceAll('-', '')
     }
 
-    // Add zeros to ends
-    text = text.trim()
-    text = text.startsWith('.') ? `0${text}` : text
-    text = text.endsWith('.') ? `${text}0` : text
-
     // Compare against original text to adjust selection
     const adjustSelection = ogText.length == text.length ? 0 : -1
 
@@ -93,6 +97,10 @@ export function NumField(
   return (
     <Field
       {...props}
+      onBlur={() => {
+        _stringValue.value = formatFinishedInput(_stringValue.value)
+        props.onBlur?.()
+      }}
       align={props.align ?? $Align.centerLeft}
       valueSig={_stringValue}
       hasFocusSig={props.hasFocusSig}
