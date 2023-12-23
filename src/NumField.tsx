@@ -62,7 +62,7 @@ export function NumField(
     // Add zeros to ends
     text = text.trim()
     text = text.startsWith('.') ? `0${text}` : text
-    text = text.endsWith('.') ? `${text}0` : text
+    text = text.endsWith('.') ? text.substring(0, text.length - 1) : text
     return text
   }
 
