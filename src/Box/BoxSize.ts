@@ -53,6 +53,8 @@ export function computeSizeInfo(props: {
   maxSize: number | string | undefined;
   isMainAxis: boolean;
   parentIsStack: boolean;
+  parentPaddingStart: string;
+  parentPaddingEnd: string;
   someChildGrows: SigGet<boolean>;
 }) {
   const targetSize = isShrinkSize(props.size ?? SIZE_SHRINKS)
@@ -73,7 +75,7 @@ export function computeSizeInfo(props: {
         : isFlexSize(targetSize)
           ? props.isMainAxis
             ? undefined // We'll use flex-basis instead.
-            : `100%` // No siblings, so just fill parent
+            : ifParentIsStackSubtractPadding(`100%`) // No siblings, so just fill parent
           : undefined;
 
   // TODO: If maxSize has been set, then maybe minSize should be set to 0.
@@ -92,17 +94,22 @@ export function computeSizeInfo(props: {
     ? isCssSize(props.maxSize)
       ? props.maxSize
       : props.maxSize === Infinity
-        ? undefined
+        ? ``
         : muToCss(props.maxSize)
     : isShrinkSize(targetSize)
       ? ``
-      : exactSize;
+      : exactSize ?? ``;
   return [
-    exactSize,
+    exactSize ?? ``,
     minSize,
     maxSize,
     isFlexSize(targetSize) ? targetSize.flex : undefined,
   ] as const;
+  function ifParentIsStackSubtractPadding(size: string): string {
+    if (size.trim().length === 0) return size;
+    if (!props.parentIsStack) return size;
+    return `calc(${size} - ${props.parentPaddingStart} - ${props.parentPaddingEnd})`;
+  }
 }
 
 export const widthGrowsClassName = `miwi-width-grows`;
@@ -145,40 +152,15 @@ export function watchBoxSize(
       maxSize: parseProp(`maxWidth`),
       isMainAxis: context.parentAxis.value === Axis.row,
       parentIsStack: context.parentAxis.value === Axis.stack,
+      parentPaddingStart: context.parentPaddingLeft.value,
+      parentPaddingEnd: context.parentPaddingRight.value,
       someChildGrows: context.aChildsWidthGrows,
     });
     flexWidth.value = _flexWidth;
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth));
-    element.value.style.minWidth = (() => {
-      let size = wMin;
-      // axis === Axis.stack && width === SIZE_SHRINKS
-      //   ? maxChildWidth
-      //   : wMin;
-      if (context.parentAxis.value === Axis.stack) {
-        size = `calc(${size} - ${context.parentPaddingLeft.value} - ${context.parentPaddingRight.value})`;
-      }
-      return size;
-    })();
-    element.value.style.width = (() => {
-      let size = exactWidth;
-      // axis === Axis.stack && width === SIZE_SHRINKS
-      //   ? maxChildWidth
-      //   : exactWidth;
-      if (context.parentAxis.value === Axis.stack) {
-        size = `calc(${size} - ${context.parentPaddingLeft.value} - ${context.parentPaddingRight.value})`;
-      }
-      return size ?? ``;
-    })();
-    element.value.style.maxWidth = (() => {
-      let size = wMax;
-      // axis === Axis.stack && width === SIZE_SHRINKS
-      //   ? maxChildWidth
-      //   : wMax;
-      if (context.parentAxis.value === Axis.stack) {
-        size = `calc(${size} - ${context.parentPaddingLeft.value} - ${context.parentPaddingRight.value})`;
-      }
-      return size ?? ``;
-    })();
+    element.value.style.minWidth = wMin;
+    element.value.style.width = exactWidth;
+    element.value.style.maxWidth = wMax;
   });
 
   // Height
@@ -196,31 +178,15 @@ export function watchBoxSize(
       maxSize: parseProp(`maxHeight`),
       isMainAxis: context.parentAxis.value === Axis.column,
       parentIsStack: context.parentAxis.value === Axis.stack,
+      parentPaddingStart: context.parentPaddingTop.value,
+      parentPaddingEnd: context.parentPaddingBottom.value,
       someChildGrows: context.aChildsHeightGrows,
     });
     flexHeight.value = _flexHeight;
     element.value.classList.toggle(heightGrowsClassName, exists(_flexHeight));
-    element.value.style.minHeight = (() => {
-      let size = hMin;
-      if (context.parentAxis.value === Axis.stack) {
-        size = `calc(${size} - ${context.parentPaddingTop.value} - ${context.parentPaddingBottom.value})`;
-      }
-      return size;
-    })();
-    element.value.style.height = (() => {
-      let size = exactHeight;
-      if (context.parentAxis.value === Axis.stack) {
-        size = `calc(${size} - ${context.parentPaddingTop.value} - ${context.parentPaddingBottom.value})`;
-      }
-      return size ?? ``;
-    })();
-    element.value.style.maxHeight = (() => {
-      let size = hMax;
-      if (context.parentAxis.value === Axis.stack) {
-        size = `calc(${size} - ${context.parentPaddingTop.value} - ${context.parentPaddingBottom.value})`;
-      }
-      return size ?? ``;
-    })();
+    element.value.style.minHeight = hMin;
+    element.value.style.height = exactHeight;
+    element.value.style.maxHeight = hMax;
   });
 
   // SECTION: Flex Basis
