@@ -55,22 +55,22 @@ export function computeSizeInfo(props: {
   parentIsStack: boolean;
   someChildGrows: SigGet<boolean>;
 }) {
-  const size = isShrinkSize(props.size ?? SIZE_SHRINKS)
+  const targetSize = isShrinkSize(props.size ?? SIZE_SHRINKS)
     ? props.someChildGrows.value
       ? { flex: 1 }
       : SIZE_SHRINKS
     : props.size ?? SIZE_SHRINKS;
-  const exactSize = isCssSize(size)
-    ? size
-    : isMiwiUnitSize(size)
-      ? muToCss(size) // Miwi Units
-      : isShrinkSize(size)
+  const exactSize = isCssSize(targetSize)
+    ? targetSize
+    : isMiwiUnitSize(targetSize)
+      ? muToCss(targetSize) // Miwi Units
+      : isShrinkSize(targetSize)
         ? /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
            * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
            * parent to grow to fit the child even when we didn't want it to. It seems to be working
            * now, so I'm going to try it this way for a  bit. */
           `fit-content`
-        : isFlexSize(size)
+        : isFlexSize(targetSize)
           ? props.isMainAxis
             ? undefined // We'll use flex-basis instead.
             : `100%` // No siblings, so just fill parent
@@ -78,10 +78,10 @@ export function computeSizeInfo(props: {
 
   // TODO: If maxSize has been set, then maybe minSize should be set to 0.
   const minSize = exists(props.minSize)
-    ? typeof props.minSize === `string`
+    ? isCssSize(props.minSize)
       ? props.minSize
       : muToCss(props.minSize)
-    : isShrinkSize(size)
+    : isShrinkSize(targetSize)
       ? ``
       : /** NOTE: Elements with no specified minWidth or minHeight might overflow their parent if
          * a non-immediate child is too big even if their overflow is set to "clip". If we
@@ -89,15 +89,20 @@ export function computeSizeInfo(props: {
          * behavior. */
         exactSize ?? `0px`;
   const maxSize = exists(props.maxSize)
-    ? typeof props.maxSize === `string`
+    ? isCssSize(props.maxSize)
       ? props.maxSize
       : props.maxSize === Infinity
         ? undefined
         : muToCss(props.maxSize)
-    : isShrinkSize(size)
+    : isShrinkSize(targetSize)
       ? ``
       : exactSize;
-  return [exactSize, minSize, maxSize, isFlexSize(size) ? size.flex : undefined] as const;
+  return [
+    exactSize,
+    minSize,
+    maxSize,
+    isFlexSize(targetSize) ? targetSize.flex : undefined,
+  ] as const;
 }
 
 export const widthGrowsClassName = `miwi-width-grows`;
