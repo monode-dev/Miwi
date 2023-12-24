@@ -1,77 +1,77 @@
-import { Sig, exists, sig, watchDeps } from './utils'
-import { Box, BoxProps } from './Box/Box'
-import { Stack } from './Stack'
-import { JSX, Show, onCleanup, onMount } from 'solid-js'
-import { Size } from './Box/BoxSize'
-import { findPageInAncestors, isActivePage } from './Nav'
+import { Sig, exists, sig, watchDeps } from "./utils";
+import { Box, BoxProps } from "./Box/Box";
+import { Stack } from "./Stack";
+import { JSX, Show, onCleanup, onMount } from "solid-js";
+import { SIZE_SHRINKS, Size } from "./Box/BoxSize";
+import { findPageInAncestors, isActivePage } from "./Nav";
 
 export function Modal<T>(
   props: {
-    openButton: JSX.Element
-    openButtonWidth: Size
-    openButtonHeight: Size
-    isOpenSig?: Sig<boolean>
-    modalWidth?: Size
-    pad?: number
+    openButton: JSX.Element;
+    openButtonWidth: Size;
+    openButtonHeight: Size;
+    isOpenSig?: Sig<boolean>;
+    modalWidth?: Size;
+    pad?: number;
   } & BoxProps,
 ) {
   // Modal
-  const openButton = props.openButton as HTMLElement
-  let modal: HTMLElement | undefined = undefined
+  const openButton = props.openButton as HTMLElement;
+  let modal: HTMLElement | undefined = undefined;
 
   //
-  const _isOpen = sig(props.isOpenSig?.value ?? false)
+  const _isOpen = sig(props.isOpenSig?.value ?? false);
   if (exists(props.isOpenSig)) {
     watchDeps([props.isOpenSig], () => {
-      if (_isOpen.value === props.isOpenSig!.value) return
+      if (_isOpen.value === props.isOpenSig!.value) return;
       if (props.isOpenSig!.value) {
-        openDropDown()
+        openDropDown();
       } else {
-        closeDropDown()
+        closeDropDown();
       }
-    })
+    });
     watchDeps([_isOpen], () => {
-      if (_isOpen.value === props.isOpenSig!.value) return
-      props.isOpenSig!.value = _isOpen.value
-    })
+      if (_isOpen.value === props.isOpenSig!.value) return;
+      props.isOpenSig!.value = _isOpen.value;
+    });
   }
 
   //
-  const shouldOpenUpwards = sig(false)
+  const shouldOpenUpwards = sig(false);
   function openDropDown() {
-    if (_isOpen.value) return
-    shouldOpenUpwards.value = openButton.getBoundingClientRect().top > window.innerHeight * 0.6
-    _isOpen.value = true
+    if (_isOpen.value) return;
+    shouldOpenUpwards.value = openButton.getBoundingClientRect().top > window.innerHeight * 0.6;
+    _isOpen.value = true;
   }
   function closeDropDown() {
-    if (!_isOpen.value) return
-    _isOpen.value = false
+    if (!_isOpen.value) return;
+    _isOpen.value = false;
   }
 
   // Close the dropdown when the user clicks outside of it
   function closeOnClickOutside(e: MouseEvent) {
-    if (!_isOpen.value) return
-    if (modal?.contains(e.target as any) ?? false) return
-    if (openButton.contains(e.target as any)) return
-    if (!exists(modal)) return
-    const page = findPageInAncestors(modal)
-    if (exists(page) && !isActivePage(page)) return
-    e.stopPropagation()
-    closeDropDown()
+    if (!_isOpen.value) return;
+    if (modal?.contains(e.target as any) ?? false) return;
+    if (openButton.contains(e.target as any)) return;
+    if (!exists(modal)) return;
+    const page = findPageInAncestors(modal);
+    if (exists(page) && !isActivePage(page)) return;
+    e.stopPropagation();
+    closeDropDown();
   }
 
   onMount(() => {
-    document.addEventListener(`click`, closeOnClickOutside, true)
+    document.addEventListener(`click`, closeOnClickOutside, true);
     onCleanup(() => {
-      document.removeEventListener(`click`, closeOnClickOutside)
-    })
-  })
+      document.removeEventListener(`click`, closeOnClickOutside);
+    });
+  });
 
   //
   return (
     <Stack
       pad={props.pad ?? 0}
-      width={props.openButtonWidth ?? -1}
+      width={props.openButtonWidth ?? SIZE_SHRINKS}
       height={props.openButtonHeight}
       align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}
     >
@@ -80,7 +80,11 @@ export function Modal<T>(
 
       {/* Modal */}
       <Show when={_isOpen.value}>
-        <Box width={props.modalWidth ?? -1} alignTopLeft overflowY={$Overflow.forceStretchParent}>
+        <Box
+          width={props.modalWidth ?? SIZE_SHRINKS}
+          alignTopLeft
+          overflowY={$Overflow.forceStretchParent}
+        >
           <Show when={!shouldOpenUpwards.value}>
             <Box height={props.openButtonHeight} />
             <Box height={0.5} />
@@ -108,5 +112,5 @@ export function Modal<T>(
         </Box>
       </Show>
     </Stack>
-  )
+  );
 }

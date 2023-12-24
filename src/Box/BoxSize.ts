@@ -1,6 +1,6 @@
-import { ParseProp, exists, isString, sizeToCss } from "./BoxUtils";
+import { ParseProp, exists, sizeToCss as muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
-import { Sig, SigGet, doNow, sig, watchEffect } from "src/utils";
+import { Sig, SigGet, sig, watchEffect } from "src/utils";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
 export type SizeSty = Partial<{
@@ -29,7 +29,17 @@ export type SizeSty = Partial<{
 export function grow(flex: number = 1) {
   return { flex };
 }
-
+export function isCssSize(size: any): size is string {
+  return typeof size === `string`;
+}
+export function isMiwiUnitSize(size: any): size is number {
+  return typeof size === `number`;
+}
+export type SIZE_SHRINKS = typeof SIZE_SHRINKS;
+export const SIZE_SHRINKS = Symbol(`SIZE_SHRINKS`);
+export function isShrinkSize(size: any): size is SIZE_SHRINKS {
+  return size === SIZE_SHRINKS;
+}
 export interface FlexSize {
   flex: number;
 }
@@ -37,23 +47,6 @@ export function isFlexSize(size: any): size is FlexSize {
   return exists(size?.flex);
 }
 
-// export type SizeType = (typeof SizeType)[keyof typeof SizeType];
-// export const SizeType = {
-//   css: `css`,
-//   fixedMu: `fixedMu`,
-//   shrink: `shrink`,
-//   flex: `flex`,
-// } as const;
-export type SIZE_SHRINKS = typeof SIZE_SHRINKS;
-export const SIZE_SHRINKS = Symbol(`SIZE_SHRINKS`);
-// export function getSizeType(size: Size): SizeType {
-//   if (isString(size)) return SizeType.css;
-//   if (isFlexSize(size)) return SizeType.flex;
-//   if (size === -1) return SizeType.shrink;
-//   if (typeof size === `number`) return SizeType.fixedMu;
-//   else
-//     throw new Error(`Miwi/BoxSize.ts:getSizeType() was given a size it didn't understand: ${size}`);
-// }
 export function computeSizeInfo(props: {
   minSize: number | string | undefined;
   size: Size | undefined;
@@ -62,62 +55,33 @@ export function computeSizeInfo(props: {
   parentIsStack: boolean;
   someChildGrows: SigGet<boolean>;
 }) {
-  const size =
-    (props.size ?? -1) === -1 ? (props.someChildGrows.value ? { flex: 1 } : -1) : props.size ?? -1;
-  // const sizeType = getSizeType(size);
-  const isShrink = size === -1;
-  const sizeIsFlex = isFlexSize(size);
-  const exactSize =
-    typeof size === `string`
-      ? size // CSS
-      : typeof size === `number`
-        ? sizeToCss(size) // Miwi Units
-        : size === SIZE_SHRINKS
-          ? /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
-             * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
-             * parent to grow to fit the child even when we didn't want it to. It seems to be working
-             * now, so I'm going to try it this way for a  bit. */
-            `fit-content`
-          : // Case Flex
-            props.isMainAxis
+  const size = isShrinkSize(props.size ?? SIZE_SHRINKS)
+    ? props.someChildGrows.value
+      ? { flex: 1 }
+      : SIZE_SHRINKS
+    : props.size ?? SIZE_SHRINKS;
+  const exactSize = isCssSize(size)
+    ? size
+    : isMiwiUnitSize(size)
+      ? muToCss(size) // Miwi Units
+      : isShrinkSize(size)
+        ? /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
+           * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
+           * parent to grow to fit the child even when we didn't want it to. It seems to be working
+           * now, so I'm going to try it this way for a  bit. */
+          `fit-content`
+        : isFlexSize(size)
+          ? props.isMainAxis
             ? undefined // We'll use flex-basis instead.
-            : `100%`; // No siblings, so just fill parent
-
-  // doNow(() => {
-  //   switch (sizeType) {
-  //     case SizeType.css:
-  //       return size as string;
-  //     case SizeType.fixedMu:
-  //       return sizeToCss(size as number);
-  //     case SizeType.flex:
-  //       return props.isMainAxis
-  //         ? undefined // We'll use flex-basis instead.
-  //         : `100%`;
-  //     case SizeType.shrink:
-  //       /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
-  //        * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
-  //        * parent to grow to fit the child even when we didn't want it to. It seems to be working
-  //        * now, so I'm going to try it this way for a  bit. */
-  //       return `fit-content`;
-  //   }
-  // });
-  // const exactSize =
-  //   !props.isMainAxis && sizeIsFlex
-  //     ? `100%`
-  //     : sizeType === SizeType.css
-  //       ? size
-  //       : !isShrink && !sizeIsFlex
-  //         ? sizeToCss(size)
-  //         : sizeIsFlex
-  //           ? undefined
-  //           : `fit-content`;
+            : `100%` // No siblings, so just fill parent
+          : undefined;
 
   // TODO: If maxSize has been set, then maybe minSize should be set to 0.
   const minSize = exists(props.minSize)
     ? typeof props.minSize === `string`
       ? props.minSize
-      : sizeToCss(props.minSize)
-    : isShrink
+      : muToCss(props.minSize)
+    : isShrinkSize(size)
       ? ``
       : /** NOTE: Elements with no specified minWidth or minHeight might overflow their parent if
          * a non-immediate child is too big even if their overflow is set to "clip". If we
@@ -129,11 +93,11 @@ export function computeSizeInfo(props: {
       ? props.maxSize
       : props.maxSize === Infinity
         ? undefined
-        : sizeToCss(props.maxSize)
-    : isShrink
+        : muToCss(props.maxSize)
+    : isShrinkSize(size)
       ? ``
       : exactSize;
-  return [exactSize, minSize, maxSize, sizeIsFlex ? size.flex : undefined] as const;
+  return [exactSize, minSize, maxSize, isFlexSize(size) ? size.flex : undefined] as const;
 }
 
 export const widthGrowsClassName = `miwi-width-grows`;
@@ -170,7 +134,7 @@ export function watchBoxSize(
       size: parseProp({
         width: v => v,
         widthGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
-        widthShrinks: () => -1,
+        widthShrinks: (() => SIZE_SHRINKS) as () => SIZE_SHRINKS,
         asWideAsParent: () => `100%`,
       }),
       maxSize: parseProp(`maxWidth`),
@@ -182,17 +146,17 @@ export function watchBoxSize(
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth));
     element.value.style.minWidth = (() => {
       let size = wMin;
-      // axis === Axis.stack && width === -1
+      // axis === Axis.stack && width === SIZE_SHRINKS
       //   ? maxChildWidth
       //   : wMin;
       if (context.parentAxis.value === Axis.stack) {
         size = `calc(${size} - ${context.parentPaddingLeft.value} - ${context.parentPaddingRight.value})`;
       }
-      return size ?? ``;
+      return size;
     })();
     element.value.style.width = (() => {
       let size = exactWidth;
-      // axis === Axis.stack && width === -1
+      // axis === Axis.stack && width === SIZE_SHRINKS
       //   ? maxChildWidth
       //   : exactWidth;
       if (context.parentAxis.value === Axis.stack) {
@@ -202,7 +166,7 @@ export function watchBoxSize(
     })();
     element.value.style.maxWidth = (() => {
       let size = wMax;
-      // axis === Axis.stack && width === -1
+      // axis === Axis.stack && width === SIZE_SHRINKS
       //   ? maxChildWidth
       //   : wMax;
       if (context.parentAxis.value === Axis.stack) {
@@ -221,7 +185,7 @@ export function watchBoxSize(
       size: parseProp({
         height: v => v,
         heightGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
-        heightShrinks: () => -1,
+        heightShrinks: (() => SIZE_SHRINKS) as () => SIZE_SHRINKS,
         asTallAsParent: () => `100%`,
       }),
       maxSize: parseProp(`maxHeight`),
@@ -236,7 +200,7 @@ export function watchBoxSize(
       if (context.parentAxis.value === Axis.stack) {
         size = `calc(${size} - ${context.parentPaddingTop.value} - ${context.parentPaddingBottom.value})`;
       }
-      return size ?? ``;
+      return size;
     })();
     element.value.style.height = (() => {
       let size = exactHeight;
