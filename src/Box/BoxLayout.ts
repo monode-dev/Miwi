@@ -1,5 +1,5 @@
 import { Sig, exists, sig, watchEffect } from "src/utils";
-import { ParseProp, sizeToCss } from "./BoxUtils";
+import { ParseProp, muToCss } from "./BoxUtils";
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and re-orderable lists.
 
@@ -309,13 +309,13 @@ export function watchBoxLayout(
     ];
     element.value.style.padding = padEachSide.every(x => x === 0)
       ? ``
-      : padEachSide.map(sizeToCss).join(` `);
+      : padEachSide.map(muToCss).join(` `);
     // NOTE: We want pad between to cascade, but not pad around.
     element.value.style.rowGap = (
       [Align.spaceAround, Align.spaceBetween, Align.spaceEvenly] as AlignSingleAxis[]
     ).includes(alignY.value)
       ? ``
-      : sizeToCss(
+      : muToCss(
           parseProp({
             padBetweenY: v => v,
             padBetween: v => v,
@@ -326,7 +326,7 @@ export function watchBoxLayout(
       [Align.spaceAround, Align.spaceBetween, Align.spaceEvenly] as AlignSingleAxis[]
     ).includes(alignX.value)
       ? ``
-      : sizeToCss(
+      : muToCss(
           parseProp({
             padBetweenX: v => v,
             padBetween: v => v,

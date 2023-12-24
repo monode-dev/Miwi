@@ -1,17 +1,17 @@
-import { SigGet } from './utils'
-import { pageTransitions } from './Nav'
-import { Box } from './Box/Box'
-import { Row } from './Row'
-import { Icon } from './Icon'
-import { mdiWifiOff } from '@mdi/js'
-import { sizeToCss } from './Box/BoxUtils'
+import { SigGet } from "./utils";
+import { pageTransitions } from "./Nav";
+import { Box } from "./Box/Box";
+import { Row } from "./Row";
+import { Icon } from "./Icon";
+import { mdiWifiOff } from "@mdi/js";
+import { muToCss } from "./Box/BoxUtils";
 
 export function OfflineWarning(props: { isOnlineSig: SigGet<boolean> }) {
   const offlineWarningTransitions = pageTransitions.from({
     duration: 0.15,
-    y: sizeToCss(4),
-    ease: 'power1.out',
-  })
+    y: muToCss(4),
+    ease: "power1.out",
+  });
   return (
     // <Transition
     //   appear
@@ -47,5 +47,5 @@ export function OfflineWarning(props: { isOnlineSig: SigGet<boolean> }) {
       </div>
     )
     // </Transition>
-  )
+  );
 }

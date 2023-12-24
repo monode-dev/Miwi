@@ -1,44 +1,44 @@
-import { DeepPartial } from './utils'
-import { sizeScaleCssVarName } from './theme'
-import { sizeToCss } from './Box/BoxUtils'
-import { Align, Axis, Overflow } from './Box/BoxLayout'
+import { DeepPartial } from "./utils";
+import { sizeScaleCssVarName } from "./theme";
+import { muToCss } from "./Box/BoxUtils";
+import { Align, Axis, Overflow } from "./Box/BoxLayout";
 
 // SECTION: Global variables
 declare global {
-  const $Align: typeof Align
-  const $Axis: typeof Axis
-  const $Overflow: typeof Overflow
+  const $Align: typeof Align;
+  const $Axis: typeof Axis;
+  const $Overflow: typeof Overflow;
 }
-const _window = window as any
-_window.miwi_globalVars = {}
-_window.miwi_globalVars.$Align = Align
-_window.miwi_globalVars.$Axis = Axis
-_window.miwi_globalVars.$Overflow = Overflow
-const globalScript = document.createElement(`script`)
+const _window = window as any;
+_window.miwi_globalVars = {};
+_window.miwi_globalVars.$Align = Align;
+_window.miwi_globalVars.$Axis = Axis;
+_window.miwi_globalVars.$Overflow = Overflow;
+const globalScript = document.createElement(`script`);
 globalScript.innerHTML = `
 const $Align = window.miwi_globalVars.$Align;
 const $Axis = window.miwi_globalVars.$Axis;
-const $Overflow = window.miwi_globalVars.$Overflow;`
-document.body.appendChild(globalScript)
+const $Overflow = window.miwi_globalVars.$Overflow;`;
+document.body.appendChild(globalScript);
 
 // SECTION: Theme
 declare global {
   const $theme: {
-    readonly scale: number | string
+    readonly scale: number | string;
     readonly colors: {
-      readonly primary: string
-      readonly accent: string
-      readonly pageBackground: string
-      readonly text: string
-      readonly hint: string
-      readonly lightHint: string
-      readonly warning: string
-      readonly error: string
-      readonly sameAsText: string
-    }
-  }
+      readonly primary: string;
+      readonly accent: string;
+      readonly pageBackground: string;
+      readonly text: string;
+      readonly hint: string;
+      readonly lightHint: string;
+      readonly warning: string;
+      readonly error: string;
+      readonly sameAsText: string;
+    };
+  };
 }
-const themeScriptElement = document.createElement(`script`)
+const themeScriptElement = document.createElement(`script`);
 /** TODO: Implement h1, h2, and bodyText
  * h1: {
  *   scale: `var(--miwi-h1-scale)`,
@@ -61,15 +61,15 @@ const $theme = ${JSON.stringify({
     error: `var(--miwi-color-error)`,
     sameAsText: `currentColor`,
   },
-} satisfies typeof $theme)};`
-document.body.appendChild(themeScriptElement)
-const themeStyleElement = document.createElement(`style`)
-setTheme({})
-document.body.appendChild(themeStyleElement)
+} satisfies typeof $theme)};`;
+document.body.appendChild(themeScriptElement);
+const themeStyleElement = document.createElement(`style`);
+setTheme({});
+document.body.appendChild(themeStyleElement);
 export function setTheme(props: DeepPartial<Omit<typeof $theme, `sameAsText`>>) {
   themeStyleElement.innerHTML = `
   :root {
-    ${sizeScaleCssVarName}: ${sizeToCss(props.scale ?? 1)};
+    ${sizeScaleCssVarName}: ${muToCss(props.scale ?? 1)};
     --miwi-color-primary: ${props.colors?.primary ?? `#b3dd3e`};
     --miwi-color-accent: ${props.colors?.accent ?? `#ffffffff`};
     --miwi-color-page-background: ${props.colors?.pageBackground ?? `#f9fafdff`};
@@ -78,11 +78,11 @@ export function setTheme(props: DeepPartial<Omit<typeof $theme, `sameAsText`>>) 
     --miwi-color-light-hint: ${props.colors?.lightHint ?? `lightgray`};
     --miwi-color-warning: ${props.colors?.warning ?? `#ff9800ff`};
     --miwi-color-error: ${props.colors?.error ?? `#f44336ff`};
-  }`
+  }`;
 }
 
 // Field style
-const fieldStyleElement = document.createElement(`style`)
+const fieldStyleElement = document.createElement(`style`);
 fieldStyleElement.innerHTML = `
 .field::placeholder {
   color: var(--miwi-placeholder-color);
@@ -104,39 +104,39 @@ fieldStyleElement.innerHTML = `
 
 .field::-ms-input-placeholder {
   color: var(--miwi-placeholder-color);
-}`
-document.body.appendChild(fieldStyleElement)
+}`;
+document.body.appendChild(fieldStyleElement);
 
-export * from './AppBar'
-export * from './Body'
+export * from "./AppBar";
+export * from "./Body";
 // export * from './Box/b-x'
-export * from './Box/Box'
-export * from './Box/BoxDecoration'
-export * from './Box/BoxInteraction'
-export * from './Box/BoxLayout'
-export * from './Box/BoxSize'
-export * from './Box/BoxText'
-export * from './Button'
-export * from './Card'
-export * from './CircularProgressIndicator'
-export * from './Column'
-export * from './DeleteDialog'
-export * from './Field'
-export * from './FloatSort'
-export * from './HiddenDelete'
-export * from './Icon'
-export * from './Label'
-export * from './Modal'
-export * from './Nav'
-export * from './NumField'
-export * from './OfflineWarning'
-export * from './Page'
-export * from './Row'
-export * from './Txt'
-export * from './Selector'
-export * from './Slider'
-export * from './SortableColumn'
-export * from './Stack'
-export * from './TabButtons'
-export * from './TabView'
-export * from './utils'
+export * from "./Box/Box";
+export * from "./Box/BoxDecoration";
+export * from "./Box/BoxInteraction";
+export * from "./Box/BoxLayout";
+export * from "./Box/BoxSize";
+export * from "./Box/BoxText";
+export * from "./Button";
+export * from "./Card";
+export * from "./CircularProgressIndicator";
+export * from "./Column";
+export * from "./DeleteDialog";
+export * from "./Field";
+export * from "./FloatSort";
+export * from "./HiddenDelete";
+export * from "./Icon";
+export * from "./Label";
+export * from "./Modal";
+export * from "./Nav";
+export * from "./NumField";
+export * from "./OfflineWarning";
+export * from "./Page";
+export * from "./Row";
+export * from "./Txt";
+export * from "./Selector";
+export * from "./Slider";
+export * from "./SortableColumn";
+export * from "./Stack";
+export * from "./TabButtons";
+export * from "./TabView";
+export * from "./utils";

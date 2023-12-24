@@ -1,4 +1,4 @@
-import { ParseProp, exists, sizeToCss as muToCss } from "./BoxUtils";
+import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
 import { Sig, SigGet, sig, watchEffect } from "src/utils";
 
@@ -75,7 +75,10 @@ export function computeSizeInfo(props: {
         : isFlexSize(targetSize)
           ? props.isMainAxis
             ? undefined // We'll use flex-basis instead.
-            : ifParentIsStackSubtractPadding(`100%`) // No siblings, so just fill parent
+            : // No siblings on this axis, so just fill parent
+              props.parentIsStack
+              ? `calc(100% - ${props.parentPaddingStart} - ${props.parentPaddingEnd})`
+              : `100%`
           : undefined;
 
   // TODO: If maxSize has been set, then maybe minSize should be set to 0.
@@ -105,11 +108,6 @@ export function computeSizeInfo(props: {
     maxSize,
     isFlexSize(targetSize) ? targetSize.flex : undefined,
   ] as const;
-  function ifParentIsStackSubtractPadding(size: string): string {
-    if (size.trim().length === 0) return size;
-    if (!props.parentIsStack) return size;
-    return `calc(${size} - ${props.parentPaddingStart} - ${props.parentPaddingEnd})`;
-  }
 }
 
 export const widthGrowsClassName = `miwi-width-grows`;
