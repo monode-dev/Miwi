@@ -12,7 +12,6 @@ export function Txt(
     singleLine?: boolean
   } & BoxProps,
 ) {
-  const scale = compute(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : undefined))
   const overflowX = compute(
     () => props.overflowX ?? (props.singleLine ?? false ? $Overflow.crop : $Overflow.wrap),
   )
@@ -20,44 +19,16 @@ export function Txt(
   return (
     <Box
       textColor={props.hint ? $theme.colors.hint : undefined}
-      scale={scale.value}
+      scale={props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : undefined)}
       alignTopLeft
       overflowY={$Overflow.forceStretchParent}
       overrideProps={props}
       overrideOverrides={{
         overflowX: overflowX.value,
       }}
-      isFlexDisplay={overflowX.value === $Overflow.crop ? false : undefined}
+      // isFlexDisplay={overflowX.value === $Overflow.crop ? false : undefined}
     >
       {props.children}
     </Box>
-    // <Box
-    //   height={
-    //     overflowX === $Overflow.crop ? scale.value ?? `var(${sizeScaleCssVarName})` : undefined
-    //   }
-    //   textColor={props.hint ? $theme.colors.hint : undefined}
-    //   scale={scale.value}
-    //   alignTopLeft
-    //   overflowY={$Overflow.forceStretchParent}
-    //   overrideProps={props}
-    //   overrideOverrides={{
-    //     overflowX: overflowX === $Overflow.crop ? $Overflow.forceStretchParent : overflowX,
-    //   }}
-    // >
-    //   {overflowX === $Overflow.crop ? (
-    //     <div
-    //       style="
-    //       position: absolute;
-    //       white-space: nowrap;
-    //       overflow: hidden;
-    //       text-overflow: ellipsis;
-    //       max-width: 100%;"
-    //     >
-    //       {props.children}
-    //     </div>
-    //   ) : (
-    //     props.children
-    //   )}
-    // </Box>
   )
 }

@@ -23,7 +23,7 @@ export type SizeSty = Partial<{
   /* TODO: Provide an option for aspect ratio using CSS's `aspect-ratio: 3 / 2`. Maybe
    * this can be implemented as a value for width or height. Which would define it
    * relative to the other. Maybe we can find a way to pick a reasonable size if both
-   * are set. I'm not 100 % sure yet.*/
+   * are set. I'm not 100% sure yet.*/
 }>
 
 export function grow(flex: number = 1) {
@@ -211,15 +211,5 @@ export function watchBoxSize(
           ? `${flexWidth.value * 100}%`
           : ``
         : ``
-    // element.value.style.flex =
-    //   context.parentAxis.value === Axis.column
-    //     ? exists(flexHeight.value)
-    //       ? `${flexHeight.value} ${flexHeight.value} 0`
-    //       : ``
-    //     : context.parentAxis.value === Axis.row
-    //     ? exists(flexWidth.value)
-    //       ? `${flexWidth.value} ${flexWidth.value} 0`
-    //       : ``
-    //     : ``
   })
 }
