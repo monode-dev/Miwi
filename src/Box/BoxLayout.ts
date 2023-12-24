@@ -367,13 +367,13 @@ export function watchBoxLayout(
       _overflowX === Overflow.scroll
         ? `auto` // Scroll when necessary, and float above contents so we can make it invisible
         : _overflowX === Overflow.crop
-        ? `clip` //hidden // https://www.youtube.com/watch?v=72pUm4tQesw&t=490
+        ? `clip` // We don't use "hidden" because: https://www.youtube.com/watch?v=72pUm4tQesw&t=490
         : `visible` // TODO: This doesn't work with text because FlexBox handles text differently.
     element.value.style.overflowY =
       overflowY === Overflow.scroll
         ? `auto` // Scroll when necessary, and float above contents so we can make it invisible
         : overflowY === Overflow.crop
-        ? `clip` //hidden // https://www.youtube.com/watch?v=72pUm4tQesw&t=490
+        ? `clip` // We don't use "hidden" because: https://www.youtube.com/watch?v=72pUm4tQesw&t=490
         : `visible`
     // Scroll bar should be invisible
     ;(element.value.style as any).scrollbarWidth = [_overflowX, overflowY].includes(Overflow.scroll)
