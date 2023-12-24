@@ -198,25 +198,25 @@ export function watchBoxSize(
   // SECTION: Flex Basis
   watchEffect(() => {
     if (!exists(element.value)) return //flex: 1 1 0;
-    // element.value.style.flexBasis =
-    //   context.parentAxis.value === Axis.column
-    //     ? exists(flexHeight.value)
-    //       ? `${flexHeight.value * 100}%`
-    //       : ``
-    //     : context.parentAxis.value === Axis.row
-    //     ? exists(flexWidth.value)
-    //       ? `${flexWidth.value * 100}%`
-    //       : ``
-    //     : ``
-    element.value.style.flex =
+    element.value.style.flexBasis =
       context.parentAxis.value === Axis.column
         ? exists(flexHeight.value)
-          ? `${flexHeight.value} ${flexHeight.value} 0`
+          ? `${flexHeight.value * 100}%`
           : ``
         : context.parentAxis.value === Axis.row
         ? exists(flexWidth.value)
-          ? `${flexWidth.value} ${flexWidth.value} 0`
+          ? `${flexWidth.value * 100}%`
           : ``
         : ``
+    // element.value.style.flex =
+    //   context.parentAxis.value === Axis.column
+    //     ? exists(flexHeight.value)
+    //       ? `${flexHeight.value} ${flexHeight.value} 0`
+    //       : ``
+    //     : context.parentAxis.value === Axis.row
+    //     ? exists(flexWidth.value)
+    //       ? `${flexWidth.value} ${flexWidth.value} 0`
+    //       : ``
+    //     : ``
   })
 }
