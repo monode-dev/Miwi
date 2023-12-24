@@ -2,7 +2,7 @@ import { ParseProp, exists, isString, sizeToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
 import { Sig, SigGet, doNow, sig, watchEffect } from "src/utils";
 
-export type Size = number | string | FlexSize;
+export type Size = number | string | FlexSize | SIZE_SHRINKS;
 export type SizeSty = Partial<{
   // Width
   minWidth: string | number;
@@ -37,24 +37,26 @@ export function isFlexSize(size: any): size is FlexSize {
   return exists(size?.flex);
 }
 
-export type SizeType = (typeof SizeType)[keyof typeof SizeType];
-export const SizeType = {
-  css: `css`,
-  fixedMu: `fixedMu`,
-  shrink: `shrink`,
-  flex: `flex`,
-} as const;
-export function getSizeType(size: Size): SizeType {
-  if (isString(size)) return SizeType.css;
-  if (isFlexSize(size)) return SizeType.flex;
-  if (size === -1) return SizeType.shrink;
-  if (typeof size === `number`) return SizeType.fixedMu;
-  else
-    throw new Error(`Miwi/BoxSize.ts:getSizeType() was given a size it didn't understand: ${size}`);
-}
+// export type SizeType = (typeof SizeType)[keyof typeof SizeType];
+// export const SizeType = {
+//   css: `css`,
+//   fixedMu: `fixedMu`,
+//   shrink: `shrink`,
+//   flex: `flex`,
+// } as const;
+export type SIZE_SHRINKS = typeof SIZE_SHRINKS;
+export const SIZE_SHRINKS = Symbol(`SIZE_SHRINKS`);
+// export function getSizeType(size: Size): SizeType {
+//   if (isString(size)) return SizeType.css;
+//   if (isFlexSize(size)) return SizeType.flex;
+//   if (size === -1) return SizeType.shrink;
+//   if (typeof size === `number`) return SizeType.fixedMu;
+//   else
+//     throw new Error(`Miwi/BoxSize.ts:getSizeType() was given a size it didn't understand: ${size}`);
+// }
 export function computeSizeInfo(props: {
   minSize: number | string | undefined;
-  size: number | string | FlexSize | undefined;
+  size: Size | undefined;
   maxSize: number | string | undefined;
   isMainAxis: boolean;
   parentIsStack: boolean;
@@ -62,27 +64,43 @@ export function computeSizeInfo(props: {
 }) {
   const size =
     (props.size ?? -1) === -1 ? (props.someChildGrows.value ? { flex: 1 } : -1) : props.size ?? -1;
-  const sizeType = getSizeType(size);
+  // const sizeType = getSizeType(size);
   const isShrink = size === -1;
   const sizeIsFlex = isFlexSize(size);
-  const exactSize = doNow(() => {
-    switch (sizeType) {
-      case SizeType.css:
-        return size as string;
-      case SizeType.fixedMu:
-        return sizeToCss(size as number);
-      case SizeType.flex:
-        return props.isMainAxis
-          ? undefined // We'll use flex-basis instead.
-          : `100%`;
-      case SizeType.shrink:
-        /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
-         * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
-         * parent to grow to fit the child even when we didn't want it to. It seems to be working
-         * now, so I'm going to try it this way for a  bit. */
-        return `fit-content`;
-    }
-  });
+  const exactSize =
+    typeof size === `string`
+      ? size // CSS
+      : typeof size === `number`
+        ? sizeToCss(size) // Miwi Units
+        : size === SIZE_SHRINKS
+          ? /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
+             * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
+             * parent to grow to fit the child even when we didn't want it to. It seems to be working
+             * now, so I'm going to try it this way for a  bit. */
+            `fit-content`
+          : // Case Flex
+            props.isMainAxis
+            ? undefined // We'll use flex-basis instead.
+            : `100%`; // No siblings, so just fill parent
+
+  // doNow(() => {
+  //   switch (sizeType) {
+  //     case SizeType.css:
+  //       return size as string;
+  //     case SizeType.fixedMu:
+  //       return sizeToCss(size as number);
+  //     case SizeType.flex:
+  //       return props.isMainAxis
+  //         ? undefined // We'll use flex-basis instead.
+  //         : `100%`;
+  //     case SizeType.shrink:
+  //       /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
+  //        * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
+  //        * parent to grow to fit the child even when we didn't want it to. It seems to be working
+  //        * now, so I'm going to try it this way for a  bit. */
+  //       return `fit-content`;
+  //   }
+  // });
   // const exactSize =
   //   !props.isMainAxis && sizeIsFlex
   //     ? `100%`
