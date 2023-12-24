@@ -70,7 +70,6 @@ export function computeSizeInfo(props: {
        * set min size to "0px" it should have no negative impacts, but should prevent this
        * behavior. */
       exactSize ?? `0px`
-  // TODO: If your parent's overflow is `hidden`, then max size should be `100%`
   const maxSize = exists(props.maxSize)
     ? typeof props.maxSize === `string`
       ? props.maxSize

@@ -64,6 +64,7 @@ export function SortableColumn(props: {
     const originalRect = sourceElement.getBoundingClientRect()
     const sourceWidth = originalRect.width
     const sourceHeight = originalRect.height
+    const scrollableContainer = getScrollableParent(columnElement!)
     const { top: dragElementY, left: dragElementX } = getOffset(sourceElement)
     // const dragElementX = originalRect.left
     // const dragElementY = originalRect.top
@@ -84,7 +85,10 @@ export function SortableColumn(props: {
         }
       }
 
-      return { top: offsetTop, left: offsetLeft }
+      return {
+        top: offsetTop - (scrollableContainer?.scrollTop ?? 0),
+        left: offsetLeft - (scrollableContainer?.scrollLeft ?? 0),
+      }
     }
 
     const { mousePos, stopWatchingMousePos } = watchMousePos(startMousePos)
@@ -115,7 +119,6 @@ export function SortableColumn(props: {
     // Initialize animation variables
     let dragAnimator: number | null = null
     const lastFrameTime = performance.now()
-    const scrollableContainer = getScrollableParent(columnElement!)
 
     // Set up event listeners
     requestAnimationFrame(handleDragMoveEachFrame)
@@ -132,7 +135,7 @@ export function SortableColumn(props: {
     /** TODO: On desktop browsers contents jitter on scroll up. What appears to
      * happen is that the placeholder phases out of existence for a frame
      * sometimes. It might be moving somewhere else, but the rest of the
-     * contents seem to be have like it just doesn't exist. This only happens
+     * contents seem to behave like it just doesn't exist. This only happens
      * when scrolling up fast. It doesn't seem to happen due to a swap. */
     function handleDragMoveEachFrame(frameTime: number) {
       const timeSinceLastFrame = frameTime - lastFrameTime
@@ -175,18 +178,6 @@ export function SortableColumn(props: {
       const prevCenter = getYFromChildNode(placeholderElement.previousSibling)
       const nextCenter = getYFromChildNode(placeholderElement.nextSibling)
       const dragPos = dragElement.getBoundingClientRect()
-      // console.log(
-      //   `prev: "${
-      //     (placeholderElement.previousSibling as HTMLElement)?.innerText
-      //   }", prevCenter: ${prevCenter}, dragTop: ${dragPos.top}, styleTop: ${
-      //     dragElement.style.top
-      //   }`,
-      // );
-      // console.log(
-      //   `next: "${
-      //     (placeholderElement.nextSibling as HTMLElement)?.innerText
-      //   }", dragBottom: ${dragPos.bottom}, nextCenter: ${nextCenter}`,
-      // );
       if (exists(prevCenter) && dragPos.top < prevCenter) {
         // console.log(`Swapping with prev.`);
         placeholderElement.parentNode?.insertBefore(

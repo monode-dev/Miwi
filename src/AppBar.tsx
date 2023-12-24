@@ -5,7 +5,6 @@ import { Icon } from './Icon'
 import { mdiArrowLeft } from '@mdi/js'
 import { Row } from './Row'
 import { Column } from './Column'
-import { grow } from './Box/BoxSize'
 import { exists } from './utils'
 
 export function AppBar(
@@ -57,7 +56,7 @@ export function AppBar(
           </Row>
 
           {/* Title / Center */}
-          <Row width={grow(3)} alignCenter boldText>
+          <Row widthGrows={3} alignCenter boldText>
             {props.children}
           </Row>
 
