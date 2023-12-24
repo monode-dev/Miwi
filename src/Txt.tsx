@@ -26,7 +26,7 @@ export function Txt(
       overrideOverrides={{
         overflowX: overflowX.value,
       }}
-      // isFlexDisplay={overflowX.value === $Overflow.crop ? false : undefined}
+      isFlexDisplay={overflowX.value === $Overflow.crop ? false : undefined}
     >
       {props.children}
     </Box>
