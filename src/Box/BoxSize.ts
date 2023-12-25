@@ -96,8 +96,7 @@ export function computeSizeInfo(props: {
       ? props.iAmAStack
         ? exactSize ?? ``
         : ``
-      : // ``
-        /** NOTE: Elements with no specified minWidth or minHeight might overflow their parent if
+      : /** NOTE: Elements with no specified minWidth or minHeight might overflow their parent if
          * a non-immediate child is too big even if their overflow is set to "clip". If we
          * set min size to "0px" it should have no negative impacts, but should prevent this
          * behavior. */

@@ -201,7 +201,7 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
               child,
               {
                 attributes: true,
-                attributeFilter: [`class`],
+                attributeFilter: [`class`, `style`],
               },
               () => {
                 if (!exists(element.value)) return;
