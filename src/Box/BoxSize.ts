@@ -94,8 +94,8 @@ export function computeSizeInfo(props: {
       : muToCss(props.minSize)
     : isShrinkSize(targetSize)
       ? props.iAmAStack
-        ? exactSize ?? `0px`
-        : `0px`
+        ? exactSize ?? ``
+        : ``
       : /** NOTE: Elements with no specified minWidth or minHeight might overflow their parent if
          * a non-immediate child is too big even if their overflow is set to "clip". If we
          * set min size to "0px" it should have no negative impacts, but should prevent this
