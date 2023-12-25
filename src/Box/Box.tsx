@@ -172,7 +172,8 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
   const maxChildWidthPx = sig(0);
   const maxChildHeightPx = sig(0);
   const hasMoreThanOneChild = sig(false);
-  const activeChildObservers: MutationObserver[] = [];
+  const childSizeGrowsObservers: MutationObserver[] = [];
+  const maxChildSizeObservers: MutationObserver[] = [];
   watchEffect(() => {
     if (!exists(element.value)) return;
     const childListObserver = observeElement(
@@ -190,65 +191,81 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
         if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
           hasMoreThanOneChild.value = newHasMoreThanOneChild;
         }
-        // A Child Size Grows
-        activeChildObservers.forEach(observer => observer.disconnect());
-        activeChildObservers.splice(0, activeChildObservers.length);
+
+        // Child observers
+        childSizeGrowsObservers.forEach(observer => observer.disconnect());
+        childSizeGrowsObservers.splice(0, childSizeGrowsObservers.length);
+        maxChildSizeObservers.forEach(observer => observer.disconnect());
+        maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
         childElementsArray.forEach(child => {
-          activeChildObservers.push(
-            // This technically works, but on init this checks every child exponentially. We should
-            // find a better way to do this.
-            observeElement(
-              child,
-              {
-                attributes: true,
-                attributeFilter: [`class`, `style`],
-              },
-              () => {
-                if (!exists(element.value)) return;
-                const childElementsArray = Array.from(element.value.childNodes).filter(
-                  child => child instanceof HTMLElement,
-                ) as HTMLElement[];
-                const newAChildsWidthGrows = childElementsArray.some(childElement =>
-                  childElement.classList.contains(widthGrowsClassName),
-                );
-                if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
-                  aChildsWidthGrows.value = newAChildsWidthGrows;
-                }
-                const newAChildsHeightGrows = childElementsArray.some(childElement =>
-                  childElement.classList.contains(heightGrowsClassName),
-                );
-                if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
-                  aChildsHeightGrows.value = newAChildsHeightGrows;
-                }
-                let newMaxChildWidthPx = 0;
-                childElementsArray.forEach(childElement => {
-                  newMaxChildWidthPx = Math.max(
-                    newMaxChildWidthPx,
-                    childElement.getBoundingClientRect().width,
-                  );
-                });
-                if (maxChildWidthPx.value !== newMaxChildWidthPx) {
-                  maxChildWidthPx.value = newMaxChildWidthPx;
-                }
-                let newMaxChildHeightPx = 0;
-                childElementsArray.forEach(childElement => {
-                  newMaxChildHeightPx = Math.max(
-                    newMaxChildHeightPx,
-                    childElement.getBoundingClientRect().height,
-                  );
-                });
-                if (maxChildHeightPx.value !== newMaxChildHeightPx) {
-                  maxChildHeightPx.value = newMaxChildHeightPx;
-                }
-              },
-            ),
-          );
+          // Observe Child Size Grows
+          const sizeGrosObserver = new MutationObserver(watchChildSizeGrows);
+          sizeGrosObserver.observe(child, {
+            attributes: true,
+            attributeFilter: [`class`],
+          });
+          childSizeGrowsObservers.push(sizeGrosObserver);
+          watchChildSizeGrows();
+          function watchChildSizeGrows() {
+            if (!exists(element.value)) return;
+            const childElementsArray = Array.from(element.value.childNodes).filter(
+              child => child instanceof HTMLElement,
+            ) as HTMLElement[];
+            const newAChildsWidthGrows = childElementsArray.some(childElement =>
+              childElement.classList.contains(widthGrowsClassName),
+            );
+            if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
+              aChildsWidthGrows.value = newAChildsWidthGrows;
+            }
+            const newAChildsHeightGrows = childElementsArray.some(childElement =>
+              childElement.classList.contains(heightGrowsClassName),
+            );
+            if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
+              aChildsHeightGrows.value = newAChildsHeightGrows;
+            }
+          }
+
+          // Observer Max Child Size
+          const maxSizeObserver = new MutationObserver(watchMaxChildSize);
+          maxSizeObserver.observe(child, {
+            attributes: true,
+            attributeFilter: [`style`],
+          });
+          maxChildSizeObservers.push(maxSizeObserver);
+          watchMaxChildSize();
+          function watchMaxChildSize() {
+            if (!exists(element.value)) return;
+            const childElementsArray = Array.from(element.value.childNodes).filter(
+              child => child instanceof HTMLElement,
+            ) as HTMLElement[];
+            let newMaxChildWidthPx = 0;
+            childElementsArray.forEach(childElement => {
+              newMaxChildWidthPx = Math.max(
+                newMaxChildWidthPx,
+                childElement.getBoundingClientRect().width,
+              );
+            });
+            if (maxChildWidthPx.value !== newMaxChildWidthPx) {
+              maxChildWidthPx.value = newMaxChildWidthPx;
+            }
+            let newMaxChildHeightPx = 0;
+            childElementsArray.forEach(childElement => {
+              newMaxChildHeightPx = Math.max(
+                newMaxChildHeightPx,
+                childElement.getBoundingClientRect().height,
+              );
+            });
+            if (maxChildHeightPx.value !== newMaxChildHeightPx) {
+              maxChildHeightPx.value = newMaxChildHeightPx;
+            }
+          }
         });
       },
     );
     onCleanup(() => {
       childListObserver.disconnect();
-      activeChildObservers.forEach(observer => observer.disconnect());
+      childSizeGrowsObservers.forEach(observer => observer.disconnect());
+      maxChildSizeObservers.forEach(observer => observer.disconnect());
     });
   });
   return {
