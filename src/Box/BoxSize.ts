@@ -1,6 +1,6 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
-import { Sig, SigGet, sig, watchEffect } from "src/utils";
+import { Sig, SigGet, prop, sig, watchEffect } from "src/utils";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
 export type SizeSty = Partial<{
@@ -57,11 +57,11 @@ export function computeSizeInfo(props: {
   parentPaddingEnd: string;
   someChildGrows: SigGet<boolean>;
 }) {
-  const targetSize = isShrinkSize(props.size ?? SIZE_SHRINKS)
-    ? props.someChildGrows.value
+  const sizeIgnoringChildGrowth = props.size ?? SIZE_SHRINKS;
+  const targetSize =
+    isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.value
       ? { flex: 1 }
-      : SIZE_SHRINKS
-    : props.size ?? SIZE_SHRINKS;
+      : sizeIgnoringChildGrowth;
   const exactSize = isCssSize(targetSize)
     ? targetSize
     : isMiwiUnitSize(targetSize)
