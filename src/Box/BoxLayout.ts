@@ -5,18 +5,6 @@ import { ParseProp, muToCss } from "./BoxUtils";
 
 export type LayoutSty = Partial<PadStyProps & AlignStyProps & AxisStyProps & OverflowStyProps>;
 
-// type PartSty = {
-//   width: SIZE_SHRINKS
-//   /**
-//    * @deprecated When width is shrink, this is ignored.
-//    */
-//   align: Align
-// }
-// function test(part: PartSty) {}
-// test({ width: SIZE_SHRINKS, align: `center` })
-// const myVal: PartSty = { width: SIZE_SHRINKS, align: `center` }
-// console.log(myVal)
-
 // Pad
 type _PadUnit = number | string;
 export type PadStyProps = {
