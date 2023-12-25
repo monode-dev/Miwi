@@ -3,22 +3,7 @@ import { ParseProp, muToCss } from "./BoxUtils";
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and re-orderable lists.
 
-export type LayoutSty = Partial<
-  PadStyProps &
-    AlignStyProps &
-    AxisStyProps & {
-      overflowX: Overflow;
-      overflowY: Overflow;
-      overflowXWraps: boolean;
-      overflowYWraps: boolean;
-      overflowXScrolls: boolean;
-      overflowYScrolls: boolean;
-      overflowXCrops: boolean;
-      overflowYCrops: boolean;
-      overflowXForceStretchParent: boolean;
-      overflowYForceStretchParent: boolean;
-    }
->;
+export type LayoutSty = Partial<PadStyProps & AlignStyProps & AxisStyProps & OverflowStyProps>;
 
 // type PartSty = {
 //   width: SIZE_SHRINKS
@@ -66,15 +51,27 @@ export type AxisStyProps = Partial<{
 }>;
 
 // Overflow
+export type OverflowStyProps = {
+  overflowX: Overflow;
+  overflowY: Overflow;
+  overflowXWraps: boolean;
+  overflowYWraps: boolean;
+  overflowXScrolls: boolean;
+  overflowYScrolls: boolean;
+  overflowXCrops: boolean;
+  overflowYCrops: boolean;
+  overflowXSpills: boolean;
+  overflowYSpills: boolean;
+};
 export type Overflow = (typeof Overflow)[keyof typeof Overflow];
 export const Overflow = {
-  /** TODO: A css overflow of `visible` doesn't behave like we want it to. We
+  /** This should be fixed now but: A css overflow of `visible` doesn't behave like we want it to. We
    * want it to behave like a spreadsheet, showing the overflow but not affecting
    * layout. However, a css overflow of visible instead affect the layout of
    * siblings and parents. We need to find a way to fix this. It would probabl
    * involve spawing a sub div to wrap the children in. */
   // visible: `visible`, // Maybe just call this "overflow"
-  forceStretchParent: `forceStretchParent`,
+  spill: `spill`,
   crop: `crop`, // Ellipsis should be a sub option of crop on overflowX
   wrap: `wrap`,
   scroll: `scroll`,
@@ -343,7 +340,7 @@ export function watchBoxLayout(
   });
 
   // Overflow
-  const overflowX = sig<Overflow>(Overflow.forceStretchParent);
+  const overflowX = sig<Overflow>(Overflow.spill);
   watchEffect(() => {
     if (!exists(element.value)) return;
     const _overflowX =
@@ -352,7 +349,7 @@ export function watchBoxLayout(
         overflowXCrops: () => Overflow.crop,
         overflowXScrolls: () => Overflow.scroll,
         overflowXWraps: () => Overflow.wrap,
-      }) ?? Overflow.forceStretchParent; // This is because otherwise text gets cut off.
+      }) ?? Overflow.spill; // This is because otherwise text gets cut off.
     overflowX.value = _overflowX;
     const overflowY =
       parseProp({
@@ -360,7 +357,7 @@ export function watchBoxLayout(
         overflowYCrops: () => Overflow.crop,
         overflowYScrolls: () => Overflow.scroll,
         overflowYWraps: () => Overflow.wrap,
-      }) ?? Overflow.forceStretchParent; // This is because otherwise text gets cut off.
+      }) ?? Overflow.spill; // This is because otherwise text gets cut off.
     context.isScrollable.value = [_overflowX, overflowY].includes(Overflow.scroll);
     /* NOTE: And-ing the axis check after the overflow check means we'll only watch row
      * when it is absolutely necessary. */

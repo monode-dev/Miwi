@@ -1,177 +1,177 @@
-import { Show, onCleanup, onMount } from 'solid-js'
-import { Box, BoxProps } from './Box/Box'
-import { Row } from './Row'
-import { Icon } from './Icon'
-import { compute, sig, Sig, watchDeps, watchEffect, exists } from './utils'
-import { Column } from './Column'
+import { Show, onCleanup, onMount } from "solid-js";
+import { Box, BoxProps } from "./Box/Box";
+import { Row } from "./Row";
+import { Icon } from "./Icon";
+import { compute, sig, Sig, watchDeps, watchEffect, exists } from "./utils";
+import { Column } from "./Column";
 // import { sizeToCss } from './Box/BoxUtils'
 
 export type KeyboardType =
-  | 'none'
-  | 'text'
-  | 'tel'
-  | 'url'
-  | 'email'
-  | 'numeric'
-  | 'decimal'
-  | 'search'
-export type FieldCapitalization = 'none' | 'sentences' | 'words' | 'characters'
+  | "none"
+  | "text"
+  | "tel"
+  | "url"
+  | "email"
+  | "numeric"
+  | "decimal"
+  | "search";
+export type FieldCapitalization = "none" | "sentences" | "words" | "characters";
 export type FormatFieldInput = (
   nextInput: string,
   event: InputEvent,
 ) => {
-  input: string
-  caret: number
-}
+  input: string;
+  caret: number;
+};
 export function Field(
   props: {
-    valueSig?: Sig<string>
-    tempValueSig?: Sig<string>
-    hasFocusSig?: Sig<boolean>
-    hintText?: string
-    hintColor?: string
-    lineCount?: number
-    limitLines?: boolean
-    underlined?: boolean
-    scale?: number
-    iconPath?: string
-    keyboard?: KeyboardType
-    heading?: boolean
-    title?: boolean
-    capitalize?: FieldCapitalization
-    onBlur?: () => void
-    validateNextInput?: (nextInput: string) => boolean
-    formatInput?: FormatFieldInput
+    valueSig?: Sig<string>;
+    tempValueSig?: Sig<string>;
+    hasFocusSig?: Sig<boolean>;
+    hintText?: string;
+    hintColor?: string;
+    lineCount?: number;
+    limitLines?: boolean;
+    underlined?: boolean;
+    scale?: number;
+    iconPath?: string;
+    keyboard?: KeyboardType;
+    heading?: boolean;
+    title?: boolean;
+    capitalize?: FieldCapitalization;
+    onBlur?: () => void;
+    validateNextInput?: (nextInput: string) => boolean;
+    formatInput?: FormatFieldInput;
   } & BoxProps,
 ) {
-  const value = props.valueSig ?? sig(``)
-  let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined
-  const inputElementHasFocus = props.hasFocusSig ?? sig(false)
-  const scale = compute(() => props.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : 1))
+  const value = props.valueSig ?? sig(``);
+  let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
+  const inputElementHasFocus = props.hasFocusSig ?? sig(false);
+  const scale = compute(() => props.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : 1));
 
   // Input
   function setTempValue(newValue: string | undefined | null) {
-    const stringValue = newValue ?? ``
+    const stringValue = newValue ?? ``;
     if (exists(props.tempValueSig)) {
-      props.tempValueSig.value = stringValue
+      props.tempValueSig.value = stringValue;
     } else {
-      value.value = stringValue
+      value.value = stringValue;
     }
     if (exists(inputElement)) {
-      inputElement.value = stringValue
+      inputElement.value = stringValue;
     }
   }
   function getTempValue() {
-    return props.tempValueSig?.value ?? value.value
+    return props.tempValueSig?.value ?? value.value;
   }
   watchDeps([value], () => {
     if (!inputElementHasFocus.value) {
-      console.log(`Setting temp value to ${value.value}`)
-      setTempValue(value.value)
+      console.log(`Setting temp value to ${value.value}`);
+      setTempValue(value.value);
     }
-  })
+  });
   function handleInput(uncastEvent: Event) {
-    const event = uncastEvent as InputEvent
-    let newInput = (event.target as any)?.value ?? ''
-    let position = null
+    const event = uncastEvent as InputEvent;
+    let newInput = (event.target as any)?.value ?? "";
+    let position = null;
 
     if (exists(props.formatInput)) {
-      const formattedResult = props.formatInput(newInput, event)
-      newInput = formattedResult.input
-      position = formattedResult.caret
+      const formattedResult = props.formatInput(newInput, event);
+      newInput = formattedResult.input;
+      position = formattedResult.caret;
     }
 
-    ;(event.target as any).value = newInput
+    (event.target as any).value = newInput;
 
-    setTempValue(newInput)
+    setTempValue(newInput);
 
     if (position !== null) {
-      ;(event.target as any).setSelectionRange(position, position)
+      (event.target as any).setSelectionRange(position, position);
     }
   }
   function handleKeyPress(event: KeyboardEvent) {
-    validateInput(event, event.key === `Enter` ? `\n` : event.key)
+    validateInput(event, event.key === `Enter` ? `\n` : event.key);
   }
   function handlePaste(event: ClipboardEvent) {
-    validateInput(event, event.clipboardData?.getData('text') ?? ``)
+    validateInput(event, event.clipboardData?.getData("text") ?? ``);
   }
   function validateInput(event: Event, newText: string) {
-    const nextInput = predictNextInput(newText)
+    const nextInput = predictNextInput(newText);
     if (exists(nextInput) && (props.limitLines ?? true)) {
-      if (nextInput.split('\n').length > (props.lineCount ?? 1)) {
-        event.preventDefault()
+      if (nextInput.split("\n").length > (props.lineCount ?? 1)) {
+        event.preventDefault();
       }
     }
     if (exists(nextInput) && exists(props.validateNextInput)) {
       if (!props.validateNextInput(nextInput)) {
-        event.preventDefault()
+        event.preventDefault();
       }
     }
   }
   function predictNextInput(newText: string) {
-    const input = inputElement
-    if (!exists(input)) return
+    const input = inputElement;
+    if (!exists(input)) return;
     return (
       input.value.slice(0, input.selectionStart!) + newText + input.value.slice(input.selectionEnd!)
-    )
+    );
   }
 
   // Focus
-  let valueOnFocus = value.value
+  let valueOnFocus = value.value;
   const handleFocus = () => {
     if (getTempValue() !== value.value) {
-      setTempValue(value.value)
+      setTempValue(value.value);
     }
-    valueOnFocus = value.value
-    inputElementHasFocus.value = true
-  }
+    valueOnFocus = value.value;
+    inputElementHasFocus.value = true;
+  };
 
   const handleBlur = () => {
-    const tempValueIsDifferentThanProp = getTempValue() !== value.value
-    const haveTypedSomething = getTempValue() !== valueOnFocus
+    const tempValueIsDifferentThanProp = getTempValue() !== value.value;
+    const haveTypedSomething = getTempValue() !== valueOnFocus;
     if (haveTypedSomething && tempValueIsDifferentThanProp) {
-      value.value = getTempValue()
+      value.value = getTempValue();
     } else if (!haveTypedSomething && tempValueIsDifferentThanProp) {
       // If someone else changed the value, and we didn't, then get the new value.
-      setTempValue(value.value)
+      setTempValue(value.value);
     }
-    inputElementHasFocus.value = false
-    props.onBlur?.()
-  }
+    inputElementHasFocus.value = false;
+    props.onBlur?.();
+  };
   watchEffect(() => {
     if (inputElementHasFocus.value !== (inputElement === document.activeElement)) {
       if (inputElementHasFocus.value) {
-        tryFocus()
+        tryFocus();
       } else {
-        inputElement?.blur()
+        inputElement?.blur();
       }
     }
-  })
+  });
 
-  const underlineHeight = compute(() => (props.underlined ? 0.5 * scale.value : 0))
+  const underlineHeight = compute(() => (props.underlined ? 0.5 * scale.value : 0));
 
   const detailColor = compute(() =>
     inputElementHasFocus.value
       ? $theme.colors.primary
       : value.value === `` || !exists(value.value)
-      ? $theme.colors.hint
-      : props.textColor ?? $theme.colors.text,
-  )
+        ? $theme.colors.hint
+        : props.textColor ?? $theme.colors.text,
+  );
 
   onMount(() => {
     if (inputElementHasFocus.value) {
       // Focus on next frame
-      const frameId = requestAnimationFrame(() => inputElement?.focus())
-      onCleanup(() => cancelAnimationFrame(frameId))
+      const frameId = requestAnimationFrame(() => inputElement?.focus());
+      onCleanup(() => cancelAnimationFrame(frameId));
     }
-  })
+  });
 
   function tryFocus() {
-    inputElement?.focus()
+    inputElement?.focus();
   }
 
   // TODO: Tapping on the field does not move the cursor.
-  const lineCount = props.lineCount ?? 1
+  const lineCount = props.lineCount ?? 1;
   function _Input(_inputProps: { value: string }) {
     const inputProps = {
       ref: (el: HTMLInputElement | HTMLTextAreaElement) => (inputElement = el),
@@ -184,30 +184,30 @@ export function Field(
       placeholder: props.hintText,
       onKeyPress: handleKeyPress,
       onPaste: handlePaste,
-      class: 'field',
+      class: "field",
       rows: exists(lineCount) ? lineCount : undefined,
       wrap: lineCount !== 1 ? (`soft` as const) : undefined,
-      ['auto-capitalize']: props.capitalize ?? 'none',
+      ["auto-capitalize"]: props.capitalize ?? "none",
       style: {
-        border: 'none',
-        'background-color': 'transparent',
-        outline: 'none',
-        'font-family': 'inherit',
-        'font-size': 'inherit',
-        'font-weight': 'inherit',
-        color: 'inherit',
-        padding: '0px',
-        margin: '0px',
-        width: '100%',
-        overflow: 'visible',
-        resize: 'none' as const,
+        border: "none",
+        "background-color": "transparent",
+        outline: "none",
+        "font-family": "inherit",
+        "font-size": "inherit",
+        "font-weight": "inherit",
+        color: "inherit",
+        padding: "0px",
+        margin: "0px",
+        width: "100%",
+        overflow: "visible",
+        resize: "none" as const,
         [`overflow-y`]: `visible` as const,
         // [`line-height`]: sizeToCss(scale.value),
         [`caret-color`]: $theme.colors.primary,
-        '--miwi-placeholder-color': props.hintColor ?? $theme.colors.hint,
+        "--miwi-placeholder-color": props.hintColor ?? $theme.colors.hint,
       },
-    }
-    return lineCount > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />
+    };
+    return lineCount > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
   }
   return (
     <Row
@@ -217,7 +217,7 @@ export function Field(
       textColor={$theme.colors.text}
       padBetweenX={0.25}
       padBetweenY={0}
-      overflowY={$Overflow.forceStretchParent}
+      overflowY={$Overflow.spill}
       alignTopLeft
       overrideProps={props}
       overrideOverrides={{
@@ -252,5 +252,5 @@ export function Field(
         </Column>
       </Show>
     </Row>
-  )
+  );
 }

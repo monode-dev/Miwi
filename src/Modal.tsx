@@ -80,11 +80,7 @@ export function Modal<T>(
 
       {/* Modal */}
       <Show when={_isOpen.value}>
-        <Box
-          width={props.modalWidth ?? SIZE_SHRINKS}
-          alignTopLeft
-          overflowY={$Overflow.forceStretchParent}
-        >
+        <Box width={props.modalWidth ?? SIZE_SHRINKS} alignTopLeft overflowYSpills>
           <Show when={!shouldOpenUpwards.value}>
             <Box height={props.openButtonHeight} />
             <Box height={0.5} />
@@ -94,7 +90,7 @@ export function Modal<T>(
             minHeight={0}
             heightShrinks
             maxHeight={16.65}
-            overflowY={$Overflow.scroll}
+            overflowYScrolls
             pad={1}
             shadowSize={1}
             background={$theme.colors.accent}

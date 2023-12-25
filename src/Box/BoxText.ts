@@ -104,8 +104,7 @@ export function watchBoxText(
     if (!exists(element.value)) return;
     // whiteSpace cascades, so we need to explicity set it.
     element.value.style.whiteSpace =
-      context.overflowX.value === Overflow.crop ||
-      context.overflowX.value === Overflow.forceStretchParent
+      context.overflowX.value === Overflow.crop || context.overflowX.value === Overflow.spill
         ? `nowrap`
         : `pre-line`;
     element.value.style.textOverflow = context.overflowX.value === Overflow.crop ? `ellipsis` : ``;
