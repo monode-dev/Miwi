@@ -13,6 +13,7 @@ export type DecorationSty = Partial<{
   background: string;
   shadowSize: number;
   shadowDirection: ShadowDirection;
+  cssStyle: Partial<CSSStyleDeclaration>;
   zIndex: number;
 }>;
 
@@ -123,5 +124,16 @@ export function watchBoxDecoration(
   watchEffect(() => {
     if (!exists(element.value)) return;
     element.value.style.zIndex = parseProp({ zIndex: v => v })?.toString() ?? ``;
+  });
+
+  // CSS Style
+  watchEffect(() => {
+    if (!exists(element.value)) return;
+    const style = parseProp(`cssStyle`);
+    if (exists(style)) {
+      for (const key of Object.keys(style)) {
+        (element.value.style as any)[key] = style[key as any];
+      }
+    }
   });
 }
