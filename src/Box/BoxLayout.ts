@@ -387,5 +387,6 @@ export function watchBoxLayout(
   return {
     alignX,
     overflowX,
+    thisAxis: axis,
   };
 }

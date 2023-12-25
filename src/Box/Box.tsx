@@ -46,7 +46,7 @@ export function Box(props: BoxProps) {
 
   // Compute Layout
   const isScrollable = sig(false);
-  const { alignX, overflowX } = watchBoxLayout(parseProp, element, {
+  const { alignX, overflowX, thisAxis } = watchBoxLayout(parseProp, element, {
     hasMoreThanOneChild,
     isScrollable,
   });
@@ -55,6 +55,7 @@ export function Box(props: BoxProps) {
 
   // Compute Size
   watchBoxSize(parseProp, element, {
+    thisAxis,
     parentAxis,
     parentPaddingLeft,
     parentPaddingRight,

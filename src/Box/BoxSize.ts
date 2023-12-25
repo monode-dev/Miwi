@@ -1,6 +1,6 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
-import { Sig, SigGet, sig, watchEffect } from "src/utils";
+import { Sig, sig, watchEffect } from "src/utils";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
 export type SizeSty = Partial<{
@@ -53,6 +53,7 @@ export function computeSizeInfo(props: {
   maxSize: number | string | undefined;
   isMainAxis: boolean;
   parentIsStack: boolean;
+  thisIsStack: boolean;
   parentPaddingStart: string;
   parentPaddingEnd: string;
   maxChildSizePx: number;
@@ -68,7 +69,7 @@ export function computeSizeInfo(props: {
     : isMiwiUnitSize(targetSize)
       ? muToCss(targetSize) // Miwi Units
       : isShrinkSize(targetSize)
-        ? props.parentIsStack
+        ? props.thisIsStack
           ? `${props.maxChildSizePx}px` // TODO: Add padding
           : /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
              * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
@@ -126,6 +127,7 @@ export function watchBoxSize(
     maxChildWidthPx: Sig<number>;
     maxChildHeightPx: Sig<number>;
     parentAxis: Sig<Axis>;
+    thisAxis: Sig<Axis>;
     parentPaddingLeft: Sig<string>;
     parentPaddingTop: Sig<string>;
     parentPaddingRight: Sig<string>;
@@ -154,6 +156,7 @@ export function watchBoxSize(
       }),
       maxSize: parseProp(`maxWidth`),
       isMainAxis: context.parentAxis.value === Axis.row,
+      thisIsStack: context.thisAxis.value === Axis.stack,
       maxChildSizePx: context.maxChildWidthPx.value,
       parentIsStack: context.parentAxis.value === Axis.stack,
       parentPaddingStart: context.parentPaddingLeft.value,
@@ -181,6 +184,7 @@ export function watchBoxSize(
       }),
       maxSize: parseProp(`maxHeight`),
       isMainAxis: context.parentAxis.value === Axis.column,
+      thisIsStack: context.thisAxis.value === Axis.stack,
       maxChildSizePx: context.maxChildHeightPx.value,
       parentIsStack: context.parentAxis.value === Axis.stack,
       parentPaddingStart: context.parentPaddingTop.value,
