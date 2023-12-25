@@ -46,16 +46,24 @@ export function Box(props: BoxProps) {
 
   // Compute Layout
   const isScrollable = sig(false);
-  const { alignX, overflowX, thisAxis } = watchBoxLayout(parseProp, element, {
-    hasMoreThanOneChild,
-    isScrollable,
-  });
+  const { alignX, overflowX, axis, padTop, padRight, padLeft, padBottom } = watchBoxLayout(
+    parseProp,
+    element,
+    {
+      hasMoreThanOneChild,
+      isScrollable,
+    },
+  );
   /** TODO: provide a second element sig for a contentWrapperElement. This will be the same as
    * element, but can be changed by watchLayout if a content wrapper is introduced. */
 
   // Compute Size
   watchBoxSize(parseProp, element, {
-    thisAxis,
+    myAxis: axis,
+    padTop,
+    padRight,
+    padLeft,
+    padBottom,
     parentAxis,
     parentPaddingLeft,
     parentPaddingRight,

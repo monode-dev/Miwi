@@ -53,9 +53,11 @@ export function computeSizeInfo(props: {
   maxSize: number | string | undefined;
   isMainAxis: boolean;
   parentIsStack: boolean;
-  thisIsStack: boolean;
+  iAmAStack: boolean;
   parentPaddingStart: string;
   parentPaddingEnd: string;
+  myPaddingStart: string;
+  myPaddingEnd: string;
   maxChildSizePx: number;
   someChildGrows: boolean;
 }) {
@@ -69,8 +71,8 @@ export function computeSizeInfo(props: {
     : isMiwiUnitSize(targetSize)
       ? muToCss(targetSize) // Miwi Units
       : isShrinkSize(targetSize)
-        ? props.thisIsStack
-          ? `${props.maxChildSizePx}px` // TODO: Add padding
+        ? props.iAmAStack
+          ? `calc(${props.maxChildSizePx}px + ${props.myPaddingStart} + ${props.myPaddingEnd})`
           : /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
              * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
              * parent to grow to fit the child even when we didn't want it to. It seems to be working
@@ -127,7 +129,11 @@ export function watchBoxSize(
     maxChildWidthPx: Sig<number>;
     maxChildHeightPx: Sig<number>;
     parentAxis: Sig<Axis>;
-    thisAxis: Sig<Axis>;
+    myAxis: Sig<Axis>;
+    padTop: Sig<string>;
+    padRight: Sig<string>;
+    padBottom: Sig<string>;
+    padLeft: Sig<string>;
     parentPaddingLeft: Sig<string>;
     parentPaddingTop: Sig<string>;
     parentPaddingRight: Sig<string>;
@@ -156,7 +162,9 @@ export function watchBoxSize(
       }),
       maxSize: parseProp(`maxWidth`),
       isMainAxis: context.parentAxis.value === Axis.row,
-      thisIsStack: context.thisAxis.value === Axis.stack,
+      iAmAStack: context.myAxis.value === Axis.stack,
+      myPaddingStart: context.padLeft.value,
+      myPaddingEnd: context.padRight.value,
       maxChildSizePx: context.maxChildWidthPx.value,
       parentIsStack: context.parentAxis.value === Axis.stack,
       parentPaddingStart: context.parentPaddingLeft.value,
@@ -184,7 +192,9 @@ export function watchBoxSize(
       }),
       maxSize: parseProp(`maxHeight`),
       isMainAxis: context.parentAxis.value === Axis.column,
-      thisIsStack: context.thisAxis.value === Axis.stack,
+      iAmAStack: context.myAxis.value === Axis.stack,
+      myPaddingStart: context.padTop.value,
+      myPaddingEnd: context.padBottom.value,
       maxChildSizePx: context.maxChildHeightPx.value,
       parentIsStack: context.parentAxis.value === Axis.stack,
       parentPaddingStart: context.parentPaddingTop.value,

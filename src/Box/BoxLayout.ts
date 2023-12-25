@@ -255,6 +255,10 @@ export function watchBoxLayout(
   const alignX = sig<AlignSingleAxis>(_FlexAlign.center);
   const alignY = sig<AlignSingleAxis>(_FlexAlign.center);
   const axis = sig<Axis>(Axis.column);
+  const padTop = sig<string>(`0px`);
+  const padRight = sig<string>(`0px`);
+  const padBottom = sig<string>(`0px`);
+  const padLeft = sig<string>(`0px`);
   watchEffect(() => {
     if (!exists(element.value)) return;
     const { alignX: _alignX, alignY: _alignY } = parseAlignProps(
@@ -307,9 +311,12 @@ export function watchBoxLayout(
         pad: v => v,
       }) ?? 0,
     ];
-    element.value.style.padding = padEachSide.every(x => x === 0)
-      ? ``
-      : padEachSide.map(muToCss).join(` `);
+    const padEachSideAsMu = padEachSide.map(muToCss);
+    padTop.value = padEachSideAsMu[0]!;
+    padRight.value = padEachSideAsMu[1]!;
+    padBottom.value = padEachSideAsMu[2]!;
+    padLeft.value = padEachSideAsMu[3]!;
+    element.value.style.padding = padEachSide.every(x => x === 0) ? `` : padEachSideAsMu.join(` `);
     // NOTE: We want pad between to cascade, but not pad around.
     element.value.style.rowGap = (
       [Align.spaceAround, Align.spaceBetween, Align.spaceEvenly] as AlignSingleAxis[]
@@ -387,6 +394,10 @@ export function watchBoxLayout(
   return {
     alignX,
     overflowX,
-    thisAxis: axis,
+    axis,
+    padTop,
+    padRight,
+    padBottom,
+    padLeft,
   };
 }
