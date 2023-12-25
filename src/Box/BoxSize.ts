@@ -1,6 +1,6 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
-import { Sig, SigGet, prop, sig, watchEffect } from "src/utils";
+import { Sig, SigGet, sig, watchEffect } from "src/utils";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
 export type SizeSty = Partial<{
@@ -56,11 +56,11 @@ export function computeSizeInfo(props: {
   parentPaddingStart: string;
   parentPaddingEnd: string;
   maxChildSizePx: number;
-  someChildGrows: SigGet<boolean>;
+  someChildGrows: boolean;
 }) {
   const sizeIgnoringChildGrowth = props.size ?? SIZE_SHRINKS;
   const targetSize =
-    isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.value
+    isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows
       ? { flex: 1 }
       : sizeIgnoringChildGrowth;
   const exactSize = isCssSize(targetSize)
@@ -69,7 +69,7 @@ export function computeSizeInfo(props: {
       ? muToCss(targetSize) // Miwi Units
       : isShrinkSize(targetSize)
         ? props.parentIsStack
-          ? `${props.maxChildSizePx}px`
+          ? `${props.maxChildSizePx}px` // TODO: Add padding
           : /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
              * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
              * parent to grow to fit the child even when we didn't want it to. It seems to be working
@@ -158,7 +158,7 @@ export function watchBoxSize(
       parentIsStack: context.parentAxis.value === Axis.stack,
       parentPaddingStart: context.parentPaddingLeft.value,
       parentPaddingEnd: context.parentPaddingRight.value,
-      someChildGrows: context.aChildsWidthGrows,
+      someChildGrows: context.aChildsWidthGrows.value,
     });
     flexWidth.value = _flexWidth;
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth));
@@ -185,7 +185,7 @@ export function watchBoxSize(
       parentIsStack: context.parentAxis.value === Axis.stack,
       parentPaddingStart: context.parentPaddingTop.value,
       parentPaddingEnd: context.parentPaddingBottom.value,
-      someChildGrows: context.aChildsHeightGrows,
+      someChildGrows: context.aChildsHeightGrows.value,
     });
     flexHeight.value = _flexHeight;
     element.value.classList.toggle(heightGrowsClassName, exists(_flexHeight));

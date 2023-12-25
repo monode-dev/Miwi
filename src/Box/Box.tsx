@@ -211,19 +211,23 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
                 if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
                   aChildsHeightGrows.value = newAChildsHeightGrows;
                 }
-                const newMaxChildWidthPx = Math.max(
-                  ...childElementsArray.map(
-                    childElement => childElement.getBoundingClientRect().width,
-                  ),
-                );
+                let newMaxChildWidthPx = 0;
+                childElementsArray.forEach(childElement => {
+                  newMaxChildWidthPx = Math.max(
+                    newMaxChildWidthPx,
+                    childElement.getBoundingClientRect().width,
+                  );
+                });
                 if (maxChildWidthPx.value !== newMaxChildWidthPx) {
                   maxChildWidthPx.value = newMaxChildWidthPx;
                 }
-                const newMaxChildHeightPx = Math.max(
-                  ...childElementsArray.map(
-                    childElement => childElement.getBoundingClientRect().height,
-                  ),
-                );
+                let newMaxChildHeightPx = 0;
+                childElementsArray.forEach(childElement => {
+                  newMaxChildHeightPx = Math.max(
+                    newMaxChildHeightPx,
+                    childElement.getBoundingClientRect().height,
+                  );
+                });
                 if (maxChildHeightPx.value !== newMaxChildHeightPx) {
                   maxChildHeightPx.value = newMaxChildHeightPx;
                 }
