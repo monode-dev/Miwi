@@ -38,7 +38,7 @@ export function isMiwiUnitSize(size: any): size is number {
 export type SIZE_SHRINKS = typeof SIZE_SHRINKS;
 export const SIZE_SHRINKS = { __SIZE_SHRINKS__: true } as const;
 export function isShrinkSize(size: any): size is SIZE_SHRINKS {
-  return size === SIZE_SHRINKS || ("__SIZE_SHRINKS__" in size && size.__SIZE_SHRINKS__ === true);
+  return size === SIZE_SHRINKS || size?.__SIZE_SHRINKS__ === true;
 }
 export interface FlexSize {
   flex: number;
