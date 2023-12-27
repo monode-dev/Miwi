@@ -63,10 +63,16 @@ export function computeSizeInfo(props: {
   myPaddingEnd: string;
   maxChildSizePx: SigGet<number>;
   someChildGrows: SigGet<boolean>;
+  shouldLog?: boolean;
 }) {
   const sizeIgnoringChildGrowth = props.size ?? SIZE_SHRINKS;
   props.shouldWatchAChildsSizeGrows.value = isShrinkSize(sizeIgnoringChildGrowth);
   props.shouldWatchMaxChildSize.value = props.iAmAStack && isShrinkSize(sizeIgnoringChildGrowth);
+  if (props.shouldLog) {
+    untrack(() =>
+      console.log(`shouldWatchAChildsSizeGrows`, props.shouldWatchAChildsSizeGrows.value),
+    );
+  }
   const targetSize =
     isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.value
       ? { flex: 1 }
@@ -211,6 +217,7 @@ export function watchBoxSize(
       parentPaddingStart: context.parentPaddingLeft.value,
       parentPaddingEnd: context.parentPaddingRight.value,
       someChildGrows: context.aChildsWidthGrows,
+      shouldLog: context.shouldLog,
     });
     flexWidth.value = _flexWidth;
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth));
