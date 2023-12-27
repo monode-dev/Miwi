@@ -1,4 +1,4 @@
-import { type JSX, type ParentProps, onCleanup } from "solid-js";
+import { type JSX, type ParentProps, onCleanup, createEffect, on } from "solid-js";
 import { Sig, exists, sig, watchDeps, watchEffect } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
 import {
@@ -197,100 +197,106 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
   const childSizeGrowsObservers: MutationObserver[] = [];
   const maxChildSizeObservers: MutationObserver[] = [];
   // watchDeps([element], () => {
-  watchEffect(() => {
-    if (!exists(element.value)) return;
-    const childListObserver = observeElement(
-      element.value,
-      {
-        childList: true,
-      },
+  // watchEffect(() => {
+  createEffect(
+    on(
+      () => element.value,
       () => {
         if (!exists(element.value)) return;
-        const childElementsArray = Array.from(element.value.childNodes).filter(
-          child => child instanceof HTMLElement,
-        ) as HTMLElement[];
-        // Has More Than One Child
-        const newHasMoreThanOneChild = childElementsArray.length > 1;
-        if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
-          hasMoreThanOneChild.value = newHasMoreThanOneChild;
-        }
-
-        // Child observers
-        childSizeGrowsObservers.forEach(observer => observer.disconnect());
-        childSizeGrowsObservers.splice(0, childSizeGrowsObservers.length);
-        maxChildSizeObservers.forEach(observer => observer.disconnect());
-        maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
-        childElementsArray.forEach(child => {
-          // Observe Child Size Grows
-          const sizeGrosObserver = new MutationObserver(watchChildSizeGrows);
-          sizeGrosObserver.observe(child, {
-            attributes: true,
-            attributeFilter: [`class`],
-          });
-          childSizeGrowsObservers.push(sizeGrosObserver);
-          watchChildSizeGrows();
-          function watchChildSizeGrows() {
+        const childListObserver = observeElement(
+          element.value,
+          {
+            childList: true,
+          },
+          () => {
             if (!exists(element.value)) return;
             const childElementsArray = Array.from(element.value.childNodes).filter(
               child => child instanceof HTMLElement,
             ) as HTMLElement[];
-            const newAChildsWidthGrows = childElementsArray.some(childElement =>
-              childElement.classList.contains(widthGrowsClassName),
-            );
-            if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
-              aChildsWidthGrows.value = newAChildsWidthGrows;
+            // Has More Than One Child
+            const newHasMoreThanOneChild = childElementsArray.length > 1;
+            if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
+              hasMoreThanOneChild.value = newHasMoreThanOneChild;
             }
-            const newAChildsHeightGrows = childElementsArray.some(childElement =>
-              childElement.classList.contains(heightGrowsClassName),
-            );
-            if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
-              aChildsHeightGrows.value = newAChildsHeightGrows;
-            }
-          }
 
-          // Observer Max Child Size
-          const maxSizeObserver = new MutationObserver(watchMaxChildSize);
-          maxSizeObserver.observe(child, {
-            attributes: true,
-            attributeFilter: [`style`],
-          });
-          maxChildSizeObservers.push(maxSizeObserver);
-          watchMaxChildSize();
-          function watchMaxChildSize() {
-            if (!exists(element.value)) return;
-            const childElementsArray = Array.from(element.value.childNodes).filter(
-              child => child instanceof HTMLElement,
-            ) as HTMLElement[];
-            let newMaxChildWidthPx = 0;
-            childElementsArray.forEach(childElement => {
-              newMaxChildWidthPx = Math.max(
-                newMaxChildWidthPx,
-                childElement.getBoundingClientRect().width,
-              );
+            // Child observers
+            childSizeGrowsObservers.forEach(observer => observer.disconnect());
+            childSizeGrowsObservers.splice(0, childSizeGrowsObservers.length);
+            maxChildSizeObservers.forEach(observer => observer.disconnect());
+            maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
+            childElementsArray.forEach(child => {
+              // Observe Child Size Grows
+              const sizeGrosObserver = new MutationObserver(watchChildSizeGrows);
+              sizeGrosObserver.observe(child, {
+                attributes: true,
+                attributeFilter: [`class`],
+              });
+              childSizeGrowsObservers.push(sizeGrosObserver);
+              watchChildSizeGrows();
+              function watchChildSizeGrows() {
+                if (!exists(element.value)) return;
+                const childElementsArray = Array.from(element.value.childNodes).filter(
+                  child => child instanceof HTMLElement,
+                ) as HTMLElement[];
+                const newAChildsWidthGrows = childElementsArray.some(childElement =>
+                  childElement.classList.contains(widthGrowsClassName),
+                );
+                if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
+                  aChildsWidthGrows.value = newAChildsWidthGrows;
+                }
+                const newAChildsHeightGrows = childElementsArray.some(childElement =>
+                  childElement.classList.contains(heightGrowsClassName),
+                );
+                if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
+                  aChildsHeightGrows.value = newAChildsHeightGrows;
+                }
+              }
+
+              // Observer Max Child Size
+              const maxSizeObserver = new MutationObserver(watchMaxChildSize);
+              maxSizeObserver.observe(child, {
+                attributes: true,
+                attributeFilter: [`style`],
+              });
+              maxChildSizeObservers.push(maxSizeObserver);
+              watchMaxChildSize();
+              function watchMaxChildSize() {
+                if (!exists(element.value)) return;
+                const childElementsArray = Array.from(element.value.childNodes).filter(
+                  child => child instanceof HTMLElement,
+                ) as HTMLElement[];
+                let newMaxChildWidthPx = 0;
+                childElementsArray.forEach(childElement => {
+                  newMaxChildWidthPx = Math.max(
+                    newMaxChildWidthPx,
+                    childElement.getBoundingClientRect().width,
+                  );
+                });
+                if (maxChildWidthPx.value !== newMaxChildWidthPx) {
+                  maxChildWidthPx.value = newMaxChildWidthPx;
+                }
+                let newMaxChildHeightPx = 0;
+                childElementsArray.forEach(childElement => {
+                  newMaxChildHeightPx = Math.max(
+                    newMaxChildHeightPx,
+                    childElement.getBoundingClientRect().height,
+                  );
+                });
+                if (maxChildHeightPx.value !== newMaxChildHeightPx) {
+                  maxChildHeightPx.value = newMaxChildHeightPx;
+                }
+              }
             });
-            if (maxChildWidthPx.value !== newMaxChildWidthPx) {
-              maxChildWidthPx.value = newMaxChildWidthPx;
-            }
-            let newMaxChildHeightPx = 0;
-            childElementsArray.forEach(childElement => {
-              newMaxChildHeightPx = Math.max(
-                newMaxChildHeightPx,
-                childElement.getBoundingClientRect().height,
-              );
-            });
-            if (maxChildHeightPx.value !== newMaxChildHeightPx) {
-              maxChildHeightPx.value = newMaxChildHeightPx;
-            }
-          }
+          },
+        );
+        onCleanup(() => {
+          childListObserver.disconnect();
+          childSizeGrowsObservers.forEach(observer => observer.disconnect());
+          maxChildSizeObservers.forEach(observer => observer.disconnect());
         });
       },
-    );
-    onCleanup(() => {
-      childListObserver.disconnect();
-      childSizeGrowsObservers.forEach(observer => observer.disconnect());
-      maxChildSizeObservers.forEach(observer => observer.disconnect());
-    });
-  });
+    ),
+  );
   return {
     element,
     hasMoreThanOneChild,
