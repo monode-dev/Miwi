@@ -1,7 +1,7 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
 import { Sig, SigGet, logTime, sig } from "src/utils";
-import { createRenderEffect } from "solid-js";
+import { createRenderEffect, untrack } from "solid-js";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
 export type SizeSty = Partial<{
@@ -163,7 +163,33 @@ export function watchBoxSize(
   // SECTION: Width
   const flexWidth = sig<number | undefined>(undefined);
   createRenderEffect(() => {
-    if (context.shouldLog) logTime(`Computing width.`);
+    if (context.shouldLog) {
+      untrack(() => {
+        logTime(
+          `Computing width: ${JSON.stringify({
+            shouldWatchAChildsSizeGrows: context.shouldWatchAChildsWidthGrows.value,
+            shouldWatchMaxChildSize: context.shouldWatchMaxChildSize.value,
+            minSize: parseProp(`minWidth`),
+            size: parseProp({
+              width: v => v,
+              widthGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
+              widthShrinks: (() => SIZE_SHRINKS) as () => SIZE_SHRINKS,
+              asWideAsParent: () => `100%`,
+            }),
+            maxSize: parseProp(`maxWidth`),
+            isMainAxis: context.parentAxis.value === Axis.row,
+            iAmAStack: context.myAxis.value === Axis.stack,
+            myPaddingStart: context.padLeft.value,
+            myPaddingEnd: context.padRight.value,
+            maxChildSizePx: context.maxChildWidthPx.value,
+            parentIsStack: context.parentAxis.value === Axis.stack,
+            parentPaddingStart: context.parentPaddingLeft.value,
+            parentPaddingEnd: context.parentPaddingRight.value,
+            someChildGrows: context.aChildsWidthGrows.value,
+          })}`,
+        );
+      });
+    }
     if (!exists(element.value)) return;
     const [exactWidth, wMin, wMax, _flexWidth] = computeSizeInfo({
       shouldWatchAChildsSizeGrows: context.shouldWatchAChildsWidthGrows,
