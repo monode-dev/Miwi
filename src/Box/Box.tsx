@@ -61,7 +61,7 @@ export function Box(props: BoxProps) {
     const { maxChildWidthPx, maxChildHeightPx } = _watchMaxChildSize(element.value!, shouldLog);
     const aChildsWidthGrows = _findClassInChildren(element.value!, widthGrowsClassName);
     const aChildsHeightGrows = _findClassInChildren(element.value!, heightGrowsClassName);
-    const { parentAxis } = _watchParentAxis(element);
+    const parentAxis = _watchParentAxis(element.value!);
     const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
       _watchParentPadding(
         element.value!,
@@ -129,40 +129,27 @@ export function Box(props: BoxProps) {
 }
 
 /** SECTION: Helper function to watch parent for Box */
-function _watchParentAxis(element: Sig<HTMLElement | undefined>) {
+function _watchParentAxis(element: HTMLElement) {
   const parentAxis = sig<Axis>(Axis.column);
-  createEffect(
-    on(
-      () => element.value,
-      () => {
-        if (!exists(element.value)) return;
-        if (!exists(element.value.parentElement)) return;
-        const parentClassObserver = observeElement(
-          element.value.parentElement,
-          {
-            attributes: true,
-            attributeFilter: [`class`],
-          },
-          () => {
-            if (!exists(element.value)) return;
-            if (!exists(element.value.parentElement)) return;
-            parentAxis.value = element.value.parentElement.classList.contains(stackClassName)
-              ? Axis.stack
-              : element.value.parentElement.classList.contains(columnClassName)
-                ? Axis.column
-                : Axis.row;
-          },
-        );
-        onCleanup(() => {
-          parentClassObserver.disconnect();
-        });
-      },
-    ),
+  const parentClassObserver = observeElement(
+    element.parentElement!,
+    {
+      attributeFilter: [`class`],
+    },
+    () => {
+      if (!exists(element)) return;
+      if (!exists(element.parentElement)) return;
+      parentAxis.value = element.parentElement.classList.contains(stackClassName)
+        ? Axis.stack
+        : element.parentElement.classList.contains(columnClassName)
+          ? Axis.column
+          : Axis.row;
+    },
   );
-
-  return {
-    parentAxis,
-  };
+  onCleanup(() => {
+    parentClassObserver.disconnect();
+  });
+  return parentAxis;
 }
 function _watchParentPadding(element: HTMLElement, shouldWatch: SigGet<boolean>) {
   const parentPaddingLeft = sig(`0px`);
