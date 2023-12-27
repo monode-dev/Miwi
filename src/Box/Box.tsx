@@ -1,5 +1,5 @@
-import { type JSX, type ParentProps, onCleanup, createEffect, on, onMount } from "solid-js";
-import { Sig, SigGet, compute, exists, sig, watchDeps, watchEffect } from "../utils";
+import { type JSX, type ParentProps, onCleanup, onMount } from "solid-js";
+import { SigGet, compute, exists, sig, watchEffect } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
 import {
   _FlexAlign,
@@ -58,9 +58,17 @@ export function Box(props: BoxProps) {
      * element, but can be changed by watchLayout if a content wrapper is introduced. */
 
     // Observe Relatives
-    const { maxChildWidthPx, maxChildHeightPx } = _watchMaxChildSize(element.value!, shouldLog);
-    const aChildsWidthGrows = _findClassInChildren(element.value!, widthGrowsClassName);
-    const aChildsHeightGrows = _findClassInChildren(element.value!, heightGrowsClassName);
+    const { maxChildWidthPx, maxChildHeightPx } = _watchMaxChildSize(
+      element.value!,
+      sig(true),
+      shouldLog,
+    );
+    const aChildsWidthGrows = _findClassInChildren(element.value!, widthGrowsClassName, sig(true));
+    const aChildsHeightGrows = _findClassInChildren(
+      element.value!,
+      heightGrowsClassName,
+      sig(true),
+    );
     const parentAxis = _watchParentAxis(element.value!);
     const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
       _watchParentPadding(
@@ -98,12 +106,6 @@ export function Box(props: BoxProps) {
 
     // Computer Interactivity
     watchBoxInteraction(parseProp, element, { isScrollable });
-
-    // The element is set up so we can give it to anyone who asked for it now
-    // parseProp(`getElement`, true).forEach((getter: any) => {
-    //   if (typeof getter !== `function`) return;
-    //   getter(element.value);
-    // });
   });
 
   // TODO: Toggle element type based on "tag" prop.
@@ -199,58 +201,68 @@ function _watchHasMoreThanOneChild(element: HTMLElement) {
   });
   return hasMoreThanOneChild;
 }
-function _findClassInChildren(element: HTMLElement, className: string) {
+function _findClassInChildren(
+  element: HTMLElement,
+  className: string,
+  shouldWatch: SigGet<boolean>,
+) {
   const foundClass = sig(false);
-  let childObserver = new MutationObserver(() => {});
-  const observer = observeElement(element, { childList: true }, () => {
-    const childElements = Array.from(element.childNodes).filter(
-      child => child instanceof HTMLElement,
-    ) as HTMLElement[];
-    childObserver.disconnect();
-    childObserver = new MutationObserver(watchAttr);
-    watchAttr();
-    childElements.forEach(child => {
-      childObserver.observe(child, { attributeFilter: [`class`] });
+  watchEffect(() => {
+    if (!shouldWatch.value) return;
+    let childObserver = new MutationObserver(() => {});
+    const observer = observeElement(element, { childList: true }, () => {
+      const childElements = Array.from(element.childNodes).filter(
+        child => child instanceof HTMLElement,
+      ) as HTMLElement[];
+      childObserver.disconnect();
+      childObserver = new MutationObserver(watchAttr);
+      watchAttr();
+      childElements.forEach(child => {
+        childObserver.observe(child, { attributeFilter: [`class`] });
+      });
+      function watchAttr() {
+        foundClass.value = childElements.some(childElement =>
+          childElement.classList.contains(className),
+        );
+      }
     });
-    function watchAttr() {
-      foundClass.value = childElements.some(childElement =>
-        childElement.classList.contains(className),
-      );
-    }
-  });
-  onCleanup(() => {
-    observer.disconnect();
-    childObserver.disconnect();
+    onCleanup(() => {
+      observer.disconnect();
+      childObserver.disconnect();
+    });
   });
   return foundClass;
 }
-function _watchMaxChildSize(element: HTMLElement, shouldLog = false) {
+function _watchMaxChildSize(element: HTMLElement, shouldWatch: SigGet<boolean>, shouldLog = false) {
   const maxChildWidthPx = sig(0);
   const maxChildHeightPx = sig(0);
-  let resizeObserver = new ResizeObserver(() => {});
-  const childListObserver = observeElement(element, { childList: true }, () => {
-    const childElements = Array.from(element.childNodes).filter(
-      child => child instanceof HTMLElement,
-    ) as HTMLElement[];
-    resizeObserver.disconnect();
-    resizeObserver = new ResizeObserver(checkGrows);
-    childElements.forEach(child => {
-      resizeObserver.observe(child);
+  watchEffect(() => {
+    if (!shouldWatch.value) return;
+    let resizeObserver = new ResizeObserver(() => {});
+    const childListObserver = observeElement(element, { childList: true }, () => {
+      const childElements = Array.from(element.childNodes).filter(
+        child => child instanceof HTMLElement,
+      ) as HTMLElement[];
+      resizeObserver.disconnect();
+      resizeObserver = new ResizeObserver(checkGrows);
+      childElements.forEach(child => {
+        resizeObserver.observe(child);
+      });
+      function checkGrows() {
+        [maxChildWidthPx.value, maxChildHeightPx.value] = childElements.reduce(
+          (max, child) => {
+            const { width, height } = child.getBoundingClientRect();
+            if (shouldLog) console.log(`watchMaxChildSize`);
+            return [Math.max(width, max[0]), Math.max(height, max[1])];
+          },
+          [0, 0],
+        );
+      }
     });
-    function checkGrows() {
-      [maxChildWidthPx.value, maxChildHeightPx.value] = childElements.reduce(
-        (max, child) => {
-          const { width, height } = child.getBoundingClientRect();
-          if (shouldLog) console.log(`watchMaxChildSize`);
-          return [Math.max(width, max[0]), Math.max(height, max[1])];
-        },
-        [0, 0],
-      );
-    }
-  });
-  onCleanup(() => {
-    childListObserver.disconnect();
-    resizeObserver.disconnect();
+    onCleanup(() => {
+      childListObserver.disconnect();
+      resizeObserver.disconnect();
+    });
   });
   return {
     element,
