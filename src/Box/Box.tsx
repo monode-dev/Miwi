@@ -238,6 +238,20 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
             maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
 
             if (shouldLog) console.log(`childElementsArray.length`, childElementsArray.length);
+            watchMaxChildSize();
+            function watchMaxChildSize() {
+              let maxWidth = 0;
+              let maxHeight = 0;
+              for (const child of element.value?.childNodes ?? []) {
+                if (shouldLog) console.log(`watchMaxChildSize`);
+                if (!(child instanceof HTMLElement)) continue;
+                const { width, height } = child.getBoundingClientRect();
+                maxWidth = Math.max(maxWidth, width);
+                maxHeight = Math.max(maxHeight, height);
+              }
+              maxChildWidthPx.value = maxWidth;
+              maxChildHeightPx.value = maxHeight;
+            }
             childElementsArray.forEach(child => {
               // Observe Child Size Grows
               const sizeGrowsObserver = new MutationObserver(watchChildSizeGrows);
@@ -268,20 +282,6 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
                 attributeFilter: [`style`],
               });
               maxChildSizeObservers.push(maxSizeObserver);
-              watchMaxChildSize();
-              function watchMaxChildSize() {
-                let maxWidth = 0;
-                let maxHeight = 0;
-                for (const child of element.value?.childNodes ?? []) {
-                  if (shouldLog) console.log(`watchMaxChildSize`);
-                  if (!(child instanceof HTMLElement)) continue;
-                  const { width, height } = child.getBoundingClientRect();
-                  maxWidth = Math.max(maxWidth, width);
-                  maxHeight = Math.max(maxHeight, height);
-                }
-                maxChildWidthPx.value = maxWidth;
-                maxChildHeightPx.value = maxHeight;
-              }
             });
           },
         );
