@@ -174,7 +174,8 @@ export function watchBoxSize(
       someChildGrows: context.aChildsWidthGrows.value,
     });
     flexWidth.value = _flexWidth;
-    (element.value as any)[widthGrowsAttrName] = exists(_flexWidth);
+    Object.assign(element.value, { [widthGrowsAttrName]: exists(_flexWidth) });
+    // (element.value as any)[widthGrowsAttrName] = exists(_flexWidth);
     element.value.style.minWidth = wMin;
     element.value.style.width = exactWidth;
     element.value.style.maxWidth = wMax;
