@@ -223,36 +223,26 @@ function _watchHasMoreThanOneChild(element: HTMLElement) {
 }
 function _findClassInChildren(element: HTMLElement, className: string) {
   const foundClass = sig(false);
-  const childObservers: MutationObserver[] = [];
-  const observer = observeElement(
-    element,
-    {
-      childList: true,
-    },
-    () => {
-      while (childObservers.length > 0) childObservers.pop()?.disconnect();
-      const childElementsArray = Array.from(element.childNodes).filter(
-        child => child instanceof HTMLElement,
-      ) as HTMLElement[];
-      function watchAttr() {
-        foundClass.value = childElementsArray.some(childElement =>
-          childElement.classList.contains(className),
-        );
-      }
-      watchAttr();
-      childElementsArray.forEach(child => {
-        const childObserver = new MutationObserver(watchAttr);
-        childObserver.observe(child, {
-          attributes: true,
-          attributeFilter: [`class`],
-        });
-        childObservers.push(childObserver);
-      });
-    },
-  );
+  let childObserver = new MutationObserver(() => {});
+  const observer = observeElement(element, { childList: true }, () => {
+    const childElements = Array.from(element.childNodes).filter(
+      child => child instanceof HTMLElement,
+    ) as HTMLElement[];
+    childObserver.disconnect();
+    childObserver = new MutationObserver(watchAttr);
+    watchAttr();
+    childElements.forEach(child => {
+      childObserver.observe(child, { attributeFilter: [`class`] });
+    });
+    function watchAttr() {
+      foundClass.value = childElements.some(childElement =>
+        childElement.classList.contains(className),
+      );
+    }
+  });
   onCleanup(() => {
     observer.disconnect();
-    childObservers.forEach(observer => observer.disconnect());
+    childObserver.disconnect();
   });
   return foundClass;
 }
@@ -260,31 +250,28 @@ function _watchMaxChildSize(element: HTMLElement, shouldLog = false) {
   const maxChildWidthPx = sig(0);
   const maxChildHeightPx = sig(0);
   let resizeObserver = new ResizeObserver(() => {});
-  const childListObserver = observeElement(
-    element,
-    {
-      childList: true,
-    },
-    () => {
-      resizeObserver.disconnect();
-      resizeObserver = new ResizeObserver(() => {
-        let maxWidth = 0;
-        let maxHeight = 0;
-        for (const child of element.childNodes) {
-          if (shouldLog) console.log(`watchMaxChildSize`);
-          if (!(child instanceof HTMLElement)) continue;
-          const { width, height } = child.getBoundingClientRect();
-          maxWidth = Math.max(maxWidth, width);
-          maxHeight = Math.max(maxHeight, height);
-        }
-        maxChildWidthPx.value = maxWidth;
-        maxChildHeightPx.value = maxHeight;
-      });
-      element.childNodes.forEach(child => {
-        if (child instanceof HTMLElement) resizeObserver.observe(child);
-      });
-    },
-  );
+  const childListObserver = observeElement(element, { childList: true }, () => {
+    const childElements = Array.from(element.childNodes).filter(
+      child => child instanceof HTMLElement,
+    ) as HTMLElement[];
+    resizeObserver.disconnect();
+    resizeObserver = new ResizeObserver(checkGrows);
+    childElements.forEach(child => {
+      resizeObserver.observe(child);
+    });
+    function checkGrows() {
+      let maxWidth = 0;
+      let maxHeight = 0;
+      for (const child of childElements) {
+        if (shouldLog) console.log(`watchMaxChildSize`);
+        const { width, height } = child.getBoundingClientRect();
+        maxWidth = Math.max(maxWidth, width);
+        maxHeight = Math.max(maxHeight, height);
+      }
+      maxChildWidthPx.value = maxWidth;
+      maxChildHeightPx.value = maxHeight;
+    }
+  });
   onCleanup(() => {
     childListObserver.disconnect();
     resizeObserver.disconnect();
