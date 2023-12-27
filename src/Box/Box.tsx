@@ -228,15 +228,15 @@ function _findClassInChildren(
         childObserver.observe(child, { attributeFilter: [`class`] });
       });
       function watchAttr() {
-        if (shouldLog) {
-          console.log(
-            `childClasses`,
-            childElements.map(child => [...child.classList]),
-          );
-        }
         foundClass.value = childElements.some(childElement =>
           childElement.classList.contains(className),
         );
+        if (shouldLog) {
+          console.log(
+            `foundClass: ${foundClass.value}, childClasses`,
+            childElements.map(child => [...child.classList].map(c => c.toString()) as string[]),
+          );
+        }
       }
     });
     return () => {
