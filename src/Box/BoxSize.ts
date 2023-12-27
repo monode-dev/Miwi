@@ -162,6 +162,7 @@ export function watchBoxSize(
   // SECTION: Width
   const flexWidth = sig<number | undefined>(undefined);
   watchEffect(() => {
+    if (context.shouldLog) console.log(`Computing width.`);
     if (!exists(element.value)) return;
     const [exactWidth, wMin, wMax, _flexWidth] = computeSizeInfo({
       shouldWatchAChildsSizeGrows: context.shouldWatchAChildsWidthGrows,
