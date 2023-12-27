@@ -98,12 +98,6 @@ export function Box(props: BoxProps) {
 
     // Computer Interactivity
     watchBoxInteraction(parseProp, element, { isScrollable });
-
-    // The element is set up so we can give it to anyone who asked for it now
-    parseProp(`getElement`, true).forEach((getter: any) => {
-      if (typeof getter !== `function`) return;
-      getter(element.value);
-    });
   });
 
   // TODO: Toggle element type based on "tag" prop.
@@ -119,10 +113,10 @@ export function Box(props: BoxProps) {
       ref={el => {
         element.value = el;
         // Notify element getters
-        // parseProp(`getElement`, true).forEach((getter: any) => {
-        //   if (typeof getter !== `function`) return;
-        //   getter(element.value);
-        // });
+        parseProp(`getElement`, true).forEach((getter: any) => {
+          if (typeof getter !== `function`) return;
+          getter(element.value);
+        });
       }}
     />
   );
