@@ -170,31 +170,26 @@ function _watchParentPadding(element: HTMLElement, shouldWatch: SigGet<boolean>)
   const parentPaddingRight = sig(`0px`);
   const parentPaddingBottom = sig(`0px`);
 
-  createEffect(
-    on(
-      () => shouldWatch.value,
-      () => {
-        if (!shouldWatch.value) return;
-        const parentStyleObserver = observeElement(
-          element.parentElement!,
-          {
-            attributes: true,
-            attributeFilter: [`style`],
-          },
-          () => {
-            const parentStyle = getComputedStyle(element.parentElement!);
-            parentPaddingLeft.value = parentStyle.paddingLeft;
-            parentPaddingTop.value = parentStyle.paddingTop;
-            parentPaddingRight.value = parentStyle.paddingRight;
-            parentPaddingBottom.value = parentStyle.paddingBottom;
-          },
-        );
-        onCleanup(() => {
-          parentStyleObserver.disconnect();
-        });
+  watchEffect(() => {
+    if (!shouldWatch.value) return;
+    const parentStyleObserver = observeElement(
+      element.parentElement!,
+      {
+        attributes: true,
+        attributeFilter: [`style`],
       },
-    ),
-  );
+      () => {
+        const parentStyle = getComputedStyle(element.parentElement!);
+        parentPaddingLeft.value = parentStyle.paddingLeft;
+        parentPaddingTop.value = parentStyle.paddingTop;
+        parentPaddingRight.value = parentStyle.paddingRight;
+        parentPaddingBottom.value = parentStyle.paddingBottom;
+      },
+    );
+    onCleanup(() => {
+      parentStyleObserver.disconnect();
+    });
+  });
 
   return {
     parentPaddingLeft,
@@ -207,15 +202,9 @@ function _watchParentPadding(element: HTMLElement, shouldWatch: SigGet<boolean>)
 /** SECTION: Helper function to watch children for Box */
 function _watchHasMoreThanOneChild(element: HTMLElement) {
   const hasMoreThanOneChild = sig(false);
-  const observer = observeElement(
-    element,
-    {
-      childList: true,
-    },
-    () => {
-      hasMoreThanOneChild.value = element.childNodes.length > 1;
-    },
-  );
+  const observer = observeElement(element, { childList: true }, () => {
+    hasMoreThanOneChild.value = element.childNodes.length > 1;
+  });
   onCleanup(() => {
     observer.disconnect();
   });
