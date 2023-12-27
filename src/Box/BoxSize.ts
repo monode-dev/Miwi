@@ -118,8 +118,8 @@ export function computeSizeInfo(props: {
   ] as const;
 }
 
-export const widthGrowsClassName = `miwi-width-grows`;
-export const heightGrowsClassName = `miwi-height-grows`;
+export const widthGrowsAttrName = `miwiWidthGrows`;
+export const heightGrowsAttrName = `miwiHeightGrows`;
 
 // Box Size
 export function watchBoxSize(
@@ -174,7 +174,7 @@ export function watchBoxSize(
       someChildGrows: context.aChildsWidthGrows.value,
     });
     flexWidth.value = _flexWidth;
-    element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth));
+    (element.value as any)[widthGrowsAttrName] = exists(_flexWidth);
     element.value.style.minWidth = wMin;
     element.value.style.width = exactWidth;
     element.value.style.maxWidth = wMax;
@@ -204,7 +204,7 @@ export function watchBoxSize(
       someChildGrows: context.aChildsHeightGrows.value,
     });
     flexHeight.value = _flexHeight;
-    element.value.classList.toggle(heightGrowsClassName, exists(_flexHeight));
+    (element.value as any)[heightGrowsAttrName] = exists(_flexHeight);
     element.value.style.minHeight = hMin;
     element.value.style.height = exactHeight;
     element.value.style.maxHeight = hMax;

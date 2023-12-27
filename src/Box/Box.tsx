@@ -13,7 +13,7 @@ import {
   nonStackClassName,
   stackAttrName,
 } from "./BoxLayout";
-import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from "./BoxSize";
+import { SizeSty, heightGrowsAttrName, watchBoxSize, widthGrowsAttrName } from "./BoxSize";
 import { DecorationSty, watchBoxDecoration } from "./BoxDecoration";
 import { TextSty, watchBoxText } from "./BoxText";
 import { InteractionSty, watchBoxInteraction } from "./BoxInteraction";
@@ -59,8 +59,9 @@ export function Box(props: BoxProps) {
      * element, but can be changed by watchLayout if a content wrapper is introduced. */
 
     // Observe Relatives
-    const { aChildsWidthGrows, aChildsHeightGrows, maxChildWidthPx, maxChildHeightPx } =
-      _watchChildren(element, shouldLog);
+    const { maxChildWidthPx, maxChildHeightPx } = _watchChildren(element, shouldLog);
+    const aChildsWidthGrows = _findAttrInChildren(element.value!, widthGrowsAttrName);
+    const aChildsHeightGrows = _findAttrInChildren(element.value!, heightGrowsAttrName);
     const { parentAxis } = _watchParentAxis(element);
     const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
       _watchParentPadding(
@@ -219,16 +220,44 @@ function _watchHasMoreThanOneChild(element: HTMLElement) {
   });
   return hasMoreThanOneChild;
 }
-// function _watchAChildsWidthGrows(element: HTMLElement) {
-//   const aChildsWidthGrows = sig(false);
-
-// }
+function _findAttrInChildren(element: HTMLElement, attr: string) {
+  const foundAttr = sig(false);
+  const childObservers: MutationObserver[] = [];
+  const observer = observeElement(
+    element,
+    {
+      childList: true,
+    },
+    () => {
+      while (childObservers.length > 0) childObservers.pop()?.disconnect();
+      const childElementsArray = Array.from(element.childNodes).filter(
+        child => child instanceof HTMLElement,
+      ) as HTMLElement[];
+      function watchAttr() {
+        foundAttr.value = childElementsArray.some(
+          childElement => (childElement as any)[attr] === true,
+        );
+      }
+      watchAttr();
+      childElementsArray.forEach(child => {
+        const childObserver = new MutationObserver(watchAttr);
+        childObserver.observe(child, {
+          attributes: true,
+          attributeFilter: [attr],
+        });
+        childObservers.push(childObserver);
+      });
+    },
+  );
+  onCleanup(() => {
+    observer.disconnect();
+    childObservers.forEach(observer => observer.disconnect());
+  });
+  return foundAttr;
+}
 function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false) {
-  const aChildsWidthGrows = sig(false);
-  const aChildsHeightGrows = sig(false);
   const maxChildWidthPx = sig(0);
   const maxChildHeightPx = sig(0);
-  const childSizeGrowsObservers: MutationObserver[] = [];
   const maxChildSizeObservers: MutationObserver[] = [];
   createEffect(
     on(
@@ -247,8 +276,6 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
             ) as HTMLElement[];
 
             // Child observers
-            childSizeGrowsObservers.forEach(observer => observer.disconnect());
-            childSizeGrowsObservers.splice(0, childSizeGrowsObservers.length);
             maxChildSizeObservers.forEach(observer => observer.disconnect());
             maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
 
@@ -266,25 +293,7 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
               maxChildWidthPx.value = maxWidth;
               maxChildHeightPx.value = maxHeight;
             }
-            watchChildSizeGrows();
-            function watchChildSizeGrows() {
-              aChildsWidthGrows.value = childElementsArray.some(childElement =>
-                childElement.classList.contains(widthGrowsClassName),
-              );
-              aChildsHeightGrows.value = childElementsArray.some(childElement =>
-                childElement.classList.contains(heightGrowsClassName),
-              );
-            }
             childElementsArray.forEach(child => {
-              // Observe Child Size Grows
-              const sizeGrowsObserver = new MutationObserver(watchChildSizeGrows);
-              sizeGrowsObserver.observe(child, {
-                attributes: true,
-                attributeFilter: [`class`],
-              });
-              childSizeGrowsObservers.push(sizeGrowsObserver);
-
-              // Observer Max Child Size
               const maxSizeObserver = new MutationObserver(watchMaxChildSize);
               maxSizeObserver.observe(child, {
                 attributes: true,
@@ -296,8 +305,6 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
         );
         onCleanup(() => {
           childListObserver.disconnect();
-          childSizeGrowsObservers.forEach(observer => observer.disconnect());
-          childSizeGrowsObservers.splice(0, childSizeGrowsObservers.length);
           maxChildSizeObservers.forEach(observer => observer.disconnect());
           maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
         });
@@ -306,8 +313,6 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
   );
   return {
     element,
-    aChildsWidthGrows,
-    aChildsHeightGrows,
     maxChildWidthPx,
     maxChildHeightPx,
   };
