@@ -213,9 +213,8 @@ export const Align = {
 } as const;
 
 // Classes
-export const columnAttrName = `miwiColumn`;
-export const rowAttrName = `miwiRow`;
-export const stackAttrName = `miwiStack`;
+export const columnClassName = `miwi-column`;
+export const rowClassName = `miwi-row`;
 export const stackClassName = `miwi-stack`;
 export const nonStackClassName = `miwi-non-stack`;
 const style = document.createElement(`style`);

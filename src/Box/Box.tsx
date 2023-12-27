@@ -7,13 +7,12 @@ import {
   LayoutSty,
   stackClassName,
   Axis,
-  columnAttrName,
   getAxisSig,
-  rowAttrName,
   nonStackClassName,
-  stackAttrName,
+  columnClassName,
+  rowClassName,
 } from "./BoxLayout";
-import { SizeSty, heightGrowsAttrName, watchBoxSize, widthGrowsAttrName } from "./BoxSize";
+import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from "./BoxSize";
 import { DecorationSty, watchBoxDecoration } from "./BoxDecoration";
 import { TextSty, watchBoxText } from "./BoxText";
 import { InteractionSty, watchBoxInteraction } from "./BoxInteraction";
@@ -60,8 +59,8 @@ export function Box(props: BoxProps) {
 
     // Observe Relatives
     const { maxChildWidthPx, maxChildHeightPx } = _watchChildren(element, shouldLog);
-    const aChildsWidthGrows = _findAttrInChildren(element.value!, widthGrowsAttrName);
-    const aChildsHeightGrows = _findAttrInChildren(element.value!, heightGrowsAttrName);
+    const aChildsWidthGrows = _findClassInChildren(element.value!, widthGrowsClassName);
+    const aChildsHeightGrows = _findClassInChildren(element.value!, heightGrowsClassName);
     const { parentAxis } = _watchParentAxis(element);
     const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
       _watchParentPadding(
@@ -111,11 +110,12 @@ export function Box(props: BoxProps) {
   return (
     <div
       {...props}
-      {...{ [columnAttrName]: axis.value === Axis.column }}
-      {...{ [rowAttrName]: axis.value === Axis.row }}
-      {...{ [stackAttrName]: axis.value === Axis.stack }}
-      {...{ [widthGrowsAttrName]: false }}
-      {...{ [heightGrowsAttrName]: false }}
+      classList={{
+        [columnClassName]: axis.value === Axis.column,
+        [rowClassName]: axis.value === Axis.row,
+        [stackClassName]: axis.value === Axis.stack,
+        [nonStackClassName]: axis.value !== Axis.stack,
+      }}
       ref={el => {
         element.value = el;
         // Notify element getters
@@ -141,15 +141,14 @@ function _watchParentAxis(element: Sig<HTMLElement | undefined>) {
           element.value.parentElement,
           {
             attributes: true,
-            attributeFilter: [columnAttrName, rowAttrName, stackAttrName],
+            attributeFilter: [`class`],
           },
           () => {
             if (!exists(element.value)) return;
             if (!exists(element.value.parentElement)) return;
-            // const classList = element.value.parentElement.classList;
-            parentAxis.value = (element.value.parentElement as any)[stackAttrName]
+            parentAxis.value = element.value.parentElement.classList.contains(stackClassName)
               ? Axis.stack
-              : (element.value.parentElement as any)[columnAttrName]
+              : element.value.parentElement.classList.contains(columnClassName)
                 ? Axis.column
                 : Axis.row;
           },
@@ -222,8 +221,8 @@ function _watchHasMoreThanOneChild(element: HTMLElement) {
   });
   return hasMoreThanOneChild;
 }
-function _findAttrInChildren(element: HTMLElement, attr: string) {
-  const foundAttr = sig(false);
+function _findClassInChildren(element: HTMLElement, className: string) {
+  const foundClass = sig(false);
   const childObservers: MutationObserver[] = [];
   const observer = observeElement(
     element,
@@ -236,8 +235,8 @@ function _findAttrInChildren(element: HTMLElement, attr: string) {
         child => child instanceof HTMLElement,
       ) as HTMLElement[];
       function watchAttr() {
-        foundAttr.value = childElementsArray.some(
-          childElement => (childElement as any)[attr] === true,
+        foundClass.value = childElementsArray.some(childElement =>
+          childElement.classList.contains(className),
         );
       }
       watchAttr();
@@ -245,7 +244,7 @@ function _findAttrInChildren(element: HTMLElement, attr: string) {
         const childObserver = new MutationObserver(watchAttr);
         childObserver.observe(child, {
           attributes: true,
-          attributeFilter: [attr],
+          attributeFilter: [`class`],
         });
         childObservers.push(childObserver);
       });
@@ -255,7 +254,7 @@ function _findAttrInChildren(element: HTMLElement, attr: string) {
     observer.disconnect();
     childObservers.forEach(observer => observer.disconnect());
   });
-  return foundAttr;
+  return foundClass;
 }
 function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false) {
   const maxChildWidthPx = sig(0);
