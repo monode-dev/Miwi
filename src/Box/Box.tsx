@@ -131,8 +131,10 @@ export function Box(props: BoxProps) {
 /** SECTION: Helper function to watch parent for Box */
 function _watchParentAxis(element: HTMLElement) {
   const parentAxis = sig<Axis>(Axis.column);
+  if (!exists(element.parentElement)) return parentAxis;
+  if (!(element.parentElement instanceof HTMLElement)) return parentAxis;
   const parentClassObserver = observeElement(
-    element.parentElement!,
+    element.parentElement,
     {
       attributeFilter: [`class`],
     },
