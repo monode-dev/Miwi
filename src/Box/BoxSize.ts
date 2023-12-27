@@ -1,6 +1,7 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
-import { Sig, SigGet, logTime, sig, watchEffect } from "src/utils";
+import { Sig, SigGet, logTime, sig } from "src/utils";
+import { createRenderEffect } from "solid-js";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
 export type SizeSty = Partial<{
@@ -152,7 +153,7 @@ export function watchBoxSize(
   },
 ) {
   // SECTION: Basics
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     element.value.style.display = parseProp(`isFlexDisplay`) ?? true ? `flex` : ``;
     element.value.style.boxSizing = `border-box`;
@@ -161,7 +162,7 @@ export function watchBoxSize(
 
   // SECTION: Width
   const flexWidth = sig<number | undefined>(undefined);
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (context.shouldLog) logTime(`Computing width.`);
     if (!exists(element.value)) return;
     const [exactWidth, wMin, wMax, _flexWidth] = computeSizeInfo({
@@ -194,7 +195,7 @@ export function watchBoxSize(
 
   // Height
   const flexHeight = sig<number | undefined>(undefined);
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const [exactHeight, hMin, hMax, _flexHeight] = computeSizeInfo({
       shouldWatchAChildsSizeGrows: context.shouldWatchAChildsHeightGrows,
@@ -225,7 +226,7 @@ export function watchBoxSize(
   });
 
   // SECTION: Flex Basis
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return; //flex: 1 1 0;
     element.value.style.flexBasis =
       context.parentAxis.value === Axis.column

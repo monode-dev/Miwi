@@ -1,6 +1,7 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign } from "./BoxLayout";
-import { Sig, watchEffect } from "src/utils";
+import { Sig } from "src/utils";
+import { createRenderEffect } from "solid-js";
 
 export type DecorationSty = Partial<{
   cornerRadius: number | string;
@@ -46,7 +47,7 @@ export function watchBoxDecoration(
   element: Sig<HTMLElement | undefined>,
 ) {
   // Corner Radius
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const cornerRadiuses = [
       parseProp({
@@ -72,7 +73,7 @@ export function watchBoxDecoration(
   });
 
   // Outline
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const outlineSize = parseProp({ outlineSize: v => v });
     const outlineColor = parseProp({ outlineColor: v => v });
@@ -85,7 +86,7 @@ export function watchBoxDecoration(
   });
 
   // Background
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const background = parseProp(`background`) ?? ``;
     const backgroundIsImage = background.startsWith(`data:image`) || background.startsWith(`/`);
@@ -97,7 +98,7 @@ export function watchBoxDecoration(
   });
 
   // Shadow
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const alignShadowDirection = parseProp({ shadowDirection: v => v }) ?? Align.bottomRight;
     const shadowDirection = {
@@ -121,13 +122,13 @@ export function watchBoxDecoration(
   });
 
   // Z-Index
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     element.value.style.zIndex = parseProp({ zIndex: v => v })?.toString() ?? ``;
   });
 
   // CSS Style
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const style = parseProp(`cssStyle`);
     if (exists(style)) {

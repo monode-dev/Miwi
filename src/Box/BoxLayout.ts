@@ -1,5 +1,6 @@
-import { Sig, SigGet, compute, exists, sig, watchEffect } from "src/utils";
+import { Sig, SigGet, compute, exists, sig } from "src/utils";
 import { ParseProp, muToCss } from "./BoxUtils";
+import { createRenderEffect } from "solid-js";
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and re-orderable lists.
 
@@ -258,7 +259,7 @@ export function watchBoxLayout(
   const padRight = sig<string>(`0px`);
   const padBottom = sig<string>(`0px`);
   const padLeft = sig<string>(`0px`);
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const { alignX: _alignX, alignY: _alignY } = parseAlignProps(
       parseProp,
@@ -275,7 +276,7 @@ export function watchBoxLayout(
   });
 
   // Pad
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const padEachSide = [
       parseProp({
@@ -336,7 +337,7 @@ export function watchBoxLayout(
 
   // Overflow
   const overflowX = sig<Overflow>(Overflow.spill);
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const _overflowX =
       parseProp({

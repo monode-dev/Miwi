@@ -1,7 +1,8 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { AlignSingleAxis, Overflow, _FlexAlign } from "./BoxLayout";
 import { sizeScaleCssVarName } from "src/theme";
-import { Sig, watchEffect } from "src/utils";
+import { Sig } from "src/utils";
+import { createRenderEffect } from "solid-js";
 
 export type TextSty = Partial<{
   scale: number | string;
@@ -36,13 +37,13 @@ export function watchBoxText(
   },
 ) {
   // Basics
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     element.value.style.fontFamily = `inherit`; //`Roboto`;
   });
 
   // Scale / Font Size
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const scale = parseProp({ scale: v => v });
     element.value.style.setProperty(sizeScaleCssVarName, muToCss(scale) ?? ``);
@@ -51,14 +52,14 @@ export function watchBoxText(
   });
 
   // Bold
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const textIsBold = parseProp({ boldText: v => v });
     element.value.style.fontWeight = exists(textIsBold) ? (textIsBold ? `bold` : `normal`) : ``;
   });
 
   // Italic
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const textIsItalic = parseProp({ italicizeText: v => v });
     element.value.style.fontStyle = exists(textIsItalic)
@@ -69,7 +70,7 @@ export function watchBoxText(
   });
 
   // Underline
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     const textIsUnderlined = parseProp({ underlineText: v => v });
     element.value.style.textDecoration = exists(textIsUnderlined)
@@ -82,13 +83,13 @@ export function watchBoxText(
   // textOverflow: sty.useEllipsisForOverflow ?? false ? `ellipsis` : undefined,
 
   // Text Color
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     element.value.style.color = parseProp({ textColor: v => v }) ?? ``;
   });
 
   // Text Align
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     element.value.style.textAlign =
       context.alignX.value === _FlexAlign.start
@@ -100,7 +101,7 @@ export function watchBoxText(
   });
 
   // Text Wrap
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!exists(element.value)) return;
     // whiteSpace cascades, so we need to explicity set it.
     element.value.style.whiteSpace =

@@ -1,5 +1,5 @@
-import { type JSX, type ParentProps, onCleanup, onMount } from "solid-js";
-import { SigGet, compute, exists, logTime, sig, watchEffect } from "../utils";
+import { type JSX, type ParentProps, onCleanup, onMount, createRenderEffect } from "solid-js";
+import { SigGet, exists, logTime, sig } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
 import {
   _FlexAlign,
@@ -172,7 +172,7 @@ function _watchParentPadding(element: HTMLElement, shouldWatch: SigGet<boolean>)
   const parentPaddingRight = sig(`0px`);
   const parentPaddingBottom = sig(`0px`);
 
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!shouldWatch.value) return;
     const parentStyleObserver = observeElement(
       element.parentElement!,
@@ -218,7 +218,7 @@ function _findClassInChildren(
   shouldWatch: SigGet<boolean>,
 ) {
   const foundClass = sig(false);
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!shouldWatch.value) return;
     let childObserver = new MutationObserver(() => {});
     const observer = observeElement(element, { childList: true }, () => {
@@ -247,7 +247,7 @@ function _findClassInChildren(
 function _watchMaxChildSize(element: HTMLElement, shouldWatch: SigGet<boolean>, shouldLog = false) {
   const maxChildWidthPx = sig(0);
   const maxChildHeightPx = sig(0);
-  watchEffect(() => {
+  createRenderEffect(() => {
     if (!shouldWatch.value) return;
     let resizeObserver = new ResizeObserver(() => {});
     const childListObserver = observeElement(element, { childList: true }, () => {
