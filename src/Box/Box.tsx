@@ -99,10 +99,10 @@ export function Box(props: BoxProps) {
     watchBoxInteraction(parseProp, element, { isScrollable });
 
     // The element is set up so we can give it to anyone who asked for it now
-    parseProp(`getElement`, true).forEach((getter: any) => {
-      if (typeof getter !== `function`) return;
-      getter(element.value);
-    });
+    // parseProp(`getElement`, true).forEach((getter: any) => {
+    //   if (typeof getter !== `function`) return;
+    //   getter(element.value);
+    // });
   });
 
   // TODO: Toggle element type based on "tag" prop.
@@ -115,7 +115,14 @@ export function Box(props: BoxProps) {
         [stackClassName]: axis.value === Axis.stack,
         [nonStackClassName]: axis.value !== Axis.stack,
       }}
-      ref={el => (element.value = el)}
+      ref={el => {
+        element.value = el;
+        // Notify element getters
+        parseProp(`getElement`, true).forEach((getter: any) => {
+          if (typeof getter !== `function`) return;
+          getter(element.value);
+        });
+      }}
     />
   );
 }
