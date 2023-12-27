@@ -228,6 +228,12 @@ function _findClassInChildren(
         childObserver.observe(child, { attributeFilter: [`class`] });
       });
       function watchAttr() {
+        if (shouldLog) {
+          console.log(
+            `childClasses`,
+            childElements.map(child => child.classList),
+          );
+        }
         foundClass.value = childElements.some(childElement =>
           childElement.classList.contains(className),
         );
