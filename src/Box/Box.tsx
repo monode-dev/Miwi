@@ -58,16 +58,23 @@ export function Box(props: BoxProps) {
      * element, but can be changed by watchLayout if a content wrapper is introduced. */
 
     // Observe Relatives
+    const shouldWatchMaxChildSize = sig(false);
     const { maxChildWidthPx, maxChildHeightPx } = _watchMaxChildSize(
       element.value!,
-      sig(true),
+      shouldWatchMaxChildSize,
       shouldLog,
     );
-    const aChildsWidthGrows = _findClassInChildren(element.value!, widthGrowsClassName, sig(true));
+    const shouldWatchAChildsWidthGrows = sig(false);
+    const aChildsWidthGrows = _findClassInChildren(
+      element.value!,
+      widthGrowsClassName,
+      shouldWatchAChildsWidthGrows,
+    );
+    const shouldWatchAChildsHeightGrows = sig(false);
     const aChildsHeightGrows = _findClassInChildren(
       element.value!,
       heightGrowsClassName,
-      sig(true),
+      shouldWatchAChildsHeightGrows,
     );
     const parentAxis = _watchParentAxis(element.value!);
     const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
@@ -88,8 +95,11 @@ export function Box(props: BoxProps) {
       parentPaddingRight,
       parentPaddingTop,
       parentPaddingBottom,
+      shouldWatchAChildsWidthGrows,
       aChildsWidthGrows,
+      shouldWatchAChildsHeightGrows,
       aChildsHeightGrows,
+      shouldWatchMaxChildSize,
       maxChildWidthPx,
       maxChildHeightPx,
       shouldLog: parseProp(`shouldLog`),

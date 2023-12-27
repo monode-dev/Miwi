@@ -48,6 +48,8 @@ export function isFlexSize(size: any): size is FlexSize {
 }
 
 export function computeSizeInfo(props: {
+  shouldWatchAChildsSizeGrows: Sig<boolean>;
+  shouldWatchMaxChildSize: Sig<boolean>;
   minSize: number | string | undefined;
   size: Size | undefined;
   maxSize: number | string | undefined;
@@ -62,6 +64,8 @@ export function computeSizeInfo(props: {
   someChildGrows: boolean;
 }) {
   const sizeIgnoringChildGrowth = props.size ?? SIZE_SHRINKS;
+  props.shouldWatchAChildsSizeGrows.value = isShrinkSize(sizeIgnoringChildGrowth);
+  props.shouldWatchMaxChildSize.value = props.iAmAStack && isShrinkSize(sizeIgnoringChildGrowth);
   const targetSize =
     isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows
       ? { flex: 1 }
@@ -126,8 +130,11 @@ export function watchBoxSize(
   parseProp: ParseProp<SizeSty>,
   element: Sig<HTMLElement | undefined>,
   context: {
+    shouldWatchAChildsWidthGrows: Sig<boolean>;
     aChildsWidthGrows: Sig<boolean>;
+    shouldWatchAChildsHeightGrows: Sig<boolean>;
     aChildsHeightGrows: Sig<boolean>;
+    shouldWatchMaxChildSize: Sig<boolean>;
     maxChildWidthPx: Sig<number>;
     maxChildHeightPx: Sig<number>;
     parentAxis: Sig<Axis>;
@@ -155,6 +162,8 @@ export function watchBoxSize(
   watchEffect(() => {
     if (!exists(element.value)) return;
     const [exactWidth, wMin, wMax, _flexWidth] = computeSizeInfo({
+      shouldWatchAChildsSizeGrows: context.shouldWatchAChildsWidthGrows,
+      shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
       minSize: parseProp(`minWidth`),
       size: parseProp({
         width: v => v,
@@ -185,6 +194,8 @@ export function watchBoxSize(
   watchEffect(() => {
     if (!exists(element.value)) return;
     const [exactHeight, hMin, hMax, _flexHeight] = computeSizeInfo({
+      shouldWatchAChildsSizeGrows: context.shouldWatchAChildsHeightGrows,
+      shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
       minSize: parseProp(`minHeight`),
       size: parseProp({
         height: v => v,
