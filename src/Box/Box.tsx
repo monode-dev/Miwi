@@ -114,6 +114,8 @@ export function Box(props: BoxProps) {
       {...{ [columnAttrName]: axis.value === Axis.column }}
       {...{ [rowAttrName]: axis.value === Axis.row }}
       {...{ [stackAttrName]: axis.value === Axis.stack }}
+      {...{ [widthGrowsAttrName]: false }}
+      {...{ [heightGrowsAttrName]: false }}
       ref={el => {
         element.value = el;
         // Notify element getters
