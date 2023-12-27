@@ -1,5 +1,5 @@
 import { type JSX, type ParentProps, onCleanup, createEffect, on, onMount } from "solid-js";
-import { Sig, exists, sig, watchDeps, watchEffect } from "../utils";
+import { Sig, SigGet, compute, exists, sig, watchDeps, watchEffect } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
 import {
   _FlexAlign,
@@ -8,6 +8,9 @@ import {
   stackClassName,
   Axis,
   columnClassName,
+  getAxisSig,
+  rowClassName,
+  nonStackClassName,
 } from "./BoxLayout";
 import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from "./BoxSize";
 import { DecorationSty, watchBoxDecoration } from "./BoxDecoration";
@@ -32,17 +35,13 @@ export function Box(props: BoxProps) {
   const parseProp: (...args: any[]) => any = makePropParser(props);
   // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
   const element = sig<HTMLElement | undefined>(undefined);
+  const shouldLog = parseProp(`shouldLog`);
+
+  // Axis
+  // NOTE: We do this here so that children can now our axis right away. Everything else can wait till onMount.
+  const axis = getAxisSig(parseProp);
 
   onMount(() => {
-    // Observe Parent
-    const {
-      parentAxis,
-      parentPaddingLeft,
-      parentPaddingTop,
-      parentPaddingRight,
-      parentPaddingBottom,
-    } = _watchParent(element);
-
     // Observe Children
     const {
       hasMoreThanOneChild,
@@ -50,20 +49,29 @@ export function Box(props: BoxProps) {
       aChildsHeightGrows,
       maxChildWidthPx,
       maxChildHeightPx,
-    } = _watchChildren(element);
+    } = _watchChildren(element, shouldLog);
 
     // Compute Layout
     const isScrollable = sig(false);
-    const { alignX, overflowX, axis, padTop, padRight, padLeft, padBottom } = watchBoxLayout(
+    const { alignX, overflowX, padTop, padRight, padLeft, padBottom } = watchBoxLayout(
       parseProp,
       element,
       {
         hasMoreThanOneChild,
         isScrollable,
+        axis,
       },
     );
     /** TODO: provide a second element sig for a contentWrapperElement. This will be the same as
      * element, but can be changed by watchLayout if a content wrapper is introduced. */
+
+    // Observe Parent
+    const { parentAxis } = _watchParentAxis(element);
+    const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
+      _watchParentPadding(
+        element.value!,
+        compute(() => axis.value === Axis.stack),
+      );
 
     // Compute Size
     watchBoxSize(parseProp, element, {
@@ -101,6 +109,12 @@ export function Box(props: BoxProps) {
   return (
     <div
       {...props}
+      classList={{
+        [columnClassName]: axis.value === Axis.column,
+        [rowClassName]: axis.value === Axis.row,
+        [stackClassName]: axis.value === Axis.stack,
+        [nonStackClassName]: axis.value !== Axis.stack,
+      }}
       ref={el => {
         element.value = el;
         // Notify element getters
@@ -114,13 +128,8 @@ export function Box(props: BoxProps) {
 }
 
 /** SECTION: Helper function to watch parent for Box */
-function _watchParent(element: Sig<HTMLElement | undefined>) {
+function _watchParentAxis(element: Sig<HTMLElement | undefined>) {
   const parentAxis = sig<Axis>(Axis.column);
-  const parentPaddingLeft = sig(`0px`);
-  const parentPaddingTop = sig(`0px`);
-  const parentPaddingRight = sig(`0px`);
-  const parentPaddingBottom = sig(`0px`);
-  // watchDeps([element], () => {
   createEffect(
     on(
       () => element.value,
@@ -135,51 +144,17 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
           },
           () => {
             if (!exists(element.value)) return;
-            const parentElement = element.value.parentElement;
-            if (!exists(parentElement)) return;
-            // Parent Axis
-            const newParentAxis = parentElement.classList.contains(stackClassName)
+            if (!exists(element.value.parentElement)) return;
+            const classList = element.value.parentElement.classList;
+            parentAxis.value = classList.contains(stackClassName)
               ? Axis.stack
-              : parentElement.classList.contains(columnClassName)
+              : classList.contains(columnClassName)
                 ? Axis.column
                 : Axis.row;
-            if (parentAxis.value !== newParentAxis) {
-              parentAxis.value = newParentAxis;
-            }
-          },
-        );
-        const parentStyleObserver = observeElement(
-          element.value.parentElement,
-          {
-            attributes: true,
-            attributeFilter: [`style`],
-          },
-          () => {
-            if (!exists(element.value)) return;
-            const parentElement = element.value.parentElement;
-            if (!exists(parentElement)) return;
-            const parentStyle = getComputedStyle(parentElement);
-            const newParentPaddingLeft = parentStyle.paddingLeft;
-            if (parentPaddingLeft.value !== newParentPaddingLeft) {
-              parentPaddingLeft.value = newParentPaddingLeft;
-            }
-            const newParentPaddingTop = parentStyle.paddingTop;
-            if (parentPaddingTop.value !== newParentPaddingTop) {
-              parentPaddingTop.value = newParentPaddingTop;
-            }
-            const newParentPaddingRight = parentStyle.paddingRight;
-            if (parentPaddingRight.value !== newParentPaddingRight) {
-              parentPaddingRight.value = newParentPaddingRight;
-            }
-            const newParentPaddingBottom = parentStyle.paddingBottom;
-            if (parentPaddingBottom.value !== newParentPaddingBottom) {
-              parentPaddingBottom.value = newParentPaddingBottom;
-            }
           },
         );
         onCleanup(() => {
           parentClassObserver.disconnect();
-          parentStyleObserver.disconnect();
         });
       },
     ),
@@ -187,6 +162,41 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
 
   return {
     parentAxis,
+  };
+}
+function _watchParentPadding(element: HTMLElement, shouldWatch: SigGet<boolean>) {
+  const parentPaddingLeft = sig(`0px`);
+  const parentPaddingTop = sig(`0px`);
+  const parentPaddingRight = sig(`0px`);
+  const parentPaddingBottom = sig(`0px`);
+
+  createEffect(
+    on(
+      () => shouldWatch.value,
+      () => {
+        if (!shouldWatch.value) return;
+        const parentStyleObserver = observeElement(
+          element.parentElement!,
+          {
+            attributes: true,
+            attributeFilter: [`style`],
+          },
+          () => {
+            const parentStyle = getComputedStyle(element.parentElement!);
+            parentPaddingLeft.value = parentStyle.paddingLeft;
+            parentPaddingTop.value = parentStyle.paddingTop;
+            parentPaddingRight.value = parentStyle.paddingRight;
+            parentPaddingBottom.value = parentStyle.paddingBottom;
+          },
+        );
+        onCleanup(() => {
+          parentStyleObserver.disconnect();
+        });
+      },
+    ),
+  );
+
+  return {
     parentPaddingLeft,
     parentPaddingTop,
     parentPaddingRight,
@@ -195,7 +205,7 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
 }
 
 /** SECTION: Helper function to watch children for Box */
-function _watchChildren(element: Sig<HTMLElement | undefined>) {
+function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false) {
   const aChildsWidthGrows = sig(false);
   const aChildsHeightGrows = sig(false);
   const maxChildWidthPx = sig(0);
@@ -203,8 +213,6 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
   const hasMoreThanOneChild = sig(false);
   const childSizeGrowsObservers: MutationObserver[] = [];
   const maxChildSizeObservers: MutationObserver[] = [];
-  // watchDeps([element], () => {
-  // watchEffect(() => {
   createEffect(
     on(
       () => element.value,
@@ -221,10 +229,7 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
               child => child instanceof HTMLElement,
             ) as HTMLElement[];
             // Has More Than One Child
-            const newHasMoreThanOneChild = childElementsArray.length > 1;
-            if (hasMoreThanOneChild.value !== newHasMoreThanOneChild) {
-              hasMoreThanOneChild.value = newHasMoreThanOneChild;
-            }
+            hasMoreThanOneChild.value = childElementsArray.length > 1;
 
             // Child observers
             childSizeGrowsObservers.forEach(observer => observer.disconnect());
@@ -233,30 +238,25 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
             maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
             childElementsArray.forEach(child => {
               // Observe Child Size Grows
-              const sizeGrosObserver = new MutationObserver(watchChildSizeGrows);
-              sizeGrosObserver.observe(child, {
+              const sizeGrowsObserver = new MutationObserver(watchChildSizeGrows);
+              sizeGrowsObserver.observe(child, {
                 attributes: true,
                 attributeFilter: [`class`],
               });
-              childSizeGrowsObservers.push(sizeGrosObserver);
+              childSizeGrowsObservers.push(sizeGrowsObserver);
               watchChildSizeGrows();
               function watchChildSizeGrows() {
-                if (!exists(element.value)) return;
-                const childElementsArray = Array.from(element.value.childNodes).filter(
-                  child => child instanceof HTMLElement,
-                ) as HTMLElement[];
-                const newAChildsWidthGrows = childElementsArray.some(childElement =>
-                  childElement.classList.contains(widthGrowsClassName),
+                const childElementsArray = Array.from(element.value?.childNodes ?? []);
+                aChildsWidthGrows.value = childElementsArray.some(
+                  childElement =>
+                    childElement instanceof HTMLElement &&
+                    childElement.classList.contains(widthGrowsClassName),
                 );
-                if (aChildsWidthGrows.value !== newAChildsWidthGrows) {
-                  aChildsWidthGrows.value = newAChildsWidthGrows;
-                }
-                const newAChildsHeightGrows = childElementsArray.some(childElement =>
-                  childElement.classList.contains(heightGrowsClassName),
+                aChildsHeightGrows.value = childElementsArray.some(
+                  childElement =>
+                    childElement instanceof HTMLElement &&
+                    childElement.classList.contains(heightGrowsClassName),
                 );
-                if (aChildsHeightGrows.value !== newAChildsHeightGrows) {
-                  aChildsHeightGrows.value = newAChildsHeightGrows;
-                }
               }
 
               // Observer Max Child Size
@@ -268,30 +268,17 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
               maxChildSizeObservers.push(maxSizeObserver);
               watchMaxChildSize();
               function watchMaxChildSize() {
-                if (!exists(element.value)) return;
-                const childElementsArray = Array.from(element.value.childNodes).filter(
-                  child => child instanceof HTMLElement,
-                ) as HTMLElement[];
-                let newMaxChildWidthPx = 0;
-                childElementsArray.forEach(childElement => {
-                  newMaxChildWidthPx = Math.max(
-                    newMaxChildWidthPx,
-                    childElement.getBoundingClientRect().width,
-                  );
-                });
-                if (maxChildWidthPx.value !== newMaxChildWidthPx) {
-                  maxChildWidthPx.value = newMaxChildWidthPx;
+                let maxWidth = 0;
+                let maxHeight = 0;
+                for (const child of element.value?.childNodes ?? []) {
+                  if (shouldLog) console.log(`watchMaxChildSize`);
+                  if (!(child instanceof HTMLElement)) continue;
+                  const { width, height } = child.getBoundingClientRect();
+                  maxWidth = Math.max(maxWidth, width);
+                  maxHeight = Math.max(maxHeight, height);
                 }
-                let newMaxChildHeightPx = 0;
-                childElementsArray.forEach(childElement => {
-                  newMaxChildHeightPx = Math.max(
-                    newMaxChildHeightPx,
-                    childElement.getBoundingClientRect().height,
-                  );
-                });
-                if (maxChildHeightPx.value !== newMaxChildHeightPx) {
-                  maxChildHeightPx.value = newMaxChildHeightPx;
-                }
+                maxChildWidthPx.value = maxWidth;
+                maxChildHeightPx.value = maxHeight;
               }
             });
           },
@@ -299,7 +286,9 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
         onCleanup(() => {
           childListObserver.disconnect();
           childSizeGrowsObservers.forEach(observer => observer.disconnect());
+          childSizeGrowsObservers.splice(0, childSizeGrowsObservers.length);
           maxChildSizeObservers.forEach(observer => observer.disconnect());
+          maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
         });
       },
     ),

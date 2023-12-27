@@ -1,4 +1,4 @@
-import { Sig, exists, sig, watchEffect } from "src/utils";
+import { Sig, SigGet, compute, exists, sig, watchEffect } from "src/utils";
 import { ParseProp, muToCss } from "./BoxUtils";
 
 // NOTE: Look into https://solid-dnd.com/ for drag and drop, and re-orderable lists.
@@ -216,7 +216,7 @@ export const Align = {
 export const columnClassName = `miwi-column`;
 export const rowClassName = `miwi-row`;
 export const stackClassName = `miwi-stack`;
-const nonStackClassName = `miwi-non-stack`;
+export const nonStackClassName = `miwi-non-stack`;
 const style = document.createElement(`style`);
 style.textContent = `
 .${stackClassName} > * {
@@ -229,6 +229,18 @@ style.textContent = `
 `;
 document.body.appendChild(style);
 
+export function getAxisSig(parseProp: ParseProp<LayoutSty>): SigGet<Axis> {
+  return compute(
+    () =>
+      parseProp({
+        axis: v => v,
+        row: () => Axis.row,
+        column: () => Axis.column,
+        stack: () => Axis.stack,
+      }) ?? Axis.column,
+  );
+}
+
 // Layout Styler
 export function watchBoxLayout(
   parseProp: ParseProp<LayoutSty>,
@@ -236,12 +248,12 @@ export function watchBoxLayout(
   context: {
     hasMoreThanOneChild: Sig<boolean>;
     isScrollable: Sig<boolean>;
+    axis: SigGet<Axis>;
   },
 ) {
   // Align & Axis
   const alignX = sig<AlignSingleAxis>(_FlexAlign.center);
   const alignY = sig<AlignSingleAxis>(_FlexAlign.center);
-  const axis = sig<Axis>(Axis.column);
   const padTop = sig<string>(`0px`);
   const padRight = sig<string>(`0px`);
   const padBottom = sig<string>(`0px`);
@@ -254,21 +266,10 @@ export function watchBoxLayout(
     );
     alignX.value = _alignX;
     alignY.value = _alignY;
-    const _axis =
-      parseProp({
-        axis: v => v,
-        row: () => Axis.row,
-        column: () => Axis.column,
-        stack: () => Axis.stack,
-      }) ?? Axis.column;
-    axis.value = _axis;
-    element.value.style.justifyContent = _axis === Axis.column ? _alignY : _alignX;
-    element.value.style.alignItems = _axis === Axis.column ? _alignX : _alignY;
-    element.value.style.flexDirection = _axis === Axis.stack ? `` : _axis;
-    element.value.classList.toggle(columnClassName, _axis === Axis.column);
-    element.value.classList.toggle(rowClassName, _axis === Axis.row);
-    element.value.classList.toggle(stackClassName, _axis === Axis.stack);
-    element.value.classList.toggle(nonStackClassName, _axis !== Axis.stack);
+    const axis = context.axis.value;
+    element.value.style.justifyContent = axis === Axis.column ? _alignY : _alignX;
+    element.value.style.alignItems = axis === Axis.column ? _alignX : _alignY;
+    element.value.style.flexDirection = axis === Axis.stack ? `` : axis;
   });
 
   // Pad
@@ -354,9 +355,9 @@ export function watchBoxLayout(
     /* NOTE: And-ing the axis check after the overflow check means we'll only watch row
      * when it is absolutely necessary. */
     element.value.style.flexWrap =
-      _overflowX === Overflow.wrap && axis.value === Axis.row
+      _overflowX === Overflow.wrap && context.axis.value === Axis.row
         ? `wrap`
-        : overflowY === Overflow.wrap && axis.value === Axis.row
+        : overflowY === Overflow.wrap && context.axis.value === Axis.row
           ? `wrap`
           : ``;
     element.value.style.overflowX =
@@ -383,7 +384,6 @@ export function watchBoxLayout(
   return {
     alignX,
     overflowX,
-    axis,
     padTop,
     padRight,
     padBottom,

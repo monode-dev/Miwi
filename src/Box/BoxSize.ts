@@ -1,6 +1,6 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
-import { Sig, sig, watchEffect } from "src/utils";
+import { Sig, SigGet, sig, watchEffect } from "src/utils";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
 export type SizeSty = Partial<{
@@ -131,7 +131,7 @@ export function watchBoxSize(
     maxChildWidthPx: Sig<number>;
     maxChildHeightPx: Sig<number>;
     parentAxis: Sig<Axis>;
-    myAxis: Sig<Axis>;
+    myAxis: SigGet<Axis>;
     padTop: Sig<string>;
     padRight: Sig<string>;
     padBottom: Sig<string>;
