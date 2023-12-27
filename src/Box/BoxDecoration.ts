@@ -77,10 +77,12 @@ export function watchBoxDecoration(
     if (!exists(element.value)) return;
     const outlineSize = parseProp({ outlineSize: v => v });
     const outlineColor = parseProp({ outlineColor: v => v });
-    element.value.style.outline =
-      exists(outlineSize) && exists(outlineColor)
-        ? `${muToCss(outlineSize)} solid ${outlineColor}`
-        : ``;
+    /* NOTE: Sometimes devs would set an outlineColor but not outlineSize,
+     * and then be confused why the outline wasn't visible. So we give it a
+     * default size but no default color. */
+    element.value.style.outline = exists(outlineColor)
+      ? `${muToCss(outlineSize ?? 1 / 8)} solid ${outlineColor}`
+      : ``;
     element.value.style.outlineOffset =
       exists(outlineSize) && exists(outlineColor) ? `-${muToCss(outlineSize)}` : ``;
   });

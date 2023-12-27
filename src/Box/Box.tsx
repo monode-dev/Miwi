@@ -38,6 +38,7 @@ export type BoxStyleProps = Partial<
       shouldLog?: boolean;
     }
 >;
+const _boxElementsToInit = new Map<HTMLElement, () => void>();
 export function Box(props: BoxProps) {
   const parseProp: (...args: any[]) => any = makePropParser(props);
   // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
@@ -49,6 +50,22 @@ export function Box(props: BoxProps) {
   const axis = getAxisSig(parseProp);
 
   onMount(() => {
+    if (!exists(element.value))
+      throw new Error(`Box element is undefined in onMount(). This should not happen!`);
+    _boxElementsToInit.get(element.value)?.();
+  });
+
+  function init() {
+    if (!exists(element.value))
+      throw new Error(`Box element is undefined in mount(). This should not happen!`);
+    // Init children first
+    element.value.childNodes.forEach(child => {
+      if (!(child instanceof HTMLElement)) return;
+      _boxElementsToInit.get(child)?.();
+    });
+    // We're about to init ourselves, so remove from map
+    _boxElementsToInit.delete(element.value);
+
     // Compute Layout
     const isScrollable = sig(false);
     const hasMoreThanOneChild = _watchHasMoreThanOneChild(element.value!);
@@ -112,7 +129,7 @@ export function Box(props: BoxProps) {
     watchBoxInteraction(parseProp, element, { isScrollable });
 
     if (shouldLog) logTime(`Box mounted.`);
-  });
+  }
 
   // TODO: Toggle element type based on "tag" prop.
   return (
@@ -126,6 +143,7 @@ export function Box(props: BoxProps) {
       }}
       ref={el => {
         element.value = el;
+        _boxElementsToInit.set(el, init);
         // Notify element getters
         parseProp(`getElement`, true).forEach((getter: any) => {
           if (typeof getter !== `function`) return;
