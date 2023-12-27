@@ -1,4 +1,11 @@
-import { type JSX, type ParentProps, onCleanup, onMount, createRenderEffect } from "solid-js";
+import {
+  type JSX,
+  type ParentProps,
+  onCleanup,
+  onMount,
+  createRenderEffect,
+  untrack,
+} from "solid-js";
 import { SigGet, Toggle, createToggle, exists, logTime, sig } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
 import {
@@ -215,6 +222,8 @@ function _findClassInChildren(
       childObserver.disconnect();
       childObserver = new MutationObserver(watchAttr);
       watchAttr();
+      if (shouldLog)
+        untrack(() => console.log(`findClassInChildren`, [className, foundClass.value]));
       childElements.forEach(child => {
         childObserver.observe(child, { attributeFilter: [`class`] });
       });
