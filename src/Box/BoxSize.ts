@@ -1,6 +1,6 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
-import { Sig, SigGet, logTime, sig } from "src/utils";
+import { Sig, SigGet, Toggle, logTime, sig } from "src/utils";
 import { createRenderEffect, untrack } from "solid-js";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
@@ -49,7 +49,6 @@ export function isFlexSize(size: any): size is FlexSize {
 }
 
 export function computeSizeInfo(props: {
-  shouldWatchAChildsSizeGrows: Sig<boolean>;
   shouldWatchMaxChildSize: Sig<boolean>;
   minSize: number | string | undefined;
   size: Size | undefined;
@@ -62,19 +61,19 @@ export function computeSizeInfo(props: {
   myPaddingStart: string;
   myPaddingEnd: string;
   maxChildSizePx: SigGet<number>;
-  someChildGrows: SigGet<boolean>;
+  someChildGrows: Toggle<SigGet<boolean>>;
   shouldLog?: boolean;
 }) {
   const sizeIgnoringChildGrowth = props.size ?? SIZE_SHRINKS;
-  props.shouldWatchAChildsSizeGrows.value = isShrinkSize(sizeIgnoringChildGrowth);
+  props.someChildGrows.toggleWatch(isShrinkSize(sizeIgnoringChildGrowth));
   props.shouldWatchMaxChildSize.value = props.iAmAStack && isShrinkSize(sizeIgnoringChildGrowth);
-  if (props.shouldLog) {
-    untrack(() =>
-      console.log(`shouldWatchAChildsSizeGrows`, props.shouldWatchAChildsSizeGrows.value),
-    );
-  }
+  // if (props.shouldLog) {
+  //   untrack(() =>
+  //     console.log(`shouldWatchAChildsSizeGrows`, props.shouldWatchAChildsSizeGrows.value),
+  //   );
+  // }
   const targetSize =
-    isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.value
+    isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.out.value
       ? { flex: 1 }
       : sizeIgnoringChildGrowth;
   const exactSize = isCssSize(targetSize)
@@ -137,10 +136,8 @@ export function watchBoxSize(
   parseProp: ParseProp<SizeSty>,
   element: Sig<HTMLElement | undefined>,
   context: {
-    shouldWatchAChildsWidthGrows: Sig<boolean>;
-    aChildsWidthGrows: Sig<boolean>;
-    shouldWatchAChildsHeightGrows: Sig<boolean>;
-    aChildsHeightGrows: Sig<boolean>;
+    aChildsWidthGrows: Toggle<SigGet<boolean>>;
+    aChildsHeightGrows: Toggle<SigGet<boolean>>;
     shouldWatchMaxChildSize: Sig<boolean>;
     maxChildWidthPx: Sig<number>;
     maxChildHeightPx: Sig<number>;
@@ -173,7 +170,6 @@ export function watchBoxSize(
       untrack(() => {
         logTime(
           `Computing width: ${JSON.stringify({
-            shouldWatchAChildsSizeGrows: context.shouldWatchAChildsWidthGrows.value,
             shouldWatchMaxChildSize: context.shouldWatchMaxChildSize.value,
             minSize: parseProp(`minWidth`),
             size: parseProp({
@@ -191,14 +187,13 @@ export function watchBoxSize(
             parentIsStack: context.parentAxis.value === Axis.stack,
             parentPaddingStart: context.parentPaddingLeft.value,
             parentPaddingEnd: context.parentPaddingRight.value,
-            someChildGrows: context.aChildsWidthGrows.value,
+            someChildGrows: context.aChildsWidthGrows.out.value,
           })}`,
         );
       });
     }
     if (!exists(element.value)) return;
     const [exactWidth, wMin, wMax, _flexWidth] = computeSizeInfo({
-      shouldWatchAChildsSizeGrows: context.shouldWatchAChildsWidthGrows,
       shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
       minSize: parseProp(`minWidth`),
       size: parseProp({
@@ -231,7 +226,6 @@ export function watchBoxSize(
   createRenderEffect(() => {
     if (!exists(element.value)) return;
     const [exactHeight, hMin, hMax, _flexHeight] = computeSizeInfo({
-      shouldWatchAChildsSizeGrows: context.shouldWatchAChildsHeightGrows,
       shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
       minSize: parseProp(`minHeight`),
       size: parseProp({

@@ -55,6 +55,25 @@ export function doNow<T>(func: () => T): T {
   return func();
 }
 
+// Experimentally lets us create a value that can be watched or not.
+export type Toggle<T> = {
+  toggleWatch(on: boolean): void;
+  out: T;
+};
+export function createToggle<T>(out: T, effect: () => () => void): Toggle<T> {
+  let cleanup = () => {};
+  let isOn = false;
+  return {
+    toggleWatch(on: boolean) {
+      if (on === isOn) return;
+      isOn = on;
+      if (on) cleanup = effect();
+      else cleanup();
+    },
+    out,
+  };
+}
+
 // New Reactivity
 export type Writable<T> = {
   [isReadableProp]: true;

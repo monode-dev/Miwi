@@ -1,5 +1,5 @@
 import { type JSX, type ParentProps, onCleanup, onMount, createRenderEffect } from "solid-js";
-import { SigGet, exists, logTime, sig } from "../utils";
+import { SigGet, Toggle, createToggle, exists, logTime, sig } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
 import {
   _FlexAlign,
@@ -64,19 +64,8 @@ export function Box(props: BoxProps) {
       shouldWatchMaxChildSize,
       shouldLog,
     );
-    const shouldWatchAChildsWidthGrows = sig(false);
-    const aChildsWidthGrows = _findClassInChildren(
-      element.value!,
-      widthGrowsClassName,
-      shouldWatchAChildsWidthGrows,
-      shouldLog,
-    );
-    const shouldWatchAChildsHeightGrows = sig(false);
-    const aChildsHeightGrows = _findClassInChildren(
-      element.value!,
-      heightGrowsClassName,
-      shouldWatchAChildsHeightGrows,
-    );
+    const aChildsWidthGrows = _findClassInChildren(element.value!, widthGrowsClassName, shouldLog);
+    const aChildsHeightGrows = _findClassInChildren(element.value!, heightGrowsClassName);
     const parentAxis = _watchParentAxis(element.value!);
     const shouldWatchParentPadding = sig(false);
     const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
@@ -95,9 +84,7 @@ export function Box(props: BoxProps) {
       parentPaddingRight,
       parentPaddingTop,
       parentPaddingBottom,
-      shouldWatchAChildsWidthGrows,
       aChildsWidthGrows,
-      shouldWatchAChildsHeightGrows,
       aChildsHeightGrows,
       shouldWatchMaxChildSize,
       maxChildWidthPx,
@@ -216,13 +203,10 @@ function _watchHasMoreThanOneChild(element: HTMLElement) {
 function _findClassInChildren(
   element: HTMLElement,
   className: string,
-  shouldWatch: SigGet<boolean>,
   shouldLog?: boolean,
-) {
+): Toggle<SigGet<boolean>> {
   const foundClass = sig(false);
-  createRenderEffect(() => {
-    if (shouldLog) console.log(`_findClassInChildren`, shouldWatch.value);
-    if (!shouldWatch.value) return;
+  return createToggle(foundClass, () => {
     let childObserver = new MutationObserver(() => {});
     const observer = observeElement(element, { childList: true }, () => {
       const childElements = Array.from(element.childNodes).filter(
@@ -240,12 +224,11 @@ function _findClassInChildren(
         );
       }
     });
-    onCleanup(() => {
+    return () => {
       observer.disconnect();
       childObserver.disconnect();
-    });
+    };
   });
-  return foundClass;
 }
 function _watchMaxChildSize(element: HTMLElement, shouldWatch: SigGet<boolean>, shouldLog = false) {
   const maxChildWidthPx = sig(0);
