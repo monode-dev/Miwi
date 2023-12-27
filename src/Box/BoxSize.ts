@@ -1,6 +1,6 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
-import { Sig, SigGet, sig, watchEffect } from "src/utils";
+import { Sig, SigGet, logTime, sig, watchEffect } from "src/utils";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
 export type SizeSty = Partial<{
@@ -162,7 +162,7 @@ export function watchBoxSize(
   // SECTION: Width
   const flexWidth = sig<number | undefined>(undefined);
   watchEffect(() => {
-    if (context.shouldLog) console.log(`Computing width.`);
+    if (context.shouldLog) logTime(`Computing width.`);
     if (!exists(element.value)) return;
     const [exactWidth, wMin, wMax, _flexWidth] = computeSizeInfo({
       shouldWatchAChildsSizeGrows: context.shouldWatchAChildsWidthGrows,

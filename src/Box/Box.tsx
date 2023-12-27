@@ -1,5 +1,5 @@
 import { type JSX, type ParentProps, onCleanup, onMount } from "solid-js";
-import { SigGet, compute, exists, sig, watchEffect } from "../utils";
+import { SigGet, compute, exists, logTime, sig, watchEffect } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
 import {
   _FlexAlign,
@@ -16,13 +16,6 @@ import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from
 import { DecorationSty, watchBoxDecoration } from "./BoxDecoration";
 import { TextSty, watchBoxText } from "./BoxText";
 import { InteractionSty, watchBoxInteraction } from "./BoxInteraction";
-
-(window as any).lastLogTime = 0;
-export function logTime(message: string) {
-  const now = Date.now();
-  console.log(`${message}: ${now - (window as any).lastLogTime}ms`);
-  (window as any).lastLogTime = now;
-}
 
 // SECTION: Box Component
 export type BoxProps = BoxStyleProps & ParentProps & JSX.DOMAttributes<HTMLDivElement>;
@@ -123,7 +116,7 @@ export function Box(props: BoxProps) {
     // Computer Interactivity
     watchBoxInteraction(parseProp, element, { isScrollable });
 
-    if (shouldLog) console.log(`Box mounted.`);
+    if (shouldLog) logTime(`Box mounted.`);
   });
 
   // TODO: Toggle element type based on "tag" prop.
@@ -270,7 +263,7 @@ function _watchMaxChildSize(element: HTMLElement, shouldWatch: SigGet<boolean>, 
         [maxChildWidthPx.value, maxChildHeightPx.value] = childElements.reduce(
           (max, child) => {
             const { width, height } = child.getBoundingClientRect();
-            if (shouldLog) console.log(`watchMaxChildSize`);
+            if (shouldLog) logTime(`watchMaxChildSize`);
             return [Math.max(width, max[0]), Math.max(height, max[1])];
           },
           [0, 0],
