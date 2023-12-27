@@ -1,4 +1,4 @@
-import { type JSX, type ParentProps, onCleanup, createEffect, on, onMount } from "solid-js";
+import { type JSX, type ParentProps, onCleanup, createEffect, on } from "solid-js";
 import { Sig, exists, sig, watchDeps, watchEffect } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
 import {
@@ -33,7 +33,6 @@ export function Box(props: BoxProps) {
   // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
   const element = sig<HTMLElement | undefined>(undefined);
 
-  // onMount(() => {
   // Observe Parent
   const {
     parentAxis,
@@ -95,7 +94,6 @@ export function Box(props: BoxProps) {
 
   // Computer Interactivity
   watchBoxInteraction(parseProp, element, { isScrollable });
-  // });
 
   // TODO: Toggle element type based on "tag" prop.
   return (
