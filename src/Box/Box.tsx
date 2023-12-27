@@ -33,13 +33,30 @@ export type BoxStyleProps = Partial<
 >;
 export function Box(props: BoxProps) {
   const parseProp: (...args: any[]) => any = makePropParser(props);
-  // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
-  const element = sig<HTMLElement | undefined>(undefined);
-  const shouldLog = parseProp(`shouldLog`);
 
   // Axis
   // NOTE: We do this here so that children can now our axis right away. Everything else can wait till onMount.
   const axis = getAxisSig(parseProp);
+  
+  // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
+  const element = sig<HTMLElement>(
+    (
+      <div
+        {...props}
+        classList={{
+          [columnClassName]: axis.value === Axis.column,
+          [rowClassName]: axis.value === Axis.row,
+          [stackClassName]: axis.value === Axis.stack,
+          [nonStackClassName]: axis.value !== Axis.stack,
+        }}
+        ref={el => {
+          element.value = el;
+        }}
+      />
+    ) as HTMLElement,
+  );
+  const shouldLog = parseProp(`shouldLog`);
+
 
   onMount(() => {
     // Compute Layout
@@ -97,28 +114,30 @@ export function Box(props: BoxProps) {
 
     // Computer Interactivity
     watchBoxInteraction(parseProp, element, { isScrollable });
+
+    // The element is set up so we can give it to anyone who asked for it now
+    parseProp(`getElement`, true).forEach((getter: any) => {
+      if (typeof getter !== `function`) return;
+      getter(element.value);
+    });
   });
 
   // TODO: Toggle element type based on "tag" prop.
-  return (
-    <div
-      {...props}
-      classList={{
-        [columnClassName]: axis.value === Axis.column,
-        [rowClassName]: axis.value === Axis.row,
-        [stackClassName]: axis.value === Axis.stack,
-        [nonStackClassName]: axis.value !== Axis.stack,
-      }}
-      ref={el => {
-        element.value = el;
-        // Notify element getters
-        parseProp(`getElement`, true).forEach((getter: any) => {
-          if (typeof getter !== `function`) return;
-          getter(element.value);
-        });
-      }}
-    />
-  );
+  return element.value;
+  // return (
+  //   <div
+  //     {...props}
+  //     classList={{
+  //       [columnClassName]: axis.value === Axis.column,
+  //       [rowClassName]: axis.value === Axis.row,
+  //       [stackClassName]: axis.value === Axis.stack,
+  //       [nonStackClassName]: axis.value !== Axis.stack,
+  //     }}
+  //     ref={el => {
+  //       element.value = el;
+  //     }}
+  //   />
+  // );
 }
 
 /** SECTION: Helper function to watch parent for Box */
@@ -201,7 +220,7 @@ function _watchParentPadding(element: HTMLElement, shouldWatch: SigGet<boolean>)
 /** SECTION: Helper function to watch children for Box */
 function _watchHasMoreThanOneChild(element: HTMLElement) {
   const hasMoreThanOneChild = sig(false);
-  const childCountObserver = observeElement(
+  const observer = observeElement(
     element,
     {
       childList: true,
@@ -211,10 +230,14 @@ function _watchHasMoreThanOneChild(element: HTMLElement) {
     },
   );
   onCleanup(() => {
-    childCountObserver.disconnect();
+    observer.disconnect();
   });
   return hasMoreThanOneChild;
 }
+// function _watchAChildsWidthGrows(element: HTMLElement) {
+//   const aChildsWidthGrows = sig(false);
+
+// }
 function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false) {
   const aChildsWidthGrows = sig(false);
   const aChildsHeightGrows = sig(false);
