@@ -66,7 +66,7 @@ export function Field(
   }
   watchDeps([value], () => {
     if (!inputElementHasFocus.value) {
-      console.log(`Setting temp value to ${value.value}`);
+      // console.log(`Setting temp value to ${value.value}`);
       setTempValue(value.value);
     }
   });
