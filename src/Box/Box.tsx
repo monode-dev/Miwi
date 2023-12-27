@@ -118,7 +118,8 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
   const parentPaddingTop = sig(`0px`);
   const parentPaddingRight = sig(`0px`);
   const parentPaddingBottom = sig(`0px`);
-  watchDeps([element], () => {
+  // watchDeps([element], () => {
+  watchEffect(() => {
     if (!exists(element.value)) return;
     if (!exists(element.value.parentElement)) return;
     const parentClassObserver = observeElement(
@@ -146,7 +147,7 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
       element.value.parentElement,
       {
         attributes: true,
-        attributeFilter: [`style`, `class`],
+        attributeFilter: [`style`],
       },
       () => {
         if (!exists(element.value)) return;
@@ -195,7 +196,8 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
   const hasMoreThanOneChild = sig(false);
   const childSizeGrowsObservers: MutationObserver[] = [];
   const maxChildSizeObservers: MutationObserver[] = [];
-  watchDeps([element], () => {
+  // watchDeps([element], () => {
+  watchEffect(() => {
     if (!exists(element.value)) return;
     const childListObserver = observeElement(
       element.value,
