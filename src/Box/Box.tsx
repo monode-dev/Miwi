@@ -231,7 +231,7 @@ function _findClassInChildren(
         if (shouldLog) {
           console.log(
             `childClasses`,
-            childElements.map(child => child.classList),
+            childElements.map(child => [...child.classList]),
           );
         }
         foundClass.value = childElements.some(childElement =>
