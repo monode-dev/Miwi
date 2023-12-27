@@ -7,10 +7,11 @@ import {
   LayoutSty,
   stackClassName,
   Axis,
-  columnClassName,
+  columnAttrName,
   getAxisSig,
-  rowClassName,
+  rowAttrName,
   nonStackClassName,
+  stackAttrName,
 } from "./BoxLayout";
 import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from "./BoxSize";
 import { DecorationSty, watchBoxDecoration } from "./BoxDecoration";
@@ -109,12 +110,9 @@ export function Box(props: BoxProps) {
   return (
     <div
       {...props}
-      classList={{
-        [columnClassName]: axis.value === Axis.column,
-        [rowClassName]: axis.value === Axis.row,
-        [stackClassName]: axis.value === Axis.stack,
-        [nonStackClassName]: axis.value !== Axis.stack,
-      }}
+      {...{ [columnAttrName]: axis.value === Axis.column }}
+      {...{ [rowAttrName]: axis.value === Axis.row }}
+      {...{ [stackAttrName]: axis.value === Axis.stack }}
       ref={el => {
         element.value = el;
         // Notify element getters
@@ -140,15 +138,15 @@ function _watchParentAxis(element: Sig<HTMLElement | undefined>) {
           element.value.parentElement,
           {
             attributes: true,
-            attributeFilter: [`class`],
+            attributeFilter: [columnAttrName, rowAttrName, stackAttrName],
           },
           () => {
             if (!exists(element.value)) return;
             if (!exists(element.value.parentElement)) return;
-            const classList = element.value.parentElement.classList;
-            parentAxis.value = classList.contains(stackClassName)
+            // const classList = element.value.parentElement.classList;
+            parentAxis.value = (element.value.parentElement as any)[stackAttrName]
               ? Axis.stack
-              : classList.contains(columnClassName)
+              : (element.value.parentElement as any)[columnAttrName]
                 ? Axis.column
                 : Axis.row;
           },

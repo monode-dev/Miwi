@@ -213,8 +213,9 @@ export const Align = {
 } as const;
 
 // Classes
-export const columnClassName = `miwi-column`;
-export const rowClassName = `miwi-row`;
+export const columnAttrName = `miwiColumn`;
+export const rowAttrName = `miwiRow`;
+export const stackAttrName = `miwiStack`;
 export const stackClassName = `miwi-stack`;
 export const nonStackClassName = `miwi-non-stack`;
 const style = document.createElement(`style`);
@@ -270,6 +271,8 @@ export function watchBoxLayout(
     element.value.style.justifyContent = axis === Axis.column ? _alignY : _alignX;
     element.value.style.alignItems = axis === Axis.column ? _alignX : _alignY;
     element.value.style.flexDirection = axis === Axis.stack ? `` : axis;
+    element.value.classList.toggle(stackClassName, axis === Axis.stack);
+    element.value.classList.toggle(nonStackClassName, axis !== Axis.stack);
   });
 
   // Pad
