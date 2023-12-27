@@ -33,69 +33,69 @@ export function Box(props: BoxProps) {
   // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
   const element = sig<HTMLElement | undefined>(undefined);
 
-  onMount(() => {
-    // Observe Parent
-    const {
-      parentAxis,
-      parentPaddingLeft,
-      parentPaddingTop,
-      parentPaddingRight,
-      parentPaddingBottom,
-    } = _watchParent(element);
+  // onMount(() => {
+  // Observe Parent
+  const {
+    parentAxis,
+    parentPaddingLeft,
+    parentPaddingTop,
+    parentPaddingRight,
+    parentPaddingBottom,
+  } = _watchParent(element);
 
-    // Observe Children
-    const {
+  // Observe Children
+  const {
+    hasMoreThanOneChild,
+    aChildsWidthGrows,
+    aChildsHeightGrows,
+    maxChildWidthPx,
+    maxChildHeightPx,
+  } = _watchChildren(element);
+
+  // Compute Layout
+  const isScrollable = sig(false);
+  const { alignX, overflowX, axis, padTop, padRight, padLeft, padBottom } = watchBoxLayout(
+    parseProp,
+    element,
+    {
       hasMoreThanOneChild,
-      aChildsWidthGrows,
-      aChildsHeightGrows,
-      maxChildWidthPx,
-      maxChildHeightPx,
-    } = _watchChildren(element);
+      isScrollable,
+    },
+  );
+  /** TODO: provide a second element sig for a contentWrapperElement. This will be the same as
+   * element, but can be changed by watchLayout if a content wrapper is introduced. */
 
-    // Compute Layout
-    const isScrollable = sig(false);
-    const { alignX, overflowX, axis, padTop, padRight, padLeft, padBottom } = watchBoxLayout(
-      parseProp,
-      element,
-      {
-        hasMoreThanOneChild,
-        isScrollable,
-      },
-    );
-    /** TODO: provide a second element sig for a contentWrapperElement. This will be the same as
-     * element, but can be changed by watchLayout if a content wrapper is introduced. */
-
-    // Compute Size
-    watchBoxSize(parseProp, element, {
-      myAxis: axis,
-      padTop,
-      padRight,
-      padLeft,
-      padBottom,
-      parentAxis,
-      parentPaddingLeft,
-      parentPaddingRight,
-      parentPaddingTop,
-      parentPaddingBottom,
-      aChildsWidthGrows,
-      aChildsHeightGrows,
-      maxChildWidthPx,
-      maxChildHeightPx,
-      shouldLog: parseProp(`shouldLog`),
-    });
-
-    // Compute Decoration
-    watchBoxDecoration(parseProp, element);
-
-    // Compute Text Styling
-    watchBoxText(parseProp, element, {
-      alignX,
-      overflowX,
-    });
-
-    // Computer Interactivity
-    watchBoxInteraction(parseProp, element, { isScrollable });
+  // Compute Size
+  watchBoxSize(parseProp, element, {
+    myAxis: axis,
+    padTop,
+    padRight,
+    padLeft,
+    padBottom,
+    parentAxis,
+    parentPaddingLeft,
+    parentPaddingRight,
+    parentPaddingTop,
+    parentPaddingBottom,
+    aChildsWidthGrows,
+    aChildsHeightGrows,
+    maxChildWidthPx,
+    maxChildHeightPx,
+    shouldLog: parseProp(`shouldLog`),
   });
+
+  // Compute Decoration
+  watchBoxDecoration(parseProp, element);
+
+  // Compute Text Styling
+  watchBoxText(parseProp, element, {
+    alignX,
+    overflowX,
+  });
+
+  // Computer Interactivity
+  watchBoxInteraction(parseProp, element, { isScrollable });
+  // });
 
   // TODO: Toggle element type based on "tag" prop.
   return (
