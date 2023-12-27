@@ -17,6 +17,13 @@ import { DecorationSty, watchBoxDecoration } from "./BoxDecoration";
 import { TextSty, watchBoxText } from "./BoxText";
 import { InteractionSty, watchBoxInteraction } from "./BoxInteraction";
 
+(window as any).lastLogTime = 0;
+export function logTime(message: string) {
+  const now = Date.now();
+  console.log(`${message}: ${now - (window as any).lastLogTime}ms`);
+  (window as any).lastLogTime = now;
+}
+
 // SECTION: Box Component
 export type BoxProps = BoxStyleProps & ParentProps & JSX.DOMAttributes<HTMLDivElement>;
 export type BoxStyleProps = Partial<
