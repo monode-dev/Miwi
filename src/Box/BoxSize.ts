@@ -60,14 +60,14 @@ export function computeSizeInfo(props: {
   parentPaddingEnd: string;
   myPaddingStart: string;
   myPaddingEnd: string;
-  maxChildSizePx: number;
-  someChildGrows: boolean;
+  maxChildSizePx: SigGet<number>;
+  someChildGrows: SigGet<boolean>;
 }) {
   const sizeIgnoringChildGrowth = props.size ?? SIZE_SHRINKS;
   props.shouldWatchAChildsSizeGrows.value = isShrinkSize(sizeIgnoringChildGrowth);
   props.shouldWatchMaxChildSize.value = props.iAmAStack && isShrinkSize(sizeIgnoringChildGrowth);
   const targetSize =
-    isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows
+    isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.value
       ? { flex: 1 }
       : sizeIgnoringChildGrowth;
   const exactSize = isCssSize(targetSize)
@@ -76,7 +76,7 @@ export function computeSizeInfo(props: {
       ? muToCss(targetSize) // Miwi Units
       : isShrinkSize(targetSize)
         ? props.iAmAStack
-          ? `calc(${props.maxChildSizePx}px + ${props.myPaddingStart} + ${props.myPaddingEnd})`
+          ? `calc(${props.maxChildSizePx.value}px + ${props.myPaddingStart} + ${props.myPaddingEnd})`
           : /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
              * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
              * parent to grow to fit the child even when we didn't want it to. It seems to be working
@@ -178,11 +178,11 @@ export function watchBoxSize(
       iAmAStack: context.myAxis.value === Axis.stack,
       myPaddingStart: context.padLeft.value,
       myPaddingEnd: context.padRight.value,
-      maxChildSizePx: context.maxChildWidthPx.value,
+      maxChildSizePx: context.maxChildWidthPx,
       parentIsStack: context.parentAxis.value === Axis.stack,
       parentPaddingStart: context.parentPaddingLeft.value,
       parentPaddingEnd: context.parentPaddingRight.value,
-      someChildGrows: context.aChildsWidthGrows.value,
+      someChildGrows: context.aChildsWidthGrows,
     });
     flexWidth.value = _flexWidth;
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth));
@@ -210,11 +210,11 @@ export function watchBoxSize(
       iAmAStack: context.myAxis.value === Axis.stack,
       myPaddingStart: context.padTop.value,
       myPaddingEnd: context.padBottom.value,
-      maxChildSizePx: context.maxChildHeightPx.value,
+      maxChildSizePx: context.maxChildHeightPx,
       parentIsStack: context.parentAxis.value === Axis.stack,
       parentPaddingStart: context.parentPaddingTop.value,
       parentPaddingEnd: context.parentPaddingBottom.value,
-      someChildGrows: context.aChildsHeightGrows.value,
+      someChildGrows: context.aChildsHeightGrows,
     });
     flexHeight.value = _flexHeight;
     element.value.classList.toggle(heightGrowsClassName, exists(_flexHeight));
