@@ -69,6 +69,7 @@ export function Box(props: BoxProps) {
       element.value!,
       widthGrowsClassName,
       shouldWatchAChildsWidthGrows,
+      shouldLog,
     );
     const shouldWatchAChildsHeightGrows = sig(false);
     const aChildsHeightGrows = _findClassInChildren(
