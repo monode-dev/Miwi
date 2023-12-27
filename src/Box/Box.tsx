@@ -33,26 +33,13 @@ export type BoxStyleProps = Partial<
 >;
 export function Box(props: BoxProps) {
   const parseProp: (...args: any[]) => any = makePropParser(props);
+  // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
+  const element = sig<HTMLElement | undefined>(undefined);
+  const shouldLog = parseProp(`shouldLog`);
 
   // Axis
   // NOTE: We do this here so that children can now our axis right away. Everything else can wait till onMount.
   const axis = getAxisSig(parseProp);
-
-  // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
-  const element = sig<HTMLElement>(
-    (
-      <div
-        {...props}
-        classList={{
-          [columnClassName]: axis.value === Axis.column,
-          [rowClassName]: axis.value === Axis.row,
-          [stackClassName]: axis.value === Axis.stack,
-          [nonStackClassName]: axis.value !== Axis.stack,
-        }}
-      />
-    ) as HTMLElement,
-  );
-  const shouldLog = parseProp(`shouldLog`);
 
   onMount(() => {
     // Compute Layout
@@ -119,21 +106,18 @@ export function Box(props: BoxProps) {
   });
 
   // TODO: Toggle element type based on "tag" prop.
-  return element.value;
-  // return (
-  //   <div
-  //     {...props}
-  //     classList={{
-  //       [columnClassName]: axis.value === Axis.column,
-  //       [rowClassName]: axis.value === Axis.row,
-  //       [stackClassName]: axis.value === Axis.stack,
-  //       [nonStackClassName]: axis.value !== Axis.stack,
-  //     }}
-  //     ref={el => {
-  //       element.value = el;
-  //     }}
-  //   />
-  // );
+  return (
+    <div
+      {...props}
+      classList={{
+        [columnClassName]: axis.value === Axis.column,
+        [rowClassName]: axis.value === Axis.row,
+        [stackClassName]: axis.value === Axis.stack,
+        [nonStackClassName]: axis.value !== Axis.stack,
+      }}
+      ref={el => (element.value = el)}
+    />
+  );
 }
 
 /** SECTION: Helper function to watch parent for Box */
