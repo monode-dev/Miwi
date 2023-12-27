@@ -115,6 +115,8 @@ export function Box(props: BoxProps) {
 
     // Computer Interactivity
     watchBoxInteraction(parseProp, element, { isScrollable });
+
+    if (shouldLog) console.log(`Box mounted.`);
   });
 
   // TODO: Toggle element type based on "tag" prop.
