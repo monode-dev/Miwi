@@ -243,7 +243,7 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
               let maxWidth = 0;
               let maxHeight = 0;
               for (const child of element.value?.childNodes ?? []) {
-                if (shouldLog) console.log(`watchMaxChildSize`);
+                if (shouldLog) console.log(`from watchMaxChildSize`);
                 if (!(child instanceof HTMLElement)) continue;
                 const { width, height } = child.getBoundingClientRect();
                 maxWidth = Math.max(maxWidth, width);
