@@ -42,17 +42,9 @@ export function Box(props: BoxProps) {
   const axis = getAxisSig(parseProp);
 
   onMount(() => {
-    // Observe Children
-    const {
-      hasMoreThanOneChild,
-      aChildsWidthGrows,
-      aChildsHeightGrows,
-      maxChildWidthPx,
-      maxChildHeightPx,
-    } = _watchChildren(element, shouldLog);
-
     // Compute Layout
     const isScrollable = sig(false);
+    const hasMoreThanOneChild = _watchHasMoreThanOneChild(element.value!);
     const { alignX, overflowX, padTop, padRight, padLeft, padBottom } = watchBoxLayout(
       parseProp,
       element,
@@ -65,7 +57,9 @@ export function Box(props: BoxProps) {
     /** TODO: provide a second element sig for a contentWrapperElement. This will be the same as
      * element, but can be changed by watchLayout if a content wrapper is introduced. */
 
-    // Observe Parent
+    // Observe Relatives
+    const { aChildsWidthGrows, aChildsHeightGrows, maxChildWidthPx, maxChildHeightPx } =
+      _watchChildren(element, shouldLog);
     const { parentAxis } = _watchParentAxis(element);
     const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
       _watchParentPadding(
@@ -205,12 +199,27 @@ function _watchParentPadding(element: HTMLElement, shouldWatch: SigGet<boolean>)
 }
 
 /** SECTION: Helper function to watch children for Box */
+function _watchHasMoreThanOneChild(element: HTMLElement) {
+  const hasMoreThanOneChild = sig(false);
+  const childCountObserver = observeElement(
+    element,
+    {
+      childList: true,
+    },
+    () => {
+      hasMoreThanOneChild.value = element.childNodes.length > 1;
+    },
+  );
+  onCleanup(() => {
+    childCountObserver.disconnect();
+  });
+  return hasMoreThanOneChild;
+}
 function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false) {
   const aChildsWidthGrows = sig(false);
   const aChildsHeightGrows = sig(false);
   const maxChildWidthPx = sig(0);
   const maxChildHeightPx = sig(0);
-  const hasMoreThanOneChild = sig(false);
   const childSizeGrowsObservers: MutationObserver[] = [];
   const maxChildSizeObservers: MutationObserver[] = [];
   createEffect(
@@ -228,8 +237,6 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
             const childElementsArray = Array.from(element.value.childNodes).filter(
               child => child instanceof HTMLElement,
             ) as HTMLElement[];
-            // Has More Than One Child
-            hasMoreThanOneChild.value = childElementsArray.length > 1;
 
             // Child observers
             childSizeGrowsObservers.forEach(observer => observer.disconnect());
@@ -243,7 +250,7 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
               let maxWidth = 0;
               let maxHeight = 0;
               for (const child of childElementsArray) {
-                if (shouldLog) console.log(`from watchMaxChildSize`);
+                if (shouldLog) console.log(`watchMaxChildSize`);
                 const { width, height } = child.getBoundingClientRect();
                 maxWidth = Math.max(maxWidth, width);
                 maxHeight = Math.max(maxHeight, height);
@@ -291,7 +298,6 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
   );
   return {
     element,
-    hasMoreThanOneChild,
     aChildsWidthGrows,
     aChildsHeightGrows,
     maxChildWidthPx,

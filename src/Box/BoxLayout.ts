@@ -246,7 +246,7 @@ export function watchBoxLayout(
   parseProp: ParseProp<LayoutSty>,
   element: Sig<HTMLElement | undefined>,
   context: {
-    hasMoreThanOneChild: Sig<boolean>;
+    hasMoreThanOneChild: SigGet<boolean>;
     isScrollable: Sig<boolean>;
     axis: SigGet<Axis>;
   },
