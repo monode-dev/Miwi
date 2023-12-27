@@ -120,7 +120,7 @@ export function Box(props: BoxProps) {
   // TODO: Toggle element type based on "tag" prop.
   return (
     <div
-      {...props}
+      // {...props}
       classList={{
         [columnClassName]: axis.value === Axis.column,
         [rowClassName]: axis.value === Axis.row,
