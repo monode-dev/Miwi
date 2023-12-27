@@ -1,27 +1,26 @@
-import { JSX, Show } from 'solid-js'
-import { Box, BoxProps } from './Box/Box'
-import { useNav } from './Nav'
-import { Icon } from './Icon'
-import { mdiArrowLeft } from '@mdi/js'
-import { Row } from './Row'
-import { Column } from './Column'
-import { exists } from './utils'
+import { JSX, Show } from "solid-js";
+import { Box, BoxProps } from "./Box/Box";
+import { useNav } from "./Nav";
+import { Icon } from "./Icon";
+import { mdiArrowLeft } from "@mdi/js";
+import { Row } from "./Row";
+import { Column } from "./Column";
+import { exists } from "./utils";
 
 export function AppBar(
   props: {
-    left?: JSX.Element
-    right?: JSX.Element
-    bottom?: JSX.Element
+    left?: JSX.Element;
+    right?: JSX.Element;
+    bottom?: JSX.Element;
   } & {
-    shouldShowBackArrowWhenApplicable?: boolean
+    shouldShowBackArrowWhenApplicable?: boolean;
   } & BoxProps,
 ) {
-  const nav = useNav()
+  const nav = useNav();
   return (
     <Column widthGrows>
       {/* Notch Spacer */}
       <Box
-        shouldLog
         widthGrows
         height={`env(safe-area-inset-top)`}
         background={props.background ?? $theme.colors.primary}
@@ -72,5 +71,5 @@ export function AppBar(
         </Row>
       </Column>
     </Column>
-  )
+  );
 }
