@@ -216,9 +216,11 @@ function _findClassInChildren(
   element: HTMLElement,
   className: string,
   shouldWatch: SigGet<boolean>,
+  shouldLog?: boolean,
 ) {
   const foundClass = sig(false);
   createRenderEffect(() => {
+    if (shouldLog) console.log(`_findClassInChildren`, shouldWatch.value);
     if (!shouldWatch.value) return;
     let childObserver = new MutationObserver(() => {});
     const observer = observeElement(element, { childList: true }, () => {
