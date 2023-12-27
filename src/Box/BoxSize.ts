@@ -139,6 +139,7 @@ export function watchBoxSize(
     maxChildHeightPx: Sig<number>;
     parentAxis: Sig<Axis>;
     myAxis: SigGet<Axis>;
+    shouldWatchParentPadding: Sig<boolean>;
     padTop: Sig<string>;
     padRight: Sig<string>;
     padBottom: Sig<string>;
@@ -155,6 +156,7 @@ export function watchBoxSize(
     if (!exists(element.value)) return;
     element.value.style.display = parseProp(`isFlexDisplay`) ?? true ? `flex` : ``;
     element.value.style.boxSizing = `border-box`;
+    context.shouldWatchParentPadding.value = context.myAxis.value === Axis.stack;
   });
 
   // SECTION: Width
