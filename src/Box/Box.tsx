@@ -58,7 +58,7 @@ export function Box(props: BoxProps) {
      * element, but can be changed by watchLayout if a content wrapper is introduced. */
 
     // Observe Relatives
-    const { maxChildWidthPx, maxChildHeightPx } = _watchChildren(element, shouldLog);
+    const { maxChildWidthPx, maxChildHeightPx } = _watchMaxChildSize(element.value!, shouldLog);
     const aChildsWidthGrows = _findClassInChildren(element.value!, widthGrowsClassName);
     const aChildsHeightGrows = _findClassInChildren(element.value!, heightGrowsClassName);
     const { parentAxis } = _watchParentAxis(element);
@@ -256,62 +256,39 @@ function _findClassInChildren(element: HTMLElement, className: string) {
   });
   return foundClass;
 }
-function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false) {
+function _watchMaxChildSize(element: HTMLElement, shouldLog = false) {
   const maxChildWidthPx = sig(0);
   const maxChildHeightPx = sig(0);
-  const maxChildSizeObservers: MutationObserver[] = [];
-  createEffect(
-    on(
-      () => element.value,
-      () => {
-        if (!exists(element.value)) return;
-        const childListObserver = observeElement(
-          element.value,
-          {
-            childList: true,
-          },
-          () => {
-            if (!exists(element.value)) return;
-            const childElementsArray = Array.from(element.value.childNodes).filter(
-              child => child instanceof HTMLElement,
-            ) as HTMLElement[];
-
-            // Child observers
-            maxChildSizeObservers.forEach(observer => observer.disconnect());
-            maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
-
-            if (shouldLog) console.log(`childElementsArray.length`, childElementsArray.length);
-            watchMaxChildSize();
-            function watchMaxChildSize() {
-              let maxWidth = 0;
-              let maxHeight = 0;
-              for (const child of childElementsArray) {
-                if (shouldLog) console.log(`watchMaxChildSize`);
-                const { width, height } = child.getBoundingClientRect();
-                maxWidth = Math.max(maxWidth, width);
-                maxHeight = Math.max(maxHeight, height);
-              }
-              maxChildWidthPx.value = maxWidth;
-              maxChildHeightPx.value = maxHeight;
-            }
-            childElementsArray.forEach(child => {
-              const maxSizeObserver = new MutationObserver(watchMaxChildSize);
-              maxSizeObserver.observe(child, {
-                attributes: true,
-                attributeFilter: [`style`],
-              });
-              maxChildSizeObservers.push(maxSizeObserver);
-            });
-          },
-        );
-        onCleanup(() => {
-          childListObserver.disconnect();
-          maxChildSizeObservers.forEach(observer => observer.disconnect());
-          maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
-        });
-      },
-    ),
+  let resizeObserver = new ResizeObserver(() => {});
+  const childListObserver = observeElement(
+    element,
+    {
+      childList: true,
+    },
+    () => {
+      resizeObserver.disconnect();
+      resizeObserver = new ResizeObserver(() => {
+        let maxWidth = 0;
+        let maxHeight = 0;
+        for (const child of element.childNodes) {
+          if (shouldLog) console.log(`watchMaxChildSize`);
+          if (!(child instanceof HTMLElement)) continue;
+          const { width, height } = child.getBoundingClientRect();
+          maxWidth = Math.max(maxWidth, width);
+          maxHeight = Math.max(maxHeight, height);
+        }
+        maxChildWidthPx.value = maxWidth;
+        maxChildHeightPx.value = maxHeight;
+      });
+      element.childNodes.forEach(child => {
+        if (child instanceof HTMLElement) resizeObserver.observe(child);
+      });
+    },
   );
+  onCleanup(() => {
+    childListObserver.disconnect();
+    resizeObserver.disconnect();
+  });
   return {
     element,
     maxChildWidthPx,
