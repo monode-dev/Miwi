@@ -242,15 +242,23 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
             function watchMaxChildSize() {
               let maxWidth = 0;
               let maxHeight = 0;
-              for (const child of element.value?.childNodes ?? []) {
+              for (const child of childElementsArray) {
                 if (shouldLog) console.log(`from watchMaxChildSize`);
-                if (!(child instanceof HTMLElement)) continue;
                 const { width, height } = child.getBoundingClientRect();
                 maxWidth = Math.max(maxWidth, width);
                 maxHeight = Math.max(maxHeight, height);
               }
               maxChildWidthPx.value = maxWidth;
               maxChildHeightPx.value = maxHeight;
+            }
+            watchChildSizeGrows();
+            function watchChildSizeGrows() {
+              aChildsWidthGrows.value = childElementsArray.some(childElement =>
+                childElement.classList.contains(widthGrowsClassName),
+              );
+              aChildsHeightGrows.value = childElementsArray.some(childElement =>
+                childElement.classList.contains(heightGrowsClassName),
+              );
             }
             childElementsArray.forEach(child => {
               // Observe Child Size Grows
@@ -260,20 +268,6 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
                 attributeFilter: [`class`],
               });
               childSizeGrowsObservers.push(sizeGrowsObserver);
-              watchChildSizeGrows();
-              function watchChildSizeGrows() {
-                const childElementsArray = Array.from(element.value?.childNodes ?? []);
-                aChildsWidthGrows.value = childElementsArray.some(
-                  childElement =>
-                    childElement instanceof HTMLElement &&
-                    childElement.classList.contains(widthGrowsClassName),
-                );
-                aChildsHeightGrows.value = childElementsArray.some(
-                  childElement =>
-                    childElement instanceof HTMLElement &&
-                    childElement.classList.contains(heightGrowsClassName),
-                );
-              }
 
               // Observer Max Child Size
               const maxSizeObserver = new MutationObserver(watchMaxChildSize);
