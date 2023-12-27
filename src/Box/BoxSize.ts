@@ -66,12 +66,10 @@ export function computeSizeInfo(props: {
 }) {
   const sizeIgnoringChildGrowth = props.size ?? SIZE_SHRINKS;
   props.someChildGrows.toggleWatch(isShrinkSize(sizeIgnoringChildGrowth));
+  if (props.shouldLog) {
+    untrack(() => console.log(`someChildGrows`, props.someChildGrows.out.value));
+  }
   props.shouldWatchMaxChildSize.value = props.iAmAStack && isShrinkSize(sizeIgnoringChildGrowth);
-  // if (props.shouldLog) {
-  //   untrack(() =>
-  //     console.log(`shouldWatchAChildsSizeGrows`, props.shouldWatchAChildsSizeGrows.value),
-  //   );
-  // }
   const targetSize =
     isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.out.value
       ? { flex: 1 }
