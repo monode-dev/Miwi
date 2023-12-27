@@ -119,64 +119,69 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
   const parentPaddingRight = sig(`0px`);
   const parentPaddingBottom = sig(`0px`);
   // watchDeps([element], () => {
-  watchEffect(() => {
-    if (!exists(element.value)) return;
-    if (!exists(element.value.parentElement)) return;
-    const parentClassObserver = observeElement(
-      element.value.parentElement,
-      {
-        attributes: true,
-        attributeFilter: [`class`],
-      },
+  createEffect(
+    on(
+      () => element.value,
       () => {
         if (!exists(element.value)) return;
-        const parentElement = element.value.parentElement;
-        if (!exists(parentElement)) return;
-        // Parent Axis
-        const newParentAxis = parentElement.classList.contains(stackClassName)
-          ? Axis.stack
-          : parentElement.classList.contains(columnClassName)
-            ? Axis.column
-            : Axis.row;
-        if (parentAxis.value !== newParentAxis) {
-          parentAxis.value = newParentAxis;
-        }
+        if (!exists(element.value.parentElement)) return;
+        const parentClassObserver = observeElement(
+          element.value.parentElement,
+          {
+            attributes: true,
+            attributeFilter: [`class`],
+          },
+          () => {
+            if (!exists(element.value)) return;
+            const parentElement = element.value.parentElement;
+            if (!exists(parentElement)) return;
+            // Parent Axis
+            const newParentAxis = parentElement.classList.contains(stackClassName)
+              ? Axis.stack
+              : parentElement.classList.contains(columnClassName)
+                ? Axis.column
+                : Axis.row;
+            if (parentAxis.value !== newParentAxis) {
+              parentAxis.value = newParentAxis;
+            }
+          },
+        );
+        const parentStyleObserver = observeElement(
+          element.value.parentElement,
+          {
+            attributes: true,
+            attributeFilter: [`style`],
+          },
+          () => {
+            if (!exists(element.value)) return;
+            const parentElement = element.value.parentElement;
+            if (!exists(parentElement)) return;
+            const parentStyle = getComputedStyle(parentElement);
+            const newParentPaddingLeft = parentStyle.paddingLeft;
+            if (parentPaddingLeft.value !== newParentPaddingLeft) {
+              parentPaddingLeft.value = newParentPaddingLeft;
+            }
+            const newParentPaddingTop = parentStyle.paddingTop;
+            if (parentPaddingTop.value !== newParentPaddingTop) {
+              parentPaddingTop.value = newParentPaddingTop;
+            }
+            const newParentPaddingRight = parentStyle.paddingRight;
+            if (parentPaddingRight.value !== newParentPaddingRight) {
+              parentPaddingRight.value = newParentPaddingRight;
+            }
+            const newParentPaddingBottom = parentStyle.paddingBottom;
+            if (parentPaddingBottom.value !== newParentPaddingBottom) {
+              parentPaddingBottom.value = newParentPaddingBottom;
+            }
+          },
+        );
+        onCleanup(() => {
+          parentClassObserver.disconnect();
+          parentStyleObserver.disconnect();
+        });
       },
-    );
-    const parentStyleObserver = observeElement(
-      element.value.parentElement,
-      {
-        attributes: true,
-        attributeFilter: [`style`],
-      },
-      () => {
-        if (!exists(element.value)) return;
-        const parentElement = element.value.parentElement;
-        if (!exists(parentElement)) return;
-        const parentStyle = getComputedStyle(parentElement);
-        const newParentPaddingLeft = parentStyle.paddingLeft;
-        if (parentPaddingLeft.value !== newParentPaddingLeft) {
-          parentPaddingLeft.value = newParentPaddingLeft;
-        }
-        const newParentPaddingTop = parentStyle.paddingTop;
-        if (parentPaddingTop.value !== newParentPaddingTop) {
-          parentPaddingTop.value = newParentPaddingTop;
-        }
-        const newParentPaddingRight = parentStyle.paddingRight;
-        if (parentPaddingRight.value !== newParentPaddingRight) {
-          parentPaddingRight.value = newParentPaddingRight;
-        }
-        const newParentPaddingBottom = parentStyle.paddingBottom;
-        if (parentPaddingBottom.value !== newParentPaddingBottom) {
-          parentPaddingBottom.value = newParentPaddingBottom;
-        }
-      },
-    );
-    onCleanup(() => {
-      parentClassObserver.disconnect();
-      parentStyleObserver.disconnect();
-    });
-  });
+    ),
+  );
 
   return {
     parentAxis,
