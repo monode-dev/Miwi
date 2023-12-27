@@ -236,6 +236,8 @@ function _watchChildren(element: Sig<HTMLElement | undefined>, shouldLog = false
             childSizeGrowsObservers.splice(0, childSizeGrowsObservers.length);
             maxChildSizeObservers.forEach(observer => observer.disconnect());
             maxChildSizeObservers.splice(0, maxChildSizeObservers.length);
+
+            if (shouldLog) console.log(`childElementsArray.length`, childElementsArray.length);
             childElementsArray.forEach(child => {
               // Observe Child Size Grows
               const sizeGrowsObserver = new MutationObserver(watchChildSizeGrows);
