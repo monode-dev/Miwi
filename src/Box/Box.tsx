@@ -260,16 +260,14 @@ function _watchMaxChildSize(element: HTMLElement, shouldLog = false) {
       resizeObserver.observe(child);
     });
     function checkGrows() {
-      let maxWidth = 0;
-      let maxHeight = 0;
-      for (const child of childElements) {
-        if (shouldLog) console.log(`watchMaxChildSize`);
-        const { width, height } = child.getBoundingClientRect();
-        maxWidth = Math.max(maxWidth, width);
-        maxHeight = Math.max(maxHeight, height);
-      }
-      maxChildWidthPx.value = maxWidth;
-      maxChildHeightPx.value = maxHeight;
+      [maxChildWidthPx.value, maxChildHeightPx.value] = childElements.reduce(
+        (max, child) => {
+          const { width, height } = child.getBoundingClientRect();
+          if (shouldLog) console.log(`watchMaxChildSize`);
+          return [Math.max(width, max[0]), Math.max(height, max[1])];
+        },
+        [0, 0],
+      );
     }
   });
   onCleanup(() => {
