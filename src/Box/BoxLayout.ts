@@ -213,6 +213,8 @@ export const Align = {
 } as const;
 
 // Classes
+export const columnClassName = `miwi-column`;
+export const rowClassName = `miwi-row`;
 export const stackClassName = `miwi-stack`;
 const nonStackClassName = `miwi-non-stack`;
 const style = document.createElement(`style`);
@@ -263,6 +265,8 @@ export function watchBoxLayout(
     element.value.style.justifyContent = _axis === Axis.column ? _alignY : _alignX;
     element.value.style.alignItems = _axis === Axis.column ? _alignX : _alignY;
     element.value.style.flexDirection = _axis === Axis.stack ? `` : _axis;
+    element.value.classList.toggle(columnClassName, _axis === Axis.column);
+    element.value.classList.toggle(rowClassName, _axis === Axis.row);
     element.value.classList.toggle(stackClassName, _axis === Axis.stack);
     element.value.classList.toggle(nonStackClassName, _axis !== Axis.stack);
   });

@@ -1,7 +1,14 @@
 import { type JSX, type ParentProps, onCleanup } from "solid-js";
-import { Sig, exists, sig, watchEffect } from "../utils";
+import { Sig, exists, sig, watchDeps, watchEffect } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
-import { _FlexAlign, watchBoxLayout, LayoutSty, stackClassName, Axis } from "./BoxLayout";
+import {
+  _FlexAlign,
+  watchBoxLayout,
+  LayoutSty,
+  stackClassName,
+  Axis,
+  columnClassName,
+} from "./BoxLayout";
 import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from "./BoxSize";
 import { DecorationSty, watchBoxDecoration } from "./BoxDecoration";
 import { TextSty, watchBoxText } from "./BoxText";
@@ -111,10 +118,31 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
   const parentPaddingTop = sig(`0px`);
   const parentPaddingRight = sig(`0px`);
   const parentPaddingBottom = sig(`0px`);
-  watchEffect(() => {
+  watchDeps([element], () => {
     if (!exists(element.value)) return;
     if (!exists(element.value.parentElement)) return;
-    const parentObserver = observeElement(
+    const parentClassObserver = observeElement(
+      element.value.parentElement,
+      {
+        attributes: true,
+        attributeFilter: [`class`],
+      },
+      () => {
+        if (!exists(element.value)) return;
+        const parentElement = element.value.parentElement;
+        if (!exists(parentElement)) return;
+        // Parent Axis
+        const newParentAxis = parentElement.classList.contains(stackClassName)
+          ? Axis.stack
+          : parentElement.classList.contains(columnClassName)
+            ? Axis.column
+            : Axis.row;
+        if (parentAxis.value !== newParentAxis) {
+          parentAxis.value = newParentAxis;
+        }
+      },
+    );
+    const parentStyleObserver = observeElement(
       element.value.parentElement,
       {
         attributes: true,
@@ -125,16 +153,6 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
         const parentElement = element.value.parentElement;
         if (!exists(parentElement)) return;
         const parentStyle = getComputedStyle(parentElement);
-        // Parent Axis
-        const newParentAxis = parentElement.classList.contains(stackClassName)
-          ? Axis.stack
-          : parentStyle.flexDirection === Axis.column
-            ? Axis.column
-            : Axis.row;
-        if (parentAxis.value !== newParentAxis) {
-          parentAxis.value = newParentAxis;
-        }
-        // Parent Padding
         const newParentPaddingLeft = parentStyle.paddingLeft;
         if (parentPaddingLeft.value !== newParentPaddingLeft) {
           parentPaddingLeft.value = newParentPaddingLeft;
@@ -153,7 +171,10 @@ function _watchParent(element: Sig<HTMLElement | undefined>) {
         }
       },
     );
-    onCleanup(() => parentObserver.disconnect());
+    onCleanup(() => {
+      parentClassObserver.disconnect();
+      parentStyleObserver.disconnect();
+    });
   });
 
   return {
@@ -174,7 +195,7 @@ function _watchChildren(element: Sig<HTMLElement | undefined>) {
   const hasMoreThanOneChild = sig(false);
   const childSizeGrowsObservers: MutationObserver[] = [];
   const maxChildSizeObservers: MutationObserver[] = [];
-  watchEffect(() => {
+  watchDeps([element], () => {
     if (!exists(element.value)) return;
     const childListObserver = observeElement(
       element.value,
