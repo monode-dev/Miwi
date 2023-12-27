@@ -37,7 +37,7 @@ export function Box(props: BoxProps) {
   // Axis
   // NOTE: We do this here so that children can now our axis right away. Everything else can wait till onMount.
   const axis = getAxisSig(parseProp);
-  
+
   // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
   const element = sig<HTMLElement>(
     (
@@ -49,14 +49,10 @@ export function Box(props: BoxProps) {
           [stackClassName]: axis.value === Axis.stack,
           [nonStackClassName]: axis.value !== Axis.stack,
         }}
-        ref={el => {
-          element.value = el;
-        }}
       />
     ) as HTMLElement,
   );
   const shouldLog = parseProp(`shouldLog`);
-
 
   onMount(() => {
     // Compute Layout
