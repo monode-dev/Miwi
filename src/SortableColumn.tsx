@@ -2,6 +2,7 @@ import { onCleanup, onMount } from "solid-js";
 import { Column } from "./Column";
 import { sig, exists, SigGet, compute } from "./utils";
 import { observeElement } from "./Box/BoxUtils";
+import { numOpenModals } from "./Modal";
 
 const elementsBeingSorted = sig<HTMLElement[]>([]);
 
@@ -17,6 +18,10 @@ export function SortableColumn(props: {
 
   // SECTION: Detect Long Press
   function watchForLongPress(event: MouseEvent | TouchEvent) {
+    /** NOTE: If a modal is open, the user can scroll in it and accidentally start a drag.
+     * Eventually we should be able to track who handles the click, but right now this patch
+     * should work. */
+    if (numOpenModals.value > 0) return;
     const initialMousePos = getMousePos(event);
     let currentMousePos = initialMousePos;
     const longPressTimeout = setTimeout(() => {

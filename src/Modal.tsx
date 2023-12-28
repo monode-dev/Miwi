@@ -1,11 +1,27 @@
-import { Sig, exists, sig, watchDeps } from "./utils";
+import { Sig, SigGet, doNow, exists, sig, watchDeps, watchEffect } from "./utils";
 import { Box, BoxProps } from "./Box/Box";
 import { Stack } from "./Stack";
 import { JSX, Show, onCleanup, onMount } from "solid-js";
 import { SIZE_SHRINKS, Size } from "./Box/BoxSize";
 import { findPageInAncestors, isActivePage } from "./Nav";
 
-export function Modal<T>(
+export const [numOpenModals, toggleModalIsOpen] = doNow(() => {
+  const openModals = new Set<HTMLElement>();
+  const _numOpenModals = sig(0);
+  return [
+    _numOpenModals as SigGet<number>,
+    (modal: HTMLElement, isOpen: boolean) => {
+      if (isOpen) {
+        openModals.add(modal);
+      } else {
+        openModals.delete(modal);
+      }
+      _numOpenModals.value = openModals.size;
+    },
+  ];
+});
+
+export function Modal(
   props: {
     openButton: JSX.Element;
     openButtonWidth: Size;
@@ -18,6 +34,7 @@ export function Modal<T>(
   // Modal
   const openButton = props.openButton as HTMLElement;
   let modal: HTMLElement | undefined = undefined;
+  let element: HTMLElement | undefined = undefined;
 
   //
   const _isOpen = sig(props.isOpenSig?.value ?? false);
@@ -35,6 +52,14 @@ export function Modal<T>(
       props.isOpenSig!.value = _isOpen.value;
     });
   }
+  onMount(() => {
+    watchEffect(() => {
+      toggleModalIsOpen(element!, _isOpen.value);
+    });
+    onCleanup(() => {
+      toggleModalIsOpen(element!, false);
+    });
+  });
 
   //
   const shouldOpenUpwards = sig(false);
@@ -71,9 +96,10 @@ export function Modal<T>(
   return (
     <Stack
       pad={props.pad ?? 0}
-      width={props.openButtonWidth ?? SIZE_SHRINKS}
+      width={props.openButtonWidth}
       height={props.openButtonHeight}
       align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}
+      getElement={el => (element = el)}
     >
       {/* Open Button */}
       {openButton}
