@@ -55,7 +55,6 @@ export function Modal(
   onMount(() => {
     watchEffect(() => {
       toggleModalIsOpen(element!, _isOpen.value);
-      console.log(`Num open modals: ${numOpenModals.value}`);
     });
     onCleanup(() => {
       toggleModalIsOpen(element!, false);

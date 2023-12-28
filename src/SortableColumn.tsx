@@ -21,10 +21,7 @@ export function SortableColumn(props: {
     /** NOTE: If a modal is open, the user can scroll in it and accidentally start a drag.
      * Eventually we should be able to track who handles the click, but right now this patch
      * should work. */
-    if (numOpenModals.value > 0) {
-      console.log(`Canceling drag because a modal is open.`);
-      return;
-    }
+    if (numOpenModals.value > 0) return;
     const initialMousePos = getMousePos(event);
     let currentMousePos = initialMousePos;
     const longPressTimeout = setTimeout(() => {
