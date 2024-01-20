@@ -101,6 +101,7 @@ export type AlignStyProps = Partial<{
 export function parseAlignProps(
   parseProp: ParseProp<LayoutSty>,
   hasMoreThanOneChild: boolean,
+  defaultAlignX?: AlignSingleAxis,
 ): AlignTwoAxis {
   const spaceBetweenAsCss = hasMoreThanOneChild ? _SpaceAlign.spaceBetween : Align.center.alignX;
   return {
@@ -126,7 +127,9 @@ export function parseAlignProps(
         spaceBetween: () => spaceBetweenAsCss,
         spaceAround: () => _SpaceAlign.spaceAround,
         spaceEvenly: () => _SpaceAlign.spaceEvenly,
-      }) ?? Align.center.alignX,
+      }) ??
+      defaultAlignX ??
+      Align.center.alignX,
     alignY:
       parseProp({
         alignY: v => v,

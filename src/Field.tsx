@@ -178,7 +178,7 @@ export function Field(
   function startWatchingTextStyle(inputElement: HTMLInputElement | HTMLTextAreaElement) {
     const alignX = sig<AlignSingleAxis>(Align.topLeft.alignX);
     watchEffect(() => {
-      const { alignX: _alignX } = parseAlignProps(parseProp, false);
+      const { alignX: _alignX } = parseAlignProps(parseProp, false, Align.topLeft.alignX);
       alignX.value = _alignX;
     });
     const overflowX = sig<Overflow>(Overflow.crop);
