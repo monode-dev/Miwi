@@ -98,7 +98,7 @@ export type AlignStyProps = Partial<{
   spaceEvenlyX: boolean;
   spaceEvenlyY: boolean;
 }>;
-function parseAlignProps(
+export function parseAlignProps(
   parseProp: ParseProp<LayoutSty>,
   hasMoreThanOneChild: boolean,
 ): AlignTwoAxis {
@@ -241,6 +241,17 @@ export function getAxisSig(parseProp: ParseProp<LayoutSty>): SigGet<Axis> {
       }) ?? Axis.column,
   );
 }
+export function parseOverflowX(parseProp: ParseProp<LayoutSty>): Overflow {
+  return (
+    parseProp({
+      overflowX: v => v,
+      overflowXCrops: () => Overflow.crop,
+      overflowXScrolls: () => Overflow.scroll,
+      overflowXWraps: () => Overflow.wrap,
+      overflowXSpills: () => Overflow.spill,
+    }) ?? Overflow.spill // This is because otherwise text gets cut off.
+  );
+}
 
 // Layout Styler
 export function watchBoxLayout(
@@ -339,13 +350,7 @@ export function watchBoxLayout(
   const overflowX = sig<Overflow>(Overflow.spill);
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    const _overflowX =
-      parseProp({
-        overflowX: v => v,
-        overflowXCrops: () => Overflow.crop,
-        overflowXScrolls: () => Overflow.scroll,
-        overflowXWraps: () => Overflow.wrap,
-      }) ?? Overflow.spill; // This is because otherwise text gets cut off.
+    const _overflowX = parseOverflowX(parseProp);
     overflowX.value = _overflowX;
     const overflowY =
       parseProp({

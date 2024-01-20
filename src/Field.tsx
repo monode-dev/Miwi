@@ -4,6 +4,9 @@ import { Row } from "./Row";
 import { Icon } from "./Icon";
 import { compute, sig, Sig, watchDeps, watchEffect, exists } from "./utils";
 import { Column } from "./Column";
+import { makePropParser } from "./Box/BoxUtils";
+import { Align, AlignSingleAxis, Overflow, parseAlignProps, parseOverflowX } from "./Box/BoxLayout";
+import { watchBoxText } from "./Box/BoxText";
 // import { sizeToCss } from './Box/BoxUtils'
 
 export type KeyboardType =
@@ -36,8 +39,8 @@ export function Field(
     scale?: number;
     iconPath?: string;
     keyboard?: KeyboardType;
-    heading?: boolean;
-    title?: boolean;
+    h1?: boolean;
+    h2?: boolean;
     capitalize?: FieldCapitalization;
     onBlur?: () => void;
     validateNextInput?: (nextInput: string) => boolean;
@@ -47,7 +50,7 @@ export function Field(
   const value = props.valueSig ?? sig(``);
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
   const inputElementHasFocus = props.hasFocusSig ?? sig(false);
-  const scale = compute(() => props.scale ?? (props.heading ? 1.5 : props.title ? 1.25 : 1));
+  const scale = compute(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
 
   // Input
   function setTempValue(newValue: string | undefined | null) {
@@ -170,11 +173,32 @@ export function Field(
     inputElement?.focus();
   }
 
+  // Apply text style to input element
+  const parseProp: (...args: any[]) => any = makePropParser(props as any);
+  function startWatchingTextStyle(inputElement: HTMLInputElement | HTMLTextAreaElement) {
+    const alignX = sig<AlignSingleAxis>(Align.topLeft.alignX);
+    watchEffect(() => {
+      const { alignX: _alignX } = parseAlignProps(parseProp, false);
+      alignX.value = _alignX;
+    });
+    const overflowX = sig<Overflow>(Overflow.crop);
+    watchEffect(() => {
+      overflowX.value = parseOverflowX(parseProp);
+    });
+    watchBoxText(parseProp, sig(inputElement), {
+      alignX,
+      overflowX,
+    });
+  }
+
   // TODO: Tapping on the field does not move the cursor.
   const lineCount = props.lineCount ?? 1;
   function _Input(_inputProps: { value: string }) {
     const inputProps = {
-      ref: (el: HTMLInputElement | HTMLTextAreaElement) => (inputElement = el),
+      ref: (el: HTMLInputElement | HTMLTextAreaElement) => {
+        inputElement = el;
+        startWatchingTextStyle(el);
+      },
       // type="text"
       inputmode: props.keyboard,
       value: _inputProps.value,

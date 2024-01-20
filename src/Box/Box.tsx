@@ -68,7 +68,7 @@ export function Box(props: BoxProps) {
 
     // Compute Layout
     const isScrollable = sig(false);
-    const hasMoreThanOneChild = _watchHasMoreThanOneChild(element.value!);
+    const hasMoreThanOneChild = _watchHasMoreThanOneChild(element.value);
     const { alignX, overflowX, padTop, padRight, padLeft, padBottom } = watchBoxLayout(
       parseProp,
       element,
@@ -84,16 +84,16 @@ export function Box(props: BoxProps) {
     // Observe Relatives
     const shouldWatchMaxChildSize = sig(false);
     const { maxChildWidthPx, maxChildHeightPx } = _watchMaxChildSize(
-      element.value!,
+      element.value,
       shouldWatchMaxChildSize,
       shouldLog,
     );
-    const aChildsWidthGrows = _findClassInChildren(element.value!, widthGrowsClassName, shouldLog);
-    const aChildsHeightGrows = _findClassInChildren(element.value!, heightGrowsClassName);
-    const parentAxis = _watchParentAxis(element.value!);
+    const aChildsWidthGrows = _findClassInChildren(element.value, widthGrowsClassName);
+    const aChildsHeightGrows = _findClassInChildren(element.value, heightGrowsClassName);
+    const parentAxis = _watchParentAxis(element.value);
     const shouldWatchParentPadding = sig(false);
     const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
-      _watchParentPadding(element.value!, shouldWatchParentPadding);
+      _watchParentPadding(element.value, shouldWatchParentPadding);
 
     // Compute Size
     watchBoxSize(parseProp, element, {
@@ -225,11 +225,7 @@ function _watchHasMoreThanOneChild(element: HTMLElement) {
   });
   return hasMoreThanOneChild;
 }
-function _findClassInChildren(
-  element: HTMLElement,
-  className: string,
-  shouldLog?: boolean,
-): Toggle<SigGet<boolean>> {
+function _findClassInChildren(element: HTMLElement, className: string): Toggle<SigGet<boolean>> {
   const foundClass = sig(false);
   return createToggle(foundClass, () => {
     let childObserver = new MutationObserver(() => {});
@@ -240,8 +236,6 @@ function _findClassInChildren(
       childObserver.disconnect();
       childObserver = new MutationObserver(watchAttr);
       watchAttr();
-      if (shouldLog)
-        untrack(() => console.log(`findClassInChildren`, [className, foundClass.value]));
       childElements.forEach(child => {
         childObserver.observe(child, { attributeFilter: [`class`] });
       });
@@ -249,12 +243,6 @@ function _findClassInChildren(
         foundClass.value = childElements.some(childElement =>
           childElement.classList.contains(className),
         );
-        if (shouldLog) {
-          console.log(
-            `foundClass: ${foundClass.value}, childClasses`,
-            childElements.map(child => [...child.classList].map(c => c.toString()) as string[]),
-          );
-        }
       }
     });
     return () => {

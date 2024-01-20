@@ -126,8 +126,8 @@ export function NumField(
       hintColor={props.hintColor}
       iconPath={props.icon}
       underlined={props.underlined}
-      title={props.title}
-      heading={props.heading}
+      h2={props.title}
+      h1={props.heading}
       validateNextInput={validateInput}
       keyboard={keyboard}
       padBetweenX={props.padBetweenX ?? 0.0}
