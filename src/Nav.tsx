@@ -1,13 +1,13 @@
-import { Component, For, JSX, Show, onMount } from 'solid-js'
-import { compute, sig, sessionStore, Sig, watchDeps, exists } from './utils'
-import { gsap } from 'gsap'
-import { Box } from './Box/Box'
-import { OfflineWarning } from './OfflineWarning'
+import { Component, For, JSX, Show, onMount } from "solid-js";
+import { compute, sig, sessionStore, Sig, watchDeps, exists } from "./utils";
+import { gsap } from "gsap";
+import { Box } from "./Box/Box";
+import { OfflineWarning } from "./OfflineWarning";
 
 // SECTION: Transitions
 export interface PageTransition {
-  enter: (el: Element) => Promise<void>
-  leave: (el: Element) => Promise<void>
+  enter: (el: Element) => Promise<void>;
+  leave: (el: Element) => Promise<void>;
 }
 function transitionFrom(options: gsap.TweenVars): PageTransition {
   return {
@@ -16,18 +16,18 @@ function transitionFrom(options: gsap.TweenVars): PageTransition {
         gsap.from(el, {
           ...options,
           onComplete: resolve,
-        })
-      })
+        });
+      });
     },
     leave(el) {
       return new Promise(resolve => {
         gsap.to(el, {
           ...options,
           onComplete: resolve,
-        })
-      })
+        });
+      });
     },
-  }
+  };
 }
 export const pageTransitions = {
   from: transitionFrom,
@@ -36,7 +36,7 @@ export const pageTransitions = {
       duration: 0.15,
       opacity: 0,
       y: `50vh`,
-      ease: 'power1.out',
+      ease: "power1.out",
 
       // Allow overrides
       ...options,
@@ -45,21 +45,21 @@ export const pageTransitions = {
     transitionFrom({
       duration: 0.15,
       opacity: 0,
-      ease: 'power1.out',
+      ease: "power1.out",
 
       // Allow overrides
       ...options,
     }),
   none: {
     enter() {
-      return new Promise(resolve => resolve())
+      return new Promise(resolve => resolve());
     },
     leave() {
-      return new Promise(resolve => resolve())
+      return new Promise(resolve => resolve());
     },
   } satisfies PageTransition,
-}
-type PageComponent<T> = Component<T> & { readonly transitions?: PageTransition }
+};
+type PageComponent<T> = Component<T> & { readonly transitions?: PageTransition };
 export function setPageTransitions<T>(
   page: Component<T>,
   transitions: PageTransition,
@@ -69,28 +69,28 @@ export function setPageTransitions<T>(
       value: transitions,
       writable: false,
     },
-  })
-  return page as PageComponent<T>
+  });
+  return page as PageComponent<T>;
 }
 
 // SECTION: Nav
 type PageToOpen<T = any> = {
-  component: Component<T>
-  props: T
-  transitions: PageTransition
-}
+  component: Component<T>;
+  props: T;
+  transitions: PageTransition;
+};
 type PageTransitionRecord =
   | {
-      page: PageToOpen
-      inOrOut: `in`
+      page: PageToOpen;
+      inOrOut: `in`;
     }
   | {
-      page: undefined
-      inOrOut: `out`
-    }
-export const useNav = sessionStore('navigator', () => {
-  const _pagesInTransitions = sig<PageTransitionRecord[]>([])
-  const openedPages = sig<PageToOpen[]>([])
+      page: undefined;
+      inOrOut: `out`;
+    };
+export const useNav = sessionStore("navigator", () => {
+  const _pagesInTransitions = sig<PageTransitionRecord[]>([]);
+  const openedPages = sig<PageToOpen[]>([]);
   return {
     openedPages,
     _pagesInTransitions,
@@ -104,7 +104,7 @@ export const useNav = sessionStore('navigator', () => {
           props,
           transitions: newPage.transitions ?? pageTransitions.none,
         },
-      ]
+      ];
       // _pagesInTransitions.value = [
       //   ..._pagesInTransitions.value,
       //   {
@@ -119,7 +119,8 @@ export const useNav = sessionStore('navigator', () => {
       // console.log(_pagesInTransitions.value)
     },
     popPage() {
-      openedPages.value = openedPages.value.slice(0, -1)
+      if (openedPages.value.length <= 1) return;
+      openedPages.value = openedPages.value.slice(0, -1);
       // if (openedPages.value.length <= 1) return
       // _pagesInTransitions.value = [
       //   ..._pagesInTransitions.value,
@@ -131,51 +132,51 @@ export const useNav = sessionStore('navigator', () => {
       // console.log(_pagesInTransitions.value)
       // openedPages.value = openedPages.value.slice(0, -1)
     },
-  }
-})
+  };
+});
 
 export function pushPage<T>(newPage: PageComponent<T>, props: T) {
-  const nav = useNav()
-  nav.pushPage(newPage, props)
+  const nav = useNav();
+  nav.pushPage(newPage, props);
 }
 
 export function popPage() {
-  const nav = useNav()
-  nav.popPage()
+  const nav = useNav();
+  nav.popPage();
 }
 
 // SECTION: UI
-const pageIdTag = `_miwi_page_`
-const pageClassTag = `miwi-nav-page`
-const activePageClass = `miwi-nav-active-page`
+const pageIdTag = `_miwi_page_`;
+const pageClassTag = `miwi-nav-page`;
+const activePageClass = `miwi-nav-active-page`;
 function getTouchId(pageId: string) {
-  return `${pageId}-touch`
+  return `${pageId}-touch`;
 }
 function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
   return {
-    background: 'transparent',
-    width: '100%',
-    height: '100%',
-    top: '0px',
-    left: '0px',
-    position: 'absolute',
+    background: "transparent",
+    width: "100%",
+    height: "100%",
+    top: "0px",
+    left: "0px",
+    position: "absolute",
     [`z-index`]: zIndex,
-  }
+  };
 }
 export function findPageInAncestors(currentElement: HTMLElement): HTMLElement | null {
   // Find Touch Element for current page
-  let element: HTMLElement | null = currentElement
+  let element: HTMLElement | null = currentElement;
   while (exists(element) && !element.classList.contains(pageClassTag)) {
-    element = element.parentElement
+    element = element.parentElement;
   }
-  return element
+  return element;
 }
 export function isActivePage(page: HTMLElement): boolean {
-  return page.classList.contains(activePageClass)
+  return page.classList.contains(activePageClass);
 }
 export function Nav(props: { isOnlineSig: Sig<boolean> }) {
   // let pageHasAnimatedIn: boolean[] = []
-  const nav = useNav()
+  const nav = useNav();
   // let aPageTransitionIsRunning = false
   // watchDeps([nav._pagesInTransitions], async () => {
   //   if (aPageTransitionIsRunning) return
@@ -228,22 +229,22 @@ export function Nav(props: { isOnlineSig: Sig<boolean> }) {
             width: `100%`,
             height: `100%`,
             position: `absolute`,
-            'pointer-events': `none`,
-            'z-index': 999999999,
+            "pointer-events": `none`,
+            "z-index": 999999999,
           }}
         />
       </Show>
     </Box>
-  )
+  );
 }
 
 function _PageWrapper(props: { children: JSX.Element; transitions: PageTransition }) {
-  let element: HTMLDivElement | undefined = undefined
+  let element: HTMLDivElement | undefined = undefined;
   onMount(() => {
     if (exists(element)) {
-      props.transitions.enter(element)
+      props.transitions.enter(element);
     }
-  })
+  });
   return (
     <div
       ref={el => (element = el)}
@@ -254,5 +255,5 @@ function _PageWrapper(props: { children: JSX.Element; transitions: PageTransitio
     >
       {props.children}
     </div>
-  )
+  );
 }
