@@ -116,6 +116,7 @@ export * from "./Box/BoxInteraction";
 export * from "./Box/BoxLayout";
 export * from "./Box/BoxSize";
 export * from "./Box/BoxText";
+export { makePropParser } from "./Box/BoxUtils";
 export * from "./Button";
 export * from "./Card";
 export * from "./CircularProgressIndicator";
