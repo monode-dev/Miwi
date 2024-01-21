@@ -29,6 +29,7 @@ export function Modal(
     isOpenSig?: Sig<boolean>;
     modalWidth?: Size;
     pad?: number;
+    cardStyle?: BoxProps;
   } & BoxProps,
 ) {
   // Modal
@@ -124,6 +125,7 @@ export function Modal(
             preventClickPropagation
             getElement={el => (modal = el)}
             zIndex={1000}
+            overrideProps={props.cardStyle}
           >
             {props.children}
           </Box>
