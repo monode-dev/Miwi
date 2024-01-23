@@ -42,6 +42,7 @@ export function Field(
     h1?: boolean;
     h2?: boolean;
     capitalize?: FieldCapitalization;
+    inputType?: `password` | `text` | `email` | `number` | `tel` | `url`;
     onBlur?: () => void;
     validateNextInput?: (nextInput: string) => boolean;
     formatInput?: FormatFieldInput;
@@ -200,6 +201,7 @@ export function Field(
         startWatchingTextStyle(el);
       },
       // type="text"
+      type: props.inputType,
       inputmode: props.keyboard,
       value: _inputProps.value,
       onInput: handleInput,
