@@ -62,10 +62,11 @@ export function watchBoxInteraction(
         ? (e: MouseEvent) => onClickListeners.forEach(listener => listener(e))
         : null;
     element.value.style.cursor = parseProp(`cssCursor`) ?? (isClickable ? `pointer` : `default`);
-    element.value.classList.toggle(
-      bonusTouchAreaClassName,
-      parseProp(`bonusTouchArea`) ?? isClickable,
-    );
+    // NOTE: This seems to be adding extra padding to layouts sometimes so I'm disabling it for now.
+    // element.value.classList.toggle(
+    //   bonusTouchAreaClassName,
+    //   parseProp(`bonusTouchArea`) ?? isClickable,
+    // );
   });
 
   // On Mouse Enter
