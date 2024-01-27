@@ -88,6 +88,7 @@ export function Box(props: BoxProps) {
       shouldWatchMaxChildSize,
       shouldLog,
     );
+    // TODO: This breaks when widthGrows is used in conjunction with maxChildWidth.
     const aChildsWidthGrows = _findClassInChildren(element.value, widthGrowsClassName);
     const aChildsHeightGrows = _findClassInChildren(element.value, heightGrowsClassName);
     const parentAxis = _watchParentAxis(element.value);

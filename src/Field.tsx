@@ -46,6 +46,7 @@ export function Field(
     onBlur?: () => void;
     validateNextInput?: (nextInput: string) => boolean;
     formatInput?: FormatFieldInput;
+    enterKeyHint?: `enter` | `done` | `go` | `next` | `previous` | `search` | `send`;
   } & BoxProps,
 ) {
   const value = props.valueSig ?? sig(``);
@@ -214,6 +215,7 @@ export function Field(
       rows: exists(lineCount) ? lineCount : undefined,
       wrap: lineCount !== 1 ? (`soft` as const) : undefined,
       ["auto-capitalize"]: props.capitalize ?? "none",
+      enterkeyhint: props.enterKeyHint ?? `done`,
       style: {
         border: "none",
         "background-color": "transparent",

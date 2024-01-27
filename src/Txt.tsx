@@ -1,5 +1,4 @@
 import { Box, BoxProps } from "./Box/Box";
-import { sizeScaleCssVarName } from "./theme";
 import { AllowOne, compute } from "./utils";
 
 export function Txt(
