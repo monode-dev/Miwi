@@ -95,6 +95,10 @@ export function Field(
     }
   }
   function handleKeyPress(event: KeyboardEvent) {
+    if (lineCount <= 1 && event.key === `Enter`) {
+      inputElementHasFocus.value = false;
+      return;
+    }
     validateInput(event, event.key === `Enter` ? `\n` : event.key);
   }
   function handlePaste(event: ClipboardEvent) {
