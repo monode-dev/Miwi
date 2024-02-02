@@ -3,20 +3,33 @@ import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign } from "./BoxLayout";
 import { Sig } from "src/utils";
 import { createRenderEffect } from "solid-js";
 
-export type DecorationSty = Partial<{
-  cornerRadius: number | string;
-  cornerRadiusTopLeft: number | string;
-  cornerRadiusTopRight: number | string;
-  cornerRadiusBottomRight: number | string;
-  cornerRadiusBottomLeft: number | string;
-  outlineColor: string;
-  outlineSize: number;
+export type DecorationSty = Partial<
+  {
+    cornerRadius: number | string;
+    cornerRadiusTopLeft: number | string;
+    cornerRadiusTopRight: number | string;
+    cornerRadiusBottomRight: number | string;
+    cornerRadiusBottomLeft: number | string;
+    outlineColor: string;
+    outlineSize: number;
+    shadowSize: number;
+    shadowDirection: ShadowDirection;
+    cssStyle: Partial<CSSStyleDeclaration>;
+    zIndex: number;
+  } & BackgroundProps
+>;
+
+export type BackgroundProps = {
   background: string;
-  shadowSize: number;
-  shadowDirection: ShadowDirection;
-  cssStyle: Partial<CSSStyleDeclaration>;
-  zIndex: number;
-}>;
+  backgroundFit: BackgroundFit;
+  backgroundCover: boolean;
+  backgroundContain: boolean;
+};
+export type BackgroundFit = keyof typeof BackgroundFit;
+export const BackgroundFit = {
+  cover: `cover`,
+  contain: `contain`,
+} as const;
 
 export type ShadowDirection = {
   [Key in keyof AlignTwoAxis]: Exclude<AlignTwoAxis[Key], _SpaceAlign>;
@@ -94,7 +107,12 @@ export function watchBoxDecoration(
     const backgroundIsImage = background.startsWith(`data:image`) || background.startsWith(`/`);
     element.value.style.backgroundColor = backgroundIsImage ? `` : background;
     element.value.style.backgroundImage = backgroundIsImage ? `url('${background}')` : ``;
-    element.value.style.backgroundSize = backgroundIsImage ? `cover` : ``;
+    element.value.style.backgroundSize =
+      parseProp({
+        backgroundFit: v => v,
+        backgroundCover: v => (v ? `cover` : ``),
+        backgroundContain: v => (v ? `contain` : ``),
+      }) ?? (backgroundIsImage ? `cover` : ``);
     element.value.style.backgroundPosition = backgroundIsImage ? `center` : ``;
     element.value.style.backgroundRepeat = backgroundIsImage ? `no-repeat` : ``;
   });
