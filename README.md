@@ -1,2 +1,3 @@
 # Miwi
-A UI library with a really simple styling API so you basically never have to touch CSS again.
+
+A simple, normalized UI library so you can build fast and pivot even faster.

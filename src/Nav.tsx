@@ -1,5 +1,5 @@
 import { Component, For, JSX, Show, onMount } from "solid-js";
-import { compute, sig, sessionStore, Sig, watchDeps, exists } from "./utils";
+import { compute, sig, sessionStore, Sig, exists } from "./utils";
 import { gsap } from "gsap";
 import { Box } from "./Box/Box";
 import { OfflineWarning } from "./OfflineWarning";
@@ -149,9 +149,9 @@ export function popPage() {
 const pageIdTag = `_miwi_page_`;
 const pageClassTag = `miwi-nav-page`;
 const activePageClass = `miwi-nav-active-page`;
-function getTouchId(pageId: string) {
-  return `${pageId}-touch`;
-}
+// function getTouchId(pageId: string) {
+//   return `${pageId}-touch`;
+// }
 function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
   return {
     background: "transparent",
@@ -174,7 +174,7 @@ export function findPageInAncestors(currentElement: HTMLElement): HTMLElement | 
 export function isActivePage(page: HTMLElement): boolean {
   return page.classList.contains(activePageClass);
 }
-export function Nav(props: { isOnlineSig: Sig<boolean> }) {
+export function Nav(props: { isOnlineSig?: Sig<boolean> }) {
   // let pageHasAnimatedIn: boolean[] = []
   const nav = useNav();
   // let aPageTransitionIsRunning = false
@@ -220,7 +220,9 @@ export function Nav(props: { isOnlineSig: Sig<boolean> }) {
       </For>
 
       {/* Offline warning is infront of all pages. */}
-      <OfflineWarning isOnlineSig={props.isOnlineSig} />
+      <Show when={exists(props.isOnlineSig)}>
+        <OfflineWarning isOnlineSig={props.isOnlineSig!} />
+      </Show>
 
       {/* Disable interaction durring page transitions */}
       <Show when={nav.pagesAreTransitioning.value}>
