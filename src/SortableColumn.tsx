@@ -11,6 +11,7 @@ const elementsBeingSorted = sig<HTMLElement[]>([]);
 export function SortableColumn(props: {
   onSort: (props: { from: number; to: number }) => void;
   children: any;
+  sortingZIndex?: number;
   shouldLog?: boolean;
 }) {
   let columnElement: HTMLElement | null = null;
@@ -117,7 +118,7 @@ export function SortableColumn(props: {
     const dragElementOffsetX = mousePos.x - dragElementX;
     const dragElementOffsetY = mousePos.y - dragElementY;
     dragElement.style.pointerEvents = "none"; // to ensure it doesn't interfere with mouse events
-    dragElement.style.zIndex = "1000"; // to ensure it renders on top of everything else
+    dragElement.style.zIndex = `${props.sortingZIndex ?? 1000}`; // to ensure it renders on top of everything else
     dragElement.style.scale = "1.025";
     dragElement.appendChild(sourceElement);
     columnElement!.appendChild(dragElement);
