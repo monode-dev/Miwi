@@ -19,7 +19,14 @@ import {
   columnClassName,
   rowClassName,
 } from "./BoxLayout";
-import { SizeSty, heightGrowsClassName, watchBoxSize, widthGrowsClassName } from "./BoxSize";
+import {
+  SizeSty,
+  heightGrowsClassName,
+  ignoreSizeInMaxHeightCalcClassName,
+  ignoreSizeInMaxWidthCalcClassName,
+  watchBoxSize,
+  widthGrowsClassName,
+} from "./BoxSize";
 import { DecorationSty, watchBoxDecoration } from "./BoxDecoration";
 import { TextSty, watchBoxText } from "./BoxText";
 import { InteractionSty, watchBoxInteraction } from "./BoxInteraction";
@@ -284,8 +291,12 @@ function _watchMaxChildSize(element: HTMLElement, shouldWatch: SigGet<boolean>, 
       function checkGrows() {
         [maxChildWidthPx.value, maxChildHeightPx.value] = childElements.reduce(
           (max, child) => {
-            const shouldIgnoreWidth = child.style.width === `100%`;
-            const shouldIgnoreHeight = child.style.height === `100%`;
+            const shouldIgnoreWidth = [...child.classList].includes(
+              ignoreSizeInMaxWidthCalcClassName,
+            );
+            const shouldIgnoreHeight = [...child.classList].includes(
+              ignoreSizeInMaxHeightCalcClassName,
+            );
             const { width, height } = child.getBoundingClientRect();
             if (shouldLog) logTime(`watchMaxChildSize`);
             return [

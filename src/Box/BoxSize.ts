@@ -130,11 +130,14 @@ export function computeSizeInfo(props: {
     minSize,
     maxSize,
     isFlexSize(targetSize) ? targetSize.flex : undefined,
+    props.parentIsStack && isCssSize(targetSize) && isCssPercent(targetSize),
   ] as const;
 }
 
 export const widthGrowsClassName = `miwi-width-grows`;
 export const heightGrowsClassName = `miwi-height-grows`;
+export const ignoreSizeInMaxWidthCalcClassName = `miwi-ignore-size-in-max-width-calc`;
+export const ignoreSizeInMaxHeightCalcClassName = `miwi-ignore-size-in-max-height-calc`;
 
 // Box Size
 export function watchBoxSize(
@@ -198,7 +201,7 @@ export function watchBoxSize(
       });
     }
     if (!exists(element.value)) return;
-    const [exactWidth, wMin, wMax, _flexWidth] = computeSizeInfo({
+    const [exactWidth, wMin, wMax, _flexWidth, ignoreSizeInMaxWidthCalc] = computeSizeInfo({
       shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
       minSize: parseProp(`minWidth`),
       size: parseProp({
@@ -224,6 +227,7 @@ export function watchBoxSize(
     }
     flexWidth.value = _flexWidth;
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth));
+    element.value.classList.toggle(ignoreSizeInMaxWidthCalcClassName, ignoreSizeInMaxWidthCalc);
     element.value.style.minWidth = wMin;
     element.value.style.width = exactWidth;
     element.value.style.maxWidth = wMax;
@@ -233,7 +237,7 @@ export function watchBoxSize(
   const flexHeight = sig<number | undefined>(undefined);
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    const [exactHeight, hMin, hMax, _flexHeight] = computeSizeInfo({
+    const [exactHeight, hMin, hMax, _flexHeight, ignoreSizeInMaxHeightCalc] = computeSizeInfo({
       shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
       minSize: parseProp(`minHeight`),
       size: parseProp({
@@ -255,6 +259,7 @@ export function watchBoxSize(
     });
     flexHeight.value = _flexHeight;
     element.value.classList.toggle(heightGrowsClassName, exists(_flexHeight));
+    element.value.classList.toggle(ignoreSizeInMaxHeightCalcClassName, ignoreSizeInMaxHeightCalc);
     element.value.style.minHeight = hMin;
     element.value.style.height = exactHeight;
     element.value.style.maxHeight = hMax;
