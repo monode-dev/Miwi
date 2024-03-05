@@ -80,12 +80,13 @@ export function computeSizeInfo(props: {
       props.myPaddingEnd
     })`;
   const exactSize = isCssSize(targetSize)
-    ? props.parentIsStack &&
-      targetSize.endsWith(`%`) &&
-      !Number.isNaN(Number(targetSize.slice(0, -1)))
-      ? getChildOfStackSize(Number(targetSize.slice(0, -1)) / 100)
-      : targetSize
-    : isMiwiUnitSize(targetSize)
+    ? targetSize
+    : // props.parentIsStack &&
+      //   targetSize.endsWith(`%`) &&
+      //   !Number.isNaN(Number(targetSize.slice(0, -1)))
+      //   ? getChildOfStackSize(Number(targetSize.slice(0, -1)) / 100)
+      //   : targetSize
+      isMiwiUnitSize(targetSize)
       ? muToCss(targetSize) // Miwi Units
       : isShrinkSize(targetSize)
         ? props.iAmAStack
