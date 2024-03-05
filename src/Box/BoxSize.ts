@@ -212,6 +212,9 @@ export function watchBoxSize(
       someChildGrows: context.aChildsWidthGrows,
       shouldLog: context.shouldLog,
     });
+    if (context.shouldLog) {
+      console.log(`exactWidth`, exactWidth);
+    }
     flexWidth.value = _flexWidth;
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth));
     element.value.style.minWidth = wMin;
