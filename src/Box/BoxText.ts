@@ -107,7 +107,8 @@ export function watchBoxText(
     element.value.style.whiteSpace =
       context.overflowX.value === Overflow.crop || context.overflowX.value === Overflow.spill
         ? `nowrap`
-        : `break-spaces`; //`pre-line`; I'm not sure why we did pre-line instead of pre-wrap. pre-wrap should preserve newlines as much as possible.
+        : // TODO: Css ignores the last trailing newline. We need to find a way to fix that.
+          `break-spaces`; // I'm not sure that `break-spaces` is the best option here, but it works for now.
     element.value.style.textOverflow = context.overflowX.value === Overflow.crop ? `ellipsis` : ``;
   });
 }
