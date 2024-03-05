@@ -180,7 +180,11 @@ function _watchParentAxis(element: HTMLElement) {
   });
   return parentAxis;
 }
-function _watchParentPadding(element: HTMLElement, shouldWatch: SigGet<boolean>) {
+function _watchParentPadding(
+  element: HTMLElement,
+  shouldWatch: SigGet<boolean>,
+  shouldLog?: boolean,
+) {
   const parentPaddingLeft = sig(`0px`);
   const parentPaddingTop = sig(`0px`);
   const parentPaddingRight = sig(`0px`);
@@ -200,6 +204,16 @@ function _watchParentPadding(element: HTMLElement, shouldWatch: SigGet<boolean>)
         parentPaddingTop.value = parentStyle.paddingTop;
         parentPaddingRight.value = parentStyle.paddingRight;
         parentPaddingBottom.value = parentStyle.paddingBottom;
+        if (shouldLog) {
+          untrack(() =>
+            console.log({
+              parentPaddingLeft: parentPaddingLeft.value,
+              parentPaddingTop: parentPaddingTop.value,
+              parentPaddingRight: parentPaddingRight.value,
+              parentPaddingBottom: parentPaddingBottom.value,
+            }),
+          );
+        }
       },
     );
     onCleanup(() => {
