@@ -36,6 +36,7 @@ export function isCssSize(size: any): size is string {
 export function isMiwiUnitSize(size: any): size is number {
   return typeof size === `number`;
 }
+// TODO: Maybe make this a symbol.
 export type SIZE_SHRINKS = typeof SIZE_SHRINKS;
 export const SIZE_SHRINKS = { __SIZE_SHRINKS__: true } as const;
 export function isShrinkSize(size: any): size is SIZE_SHRINKS {
@@ -71,16 +72,28 @@ export function computeSizeInfo(props: {
   }
   props.shouldWatchMaxChildSize.value = props.iAmAStack && isShrinkSize(sizeIgnoringChildGrowth);
   const targetSize =
-    isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.out.value
+    props.parentIsStack &&
+    typeof sizeIgnoringChildGrowth === `string` &&
+    sizeIgnoringChildGrowth.endsWith(`%`)
       ? { flex: 1 }
-      : sizeIgnoringChildGrowth;
+      : isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.out.value
+        ? { flex: 1 }
+        : sizeIgnoringChildGrowth;
+  const getChildOfStackSize = (percent: number = 1) =>
+    `calc(${props.maxChildSizePx.value * percent}px + ${props.myPaddingStart} + ${
+      props.myPaddingEnd
+    })`;
   const exactSize = isCssSize(targetSize)
-    ? targetSize
+    ? props.parentIsStack &&
+      targetSize.endsWith(`%`) &&
+      !Number.isNaN(Number(targetSize.slice(0, -1)))
+      ? getChildOfStackSize(Number(targetSize.slice(0, -1)) / 100)
+      : targetSize
     : isMiwiUnitSize(targetSize)
       ? muToCss(targetSize) // Miwi Units
       : isShrinkSize(targetSize)
         ? props.iAmAStack
-          ? `calc(${props.maxChildSizePx.value}px + ${props.myPaddingStart} + ${props.myPaddingEnd})`
+          ? getChildOfStackSize()
           : /** NOTE: This use to be auto, but that was allowing text to be cut off, so I'm trying
              * fit-content again. I'm guessing I swapped to auto because fit-content was causing the
              * parent to grow to fit the child even when we didn't want it to. It seems to be working
