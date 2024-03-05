@@ -1,5 +1,5 @@
 import { Box, BoxProps } from "./Box/Box";
-import { AllowOne, compute, doNow } from "./utils";
+import { AllowOne, compute } from "./utils";
 
 export function Txt(
   props: AllowOne<{
@@ -14,21 +14,6 @@ export function Txt(
   const overflowX = compute(
     () => props.overflowX ?? (props.singleLine ?? false ? $Overflow.crop : $Overflow.wrap),
   );
-  const children = compute(() => {
-    const lastChildIfString = doNow(() => {
-      if (typeof props.children === "string") props.children;
-      if (Array.isArray(props.children)) {
-        const lastChild = props.children[props.children.length - 1];
-        if (typeof lastChild === "string") return lastChild;
-      }
-      return undefined;
-    });
-    const children = [...(Array.isArray(props.children) ? props.children : [props.children])];
-    if (overflowX.value === $Overflow.wrap && lastChildIfString?.endsWith(`\n`)) {
-      children.push(`\n`);
-    }
-    return children;
-  });
 
   return (
     <Box
@@ -42,7 +27,7 @@ export function Txt(
       }}
       isFlexDisplay={overflowX.value === $Overflow.crop ? false : undefined}
     >
-      {children.value}
+      {props.children}
     </Box>
   );
 }
