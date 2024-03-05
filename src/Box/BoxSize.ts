@@ -72,13 +72,9 @@ export function computeSizeInfo(props: {
   }
   props.shouldWatchMaxChildSize.value = props.iAmAStack && isShrinkSize(sizeIgnoringChildGrowth);
   const targetSize =
-    props.parentIsStack &&
-    typeof sizeIgnoringChildGrowth === `string` &&
-    sizeIgnoringChildGrowth.endsWith(`%`)
+    isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.out.value
       ? { flex: 1 }
-      : isShrinkSize(sizeIgnoringChildGrowth) && props.someChildGrows.out.value
-        ? { flex: 1 }
-        : sizeIgnoringChildGrowth;
+      : sizeIgnoringChildGrowth;
   const getChildOfStackSize = (percent: number = 1) =>
     `calc(${props.maxChildSizePx.value * percent}px + ${props.myPaddingStart} + ${
       props.myPaddingEnd
