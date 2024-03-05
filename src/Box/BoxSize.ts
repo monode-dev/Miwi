@@ -158,7 +158,7 @@ export function watchBoxSize(
     if (!exists(element.value)) return;
     element.value.style.display = parseProp(`isFlexDisplay`) ?? true ? `flex` : ``;
     element.value.style.boxSizing = `border-box`;
-    context.shouldWatchParentPadding.value = context.myAxis.value === Axis.stack;
+    context.shouldWatchParentPadding.value = context.parentAxis.value === Axis.stack;
   });
 
   // SECTION: Width
