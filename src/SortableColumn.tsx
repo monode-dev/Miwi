@@ -13,6 +13,7 @@ export function SortableColumn(props: {
   children: any;
   sortingZIndex?: number;
   shouldLog?: boolean;
+  // TODO: for: (entry: T) => JSX.Element
 }) {
   let columnElement: HTMLElement | null = null;
   const doOnCleanUp = new Set<() => void>();

@@ -270,9 +270,14 @@ function _watchMaxChildSize(element: HTMLElement, shouldWatch: SigGet<boolean>, 
       function checkGrows() {
         [maxChildWidthPx.value, maxChildHeightPx.value] = childElements.reduce(
           (max, child) => {
+            const shouldIgnoreWidth = child.style.width === `100%`;
+            const shouldIgnoreHeight = child.style.height === `100%`;
             const { width, height } = child.getBoundingClientRect();
             if (shouldLog) logTime(`watchMaxChildSize`);
-            return [Math.max(width, max[0]), Math.max(height, max[1])];
+            return [
+              Math.max(shouldIgnoreWidth ? 0 : width, max[0]),
+              Math.max(shouldIgnoreHeight ? 0 : height, max[1]),
+            ];
           },
           [0, 0],
         );

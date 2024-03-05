@@ -151,6 +151,7 @@ export function watchBoxDecoration(
   createRenderEffect(() => {
     if (!exists(element.value)) return;
     const style = parseProp(`cssStyle`);
+    // TODO: Clear Old Style
     if (exists(style)) {
       for (const key of Object.keys(style)) {
         (element.value.style as any)[key] = style[key as any];
