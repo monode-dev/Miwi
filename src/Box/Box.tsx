@@ -94,7 +94,7 @@ export function Box(props: BoxProps) {
     const parentAxis = _watchParentAxis(element.value);
     const shouldWatchParentPadding = sig(false);
     const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
-      _watchParentPadding(element.value, shouldWatchParentPadding, props.shouldLog ?? false);
+      _watchParentPadding(element.value, shouldWatchParentPadding, shouldLog);
 
     // Compute Size
     watchBoxSize(parseProp, element, {
