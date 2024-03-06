@@ -103,7 +103,8 @@ export function watchBoxText(
   // Text Wrap
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    // whiteSpace cascades, so we need to explicity set it.
+    // White Space: https://developer.mozilla.org/en-US/docs/Web/CSS/white-space
+    // NOTE: whiteSpace cascades, so we need to explicity set it.
     element.value.style.whiteSpace =
       context.overflowX.value === Overflow.crop || context.overflowX.value === Overflow.spill
         ? `nowrap`

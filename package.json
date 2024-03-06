@@ -1,7 +1,7 @@
 {
   "name": "miwi",
   "description": "A UI library with a really simple styling API so you basically never have to touch CSS again.",
-  "version": "0.0.599",
+  "version": "0.0.600",
   "license": "MIT",
   "author": "Monode",
   "contributors": [],
@@ -73,8 +73,5 @@
   "engines": {
     "node": ">=18",
     "pnpm": ">=8.6.0"
-  },
-  "dependencies": {
-    "uuidv4": "^6.2.13"
   }
 }
