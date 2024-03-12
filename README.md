@@ -60,7 +60,7 @@ function MyComponent(props: { firstName: string; lastName: string }) {
 }
 ```
 
-Can also be be called with a second function to create a read/write formula.
+Can also be be called with a second function to create a read/write formula. Note, the write type is assumed to be the same as the read type, but you can override it if you need to.
 
 ```tsx
 import { useProp, useFormula } from "miwi";

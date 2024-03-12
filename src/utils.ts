@@ -47,7 +47,9 @@ export function useProp<T>(initValue: T): Prop<T> {
  *   return <Txt>{myFormula.value}</Txt>;
  * }
  * ```
- * Can be be called with a second function to create a read/write formula.
+ * Can also be be called with a second function to create a read/write formula. Note, the
+ * write type is assumed to be the same as the read type, but you can override it if you
+ * need to.
  * ```ts
  * const myProp = useProp<number | null>(null);
  * // In this example we use `useFormula` to create a non-null version of `myProp`.
