@@ -46,7 +46,7 @@ export function useProp<T>(initValue: T): Prop<T> {
 }
 ```
 
-## `useFormula`
+### `useFormula`
 
 `useFormula` creates a reactive value that is derived from other reactive values and can be accessed via `myFormula.value`. It's like a computed property in Vue or SolidJS.
 
@@ -97,7 +97,7 @@ export function useFormula<T, Set extends ((value: T) => any) | undefined>(
 }
 ```
 
-## `doNow`
+### `doNow`
 
 `doNow` just runs the provided function immediately and returns the result. It just helps corral code.
 
@@ -114,7 +114,7 @@ export function doNow<T>(func: () => T): T {
 }
 ```
 
-## `doWatch`
+### `doWatch`
 
 `doWatch` runs the provided function immediately and then again whenever any of the reactive values it reads from change.
 
