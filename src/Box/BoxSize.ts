@@ -1,6 +1,6 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
-import { Sig, SigGet, Toggle, logTime, sig } from "src/utils";
+import { Prop, ReadonlyProp, Toggle, logTime, useProp } from "src/utils";
 import { createRenderEffect, untrack } from "solid-js";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
@@ -50,7 +50,7 @@ export function isFlexSize(size: any): size is FlexSize {
 }
 
 export function computeSizeInfo(props: {
-  shouldWatchMaxChildSize: Sig<boolean>;
+  shouldWatchMaxChildSize: Prop<boolean>;
   minSize: number | string | undefined;
   size: Size | undefined;
   maxSize: number | string | undefined;
@@ -61,8 +61,8 @@ export function computeSizeInfo(props: {
   parentPaddingEnd: string;
   myPaddingStart: string;
   myPaddingEnd: string;
-  maxChildSizePx: SigGet<number>;
-  someChildGrows: Toggle<SigGet<boolean>>;
+  maxChildSizePx: ReadonlyProp<number>;
+  someChildGrows: Toggle<ReadonlyProp<boolean>>;
   shouldLog?: boolean;
 }) {
   const sizeIgnoringChildGrowth = props.size ?? SIZE_SHRINKS;
@@ -142,24 +142,24 @@ export const ignoreSizeInMaxHeightCalcClassName = `miwi-ignore-size-in-max-heigh
 // Box Size
 export function watchBoxSize(
   parseProp: ParseProp<SizeSty>,
-  element: Sig<HTMLElement | undefined>,
+  element: Prop<HTMLElement | undefined>,
   context: {
-    aChildsWidthGrows: Toggle<SigGet<boolean>>;
-    aChildsHeightGrows: Toggle<SigGet<boolean>>;
-    shouldWatchMaxChildSize: Sig<boolean>;
-    maxChildWidthPx: Sig<number>;
-    maxChildHeightPx: Sig<number>;
-    parentAxis: Sig<Axis>;
-    myAxis: SigGet<Axis>;
-    shouldWatchParentPadding: Sig<boolean>;
-    padTop: Sig<string>;
-    padRight: Sig<string>;
-    padBottom: Sig<string>;
-    padLeft: Sig<string>;
-    parentPaddingLeft: Sig<string>;
-    parentPaddingTop: Sig<string>;
-    parentPaddingRight: Sig<string>;
-    parentPaddingBottom: Sig<string>;
+    aChildsWidthGrows: Toggle<ReadonlyProp<boolean>>;
+    aChildsHeightGrows: Toggle<ReadonlyProp<boolean>>;
+    shouldWatchMaxChildSize: Prop<boolean>;
+    maxChildWidthPx: Prop<number>;
+    maxChildHeightPx: Prop<number>;
+    parentAxis: Prop<Axis>;
+    myAxis: ReadonlyProp<Axis>;
+    shouldWatchParentPadding: Prop<boolean>;
+    padTop: Prop<string>;
+    padRight: Prop<string>;
+    padBottom: Prop<string>;
+    padLeft: Prop<string>;
+    parentPaddingLeft: Prop<string>;
+    parentPaddingTop: Prop<string>;
+    parentPaddingRight: Prop<string>;
+    parentPaddingBottom: Prop<string>;
     shouldLog: boolean;
   },
 ) {
@@ -172,7 +172,7 @@ export function watchBoxSize(
   });
 
   // SECTION: Width
-  const flexWidth = sig<number | undefined>(undefined);
+  const flexWidth = useProp<number | undefined>(undefined);
   createRenderEffect(() => {
     if (context.shouldLog) {
       untrack(() => {
@@ -234,7 +234,7 @@ export function watchBoxSize(
   });
 
   // Height
-  const flexHeight = sig<number | undefined>(undefined);
+  const flexHeight = useProp<number | undefined>(undefined);
   createRenderEffect(() => {
     if (!exists(element.value)) return;
     const [exactHeight, hMin, hMax, _flexHeight, ignoreSizeInMaxHeightCalc] = computeSizeInfo({

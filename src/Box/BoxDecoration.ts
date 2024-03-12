@@ -1,6 +1,6 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign } from "./BoxLayout";
-import { Sig } from "src/utils";
+import { Prop } from "src/utils";
 import { createRenderEffect } from "solid-js";
 
 export type DecorationSty = Partial<
@@ -21,6 +21,7 @@ export type DecorationSty = Partial<
 
 export type BackgroundProps = {
   background: string;
+  // fillWithForeground: boolean;
   backgroundFit: BackgroundFit;
   backgroundCover: boolean;
   backgroundContain: boolean;
@@ -57,7 +58,7 @@ export const mdColors = {
 // We might be able to infer everything we need from these compute functions, which could make updates even easier to make. If we did this, then we'd want to use another function to generate these compute functions.
 export function watchBoxDecoration(
   parseProp: ParseProp<DecorationSty>,
-  element: Sig<HTMLElement | undefined>,
+  element: Prop<HTMLElement | undefined>,
 ) {
   // Corner Radius
   createRenderEffect(() => {

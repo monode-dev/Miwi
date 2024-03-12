@@ -1,67 +1,75 @@
-import { mdiClose, mdiMenuDown } from '@mdi/js'
-import { Show } from 'solid-js'
-import { BoxProps } from './Box/Box'
-import { grow } from './Box/BoxSize'
-import { Field } from './Field'
-import { Icon } from './Icon'
-import { Modal } from './Modal'
-import { Row } from './Row'
-import { Txt } from './Txt'
-import { Sig, compute, sig, exists, watchDeps } from './utils'
+import { mdiClose, mdiMenuDown } from "@mdi/js";
+import { Show } from "solid-js";
+import { BoxProps } from "./Box/Box";
+import { grow } from "./Box/BoxSize";
+import { Field } from "./Field";
+import { Icon } from "./Icon";
+import { Modal } from "./Modal";
+import { Row } from "./Row";
+import { Txt } from "./Txt";
+import { Prop, useFormula, useProp, exists, doWatch } from "./utils";
 
 export function Selector<T>(
   props: {
-    value: T
-    getLabelForData: (data: T) => string | null
-    noneLabel?: string
-    modalIsOpenSig?: Sig<boolean>
-    emptyListText?: string
-    filterStringSig?: Sig<string>
-    showCancelOptionForFilter?: boolean
-    isWide?: boolean
+    value: T;
+    getLabelForData: (data: T) => string | null;
+    noneLabel?: string;
+    modalIsOpenSig?: Prop<boolean>;
+    emptyListText?: string;
+    filterStringSig?: Prop<string>;
+    showCancelOptionForFilter?: boolean;
+    isWide?: boolean;
   } & BoxProps,
 ) {
   // DEFAULT PROPERTIES
-  const noneLabel = compute(() => props.noneLabel ?? 'None')
-  const emptyListText = compute(() => props.emptyListText ?? 'No Options')
-  const isWide = compute(() => props.isWide ?? false)
-  const _modalIsOpen = sig(props.modalIsOpenSig?.value ?? false)
+  const noneLabel = useFormula(() => props.noneLabel ?? "None");
+  const emptyListText = useFormula(() => props.emptyListText ?? "No Options");
+  const isWide = useFormula(() => props.isWide ?? false);
+  const _modalIsOpen = useProp(props.modalIsOpenSig?.value ?? false);
 
-  const selectedLabel = compute(() => props.getLabelForData(props.value) ?? noneLabel.value)
+  const selectedLabel = useFormula(() => props.getLabelForData(props.value) ?? noneLabel.value);
 
-  const thereAreNoOptions = compute(() => {
-    return !exists(props.children) || (Array.isArray(props.children) && props.children.length === 0)
-  })
+  const thereAreNoOptions = useFormula(() => {
+    return (
+      !exists(props.children) || (Array.isArray(props.children) && props.children.length === 0)
+    );
+  });
 
   function openDropDown() {
-    if (_modalIsOpen.value) return
-    _modalIsOpen.value = true
+    if (_modalIsOpen.value) return;
+    _modalIsOpen.value = true;
   }
 
   function closeDropDown() {
-    if (!_modalIsOpen.value) return
+    if (!_modalIsOpen.value) return;
 
-    _modalIsOpen.value = false
+    _modalIsOpen.value = false;
 
     if (exists(props.filterStringSig)) {
-      props.filterStringSig.value = ``
+      props.filterStringSig.value = ``;
     }
   }
 
   if (exists(props.modalIsOpenSig)) {
-    watchDeps([props.modalIsOpenSig], () => {
-      if (!exists(props.modalIsOpenSig)) return
-      if (_modalIsOpen.value === props.modalIsOpenSig.value) return
-      if (props.modalIsOpenSig.value) {
-        openDropDown()
-      } else {
-        closeDropDown()
-      }
-    })
-    watchDeps([_modalIsOpen], () => {
-      if (_modalIsOpen.value === props.modalIsOpenSig!.value) return
-      props.modalIsOpenSig!.value = _modalIsOpen.value
-    })
+    doWatch({
+      on: [props.modalIsOpenSig],
+      do: () => {
+        if (!exists(props.modalIsOpenSig)) return;
+        if (_modalIsOpen.value === props.modalIsOpenSig.value) return;
+        if (props.modalIsOpenSig.value) {
+          openDropDown();
+        } else {
+          closeDropDown();
+        }
+      },
+    });
+    doWatch({
+      on: [_modalIsOpen],
+      do: () => {
+        if (_modalIsOpen.value === props.modalIsOpenSig!.value) return;
+        props.modalIsOpenSig!.value = _modalIsOpen.value;
+      },
+    });
   }
 
   return (
@@ -70,12 +78,12 @@ export function Selector<T>(
         <Row
           onClick={() => {
             if (exists(props.filterStringSig)) {
-              openDropDown()
+              openDropDown();
             } else {
               if (_modalIsOpen.value) {
-                _modalIsOpen.value = false
+                _modalIsOpen.value = false;
               } else {
-                openDropDown()
+                openDropDown();
               }
             }
           }}
@@ -83,7 +91,7 @@ export function Selector<T>(
           height={props.scale ?? 1}
           spaceBetween
         >
-          {' '}
+          {" "}
           {!exists(props.filterStringSig) || !_modalIsOpen.value ? (
             <Txt
               widthGrows
@@ -93,15 +101,15 @@ export function Selector<T>(
               {selectedLabel.value}
             </Txt>
           ) : (
-            <Field valueSig={props.filterStringSig} hintText="Search" hasFocusSig={sig(true)} />
+            <Field valueSig={props.filterStringSig} hintText="Search" hasFocusSig={useProp(true)} />
           )}
           <Icon
             iconPath={exists(props.filterStringSig) && _modalIsOpen.value ? mdiClose : mdiMenuDown}
             onClick={() => {
               if (_modalIsOpen.value) {
-                _modalIsOpen.value = false
+                _modalIsOpen.value = false;
               } else {
-                openDropDown()
+                openDropDown();
               }
             }}
           />
@@ -131,5 +139,5 @@ export function Selector<T>(
       {/* SECTION: Custom Options */}
       {props.children}
     </Modal>
-  )
+  );
 }

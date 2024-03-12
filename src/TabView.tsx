@@ -1,65 +1,65 @@
-import { gsap } from 'gsap'
-import { Sig, sig } from './utils'
-import { onMount, createEffect, JSX } from 'solid-js'
-import { Box, BoxProps } from './Box/Box'
-import { Txt } from './Txt'
-import { Row } from './Row'
+import { gsap } from "gsap";
+import { Prop, useProp } from "./utils";
+import { onMount, createEffect, JSX } from "solid-js";
+import { Box, BoxProps } from "./Box/Box";
+import { Txt } from "./Txt";
+import { Row } from "./Row";
 
 export function TabView(
   props: BoxProps & {
-    selectedTabSig: Sig<number>
-    tab0?: JSX.Element
-    tab1?: JSX.Element
-    tab2?: JSX.Element
+    selectedTabSig: Prop<number>;
+    tab0?: JSX.Element;
+    tab1?: JSX.Element;
+    tab2?: JSX.Element;
   },
 ) {
   function selectTab(newTab: number) {
     if (newTab === props.selectedTabSig.value) {
-      return
+      return;
     }
-    props.selectedTabSig.value = newTab
+    props.selectedTabSig.value = newTab;
   }
 
   // TODO: WHAT IS THIS??
   //const tabBodiesParent = ref<ComponentPublicInstance | null>(null);
-  const tabBodiesParent = sig<HTMLElement | undefined>(undefined)
+  const tabBodiesParent = useProp<HTMLElement | undefined>(undefined);
 
   createEffect(() => {
-    const newTabPosition = [`100vw`, 0, `-100vw`][props.selectedTabSig.value]
+    const newTabPosition = [`100vw`, 0, `-100vw`][props.selectedTabSig.value];
     if (tabBodiesParent.value) {
       gsap.to(tabBodiesParent.value, {
         duration: 0.15,
         x: newTabPosition,
-        ease: 'power1.out',
-      })
+        ease: "power1.out",
+      });
     }
-  })
+  });
 
   // Swipe gesture
   onMount(() => {
-    let swipeStartTime = 0
-    let swipeStartX = 0
-    let swipeStartY = 0
-    let lastSwipeX = 0
-    let lastSwipeY = 0
-    tabBodiesParent.value?.addEventListener('touchstart', (e: TouchEvent) => {
-      const touch = e.touches[0]
-      swipeStartX = touch!.clientX
-      swipeStartY = touch!.clientY
-      lastSwipeX = touch!.clientX
-      lastSwipeY = touch!.clientY
-      swipeStartTime = Date.now()
-    })
-    tabBodiesParent.value?.addEventListener('touchmove', (e: TouchEvent) => {
-      const touch = e.touches[0]
-      lastSwipeX = touch!.clientX
-      lastSwipeY = touch!.clientY
-    })
-    tabBodiesParent.value?.addEventListener('touchend', (e: TouchEvent) => {
-      const deltaX = lastSwipeX - swipeStartX
-      const deltaY = lastSwipeY - swipeStartY
-      const deltaTime = Date.now() - swipeStartTime
-      const velocityX = deltaX / deltaTime
+    let swipeStartTime = 0;
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+    let lastSwipeX = 0;
+    let lastSwipeY = 0;
+    tabBodiesParent.value?.addEventListener("touchstart", (e: TouchEvent) => {
+      const touch = e.touches[0];
+      swipeStartX = touch!.clientX;
+      swipeStartY = touch!.clientY;
+      lastSwipeX = touch!.clientX;
+      lastSwipeY = touch!.clientY;
+      swipeStartTime = Date.now();
+    });
+    tabBodiesParent.value?.addEventListener("touchmove", (e: TouchEvent) => {
+      const touch = e.touches[0];
+      lastSwipeX = touch!.clientX;
+      lastSwipeY = touch!.clientY;
+    });
+    tabBodiesParent.value?.addEventListener("touchend", (e: TouchEvent) => {
+      const deltaX = lastSwipeX - swipeStartX;
+      const deltaY = lastSwipeY - swipeStartY;
+      const deltaTime = Date.now() - swipeStartTime;
+      const velocityX = deltaX / deltaTime;
       if (
         Math.abs(deltaX) > Math.abs(deltaY) &&
         Math.abs(deltaX) > 50 &&
@@ -67,18 +67,18 @@ export function TabView(
       ) {
         // e.preventDefault();
         if (deltaX > 0) {
-          selectTab(Math.max(0, props.selectedTabSig.value - 1))
+          selectTab(Math.max(0, props.selectedTabSig.value - 1));
         } else {
-          selectTab(Math.min(2, props.selectedTabSig.value + 1))
+          selectTab(Math.min(2, props.selectedTabSig.value + 1));
         }
       }
-    })
-  })
+    });
+  });
 
   return (
     <Row
       getElement={el => {
-        tabBodiesParent.value = el
+        tabBodiesParent.value = el;
       }}
       width="300%"
       onClick={props.onClick}
@@ -98,5 +98,5 @@ export function TabView(
         {props.tab2 ?? <Txt hint>Tab 2</Txt>}
       </Box>
     </Row>
-  )
+  );
 }

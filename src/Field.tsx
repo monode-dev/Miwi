@@ -2,7 +2,7 @@ import { Show, onCleanup, onMount } from "solid-js";
 import { Box, BoxProps } from "./Box/Box";
 import { Row } from "./Row";
 import { Icon } from "./Icon";
-import { compute, sig, Sig, watchDeps, watchEffect, exists } from "./utils";
+import { useFormula, useProp, Prop, doWatch, exists } from "./utils";
 import { Column } from "./Column";
 import { makePropParser } from "./Box/BoxUtils";
 import { Align, AlignSingleAxis, Overflow, parseAlignProps, parseOverflowX } from "./Box/BoxLayout";
@@ -28,9 +28,9 @@ export type FormatFieldInput = (
 };
 export function Field(
   props: {
-    valueSig?: Sig<string>;
-    tempValueSig?: Sig<string>;
-    hasFocusSig?: Sig<boolean>;
+    valueSig?: Prop<string>;
+    tempValueSig?: Prop<string>;
+    hasFocusSig?: Prop<boolean>;
     hintText?: string;
     hintColor?: string;
     lineCount?: number;
@@ -49,10 +49,10 @@ export function Field(
     enterKeyHint?: `enter` | `done` | `go` | `next` | `previous` | `search` | `send`;
   } & BoxProps,
 ) {
-  const value = props.valueSig ?? sig(``);
+  const value = props.valueSig ?? useProp(``);
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
-  const inputElementHasFocus = props.hasFocusSig ?? sig(false);
-  const scale = compute(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
+  const inputElementHasFocus = props.hasFocusSig ?? useProp(false);
+  const scale = useFormula(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
 
   // Input
   function setTempValue(newValue: string | undefined | null) {
@@ -69,11 +69,14 @@ export function Field(
   function getTempValue() {
     return props.tempValueSig?.value ?? value.value;
   }
-  watchDeps([value], () => {
-    if (!inputElementHasFocus.value) {
-      // console.log(`Setting temp value to ${value.value}`);
-      setTempValue(value.value);
-    }
+  doWatch({
+    on: [value],
+    do: () => {
+      if (!inputElementHasFocus.value) {
+        // console.log(`Setting temp value to ${value.value}`);
+        setTempValue(value.value);
+      }
+    },
   });
   function handleInput(uncastEvent: Event) {
     const event = uncastEvent as InputEvent;
@@ -147,7 +150,7 @@ export function Field(
     inputElementHasFocus.value = false;
     props.onBlur?.();
   };
-  watchEffect(() => {
+  doWatch(() => {
     if (inputElementHasFocus.value !== (inputElement === document.activeElement)) {
       if (inputElementHasFocus.value) {
         tryFocus();
@@ -157,9 +160,9 @@ export function Field(
     }
   });
 
-  const underlineHeight = compute(() => (props.underlined ? 0.5 * scale.value : 0));
+  const underlineHeight = useFormula(() => (props.underlined ? 0.5 * scale.value : 0));
 
-  const detailColor = compute(() =>
+  const detailColor = useFormula(() =>
     inputElementHasFocus.value
       ? $theme.colors.primary
       : value.value === `` || !exists(value.value)
@@ -182,16 +185,16 @@ export function Field(
   // Apply text style to input element
   const parseProp: (...args: any[]) => any = makePropParser(props as any);
   function startWatchingTextStyle(inputElement: HTMLInputElement | HTMLTextAreaElement) {
-    const alignX = sig<AlignSingleAxis>(Align.topLeft.alignX);
-    watchEffect(() => {
+    const alignX = useProp<AlignSingleAxis>(Align.topLeft.alignX);
+    doWatch(() => {
       const { alignX: _alignX } = parseAlignProps(parseProp, false, Align.topLeft.alignX);
       alignX.value = _alignX;
     });
-    const overflowX = sig<Overflow>(Overflow.crop);
-    watchEffect(() => {
+    const overflowX = useProp<Overflow>(Overflow.crop);
+    doWatch(() => {
       overflowX.value = parseOverflowX(parseProp);
     });
-    watchBoxText(parseProp, sig(inputElement), {
+    watchBoxText(parseProp, useProp(inputElement), {
       alignX,
       overflowX,
     });

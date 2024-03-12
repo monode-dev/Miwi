@@ -1,4 +1,4 @@
-import { Sig, SigGet, doNow, exists, sig, watchDeps, watchEffect } from "./utils";
+import { Prop, ReadonlyProp, doNow, exists, useProp, doWatch } from "./utils";
 import { Box, BoxProps } from "./Box/Box";
 import { Stack } from "./Stack";
 import { JSX, Show, onCleanup, onMount } from "solid-js";
@@ -7,9 +7,9 @@ import { findPageInAncestors, isActivePage } from "./Nav";
 
 export const [numOpenModals, toggleModalIsOpen] = doNow(() => {
   const openModals = new Set<HTMLElement>();
-  const _numOpenModals = sig(0);
+  const _numOpenModals = useProp(0);
   return [
-    _numOpenModals as SigGet<number>,
+    _numOpenModals as ReadonlyProp<number>,
     (modal: HTMLElement, isOpen: boolean) => {
       if (isOpen) {
         openModals.add(modal);
@@ -26,7 +26,7 @@ export function Modal(
     openButton: JSX.Element;
     openButtonWidth: Size;
     openButtonHeight: Size;
-    isOpenSig?: Sig<boolean>;
+    isOpenSig?: Prop<boolean>;
     modalWidth?: Size;
     pad?: number;
     cardStyle?: BoxProps;
@@ -38,23 +38,29 @@ export function Modal(
   let element: HTMLElement | undefined = undefined;
 
   //
-  const _isOpen = sig(props.isOpenSig?.value ?? false);
+  const _isOpen = useProp(props.isOpenSig?.value ?? false);
   if (exists(props.isOpenSig)) {
-    watchDeps([props.isOpenSig], () => {
-      if (_isOpen.value === props.isOpenSig!.value) return;
-      if (props.isOpenSig!.value) {
-        openDropDown();
-      } else {
-        closeDropDown();
-      }
+    doWatch({
+      on: [props.isOpenSig],
+      do: () => {
+        if (_isOpen.value === props.isOpenSig!.value) return;
+        if (props.isOpenSig!.value) {
+          openDropDown();
+        } else {
+          closeDropDown();
+        }
+      },
     });
-    watchDeps([_isOpen], () => {
-      if (_isOpen.value === props.isOpenSig!.value) return;
-      props.isOpenSig!.value = _isOpen.value;
+    doWatch({
+      on: [_isOpen],
+      do: () => {
+        if (_isOpen.value === props.isOpenSig!.value) return;
+        props.isOpenSig!.value = _isOpen.value;
+      },
     });
   }
   onMount(() => {
-    watchEffect(() => {
+    doWatch(() => {
       toggleModalIsOpen(element!, _isOpen.value);
     });
     onCleanup(() => {
@@ -63,7 +69,7 @@ export function Modal(
   });
 
   //
-  const shouldOpenUpwards = sig(false);
+  const shouldOpenUpwards = useProp(false);
   function openDropDown() {
     if (_isOpen.value) return;
     shouldOpenUpwards.value = openButton.getBoundingClientRect().top > window.innerHeight * 0.6;

@@ -1,5 +1,5 @@
 import { Box, BoxProps } from "./Box/Box";
-import { AllowOne, compute } from "./utils";
+import { AllowOne, useFormula } from "./utils";
 
 export function Txt(
   props: AllowOne<{
@@ -11,7 +11,7 @@ export function Txt(
     singleLine?: boolean;
   } & BoxProps,
 ) {
-  const overflowX = compute(
+  const overflowX = useFormula(
     () => props.overflowX ?? (props.singleLine ?? false ? $Overflow.crop : $Overflow.wrap),
   );
 

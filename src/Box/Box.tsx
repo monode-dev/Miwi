@@ -6,7 +6,7 @@ import {
   createRenderEffect,
   untrack,
 } from "solid-js";
-import { SigGet, Toggle, createToggle, exists, logTime, sig } from "../utils";
+import { ReadonlyProp, Toggle, createToggle, exists, logTime, useProp } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
 import {
   _FlexAlign,
@@ -49,7 +49,7 @@ const _boxElementsToInit = new Map<HTMLElement, () => void>();
 export function Box(props: BoxProps) {
   const parseProp: (...args: any[]) => any = makePropParser(props);
   // TODO: Eventually we want a "tag" prop, and to use document.createElement here.
-  const element = sig<HTMLElement | undefined>(undefined);
+  const element = useProp<HTMLElement | undefined>(undefined);
   const shouldLog = parseProp(`shouldLog`);
 
   // Axis
@@ -74,7 +74,7 @@ export function Box(props: BoxProps) {
     _boxElementsToInit.delete(element.value);
 
     // Compute Layout
-    const isScrollable = sig(false);
+    const isScrollable = useProp(false);
     const hasMoreThanOneChild = _watchHasMoreThanOneChild(element.value);
     const { alignX, overflowX, padTop, padRight, padLeft, padBottom } = watchBoxLayout(
       parseProp,
@@ -89,7 +89,7 @@ export function Box(props: BoxProps) {
      * element, but can be changed by watchLayout if a content wrapper is introduced. */
 
     // Observe Relatives
-    const shouldWatchMaxChildSize = sig(false);
+    const shouldWatchMaxChildSize = useProp(false);
     const { maxChildWidthPx, maxChildHeightPx } = _watchMaxChildSize(
       element.value,
       shouldWatchMaxChildSize,
@@ -99,7 +99,7 @@ export function Box(props: BoxProps) {
     const aChildsWidthGrows = _findClassInChildren(element.value, widthGrowsClassName);
     const aChildsHeightGrows = _findClassInChildren(element.value, heightGrowsClassName);
     const parentAxis = _watchParentAxis(element.value);
-    const shouldWatchParentPadding = sig(false);
+    const shouldWatchParentPadding = useProp(false);
     const { parentPaddingLeft, parentPaddingTop, parentPaddingRight, parentPaddingBottom } =
       _watchParentPadding(element.value, shouldWatchParentPadding, shouldLog);
 
@@ -164,9 +164,9 @@ export function Box(props: BoxProps) {
 
 /** SECTION: Helper function to watch parent for Box */
 function _watchParentAxis(element: HTMLElement) {
-  if (!exists(element.parentElement)) return sig<Axis>(Axis.column);
-  if (!(element.parentElement instanceof HTMLElement)) return sig<Axis>(Axis.row);
-  const parentAxis = sig<Axis>(Axis.column);
+  if (!exists(element.parentElement)) return useProp<Axis>(Axis.column);
+  if (!(element.parentElement instanceof HTMLElement)) return useProp<Axis>(Axis.row);
+  const parentAxis = useProp<Axis>(Axis.column);
   const parentClassObserver = observeElement(
     element.parentElement,
     {
@@ -189,13 +189,13 @@ function _watchParentAxis(element: HTMLElement) {
 }
 function _watchParentPadding(
   element: HTMLElement,
-  shouldWatch: SigGet<boolean>,
+  shouldWatch: ReadonlyProp<boolean>,
   shouldLog: boolean,
 ) {
-  const parentPaddingLeft = sig(`0px`);
-  const parentPaddingTop = sig(`0px`);
-  const parentPaddingRight = sig(`0px`);
-  const parentPaddingBottom = sig(`0px`);
+  const parentPaddingLeft = useProp(`0px`);
+  const parentPaddingTop = useProp(`0px`);
+  const parentPaddingRight = useProp(`0px`);
+  const parentPaddingBottom = useProp(`0px`);
 
   createRenderEffect(() => {
     if (!shouldWatch.value) return;
@@ -238,7 +238,7 @@ function _watchParentPadding(
 
 /** SECTION: Helper function to watch children for Box */
 function _watchHasMoreThanOneChild(element: HTMLElement) {
-  const hasMoreThanOneChild = sig(false);
+  const hasMoreThanOneChild = useProp(false);
   const observer = observeElement(element, { childList: true }, () => {
     hasMoreThanOneChild.value = element.childNodes.length > 1;
   });
@@ -247,8 +247,11 @@ function _watchHasMoreThanOneChild(element: HTMLElement) {
   });
   return hasMoreThanOneChild;
 }
-function _findClassInChildren(element: HTMLElement, className: string): Toggle<SigGet<boolean>> {
-  const foundClass = sig(false);
+function _findClassInChildren(
+  element: HTMLElement,
+  className: string,
+): Toggle<ReadonlyProp<boolean>> {
+  const foundClass = useProp(false);
   return createToggle(foundClass, () => {
     let childObserver = new MutationObserver(() => {});
     const observer = observeElement(element, { childList: true }, () => {
@@ -273,9 +276,13 @@ function _findClassInChildren(element: HTMLElement, className: string): Toggle<S
     };
   });
 }
-function _watchMaxChildSize(element: HTMLElement, shouldWatch: SigGet<boolean>, shouldLog = false) {
-  const maxChildWidthPx = sig(0);
-  const maxChildHeightPx = sig(0);
+function _watchMaxChildSize(
+  element: HTMLElement,
+  shouldWatch: ReadonlyProp<boolean>,
+  shouldLog = false,
+) {
+  const maxChildWidthPx = useProp(0);
+  const maxChildHeightPx = useProp(0);
   createRenderEffect(() => {
     if (!shouldWatch.value) return;
     let resizeObserver = new ResizeObserver(() => {});

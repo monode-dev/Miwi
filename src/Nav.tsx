@@ -1,5 +1,5 @@
 import { Component, For, JSX, Show, onMount } from "solid-js";
-import { compute, sig, sessionStore, Sig, exists } from "./utils";
+import { useFormula, useProp, sessionStore, Prop, exists } from "./utils";
 import { gsap } from "gsap";
 import { Box } from "./Box/Box";
 import { OfflineWarning } from "./OfflineWarning";
@@ -89,12 +89,12 @@ type PageTransitionRecord =
       inOrOut: `out`;
     };
 export const useNav = sessionStore("navigator", () => {
-  const _pagesInTransitions = sig<PageTransitionRecord[]>([]);
-  const openedPages = sig<PageToOpen[]>([]);
+  const _pagesInTransitions = useProp<PageTransitionRecord[]>([]);
+  const openedPages = useProp<PageToOpen[]>([]);
   return {
     openedPages,
     _pagesInTransitions,
-    pagesAreTransitioning: compute(() => _pagesInTransitions.value.length > 0),
+    pagesAreTransitioning: useFormula(() => _pagesInTransitions.value.length > 0),
     // TODO: Poping a page and then immediately pushing a page seems to fail
     pushPage<T>(newPage: PageComponent<T>, props: T) {
       openedPages.value = [
@@ -174,7 +174,7 @@ export function findPageInAncestors(currentElement: HTMLElement): HTMLElement | 
 export function isActivePage(page: HTMLElement): boolean {
   return page.classList.contains(activePageClass);
 }
-export function Nav(props: { isOnlineSig?: Sig<boolean> }) {
+export function Nav(props: { isOnlineSig?: Prop<boolean> }) {
   // let pageHasAnimatedIn: boolean[] = []
   const nav = useNav();
   // let aPageTransitionIsRunning = false

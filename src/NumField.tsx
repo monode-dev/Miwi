@@ -1,12 +1,12 @@
 import { BoxProps } from "./Box/Box";
-import { sig, Sig, watchDeps, exists } from "./utils";
+import { useProp, Prop, doWatch, exists } from "./utils";
 import { Field, KeyboardType } from "./Field";
 
 export function NumField(
   props: {
-    valueSig?: Sig<number | null | undefined>;
+    valueSig?: Prop<number | null | undefined>;
     negativesAreAllowed?: boolean;
-    hasFocusSig?: Sig<boolean>;
+    hasFocusSig?: Prop<boolean>;
     scale?: number;
     hint?: string;
     hintColor?: string;
@@ -19,26 +19,32 @@ export function NumField(
   } & BoxProps,
 ) {
   const keyboard = props.keyboard ?? "decimal";
-  const _stringValue = sig(props.valueSig?.value?.toString() ?? "");
+  const _stringValue = useProp(props.valueSig?.value?.toString() ?? "");
 
   if (exists(props.valueSig)) {
-    watchDeps([props.valueSig], () => {
-      const value = props.valueSig?.value;
-      if (!exists(value)) {
-        _stringValue.value = "";
-      } else if (textToNumber(_stringValue.value) !== value) {
-        _stringValue.value = value.toString();
-      }
+    doWatch({
+      on: [props.valueSig],
+      do: () => {
+        const value = props.valueSig?.value;
+        if (!exists(value)) {
+          _stringValue.value = "";
+        } else if (textToNumber(_stringValue.value) !== value) {
+          _stringValue.value = value.toString();
+        }
+      },
     });
-    watchDeps([_stringValue], () => {
-      if (_stringValue.value === "") {
-        props.valueSig!.value = null;
-      } else {
-        if (!validateInput(_stringValue.value)) return;
-        const asNumber = textToNumber(_stringValue.value);
-        if (asNumber === props.valueSig!.value) return;
-        props.valueSig!.value = asNumber;
-      }
+    doWatch({
+      on: [_stringValue],
+      do: () => {
+        if (_stringValue.value === "") {
+          props.valueSig!.value = null;
+        } else {
+          if (!validateInput(_stringValue.value)) return;
+          const asNumber = textToNumber(_stringValue.value);
+          if (asNumber === props.valueSig!.value) return;
+          props.valueSig!.value = asNumber;
+        }
+      },
     });
   }
 

@@ -1,18 +1,18 @@
-import { Sig, sig } from "./utils";
+import { Prop, useProp } from "./utils";
 import { Box, BoxProps } from "./Box/Box";
 import { Row } from "./Row";
 import { Stack } from "./Stack";
 
 export function Slider(
   props: {
-    valueSig: Sig<number>;
+    valueSig: Prop<number>;
     min: number;
     max: number;
   } & BoxProps,
 ) {
   const thumbHeight = 1;
   const trackHeight = 0.5;
-  let isDragging = sig(false);
+  let isDragging = useProp(false);
   let slider: HTMLElement | undefined = undefined;
 
   function updateValue(clientX: number) {

@@ -1,4 +1,4 @@
-import { SigGet } from "./utils";
+import { ReadonlyProp } from "./utils";
 import { pageTransitions } from "./Nav";
 import { Box } from "./Box/Box";
 import { Row } from "./Row";
@@ -6,7 +6,7 @@ import { Icon } from "./Icon";
 import { mdiWifiOff } from "@mdi/js";
 import { muToCss } from "./Box/BoxUtils";
 
-export function OfflineWarning(props: { isOnlineSig: SigGet<boolean> }) {
+export function OfflineWarning(props: { isOnlineSig: ReadonlyProp<boolean> }) {
   const offlineWarningTransitions = pageTransitions.from({
     duration: 0.15,
     y: muToCss(4),

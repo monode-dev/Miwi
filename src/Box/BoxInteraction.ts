@@ -1,4 +1,4 @@
-import { Sig, exists } from "src/utils";
+import { Prop, exists } from "src/utils";
 import { ParseProp } from "./BoxUtils";
 import { createRenderEffect } from "solid-js";
 
@@ -35,9 +35,9 @@ document.body.appendChild(style);
 
 export function watchBoxInteraction(
   parseProp: ParseProp<InteractionSty>,
-  element: Sig<HTMLElement | undefined>,
+  element: Prop<HTMLElement | undefined>,
   context: {
-    isScrollable: Sig<boolean>;
+    isScrollable: Prop<boolean>;
   },
 ) {
   // htmlElement.role = parseProp(`role`) ?? ``

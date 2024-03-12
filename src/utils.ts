@@ -7,11 +7,12 @@ export function logTime(message: string) {
   (window as any).lastLogTime = now;
 }
 
-export type Sig<T> = { readonly _isSig: true; value: T };
-export function sig<T>(initValue: T): Sig<T> {
+export type ReadonlyProp<T> = { get value(): T };
+export type WriteonlyProp<T> = { set value(x: T) };
+export type Prop<T> = ReadonlyProp<T> & WriteonlyProp<T>;
+export function useProp<T>(initValue: T): Prop<T> {
   const [getValue, setValue] = createSignal(initValue);
   return {
-    _isSig: true,
     get value(): T {
       return getValue();
     },
@@ -20,39 +21,89 @@ export function sig<T>(initValue: T): Sig<T> {
     },
   };
 }
-
-export function isSig(x: any): x is Sig<any> {
-  return x?._isSignal === true;
-}
-// TODO: Maybe name Formula
-export type SigGet<T> = { readonly value: T };
-export function compute<T>(getter: () => T): SigGet<T> {
-  const read = createMemo(getter);
+export function useFormula<T, Set extends ((value: T) => any) | undefined>(
+  get: () => T,
+  set?: Set,
+): Set extends undefined ? ReadonlyProp<T> : Prop<T> {
+  const getMemo = createMemo(get);
   return {
+    _isSig: true,
     get value(): T {
-      return read();
+      return getMemo();
     },
-  };
+    set value(newValue: T) {
+      set?.(newValue);
+    },
+  } as any;
 }
-export function watchDeps(deps: SigGet<any>[], callback: () => void) {
-  return createEffect(
-    on(
-      // Solid JS expects functions like it is use to.
-      deps.map(dep => () => dep.value),
-      callback,
-    ),
+export function doNow<T>(func: () => T): T {
+  return func();
+}
+export function doWatch(
+  options:
+    | (() => void)
+    | {
+        on?: ReadonlyProp<any>[];
+        do: () => void;
+      },
+) {
+  createEffect(
+    typeof options === `function`
+      ? options
+      : exists(options.on)
+        ? on(
+            options.on.map(dep => () => dep.value),
+            options.do,
+          )
+        : options.do,
   );
 }
-export function watchEffect(callback: () => void) {
-  return createEffect(callback);
-}
+// type WritableProps<T extends {}> = {
+//   [K in keyof T]: T[K] extends Writable<any> ? K : never;
+// }[keyof T];
+// type NonWritableProps<T extends {}> = {
+//   [K in keyof T]: T[K] extends Writable<any> ? never : K;
+// }[keyof T];
+// export function parseProps<T extends {}>(
+//   obj: T,
+// ): {
+//   [K in WritableProps<T>]: T[K] extends Writable<infer R> ? R : never;
+// } & {
+//   readonly [K in NonWritableProps<T>]: T[K] extends Writable<any> ? never : T[K];
+// } {
+//   return new Proxy(obj, {
+//     get(target, prop) {
+//       const value = target[prop as keyof typeof target];
+//       if (isProp(value)) {
+//         return value.get();
+//       } else {
+//         return value;
+//       }
+//     },
+//     set(target, prop, value) {
+//       // setterForLastProp = undefined
+//       const targetProp = target[prop as keyof typeof target];
+//       // if (exists(setterForLastProp)) {
+//       //   ;(setterForLastProp as any)(value)
+//       // } else
+//       if (isProp(targetProp)) {
+//         targetProp.set(value);
+//       } else {
+//         target[prop as keyof typeof target] = value;
+//       }
+//       return true;
+//     },
+//     has(target, key) {
+//       return key in target;
+//     },
+//     ownKeys(target) {
+//       return Reflect.ownKeys(target);
+//     },
+//   }) as any;
+// }
 
 export function exists<T>(x: T): x is NonNullable<T> {
   return x !== undefined && x !== null;
-}
-
-export function doNow<T>(func: () => T): T {
-  return func();
 }
 
 // Experimentally lets us create a value that can be watched or not.
@@ -72,150 +123,6 @@ export function createToggle<T>(out: T, effect: () => () => void): Toggle<T> {
     },
     out,
   };
-}
-
-// New Reactivity
-export type Writable<T> = {
-  [isReadableProp]: true;
-  [isWritableProp]: true;
-  get(): T;
-  set(value: T): void;
-};
-export function isProp(x: any): x is Writable<any> {
-  return (
-    // We check this one first since it is the most likely to fail.
-    x?.[isWritableProp] === true &&
-    x?.[isReadableProp] === true &&
-    x?.get !== undefined &&
-    typeof x.get === `function` &&
-    x?.set !== undefined &&
-    typeof x.set === `function`
-  );
-}
-// TODO: We need to rename this again so that props represent obj.prop and this represents var.value
-export function prop<T>(initValue: T): Writable<T> {
-  const [get, set] = createSignal(initValue);
-  // TODO: Remove this as any
-  return propFromFuncs(get, set) as any;
-}
-// let setterForLastProp: ((value: any) => void) | undefined
-const isReadableProp = Symbol(`isReadableProp`);
-const isWritableProp = Symbol(`isWritableProp`);
-export function propFromFuncs<T, Set extends ((value: T) => any) | undefined>(
-  get: () => T,
-  set?: Set,
-): Set extends undefined
-  ? {
-      get(): T;
-    }
-  : Writable<T> {
-  const result = {
-    [isReadableProp]: true,
-    get: createMemo(get),
-  };
-  if (set !== undefined) {
-    (result as any)[isWritableProp] = true;
-    (result as any).set = set;
-    // get() {
-    // const value = getValue()
-    // setterForLastProp = set
-    // return value
-    // },
-  }
-  return result as any;
-}
-export function propFromName<T extends {}, K extends keyof T>(obj: T, propName: K): Writable<T[K]> {
-  return propFromFuncs(
-    () => obj[propName],
-    value => (obj[propName] = value),
-  );
-}
-export function propFromSig<T>(sig: Sig<T>): Writable<T> {
-  return propFromFuncs(
-    () => sig.value,
-    value => (sig.value = value),
-  );
-}
-export function sigFromProp<T>(prop: Writable<T>): Sig<T> {
-  return {
-    _isSig: true,
-    get value(): T {
-      return prop.get();
-    },
-    set value(newValue: T) {
-      prop.set(newValue);
-    },
-  };
-}
-type WritableProps<T extends {}> = {
-  [K in keyof T]: T[K] extends Writable<any> ? K : never;
-}[keyof T];
-type NonWritableProps<T extends {}> = {
-  [K in keyof T]: T[K] extends Writable<any> ? never : K;
-}[keyof T];
-export function parseProps<T extends {}>(
-  obj: T,
-): {
-  [K in WritableProps<T>]: T[K] extends Writable<infer R> ? R : never;
-} & {
-  readonly [K in NonWritableProps<T>]: T[K] extends Writable<any> ? never : T[K];
-} {
-  return new Proxy(obj, {
-    get(target, prop) {
-      const value = target[prop as keyof typeof target];
-      if (isProp(value)) {
-        return value.get();
-      } else {
-        return value;
-      }
-    },
-    set(target, prop, value) {
-      // setterForLastProp = undefined
-      const targetProp = target[prop as keyof typeof target];
-      // if (exists(setterForLastProp)) {
-      //   ;(setterForLastProp as any)(value)
-      // } else
-      if (isProp(targetProp)) {
-        targetProp.set(value);
-      } else {
-        target[prop as keyof typeof target] = value;
-      }
-      return true;
-    },
-    has(target, key) {
-      return key in target;
-    },
-    ownKeys(target) {
-      return Reflect.ownKeys(target);
-    },
-  }) as any;
-}
-
-export function orderDocs<T, K extends string | number | null | undefined>(
-  list: Iterable<T>,
-  getKey: (obj: T) => K,
-  options?: {
-    nullPosition?: `first` | `last`;
-    direction?: `normal` | `reverse`;
-  },
-): T[] {
-  return [...list].sort((a, b) => {
-    const direction = options?.direction ?? `normal`;
-    const nullPosition = options?.nullPosition ?? `first`;
-    const keyA = getKey(direction === `normal` ? a : b);
-    const keyB = getKey(direction === `normal` ? b : a);
-    if (!exists(keyA)) {
-      return nullPosition === `first` ? -1 : 1;
-    } else if (!exists(keyB)) {
-      return nullPosition === `first` ? 1 : -1;
-    } else {
-      if (typeof keyA === `number` && typeof keyB === `number`) {
-        return keyA - keyB;
-      } else {
-        return keyA.toString().localeCompare(keyB.toString());
-      }
-    }
-  });
 }
 
 export function formatNumWithCommas(num: number, digits: number | `min` = 0): string {

@@ -1,10 +1,10 @@
 import { onCleanup, onMount } from "solid-js";
 import { Column } from "./Column";
-import { sig, exists, SigGet, compute } from "./utils";
+import { useProp, exists, ReadonlyProp, useFormula } from "./utils";
 import { observeElement } from "./Box/BoxUtils";
 import { numOpenModals } from "./Modal";
 
-const elementsBeingSorted = sig<HTMLElement[]>([]);
+const elementsBeingSorted = useProp<HTMLElement[]>([]);
 
 // TODO: Support horizontal and grid sorting
 /** Contents can be sorted by long pressing. */
@@ -284,9 +284,9 @@ export function SortableColumn(props: {
 // SECTION: Utils
 /** Finds the closest sortable ancestor, and returns a sig for if this component is being sorted. */
 export function watchThisComponentIsBeingSorted(
-  element: SigGet<HTMLElement | null>,
-): SigGet<boolean> {
-  return compute(() => {
+  element: ReadonlyProp<HTMLElement | null>,
+): ReadonlyProp<boolean> {
+  return useFormula(() => {
     if (!element.value) return false;
     // Find the closest sortable ancestor
     let sortableAncestor = element.value;

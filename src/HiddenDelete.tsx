@@ -1,4 +1,4 @@
-import { Sig, doNow, exists, sig } from "./utils";
+import { Prop, doNow, exists, useProp } from "./utils";
 import { BoxProps } from "./Box/Box";
 import { Icon } from "./Icon";
 import { Modal } from "./Modal";
@@ -9,14 +9,14 @@ import { mdiClose, mdiDelete, mdiDotsVertical } from "@mdi/js";
 export function HiddenDelete(
   props: {
     onDelete: () => void;
-    isOpen?: Sig<boolean>;
+    isOpen?: Prop<boolean>;
     deleteIcon?: string;
     cardStyle?: BoxProps;
   } & BoxProps,
 ) {
   const scale = props.scale ?? 1;
   const isOpen = doNow(() => {
-    const _fallbackIsOpen = sig(false);
+    const _fallbackIsOpen = useProp(false);
     return {
       _isSig: true as const,
       get value() {

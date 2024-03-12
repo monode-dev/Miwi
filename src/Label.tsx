@@ -1,17 +1,17 @@
-import { BoxProps } from './Box/Box'
-import { compute, exists } from './utils'
-import { Row } from './Row'
-import { Txt } from './Txt'
+import { BoxProps } from "./Box/Box";
+import { useFormula, exists } from "./utils";
+import { Row } from "./Row";
+import { Txt } from "./Txt";
 
 export function Label(
   props: {
-    label?: string
-    hint?: boolean
-    labelBackground?: string
-    labelWidth?: number | string
+    label?: string;
+    hint?: boolean;
+    labelBackground?: string;
+    labelWidth?: number | string;
   } & BoxProps,
 ) {
-  const shouldShowLabel = compute(() => exists(props.label) && props.label.length > 0)
+  const shouldShowLabel = useFormula(() => exists(props.label) && props.label.length > 0);
 
   return shouldShowLabel.value ? (
     <Row widthGrows padBetween={0.25} alignTopLeft overrideProps={props}>
@@ -27,5 +27,5 @@ export function Label(
     </Row>
   ) : (
     props.children
-  )
+  );
 }

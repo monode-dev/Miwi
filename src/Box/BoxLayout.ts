@@ -1,4 +1,4 @@
-import { Sig, SigGet, compute, exists, sig } from "src/utils";
+import { Prop, ReadonlyProp, useFormula, exists, useProp } from "src/utils";
 import { ParseProp, muToCss } from "./BoxUtils";
 import { createRenderEffect } from "solid-js";
 
@@ -233,8 +233,8 @@ style.textContent = `
 `;
 document.body.appendChild(style);
 
-export function getAxisSig(parseProp: ParseProp<LayoutSty>): SigGet<Axis> {
-  return compute(
+export function getAxisSig(parseProp: ParseProp<LayoutSty>): ReadonlyProp<Axis> {
+  return useFormula(
     () =>
       parseProp({
         axis: v => v,
@@ -259,20 +259,20 @@ export function parseOverflowX(parseProp: ParseProp<LayoutSty>): Overflow {
 // Layout Styler
 export function watchBoxLayout(
   parseProp: ParseProp<LayoutSty>,
-  element: Sig<HTMLElement | undefined>,
+  element: Prop<HTMLElement | undefined>,
   context: {
-    hasMoreThanOneChild: SigGet<boolean>;
-    isScrollable: Sig<boolean>;
-    axis: SigGet<Axis>;
+    hasMoreThanOneChild: ReadonlyProp<boolean>;
+    isScrollable: Prop<boolean>;
+    axis: ReadonlyProp<Axis>;
   },
 ) {
   // Align & Axis
-  const alignX = sig<AlignSingleAxis>(_FlexAlign.center);
-  const alignY = sig<AlignSingleAxis>(_FlexAlign.center);
-  const padTop = sig<string>(`0px`);
-  const padRight = sig<string>(`0px`);
-  const padBottom = sig<string>(`0px`);
-  const padLeft = sig<string>(`0px`);
+  const alignX = useProp<AlignSingleAxis>(_FlexAlign.center);
+  const alignY = useProp<AlignSingleAxis>(_FlexAlign.center);
+  const padTop = useProp<string>(`0px`);
+  const padRight = useProp<string>(`0px`);
+  const padBottom = useProp<string>(`0px`);
+  const padLeft = useProp<string>(`0px`);
   createRenderEffect(() => {
     if (!exists(element.value)) return;
     const { alignX: _alignX, alignY: _alignY } = parseAlignProps(
@@ -350,7 +350,7 @@ export function watchBoxLayout(
   });
 
   // Overflow
-  const overflowX = sig<Overflow>(Overflow.spill);
+  const overflowX = useProp<Overflow>(Overflow.spill);
   createRenderEffect(() => {
     if (!exists(element.value)) return;
     const _overflowX = parseOverflowX(parseProp);

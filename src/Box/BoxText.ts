@@ -1,7 +1,7 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { AlignSingleAxis, Overflow, _FlexAlign } from "./BoxLayout";
 import { sizeScaleCssVarName } from "src/theme";
-import { Sig } from "src/utils";
+import { Prop } from "src/utils";
 import { createRenderEffect } from "solid-js";
 
 export type TextSty = Partial<{
@@ -30,10 +30,10 @@ export type TextSty = Partial<{
 // Text Styler
 export function watchBoxText(
   parseProp: ParseProp<TextSty>,
-  element: Sig<HTMLElement | undefined>,
+  element: Prop<HTMLElement | undefined>,
   context: {
-    alignX: Sig<AlignSingleAxis>;
-    overflowX: Sig<Overflow>;
+    alignX: Prop<AlignSingleAxis>;
+    overflowX: Prop<Overflow>;
   },
 ) {
   // Basics
