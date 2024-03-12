@@ -51,9 +51,8 @@ export function Selector<T>(
   }
 
   if (exists(props.modalIsOpenSig)) {
-    doWatch({
-      on: [props.modalIsOpenSig],
-      do: () => {
+    doWatch(
+      () => {
         if (!exists(props.modalIsOpenSig)) return;
         if (_modalIsOpen.value === props.modalIsOpenSig.value) return;
         if (props.modalIsOpenSig.value) {
@@ -62,14 +61,19 @@ export function Selector<T>(
           closeDropDown();
         }
       },
-    });
-    doWatch({
-      on: [_modalIsOpen],
-      do: () => {
+      {
+        on: [props.modalIsOpenSig],
+      },
+    );
+    doWatch(
+      () => {
         if (_modalIsOpen.value === props.modalIsOpenSig!.value) return;
         props.modalIsOpenSig!.value = _modalIsOpen.value;
       },
-    });
+      {
+        on: [_modalIsOpen],
+      },
+    );
   }
 
   return (

@@ -10,52 +10,126 @@ export function logTime(message: string) {
 export type ReadonlyProp<T> = { get value(): T };
 export type WriteonlyProp<T> = { set value(x: T) };
 export type Prop<T> = ReadonlyProp<T> & WriteonlyProp<T>;
+/** Creates a reactive value that can be accessed via `.value`.
+ * ```tsx
+ * function MyComponent() {
+ *   const myProp = useProp(0);
+ *   return (
+ *     // Assigning to `myProp.value` will cause the text below to automatically re-render.
+ *     <button onClick={() => myProp.value++}
+ *       // Because we read `myProp.value` this will automatically re-render when myProp changes.
+ *       >You've pressed the button {myProp.value} times.
+ *     </button>
+ *   );
+ * }
+ * ``` */
 export function useProp<T>(initValue: T): Prop<T> {
+  // We literally wrap a Solid JS signal.
   const [getValue, setValue] = createSignal(initValue);
+  // We prefer to the `.value` syntax to Solid's function syntax, hence why we do this.
   return {
+    // Reads the value, and triggers a re-render when it changes.
     get value(): T {
       return getValue();
     },
+    // Updates the value and notifies all watchers.
     set value(newValue: T) {
       setValue(newValue as any);
     },
   };
 }
+/** Creates a reactive value that is derived from other reactive values and can be accessed
+ * via `myFormula.value`.
+ * ```tsx
+ * function MyComponent(props: { firstName: string; lastName: string }) {
+ *   const myFormula = useFormula(() => `${props.firstName} ${props.lastName}`);
+ *   // Will re-render if firstName or lastName changes.
+ *   return <Txt>{myFormula.value}</Txt>;
+ * }
+ * ```
+ * Can be be called with a second function to create a read/write formula.
+ * ```ts
+ * const myProp = useProp<number | null>(null);
+ * // In this example we use `useFormula` to create a non-null version of `myProp`.
+ * const myFormula = useFormula(
+ *   () => myProp ?? 0,
+ *   // Can be written to.
+ *   (newValue: number) => (myProp.value = newValue),
+ * );
+ * ``` */
 export function useFormula<T, Set extends ((value: T) => any) | undefined>(
   get: () => T,
+  /** Optional setter function */
   set?: Set,
 ): Set extends undefined ? ReadonlyProp<T> : Prop<T> {
+  // For getting, `useFormula` just wraps SolidJS's `createMemo`.
   const getMemo = createMemo(get);
   return {
     _isSig: true,
     get value(): T {
       return getMemo();
     },
+    // The value can't be set on readonly formulas.
     set value(newValue: T) {
       set?.(newValue);
     },
   } as any;
 }
+/** Runs the provided function immediately and returns the result.
+ * ```tsx
+ * // `myNum` will equal 42
+ * const myNum = doNow(() => 42);
+ * ``` */
 export function doNow<T>(func: () => T): T {
   return func();
 }
+/** Runs the provided function immediately and then re-runs it whenever any of the
+ * reactive values it reads from change.
+ * ```tsx
+ * const myProp = useProp(0);
+ *
+ * // Immediately logs "myProp: 0"
+ * doWatch(() => {
+ *   console.log("myProp: ", myProp.value);
+ * });
+ *
+ * // Logs "myProp: 1" when myProp changes.
+ * myProp.value = 1;
+ * ```
+ * You may also provide an `on` option to control exactly which props to watch.
+ * ```tsx
+ * const myProp = useProp(0);
+ * const myOtherProp = useProp(0);
+ *
+ * // Immediately logs "myProp: 0"
+ * doWatch(
+ *   () => {
+ *     console.log("myProp: ", myProp.value);
+ *   },
+ *   { on: [myProp] },
+ * );
+ *
+ * // Logs "myProp: 1" when myProp changes.
+ * myProp.value = 1;
+ *
+ * // Does not log anything when myOtherProp changes.
+ * myOtherProp.value = 1;
+ * ``` */
 export function doWatch(
-  options:
-    | (() => void)
-    | {
-        on?: ReadonlyProp<any>[];
-        do: () => void;
-      },
+  func: () => void,
+  options?: Partial<{
+    on: ReadonlyProp<any>[];
+  }>,
 ) {
+  // Just wraps SolidJS's `createEffect`.
   createEffect(
-    typeof options === `function`
-      ? options
-      : exists(options.on)
-        ? on(
-            options.on.map(dep => () => dep.value),
-            options.do,
-          )
-        : options.do,
+    exists(options?.on)
+      ? // Use SolidJS's `on` when requested.
+        on(
+          options!.on.map(dep => () => dep.value),
+          func,
+        )
+      : func,
   );
 }
 // type WritableProps<T extends {}> = {

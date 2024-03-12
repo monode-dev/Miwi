@@ -22,9 +22,8 @@ export function NumField(
   const _stringValue = useProp(props.valueSig?.value?.toString() ?? "");
 
   if (exists(props.valueSig)) {
-    doWatch({
-      on: [props.valueSig],
-      do: () => {
+    doWatch(
+      () => {
         const value = props.valueSig?.value;
         if (!exists(value)) {
           _stringValue.value = "";
@@ -32,10 +31,12 @@ export function NumField(
           _stringValue.value = value.toString();
         }
       },
-    });
-    doWatch({
-      on: [_stringValue],
-      do: () => {
+      {
+        on: [props.valueSig],
+      },
+    );
+    doWatch(
+      () => {
         if (_stringValue.value === "") {
           props.valueSig!.value = null;
         } else {
@@ -45,7 +46,10 @@ export function NumField(
           props.valueSig!.value = asNumber;
         }
       },
-    });
+      {
+        on: [_stringValue],
+      },
+    );
   }
 
   function textToNumber(text: string): number | null {

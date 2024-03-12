@@ -40,9 +40,8 @@ export function Modal(
   //
   const _isOpen = useProp(props.isOpenSig?.value ?? false);
   if (exists(props.isOpenSig)) {
-    doWatch({
-      on: [props.isOpenSig],
-      do: () => {
+    doWatch(
+      () => {
         if (_isOpen.value === props.isOpenSig!.value) return;
         if (props.isOpenSig!.value) {
           openDropDown();
@@ -50,14 +49,19 @@ export function Modal(
           closeDropDown();
         }
       },
-    });
-    doWatch({
-      on: [_isOpen],
-      do: () => {
+      {
+        on: [props.isOpenSig],
+      },
+    );
+    doWatch(
+      () => {
         if (_isOpen.value === props.isOpenSig!.value) return;
         props.isOpenSig!.value = _isOpen.value;
       },
-    });
+      {
+        on: [_isOpen],
+      },
+    );
   }
   onMount(() => {
     doWatch(() => {

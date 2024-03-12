@@ -69,15 +69,17 @@ export function Field(
   function getTempValue() {
     return props.tempValueSig?.value ?? value.value;
   }
-  doWatch({
-    on: [value],
-    do: () => {
+  doWatch(
+    () => {
       if (!inputElementHasFocus.value) {
         // console.log(`Setting temp value to ${value.value}`);
         setTempValue(value.value);
       }
     },
-  });
+    {
+      on: [value],
+    },
+  );
   function handleInput(uncastEvent: Event) {
     const event = uncastEvent as InputEvent;
     let newInput = (event.target as any)?.value ?? "";
