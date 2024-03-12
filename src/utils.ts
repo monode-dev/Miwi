@@ -57,7 +57,7 @@ export function useProp<T>(initValue: T): Prop<T> {
  *   (newValue: number) => (myProp.value = newValue),
  * );
  * ``` */
-export function useFormula<T, Set extends ((value: T) => any) | undefined>(
+export function useFormula<T, Set extends ((value: T) => any) | undefined = undefined>(
   get: () => T,
   /** Optional setter function */
   set?: Set,

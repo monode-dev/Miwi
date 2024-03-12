@@ -77,7 +77,7 @@ const myFormula = useFormula(
 If you're curious, here is the actual source code for `useFormula`.
 
 ```ts
-export function useFormula<T, Set extends ((value: T) => any) | undefined>(
+export function useFormula<T, Set extends ((value: T) => any) | undefined = undefined>(
   get: () => T,
   /** Optional setter function */
   set?: Set,
