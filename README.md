@@ -77,20 +77,20 @@ const myFormula = useFormula(
 If you're curious, here is the actual source code for `useFormula`.
 
 ```ts
-export function useFormula<T, Set extends ((value: T) => any) | undefined = undefined>(
-  get: () => T,
+export function useFormula<GetType, SetType = GetType>(
+  get: () => GetType,
   /** Optional setter function */
-  set?: Set,
-): Set extends undefined ? ReadonlyProp<T> : Prop<T> {
+  set?: ((value: SetType) => any) | undefined,
+): ReadonlyProp<GetType> & (typeof set extends undefined ? {} : WriteonlyProp<GetType>) {
   // For getting, `useFormula` just wraps SolidJS's `createMemo`.
   const getMemo = createMemo(get);
   return {
     _isSig: true,
-    get value(): T {
+    get value(): GetType {
       return getMemo();
     },
     // The value can't be set on readonly formulas.
-    set value(newValue: T) {
+    set value(newValue: SetType) {
       set?.(newValue);
     },
   } as any;
