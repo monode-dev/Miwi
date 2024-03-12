@@ -8,7 +8,7 @@ We've baked Antioch's reactivity tools into Miwi. There are four main ones that 
 
 ### `useProp`
 
-`useProp` creates a basic, reactive value that can be read by using `myProp.value`, and written to using `myProp.value = newValue`.
+Creates a basic, reactive value that can be read by using `myProp.value`, and written to using `myProp.value = newValue`.
 
 ```tsx
 import { useProp } from "miwi";
@@ -48,7 +48,7 @@ export function useProp<T>(initValue: T): Prop<T> {
 
 ### `useFormula`
 
-`useFormula` creates a reactive value that is derived from other reactive values and can be accessed via `myFormula.value`. It's like a computed property in Vue or SolidJS.
+Creates a reactive value that is derived from other reactive values and can be accessed via `myFormula.value`. It's like a computed property in Vue or SolidJS.
 
 ```tsx
 import { useProp, useFormula } from "miwi";
@@ -60,7 +60,7 @@ function MyComponent(props: { firstName: string; lastName: string }) {
 }
 ```
 
-`useFormula` can be be called with a second function to create a read/write formula.
+Can also be be called with a second function to create a read/write formula.
 
 ```tsx
 import { useProp, useFormula } from "miwi";
@@ -99,7 +99,7 @@ export function useFormula<T, Set extends ((value: T) => any) | undefined>(
 
 ### `doNow`
 
-`doNow` just runs the provided function immediately and returns the result. It just helps corral code.
+Just runs the provided function immediately and returns the result. It just helps corral code.
 
 ```tsx
 // `myNum` will equal 42
@@ -116,7 +116,7 @@ export function doNow<T>(func: () => T): T {
 
 ### `doWatch`
 
-`doWatch` runs the provided function immediately and then again whenever any of the reactive values it reads from change.
+Runs the provided function immediately and then again whenever any of the reactive values it reads from change.
 
 ```tsx
 import { useProp, doWatch } from "miwi";
