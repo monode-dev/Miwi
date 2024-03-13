@@ -85,7 +85,11 @@ export function useFormula<
   /** Optional setter function */
   set?: Setter,
 ): ReadonlyProp<GetType> &
-  (undefined extends Setter ? {} : WriteonlyProp<Parameters<(value: GetType) => any>[0]>) {
+  (undefined extends Setter
+    ? {}
+    : Setter extends (...args: any[]) => any
+      ? WriteonlyProp<Parameters<Setter>[0]>
+      : {}) {
   // For getting, `useFormula` just wraps SolidJS's `createMemo`.
   const getMemo = createMemo(get);
   return {
