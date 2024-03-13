@@ -59,11 +59,15 @@ export function useProp<T>(initValue: T): Prop<T> {
  *   (newValue: number) => (myProp.value = newValue),
  * );
  * ``` */
-export function useFormula<GetType, SetType = GetType>(
+export function useFormula<
+  GetType,
+  SetType = GetType,
+  Setter extends undefined | ((value: SetType) => any) = undefined,
+>(
   get: () => GetType,
   /** Optional setter function */
-  set?: ((value: SetType) => any),
-): ReadonlyProp<GetType> & (undefined extends typeof set ? {} : WriteonlyProp<GetType>) {
+  set?: Setter,
+): ReadonlyProp<GetType> & (undefined extends Setter ? {} : WriteonlyProp<GetType>) {
   // For getting, `useFormula` just wraps SolidJS's `createMemo`.
   const getMemo = createMemo(get);
   return {
