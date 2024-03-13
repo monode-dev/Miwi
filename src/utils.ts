@@ -61,8 +61,8 @@ export function useProp<T>(initValue: T): Prop<T> {
  * ``` */
 export function useFormula<
   GetType,
-  SetType = GetType,
-  Setter extends undefined | ((value: SetType) => any) = undefined,
+  Sett extends (value: any) => any = (value: GetType) => any,
+  Setter extends undefined | Sett = undefined,
 >(
   get: () => GetType,
   /** Optional setter function */
@@ -76,7 +76,7 @@ export function useFormula<
       return getMemo();
     },
     // The value can't be set on readonly formulas.
-    set value(newValue: SetType) {
+    set value(newValue) {
       set?.(newValue);
     },
   } as any;
