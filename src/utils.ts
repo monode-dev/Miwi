@@ -9,19 +9,23 @@ export function logTime(message: string) {
 
 // Unionize
 const skadjlf = Symbol();
+const lkjsadkfja: Unionize<{ a: 1; b: 2 } | typeof skadjlf | number> = { a: 1, b: 2 };
+lkjsadkfja.a;
 export type Unionize<T> = _Unionize<T, T>;
-type _Unionize<T, All> = T extends infer U
-  ? U &
+type _Unionize<T, All> = T extends any
+  ? T &
       _UnionToIntersection<
-        _PropsToUndefined<Exclude<All extends NonObjects ? never : All, U>, keyof U>
+        _PropsToUndefined<Exclude<All extends NonObjects ? never : All, T>, keyof T>
       >
   : never;
 type NonObjects = boolean | number | string | symbol | null | undefined | Function | Date | RegExp;
-type _UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void
-  ? I | {}
+type _UnionToIntersection<U> = (U extends any ? (x: U | {}) => void : never) extends (
+  x: infer I,
+) => void
+  ? I
   : never;
-type _PropsToUndefined<T, ExcludeKeys> = T extends infer U
-  ? { [K in Exclude<keyof U, ExcludeKeys>]: undefined }
+type _PropsToUndefined<T, ExcludeKeys> = T extends any
+  ? { [K in Exclude<keyof T, ExcludeKeys>]: undefined }
   : never;
 
 // SECTION: Prop
