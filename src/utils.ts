@@ -19,9 +19,7 @@ type _Unionize<T, All> = T extends any
       >
   : never;
 type NonObjects = boolean | number | string | symbol | null | undefined | Function | Date | RegExp;
-type _UnionToIntersection<U> = (U extends any ? (x: U | {}) => void : never) extends (
-  x: infer I,
-) => void
+type _UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void
   ? I
   : never;
 type _PropsToUndefined<T, ExcludeKeys> = T extends any
