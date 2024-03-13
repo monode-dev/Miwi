@@ -7,8 +7,23 @@ export function logTime(message: string) {
   (window as any).lastLogTime = now;
 }
 
-export type ReadonlyProp<T> = { get value(): T };
-export type WriteonlyProp<T> = { set value(x: T) };
+// Unionize
+export type Unionize<T> = _Unionize<T, T>;
+type _Unionize<T, All> = T extends infer U
+  ? U extends {}
+    ? U & _UnionToIntersection<_PropsToUndefined<Exclude<All extends {} ? All : never, U>, keyof U>>
+    : U
+  : never;
+type _UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void
+  ? I
+  : never;
+type _PropsToUndefined<T, ExcludeKeys> = T extends infer U
+  ? { [K in Exclude<keyof U, ExcludeKeys>]: undefined }
+  : never;
+
+// SECTION: Prop
+export type ReadonlyProp<T> = { get value(): Unionize<T> };
+export type WriteonlyProp<T> = { set value(x: Unionize<T>) };
 export type Prop<T> = ReadonlyProp<T> & WriteonlyProp<T>;
 /** Creates a reactive value that can be accessed via `.value`.
  * ```tsx
@@ -29,11 +44,11 @@ export function useProp<T>(initValue: T): Prop<T> {
   // We prefer to the `.value` syntax to Solid's function syntax, hence why we do this.
   return {
     // Reads the value, and triggers a re-render when it changes.
-    get value(): T {
-      return getValue();
+    get value(): Unionize<T> {
+      return getValue() as Unionize<T>;
     },
     // Updates the value and notifies all watchers.
-    set value(newValue: T) {
+    set value(newValue: Unionize<T>) {
       setValue(newValue as any);
     },
   };
