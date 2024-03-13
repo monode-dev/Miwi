@@ -61,8 +61,7 @@ export function useProp<T>(initValue: T): Prop<T> {
  * ``` */
 export function useFormula<
   GetType,
-  Sett extends (value: any) => any = (value: GetType) => any,
-  Setter extends undefined | Sett = undefined,
+  Setter extends ((value: any) => any) | undefined = ((value: GetType) => any) | undefined,
 >(
   get: () => GetType,
   /** Optional setter function */
