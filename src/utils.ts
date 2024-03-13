@@ -18,10 +18,10 @@ type _Unionize<T, All> = T extends infer U
   : never;
 type NonObjects = boolean | number | string | symbol | null | undefined | Function | Date | RegExp;
 type _UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void
-  ? I
+  ? I | {}
   : never;
 type _PropsToUndefined<T, ExcludeKeys> = T extends infer U
-  ? { [K in Exclude<keyof U, ExcludeKeys>]: undefined } | {}
+  ? { [K in Exclude<keyof U, ExcludeKeys>]: undefined }
   : never;
 
 // SECTION: Prop
