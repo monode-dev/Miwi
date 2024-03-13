@@ -77,11 +77,15 @@ const myFormula = useFormula(
 If you're curious, here is the actual source code for `useFormula`.
 
 ```ts
-export function useFormula<GetType, SetType = GetType>(
+export function useFormula<
+  GetType,
+  Setter extends ((value: any) => any) | undefined = ((value: GetType) => any) | undefined,
+>(
   get: () => GetType,
   /** Optional setter function */
-  set?: ((value: SetType) => any) | undefined,
-): ReadonlyProp<GetType> & (typeof set extends undefined ? {} : WriteonlyProp<GetType>) {
+  set?: Setter,
+): ReadonlyProp<GetType> &
+  (undefined extends Setter ? {} : WriteonlyProp<Parameters<(value: GetType) => any>[0]>) {
   // For getting, `useFormula` just wraps SolidJS's `createMemo`.
   const getMemo = createMemo(get);
   return {
@@ -90,7 +94,7 @@ export function useFormula<GetType, SetType = GetType>(
       return getMemo();
     },
     // The value can't be set on readonly formulas.
-    set value(newValue: SetType) {
+    set value(newValue) {
       set?.(newValue);
     },
   } as any;
