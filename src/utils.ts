@@ -21,7 +21,7 @@ type _UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends 
   ? I
   : never;
 type _PropsToUndefined<T, ExcludeKeys> = T extends infer U
-  ? { [K in Exclude<keyof U, ExcludeKeys>]: undefined }
+  ? { [K in Exclude<keyof U, ExcludeKeys>]: undefined } | {}
   : never;
 
 // SECTION: Prop
