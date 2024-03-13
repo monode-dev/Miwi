@@ -14,7 +14,7 @@ export function TabButtons(
   const tabButtonWidth = 5;
   let tab1Ref: HTMLElement | undefined = undefined;
   let tab2Ref: HTMLElement | undefined = undefined;
-  const tabUnderline: Prop<HTMLElement | undefined> = useProp(undefined);
+  const tabUnderline = useProp<HTMLElement | undefined>(undefined);
 
   function selectTab(newTab: number) {
     if (newTab === props.selectedTab.value) return;

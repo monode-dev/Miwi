@@ -11,12 +11,10 @@ export function logTime(message: string) {
 const skadjlf = Symbol();
 export type Unionize<T> = _Unionize<T, T>;
 type _Unionize<T, All> = T extends infer U
-  ? U extends NonObjects
-    ? U
-    : U &
-        _UnionToIntersection<
-          _PropsToUndefined<Exclude<All extends NonObjects ? never : All, U>, keyof U>
-        >
+  ? U &
+      _UnionToIntersection<
+        _PropsToUndefined<Exclude<All extends NonObjects ? never : All, U>, keyof U>
+      >
   : never;
 type NonObjects = boolean | number | string | symbol | null | undefined | Function | Date | RegExp;
 type _UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void
