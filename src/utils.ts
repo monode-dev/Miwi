@@ -9,8 +9,7 @@ export function logTime(message: string) {
 
 // Unionize
 const skadjlf = Symbol();
-const lkjsadkfja: Unionize<{ a: 1; b: 2 } | typeof skadjlf | number> = { a: 1, b: 2 };
-lkjsadkfja.a;
+const lkjsadkfja: typeof skadjlf & { a?: undefined } = skadjlf;
 export type Unionize<T> = _Unionize<T, T>;
 type _Unionize<T, All> = T extends any
   ? T &
@@ -22,8 +21,9 @@ type NonObjects = boolean | number | string | symbol | null | undefined | Functi
 type _UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void
   ? I
   : never;
+type SDKfjs = _UnionToIntersection<{ a: 1 } | { b: 2 }>;
 type _PropsToUndefined<T, ExcludeKeys> = T extends any
-  ? { [K in Exclude<keyof T, ExcludeKeys>]: undefined }
+  ? { [K in Exclude<keyof T, ExcludeKeys>]?: undefined }
   : never;
 
 // SECTION: Prop
