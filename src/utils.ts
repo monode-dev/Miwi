@@ -8,20 +8,20 @@ export function logTime(message: string) {
 }
 
 // Unionize
-const skadjlf = Symbol();
-const lkjsadkfja: typeof skadjlf & { a?: undefined } = skadjlf;
 export type Unionize<T> = _Unionize<T, T>;
 type _Unionize<T, All> = T extends any
-  ? T &
-      _UnionToIntersection<
-        _PropsToUndefined<Exclude<All extends NonObjects ? never : All, T>, keyof T>
-      >
+  ? T extends null | undefined
+    ? T
+    : T &
+        _UnionToIntersection<
+          _PropsToUndefined<Exclude<All extends NonObjects ? never : All, T>, keyof T>
+        >
   : never;
 type NonObjects = boolean | number | string | symbol | null | undefined | Function | Date | RegExp;
+// From: https://stackoverflow.com/a/50375286
 type _UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void
   ? I
   : never;
-type SDKfjs = _UnionToIntersection<{ a: 1 } | { b: 2 }>;
 type _PropsToUndefined<T, ExcludeKeys> = T extends any
   ? { [K in Exclude<keyof T, ExcludeKeys>]?: undefined }
   : never;
