@@ -6,7 +6,7 @@ import {
   createRenderEffect,
   untrack,
 } from "solid-js";
-import { ReadonlyProp, Toggle, createToggle, exists, logTime, useProp } from "../utils";
+import { ReadonlyProp, Toggle, createToggle, exists, useProp } from "../utils";
 import { makePropParser, observeElement } from "./BoxUtils";
 import {
   _FlexAlign,
@@ -135,8 +135,6 @@ export function Box(props: BoxProps) {
 
     // Computer Interactivity
     watchBoxInteraction(parseProp, element, { isScrollable });
-
-    if (shouldLog) logTime(`Box mounted.`);
   }
 
   // TODO: Toggle element type based on "tag" prop.
@@ -305,7 +303,6 @@ function _watchMaxChildSize(
               ignoreSizeInMaxHeightCalcClassName,
             );
             const { width, height } = child.getBoundingClientRect();
-            if (shouldLog) logTime(`watchMaxChildSize`);
             return [
               Math.max(shouldIgnoreWidth ? 0 : width, max[0]),
               Math.max(shouldIgnoreHeight ? 0 : height, max[1]),
