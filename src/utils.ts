@@ -3,7 +3,8 @@ import { mosaConfigForSolid } from "@monode/mosa/solid";
 
 // SECTION: Mosa Reactivity
 export type { ReadonlyProp, WriteonlyProp, Prop } from "@monode/mosa";
-export const { useProp, useFormula, doNow, doWatch, exists } = initializeMosa(mosaConfigForSolid);
+export const { useProp, useFormula, doNow, doWatch, onDispose, exists } =
+  initializeMosa(mosaConfigForSolid);
 
 // Experimentally lets us create a value that can be watched or not.
 export type Toggle<T> = {

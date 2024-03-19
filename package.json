@@ -1,7 +1,7 @@
 {
   "name": "miwi",
   "description": "A UI library with a really simple styling API so you basically never have to touch CSS again.",
-  "version": "0.0.629",
+  "version": "0.0.630",
   "license": "MIT",
   "author": "Monode",
   "contributors": [],
@@ -75,6 +75,6 @@
     "pnpm": ">=8.6.0"
   },
   "dependencies": {
-    "@monode/mosa": "^0.0.4"
+    "@monode/mosa": "^0.0.5"
   }
 }
