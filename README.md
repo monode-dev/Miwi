@@ -29,20 +29,22 @@ function MyComponent() {
 If you're curious, here is the actual source code for `useProp`.
 
 ```ts
-export function useProp<T>(initValue: T): Prop<T> {
+export function useProp<GetType, SetType = GetType>(
+  initValue: GetType | SetType,
+): Prop<GetType, SetType> {
   // We literally wrap a Solid JS signal.
   const [getValue, setValue] = createSignal(initValue);
   // We prefer to the `.value` syntax to Solid's function syntax, hence why we do this.
   return {
     // Reads the value, and triggers a re-render when it changes.
-    get value(): T {
-      return getValue();
+    get value(): Unionize<GetType> {
+      return getValue() as Unionize<GetType>;
     },
     // Updates the value and notifies all watchers.
-    set value(newValue: T) {
+    set value(newValue: Unionize<SetType>) {
       setValue(newValue as any);
     },
-  };
+  } as any;
 }
 ```
 

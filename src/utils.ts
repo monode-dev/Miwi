@@ -29,7 +29,7 @@ type _PropsToUndefined<T, ExcludeKeys> = T extends any
 // SECTION: Prop
 export type ReadonlyProp<T> = { get value(): Unionize<T> };
 export type WriteonlyProp<T> = { set value(x: Unionize<T>) };
-export type Prop<T> = ReadonlyProp<T> & WriteonlyProp<T>;
+export type Prop<GetType, SetType = GetType> = ReadonlyProp<GetType> & WriteonlyProp<SetType>;
 /** Creates a reactive value that can be accessed via `.value`.
  * ```tsx
  * function MyComponent() {
@@ -43,20 +43,22 @@ export type Prop<T> = ReadonlyProp<T> & WriteonlyProp<T>;
  *   );
  * }
  * ``` */
-export function useProp<T>(initValue: T): Prop<T> {
+export function useProp<GetType, SetType = GetType>(
+  initValue: GetType | SetType,
+): Prop<GetType, SetType> {
   // We literally wrap a Solid JS signal.
   const [getValue, setValue] = createSignal(initValue);
   // We prefer to the `.value` syntax to Solid's function syntax, hence why we do this.
   return {
     // Reads the value, and triggers a re-render when it changes.
-    get value(): Unionize<T> {
-      return getValue() as Unionize<T>;
+    get value(): Unionize<GetType> {
+      return getValue() as Unionize<GetType>;
     },
     // Updates the value and notifies all watchers.
-    set value(newValue: Unionize<T>) {
+    set value(newValue: Unionize<SetType>) {
       setValue(newValue as any);
     },
-  };
+  } as any;
 }
 /** Creates a reactive value that is derived from other reactive values and can be accessed
  * via `myFormula.value`.
