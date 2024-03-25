@@ -10,6 +10,7 @@ export function HiddenDelete(
   props: {
     onDelete: () => void;
     isOpen?: Prop<boolean>;
+    deleteText?: string;
     deleteIcon?: string;
     cardStyle?: BoxProps;
   } & BoxProps,
@@ -66,7 +67,7 @@ export function HiddenDelete(
         }}
         textColor={$theme.colors.error}
       >
-        <Txt>Delete</Txt>
+        <Txt>{props.deleteText ?? `Delete`}</Txt>
         <Icon iconPath={props.deleteIcon ?? mdiDelete} />
       </Row>
     </Modal>
