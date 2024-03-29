@@ -197,8 +197,9 @@ function _watchParentPadding(
 
   createRenderEffect(() => {
     if (!shouldWatch.value) return;
+    if (!exists(element.parentElement)) return;
     const parentStyleObserver = observeElement(
-      element.parentElement!,
+      element.parentElement,
       {
         attributes: true,
         attributeFilter: [`style`],
