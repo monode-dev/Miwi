@@ -163,6 +163,14 @@ function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
     [`z-index`]: zIndex,
   };
 }
+export function getMyPageIndex(currentElement: HTMLElement): number | null {
+  const page = findPageInAncestors(currentElement);
+  if (!exists(page)) return null;
+  const id = page.id;
+  if (!exists(id)) return null;
+  return Number(id.replace(pageIdTag, ""));
+}
+
 export function findPageInAncestors(currentElement: HTMLElement): HTMLElement | null {
   // Find Touch Element for current page
   let element: HTMLElement | null = currentElement;
