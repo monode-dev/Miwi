@@ -4,7 +4,7 @@ import * as preset from "tsup-preset-solid";
 const preset_options: preset.PresetOptions = {
   entries: [
     {
-      entry: "src/miwi.tsx",
+      entry: "src/Miwi.tsx",
     },
   ],
 };

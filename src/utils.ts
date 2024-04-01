@@ -1,7 +1,7 @@
-import { mosaForSolid } from "@monode/mosa/solid-js";
+import { mosaForSolid } from "mosa-js/solid-js";
 
 // SECTION: Mosa Reactivity
-export type { ReadonlyProp, WriteonlyProp, Prop } from "@monode/mosa";
+export type { ReadonlyProp, WriteonlyProp, Prop } from "mosa-js";
 export const { useProp, useFormula, doNow, doWatch, onDispose, exists } = mosaForSolid;
 
 // Experimentally lets us create a value that can be watched or not.
