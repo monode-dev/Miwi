@@ -11,7 +11,7 @@ export function Dialog(
     <Box
       widthGrows
       heightGrows
-      background={`#00000099`}
+      fill={`#00000099`}
       onClick={() => (props.doNotCloseOnClickOutside ? {} : popPage())}
     >
       <Card width={`75%`} preventClickPropagation overrideProps={props} shadowSize={1.25}>

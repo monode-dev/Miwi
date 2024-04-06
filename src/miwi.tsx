@@ -53,7 +53,7 @@ const $theme = ${JSON.stringify({
   colors: {
     primary: `var(--miwi-color-primary)`,
     accent: `var(--miwi-color-accent)`,
-    pageBackground: `var(--miwi-color-page-background)`,
+    pageBackground: `var(--miwi-color-page-fill)`,
     text: `var(--miwi-color-text)`,
     hint: `var(--miwi-color-hint)`,
     lightHint: `var(--miwi-color-light-hint)`,
@@ -72,7 +72,7 @@ export function setTheme(props: DeepPartial<Omit<typeof $theme, `sameAsText`>>) 
     ${sizeScaleCssVarName}: ${muToCss(props.scale ?? 1)};
     --miwi-color-primary: ${props.colors?.primary ?? `#b3dd3e`};
     --miwi-color-accent: ${props.colors?.accent ?? `#ffffffff`};
-    --miwi-color-page-background: ${props.colors?.pageBackground ?? `#f9fafdff`};
+    --miwi-color-page-fill: ${props.colors?.pageBackground ?? `#f9fafdff`};
     --miwi-color-text: ${props.colors?.text ?? `#000000ff`};
     --miwi-color-hint: ${props.colors?.hint ?? `#9e9e9eff`};
     --miwi-color-light-hint: ${props.colors?.lightHint ?? `lightgray`};

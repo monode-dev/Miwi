@@ -154,7 +154,7 @@ const activePageClass = `miwi-nav-active-page`;
 // }
 function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
   return {
-    background: "transparent",
+    fill: "transparent",
     width: "100%",
     height: "100%",
     top: "0px",

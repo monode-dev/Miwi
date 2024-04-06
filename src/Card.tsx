@@ -4,7 +4,7 @@ import { Column } from "./Column";
 export function Card(props: BoxProps) {
   return (
     <Column
-      background={$theme.colors.accent}
+      fill={$theme.colors.accent}
       cornerRadius={0.5}
       shadowSize={1.5}
       shadowDirection={$Align.bottomRight}

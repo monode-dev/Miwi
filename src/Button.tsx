@@ -22,13 +22,13 @@ export function Button(
   const colorSty = useFormula(() =>
     props.outlined
       ? {
-          background: $theme.colors.accent,
+          fill: $theme.colors.accent,
           foreground: $theme.colors.primary,
           outlineColor: `currentColor`,
           outlineSize: 0.125,
         }
       : {
-          background: $theme.colors.primary,
+          fill: $theme.colors.primary,
           foreground: $theme.colors.accent,
         },
   );

@@ -23,14 +23,14 @@ export function AppBar(
       <Box
         widthGrows
         height={`env(safe-area-inset-top)`}
-        background={props.background ?? $theme.colors.primary}
+        fill={props.fill ?? $theme.colors.primary}
         zIndex={2}
       />
 
       {/* AppBar */}
       <Column
         widthGrows
-        background={$theme.colors.primary}
+        fill={$theme.colors.primary}
         shadowSize={1.25}
         shadowDirection={$Align.bottomCenter}
         alignBottomCenter

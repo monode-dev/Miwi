@@ -20,7 +20,7 @@ export type DecorationSty = Partial<
 >;
 
 export type BackgroundProps = {
-  background: string;
+  fill: string;
   // fillWithForeground: boolean;
   backgroundFit: BackgroundFit;
   backgroundCover: boolean;
@@ -104,10 +104,10 @@ export function watchBoxDecoration(
   // Background
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    const background = parseProp(`background`) ?? ``;
-    const backgroundIsImage = background.startsWith(`data:image`) || background.startsWith(`/`);
-    element.value.style.backgroundColor = backgroundIsImage ? `` : background;
-    element.value.style.backgroundImage = backgroundIsImage ? `url('${background}')` : ``;
+    const fill = parseProp(`fill`) ?? ``;
+    const backgroundIsImage = fill.startsWith(`data:image`) || fill.startsWith(`/`);
+    element.value.style.backgroundColor = backgroundIsImage ? `` : fill;
+    element.value.style.backgroundImage = backgroundIsImage ? `url('${fill}')` : ``;
     element.value.style.backgroundSize =
       parseProp({
         backgroundFit: v => v,

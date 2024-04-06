@@ -31,7 +31,7 @@ export function DeleteDialog(props: BoxProps & { onDelete?: () => void; message:
 
   return (
     <>
-      <Box onClick={popOnClickOutside} widthGrows heightGrows background={`#00000099`}>
+      <Box onClick={popOnClickOutside} widthGrows heightGrows fill={`#00000099`}>
         <Card getElement={cardRef} width={`75%`} shadowSize={0}>
           <Txt widthGrows overflowX={$Overflow.wrap}>
             {props.message}

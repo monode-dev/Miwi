@@ -130,7 +130,7 @@ export function Modal(
             overflowYScrolls
             pad={1}
             shadowSize={1}
-            background={$theme.colors.accent}
+            fill={$theme.colors.accent}
             alignTopLeft
             preventClickPropagation
             getElement={el => (modal = el)}

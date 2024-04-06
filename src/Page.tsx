@@ -1,11 +1,11 @@
-import { Box, BoxProps } from './Box/Box'
+import { Box, BoxProps } from "./Box/Box";
 
 export function Page(props: BoxProps) {
   return (
     <Box
       asWideAsParent
       asTallAsParent
-      background={$theme.colors.pageBackground}
+      fill={$theme.colors.pageBackground}
       alignCenter
       overflowX={$Overflow.crop}
       overflowY={$Overflow.crop}
@@ -14,5 +14,5 @@ export function Page(props: BoxProps) {
     >
       {props.children}
     </Box>
-  )
+  );
 }

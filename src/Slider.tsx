@@ -51,7 +51,7 @@ export function Slider(
           width={"100%"}
           height={trackHeight}
           cornerRadius={0.25}
-          background={$theme.colors.lightHint}
+          fill={$theme.colors.lightHint}
         />
         <Row
           width={"100%"}
@@ -67,7 +67,7 @@ export function Slider(
             )}%`}
             height={trackHeight}
             cornerRadius={0.25}
-            background={$theme.colors.primary}
+            fill={$theme.colors.primary}
           />
           <Box width={0} height={0} overflowX={$Overflow.spill} overflowY={$Overflow.spill}>
             <Box
@@ -76,7 +76,7 @@ export function Slider(
               width={thumbHeight}
               height={thumbHeight}
               cornerRadius={thumbHeight / 2}
-              background={$theme.colors.primary}
+              fill={$theme.colors.primary}
             />
           </Box>
         </Row>

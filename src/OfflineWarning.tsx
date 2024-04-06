@@ -21,7 +21,7 @@ export function OfflineWarning(props: { isOnlineSig: ReadonlyProp<boolean> }) {
     props.isOnlineSig.value ? undefined : (
       <div
         style={{
-          background: `transparent`,
+          fill: `transparent`,
           width: `100%`,
           height: `100%`,
           bottom: 0,
@@ -33,7 +33,7 @@ export function OfflineWarning(props: { isOnlineSig: ReadonlyProp<boolean> }) {
       >
         <Box asWideAsParent asTallAsParent pad={1} alignBottomLeft>
           <Row
-            background={$theme.colors.warning}
+            fill={$theme.colors.warning}
             foreground={$theme.colors.accent}
             cornerRadius={1}
             shadowDirection={$Align.center}

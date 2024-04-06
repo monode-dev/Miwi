@@ -227,7 +227,7 @@ export function Field(
       enterkeyhint: props.enterKeyHint ?? `done`,
       style: {
         border: "none",
-        "background-color": "transparent",
+        "fill-color": "transparent",
         outline: "none",
         "font-family": "inherit",
         "font-size": "inherit",
@@ -284,7 +284,7 @@ export function Field(
 
           {/* Underline */}
           <Box height={underlineHeight.value} alignBottomLeft>
-            <Box widthGrows height={0.0625} background={detailColor.value} />
+            <Box widthGrows height={0.0625} fill={detailColor.value} />
           </Box>
         </Column>
       </Show>
