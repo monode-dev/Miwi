@@ -1,26 +1,26 @@
 // https://pictogrammers.com/library/mdi/
-import { Box } from './Box/Box'
-import { Size } from './Box/BoxSize'
+import { Box } from "./Box/Box";
+import { Size } from "./Box/BoxSize";
 
 // From: https://github.com/therufa/mdi-vue/blob/master/src/shared.js
 function ucFirst(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 function toMdiName(str: string) {
-  return str.split('-').map(ucFirst).join('')
+  return str.split("-").map(ucFirst).join("");
 }
 
 export function Icon(props: {
-  iconPath: string
-  textColor?: string
-  scale?: Size
-  onClick?: () => void
+  iconPath: string;
+  foreground?: string;
+  scale?: Size;
+  onClick?: () => void;
 }) {
   return (
     <Box
       width={props.scale ?? $theme.scale}
       height={props.scale ?? $theme.scale}
-      textColor={props.textColor ?? `currentColor`}
+      foreground={props.foreground ?? `currentColor`}
       overflowY={$Overflow.crop}
       overflowX={$Overflow.crop}
       onClick={props.onClick}
@@ -36,5 +36,5 @@ export function Icon(props: {
         <path d={props.iconPath}></path>
       </svg>
     </Box>
-  )
+  );
 }

@@ -6,7 +6,7 @@ import { createRenderEffect } from "solid-js";
 
 export type TextSty = Partial<{
   scale: number | string;
-  textColor: string;
+  foreground: string;
   // NOTE: Eventually we might want to make this a number so it can be granularly controlled. With presets for thin, normal, and bold.
   boldText: boolean;
   italicizeText: boolean;
@@ -85,7 +85,7 @@ export function watchBoxText(
   // Text Color
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    element.value.style.color = parseProp({ textColor: v => v }) ?? ``;
+    element.value.style.color = parseProp({ foreground: v => v }) ?? ``;
   });
 
   // Text Align

@@ -34,7 +34,7 @@ export function AppBar(
         shadowSize={1.25}
         shadowDirection={$Align.bottomCenter}
         alignBottomCenter
-        textColor={$theme.colors.accent}
+        foreground={$theme.colors.accent}
         zIndex={1}
         overrideProps={props}
       >

@@ -17,7 +17,7 @@ export function Txt(
 
   return (
     <Box
-      textColor={props.hint ? $theme.colors.hint : undefined}
+      foreground={props.hint ? $theme.colors.hint : undefined}
       scale={props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : undefined)}
       alignTopLeft
       overflowY={$Overflow.spill}

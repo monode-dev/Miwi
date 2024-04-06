@@ -1,5 +1,5 @@
-import { BoxProps } from './Box/Box'
-import { Column } from './Column'
+import { BoxProps } from "./Box/Box";
+import { Column } from "./Column";
 
 export function Card(props: BoxProps) {
   return (
@@ -9,12 +9,12 @@ export function Card(props: BoxProps) {
       shadowSize={1.5}
       shadowDirection={$Align.bottomRight}
       alignCenter
-      textColor={$theme.colors.text}
+      foreground={$theme.colors.text}
       scale={1}
       pad={1}
       overrideProps={props}
     >
       {props.children}
     </Column>
-  )
+  );
 }

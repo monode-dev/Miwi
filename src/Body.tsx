@@ -1,5 +1,5 @@
-import { BoxProps } from './Box/Box'
-import { Column } from './Column'
+import { BoxProps } from "./Box/Box";
+import { Column } from "./Column";
 
 export function Body(props: BoxProps) {
   return (
@@ -8,7 +8,7 @@ export function Body(props: BoxProps) {
       heightGrows
       alignTopCenter
       preventClickPropagation
-      textColor={$theme.colors.text}
+      foreground={$theme.colors.text}
       scale={1}
       pad={1}
       overflowY={$Overflow.scroll}
@@ -17,5 +17,5 @@ export function Body(props: BoxProps) {
     >
       {props.children}
     </Column>
-  )
+  );
 }

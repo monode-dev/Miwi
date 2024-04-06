@@ -169,7 +169,7 @@ export function Field(
       ? $theme.colors.primary
       : value.value === `` || !exists(value.value)
         ? $theme.colors.hint
-        : props.textColor ?? $theme.colors.text,
+        : props.foreground ?? $theme.colors.text,
   );
 
   onMount(() => {
@@ -251,7 +251,7 @@ export function Field(
       onClick={() => tryFocus()}
       widthGrows
       height={exists(lineCount) ? scale.value * lineCount + underlineHeight.value : undefined}
-      textColor={$theme.colors.text}
+      foreground={$theme.colors.text}
       padBetweenX={0.25}
       padBetweenY={0}
       overflowY={$Overflow.spill}
@@ -263,7 +263,7 @@ export function Field(
     >
       {/* Icon */}
       <Show when={exists(props.iconPath) && props.iconPath !== ``}>
-        <Icon iconPath={props.iconPath!} textColor={detailColor.value} scale={scale.value} />
+        <Icon iconPath={props.iconPath!} foreground={detailColor.value} scale={scale.value} />
       </Show>
 
       <Show when={props.underlined} fallback={<_Input value={value.value} />}>

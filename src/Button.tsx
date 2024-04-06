@@ -23,13 +23,13 @@ export function Button(
     props.outlined
       ? {
           background: $theme.colors.accent,
-          textColor: $theme.colors.primary,
+          foreground: $theme.colors.primary,
           outlineColor: `currentColor`,
           outlineSize: 0.125,
         }
       : {
           background: $theme.colors.primary,
-          textColor: $theme.colors.accent,
+          foreground: $theme.colors.accent,
         },
   );
   const shadowSty = useFormula(() =>

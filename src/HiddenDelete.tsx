@@ -47,7 +47,7 @@ export function HiddenDelete(
       cardStyle={props.cardStyle}
     >
       <Row
-        textColor={$theme.colors.text}
+        foreground={$theme.colors.text}
         scale={scale}
         alignCenterLeft
         padBetween={0.25}
@@ -65,7 +65,7 @@ export function HiddenDelete(
           isOpen.value = false;
           props.onDelete();
         }}
-        textColor={$theme.colors.error}
+        foreground={$theme.colors.error}
       >
         <Txt>{props.deleteText ?? `Delete`}</Txt>
         <Icon iconPath={props.deleteIcon ?? mdiDelete} />
