@@ -228,7 +228,7 @@ export function Field(
       enterkeyhint: props.enterKeyHint ?? `done`,
       style: {
         border: "none",
-        "fill-color": "transparent",
+        "background-color": "transparent",
         outline: "none",
         "font-family": "inherit",
         "font-size": "inherit",
