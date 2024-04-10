@@ -182,6 +182,7 @@ export function Field(
 
   function tryFocus() {
     if (inputElementHasFocus.value) return;
+    console.log(`Trying to focus`);
     inputElement?.focus();
   }
 
