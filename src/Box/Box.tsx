@@ -136,7 +136,16 @@ export function Box(props: BoxProps) {
     // Computer Interactivity
     watchBoxInteraction(parseProp, element, { isScrollable });
   }
-
+  const additionalClasses = parseProp(`classList`, true).reduce(
+    (acc: { [key: string]: boolean }, cls: { [key: string]: boolean }) => ({
+      ...acc,
+      ...cls,
+    }),
+    {},
+  );
+  if (Object.keys(additionalClasses).length > 0) { 
+    console.log(additionalClasses);
+  }
   // TODO: Toggle element type based on "tag" prop.
   return (
     <div
@@ -146,7 +155,7 @@ export function Box(props: BoxProps) {
         [rowClassName]: axis.value === Axis.row,
         [stackClassName]: axis.value === Axis.stack,
         [nonStackClassName]: axis.value !== Axis.stack,
-        ...parseProp(`classList`, {}),
+        ...additionalClasses,
       }}
       ref={el => {
         element.value = el;
