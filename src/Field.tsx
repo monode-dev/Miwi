@@ -234,6 +234,7 @@ export function Field(
         "font-family": "inherit",
         "font-size": "inherit",
         "font-weight": "inherit",
+        "pointer-events": "auto",
         color: "inherit",
         padding: "0px",
         margin: "0px",
