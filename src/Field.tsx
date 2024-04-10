@@ -181,7 +181,6 @@ export function Field(
   });
 
   function tryFocus() {
-    console.log(`Trying to focus`);
     if (inputElementHasFocus.value) return;
     inputElement?.focus();
   }
@@ -254,7 +253,7 @@ export function Field(
   }
   return (
     <Row
-      // onClick={() => tryFocus()}
+      onClick={() => tryFocus()}
       widthGrows
       height={exists(lineCount) ? scale.value * lineCount + underlineHeight.value : undefined}
       foreground={$theme.colors.text}
