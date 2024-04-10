@@ -253,7 +253,7 @@ export function Field(
   }
   return (
     <Row
-      onClick={() => tryFocus()}
+      onClick={inputElementHasFocus.value ? undefined : () => tryFocus()}
       widthGrows
       height={exists(lineCount) ? scale.value * lineCount + underlineHeight.value : undefined}
       foreground={$theme.colors.text}
