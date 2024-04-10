@@ -4,12 +4,13 @@ import { Stack } from "./Stack";
 import { JSX, Show, onCleanup, onMount } from "solid-js";
 import { SIZE_SHRINKS, Size } from "./Box/BoxSize";
 import { findPageInAncestors, isActivePage } from "./Nav";
+import { Column } from "./Column";
 
 // SECTION: Modal Utils
-const _openModals = new Map<HTMLElement, () => void>();
+const _openModals = new Map<Element, () => void>();
 const _numOpenModals = useProp(0);
 export const numOpenModals: ReadonlyProp<number> = _numOpenModals;
-const _recordModalOpenState = (modalElement: HTMLElement, isOpen: boolean, close: () => void) => {
+const _recordModalOpenState = (modalElement: Element, isOpen: boolean, close: () => void) => {
   if (isOpen) {
     _openModals.set(modalElement, close);
   } else {
@@ -17,7 +18,9 @@ const _recordModalOpenState = (modalElement: HTMLElement, isOpen: boolean, close
   }
   _numOpenModals.value = _openModals.size;
 };
-export const closeModalByElement = (modalElement: HTMLElement | null | undefined) => {
+const _modalCssClass = `miwi-modal`;
+export const closeParentModal = (thisElement: Element | null | undefined) => {
+  const modalElement = thisElement?.closest(`.${_modalCssClass}`);
   if (!exists(modalElement)) return;
   _openModals.get(modalElement)?.();
 };
@@ -28,7 +31,7 @@ export function Modal(
     openButton: JSX.Element;
     openButtonWidth: Size;
     openButtonHeight: Size;
-    isOpenSig?: Prop<boolean>;
+    isOpen?: Prop<boolean>;
     modalWidth?: Size;
     pad?: number;
     cardStyle?: BoxProps;
@@ -40,25 +43,25 @@ export function Modal(
   let element: HTMLElement | undefined = undefined;
 
   //
-  const _isOpen = useProp(props.isOpenSig?.value ?? false);
-  if (exists(props.isOpenSig)) {
+  const _isOpen = useProp(props.isOpen?.value ?? false);
+  if (exists(props.isOpen)) {
     doWatch(
       () => {
-        if (_isOpen.value === props.isOpenSig!.value) return;
-        if (props.isOpenSig!.value) {
+        if (_isOpen.value === props.isOpen!.value) return;
+        if (props.isOpen!.value) {
           openDropDown();
         } else {
           closeDropDown();
         }
       },
       {
-        on: [props.isOpenSig],
+        on: [props.isOpen],
       },
     );
     doWatch(
       () => {
-        if (_isOpen.value === props.isOpenSig!.value) return;
-        props.isOpenSig!.value = _isOpen.value;
+        if (_isOpen.value === props.isOpen!.value) return;
+        props.isOpen!.value = _isOpen.value;
       },
       {
         on: [_isOpen],
@@ -113,18 +116,21 @@ export function Modal(
       height={props.openButtonHeight}
       align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}
       getElement={el => (element = el)}
+      classList={{
+        [_modalCssClass]: true,
+      }}
     >
       {/* Open Button */}
       {openButton}
 
       {/* Modal */}
       <Show when={_isOpen.value}>
-        <Box width={props.modalWidth ?? SIZE_SHRINKS} alignTopLeft overflowYSpills>
+        <Column width={props.modalWidth ?? SIZE_SHRINKS} alignTopLeft overflowYSpills>
           <Show when={!shouldOpenUpwards.value}>
             <Box height={props.openButtonHeight} />
             <Box height={0.5} />
           </Show>
-          <Box
+          <Column
             // widthGrows
             minHeight={0}
             heightShrinks
@@ -140,12 +146,12 @@ export function Modal(
             overrideProps={props.cardStyle}
           >
             {props.children}
-          </Box>
+          </Column>
           <Show when={shouldOpenUpwards.value}>
             <Box height={0.5} />
             <Box height={props.openButtonHeight} />
           </Show>
-        </Box>
+        </Column>
       </Show>
     </Stack>
   );

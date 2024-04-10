@@ -121,7 +121,7 @@ export function Selector<T>(
       }
       openButtonWidth={grow()}
       openButtonHeight={props.scale ?? 1}
-      isOpenSig={_modalIsOpen}
+      isOpen={_modalIsOpen}
       modalWidth={isWide.value ? `100%` : undefined}
     >
       {/* SECTION: No Options */}

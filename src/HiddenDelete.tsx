@@ -44,7 +44,7 @@ export function HiddenDelete(
       }
       openButtonWidth={scale}
       openButtonHeight={scale}
-      isOpenSig={isOpen}
+      isOpen={isOpen}
       cardStyle={props.cardStyle}
       modalWidth={props.modalWidth}
     >
