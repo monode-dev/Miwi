@@ -243,9 +243,9 @@ export function Field(
         // [`line-height`]: sizeToCss(scale.value),
         [`caret-color`]: $theme.colors.primary,
         "--miwi-placeholder-color": props.hintColor ?? $theme.colors.hint,
-        "-webkit-user-select": "auto" /* Safari */,
-        "-ms-user-select": "auto" /* IE 10 and IE 11 */,
-        "user-select": "auto" /* Standard syntax */,
+        "-webkit-user-select": "text" /* Safari */,
+        "-ms-user-select": "text" /* IE 10 and IE 11 */,
+        "user-select": "text" /* Standard syntax */,
       } as any,
     };
     return lineCount > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
