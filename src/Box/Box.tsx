@@ -146,6 +146,7 @@ export function Box(props: BoxProps) {
         [rowClassName]: axis.value === Axis.row,
         [stackClassName]: axis.value === Axis.stack,
         [nonStackClassName]: axis.value !== Axis.stack,
+        ...parseProp(`classList`, {}),
       }}
       ref={el => {
         element.value = el;
