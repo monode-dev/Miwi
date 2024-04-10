@@ -21,6 +21,7 @@ const _recordModalOpenState = (modalElement: Element, isOpen: boolean, close: ()
 const _modalCssClass = `miwi-modal`;
 export const closeParentModal = (thisElement: Element | null | undefined) => {
   const modalElement = thisElement?.closest(`.${_modalCssClass}`);
+  console.log(`closeParentModal ${modalElement}`);
   if (!exists(modalElement)) return;
   _openModals.get(modalElement)?.();
 };
