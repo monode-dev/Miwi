@@ -5,6 +5,7 @@ import { Modal } from "./Modal";
 import { Row } from "./Row";
 import { Txt } from "./Txt";
 import { mdiClose, mdiDelete, mdiDotsVertical } from "@mdi/js";
+import { Size } from "./Box/BoxSize";
 
 export function HiddenDelete(
   props: {
@@ -13,13 +14,13 @@ export function HiddenDelete(
     deleteText?: string;
     deleteIcon?: string;
     cardStyle?: BoxProps;
+    modalWidth?: Size;
   } & BoxProps,
 ) {
   const scale = props.scale ?? 1;
   const isOpen = doNow(() => {
     const _fallbackIsOpen = useProp(false);
     return {
-      _isSig: true as const,
       get value() {
         return props.isOpen?.value ?? _fallbackIsOpen.value;
       },
@@ -45,6 +46,7 @@ export function HiddenDelete(
       openButtonHeight={scale}
       isOpenSig={isOpen}
       cardStyle={props.cardStyle}
+      modalWidth={props.modalWidth}
     >
       <Row
         foreground={$theme.colors.text}

@@ -1,26 +1,28 @@
-import { Prop, ReadonlyProp, doNow, exists, useProp, doWatch } from "./utils";
+import { Prop, ReadonlyProp, exists, useProp, doWatch } from "./utils";
 import { Box, BoxProps } from "./Box/Box";
 import { Stack } from "./Stack";
 import { JSX, Show, onCleanup, onMount } from "solid-js";
 import { SIZE_SHRINKS, Size } from "./Box/BoxSize";
 import { findPageInAncestors, isActivePage } from "./Nav";
 
-export const [numOpenModals, toggleModalIsOpen] = doNow(() => {
-  const openModals = new Set<HTMLElement>();
-  const _numOpenModals = useProp(0);
-  return [
-    _numOpenModals as ReadonlyProp<number>,
-    (modal: HTMLElement, isOpen: boolean) => {
-      if (isOpen) {
-        openModals.add(modal);
-      } else {
-        openModals.delete(modal);
-      }
-      _numOpenModals.value = openModals.size;
-    },
-  ];
-});
+// SECTION: Modal Utils
+const _openModals = new Map<HTMLElement, () => void>();
+const _numOpenModals = useProp(0);
+export const numOpenModals: ReadonlyProp<number> = _numOpenModals;
+const _recordModalOpenState = (modalElement: HTMLElement, isOpen: boolean, close: () => void) => {
+  if (isOpen) {
+    _openModals.set(modalElement, close);
+  } else {
+    _openModals.delete(modalElement);
+  }
+  _numOpenModals.value = _openModals.size;
+};
+export const closeModalByElement = (modalElement: HTMLElement | null | undefined) => {
+  if (!exists(modalElement)) return;
+  _openModals.get(modalElement)?.();
+};
 
+// SECTION: Modal Component
 export function Modal(
   props: {
     openButton: JSX.Element;
@@ -65,10 +67,10 @@ export function Modal(
   }
   onMount(() => {
     doWatch(() => {
-      toggleModalIsOpen(element!, _isOpen.value);
+      _recordModalOpenState(element!, _isOpen.value, closeDropDown);
     });
     onCleanup(() => {
-      toggleModalIsOpen(element!, false);
+      _recordModalOpenState(element!, false, closeDropDown);
     });
   });
 
