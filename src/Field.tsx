@@ -175,7 +175,7 @@ export function Field(
   onMount(() => {
     if (inputElementHasFocus.value) {
       // Focus on next frame
-      const frameId = requestAnimationFrame(() => inputElement?.focus());
+      const frameId = requestAnimationFrame(() => tryFocus());
       onCleanup(() => cancelAnimationFrame(frameId));
     }
   });
@@ -243,7 +243,10 @@ export function Field(
         // [`line-height`]: sizeToCss(scale.value),
         [`caret-color`]: $theme.colors.primary,
         "--miwi-placeholder-color": props.hintColor ?? $theme.colors.hint,
-      },
+        "-webkit-user-select": "auto" /* Safari */,
+        "-ms-user-select": "auto" /* IE 10 and IE 11 */,
+        "user-select": "auto" /* Standard syntax */,
+      } as any,
     };
     return lineCount > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
   }
