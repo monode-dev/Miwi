@@ -212,7 +212,7 @@ export function Field(
         startWatchingTextStyle(el);
       },
       // type="text"
-      type: props.inputType,
+      type: props.inputType ?? `text`,
       inputmode: props.keyboard,
       value: _inputProps.value,
       onInput: handleInput,
