@@ -175,7 +175,7 @@ export function Field(
   onMount(() => {
     if (inputElementHasFocus.value) {
       // Focus on next frame
-      const frameId = requestAnimationFrame(() => tryFocus());
+      const frameId = requestAnimationFrame(() => inputElement?.focus());
       onCleanup(() => cancelAnimationFrame(frameId));
     }
   });
