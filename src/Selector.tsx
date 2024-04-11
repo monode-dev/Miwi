@@ -105,7 +105,7 @@ export function Selector<T>(
               {selectedLabel.value}
             </Txt>
           ) : (
-            <Field valueSig={props.filterStringSig} hintText="Search" hasFocusSig={useProp(true)} />
+            <Field value={props.filterStringSig} hintText="Search" hasFocusSig={useProp(true)} />
           )}
           <Icon
             iconPath={exists(props.filterStringSig) && _modalIsOpen.value ? mdiClose : mdiMenuDown}

@@ -130,7 +130,7 @@ export function NumField(
         props.onBlur?.();
       }}
       align={props.align ?? $Align.centerLeft}
-      valueSig={_stringValue}
+      value={_stringValue}
       hasFocusSig={props.hasFocusSig}
       hintText={props.hint}
       hintColor={props.hintColor}

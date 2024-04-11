@@ -28,7 +28,7 @@ export type FormatFieldInput = (
 };
 export function Field(
   props: {
-    valueSig?: Prop<string>;
+    value?: Prop<string>;
     tempValueSig?: Prop<string>;
     hasFocusSig?: Prop<boolean>;
     hintText?: string;
@@ -49,7 +49,7 @@ export function Field(
     enterKeyHint?: `enter` | `done` | `go` | `next` | `previous` | `search` | `send`;
   } & BoxProps,
 ) {
-  const value = props.valueSig ?? useProp(``);
+  const value = props.value ?? useProp(``);
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
   const inputElementHasFocus = props.hasFocusSig ?? useProp(false);
   const scale = useFormula(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
