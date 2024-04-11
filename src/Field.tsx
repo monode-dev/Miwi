@@ -29,8 +29,8 @@ export type FormatFieldInput = (
 export function Field(
   props: {
     value?: Prop<string>;
-    tempValueSig?: Prop<string>;
-    hasFocusSig?: Prop<boolean>;
+    tempValue?: Prop<string>;
+    hasFocus?: Prop<boolean>;
     hintText?: string;
     hintColor?: string;
     lineCount?: number;
@@ -51,14 +51,14 @@ export function Field(
 ) {
   const value = props.value ?? useProp(``);
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
-  const inputElementHasFocus = props.hasFocusSig ?? useProp(false);
+  const inputElementHasFocus = props.hasFocus ?? useProp(false);
   const scale = useFormula(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
 
   // Input
   function setTempValue(newValue: string | undefined | null) {
     const stringValue = newValue ?? ``;
-    if (exists(props.tempValueSig)) {
-      props.tempValueSig.value = stringValue;
+    if (exists(props.tempValue)) {
+      props.tempValue.value = stringValue;
     } else {
       value.value = stringValue;
     }
@@ -67,7 +67,7 @@ export function Field(
     }
   }
   function getTempValue() {
-    return props.tempValueSig?.value ?? value.value;
+    return props.tempValue?.value ?? value.value;
   }
   doWatch(
     () => {

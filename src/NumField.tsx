@@ -131,7 +131,7 @@ export function NumField(
       }}
       align={props.align ?? $Align.centerLeft}
       value={_stringValue}
-      hasFocusSig={props.hasFocusSig}
+      hasFocus={props.hasFocusSig}
       hintText={props.hint}
       hintColor={props.hintColor}
       iconPath={props.icon}
