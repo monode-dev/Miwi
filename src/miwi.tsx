@@ -139,4 +139,5 @@ export * from "./SortableColumn";
 export * from "./Stack";
 export * from "./TabButtons";
 export * from "./TabView";
+export * from "./Theme";
 export * from "./utils";
