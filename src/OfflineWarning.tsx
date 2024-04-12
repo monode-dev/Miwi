@@ -34,7 +34,7 @@ export function OfflineWarning(props: { isOnlineSig: ReadonlyProp<boolean> }) {
         <Box asWideAsParent asTallAsParent pad={1} alignBottomLeft>
           <Row
             fill={$theme.colors.warning}
-            foreground={$theme.colors.accent}
+            stroke={$theme.colors.accent}
             cornerRadius={1}
             shadowDirection={$Align.center}
             shadowSize={2}

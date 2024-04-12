@@ -2,6 +2,7 @@ import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign } from "./BoxLayout";
 import { Prop } from "src/utils";
 import { createRenderEffect } from "solid-js";
+import { foregroundMaterial } from "src/Theme";
 
 export type DecorationSty = Partial<
   {
@@ -21,7 +22,7 @@ export type DecorationSty = Partial<
 
 export type BackgroundProps = {
   fill: string;
-  // fillWithForeground: boolean;
+  fillWithForeground: boolean;
   backgroundFit: BackgroundFit;
   backgroundCover: boolean;
   backgroundContain: boolean;
@@ -52,7 +53,7 @@ export const mdColors = {
   grey: `#9e9e9eff`,
   black: `#000000ff`,
   transparent: `#ffffff00`,
-  sameAsText: `currentColor`,
+  stroke: `currentColor`,
 } as const;
 
 // We might be able to infer everything we need from these compute functions, which could make updates even easier to make. If we did this, then we'd want to use another function to generate these compute functions.
@@ -104,7 +105,11 @@ export function watchBoxDecoration(
   // Background
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    const fill = parseProp(`fill`) ?? ``;
+    const fill =
+      parseProp({
+        fill: v => v,
+        fillWithForeground: _ => foregroundMaterial,
+      }) ?? ``;
     const backgroundIsImage = fill.startsWith(`data:image`) || fill.startsWith(`/`);
     element.value.style.backgroundColor = backgroundIsImage ? `` : fill;
     element.value.style.backgroundImage = backgroundIsImage ? `url('${fill}')` : ``;

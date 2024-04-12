@@ -100,7 +100,7 @@ export function Selector<T>(
             <Txt
               widthGrows
               overflowX={$Overflow.crop}
-              foreground={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
+              stroke={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
             >
               {selectedLabel.value}
             </Txt>

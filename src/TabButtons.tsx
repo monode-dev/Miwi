@@ -61,7 +61,7 @@ export function TabButtons(
             getElement={el => (tabUnderline.value = el)}
             width={tabButtonWidth}
             height={0.125}
-            fill={$theme.colors.sameAsText}
+            fillWithForeground
           />
           <Box width={tabButtonWidth} />
         </Row>

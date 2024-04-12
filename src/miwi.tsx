@@ -1,5 +1,5 @@
 import { DeepPartial } from "./utils";
-import { sizeScaleCssVarName } from "./theme";
+import { sizeScaleCssVarName } from "./Theme";
 import { muToCss } from "./Box/BoxUtils";
 import { Align, Axis, Overflow } from "./Box/BoxLayout";
 
@@ -34,7 +34,6 @@ declare global {
       readonly lightHint: string;
       readonly warning: string;
       readonly error: string;
-      readonly sameAsText: string;
     };
   };
 }
@@ -59,14 +58,13 @@ const $theme = ${JSON.stringify({
     lightHint: `var(--miwi-color-light-hint)`,
     warning: `var(--miwi-color-warning)`,
     error: `var(--miwi-color-error)`,
-    sameAsText: `currentColor`,
   },
 } satisfies typeof $theme)};`;
 document.body.appendChild(themeScriptElement);
 const themeStyleElement = document.createElement(`style`);
 setTheme({});
 document.body.appendChild(themeStyleElement);
-export function setTheme(props: DeepPartial<Omit<typeof $theme, `sameAsText`>>) {
+export function setTheme(props: DeepPartial<Omit<typeof $theme, `stroke`>>) {
   themeStyleElement.innerHTML = `
   :root {
     ${sizeScaleCssVarName}: ${muToCss(props.scale ?? 1)};

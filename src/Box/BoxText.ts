@@ -1,15 +1,18 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { AlignSingleAxis, Overflow, _FlexAlign } from "./BoxLayout";
-import { sizeScaleCssVarName } from "src/theme";
+import { sizeScaleCssVarName } from "src/Theme";
 import { Prop } from "src/utils";
 import { createRenderEffect } from "solid-js";
 
 export type TextSty = Partial<{
   scale: number | string;
-  foreground: string;
+  stroke: string;
+  // primaryForeground: boolean;
+  // hintForeground: boolean;
+  // errorForeground: boolean;
   // NOTE: Eventually we might want to make this a number so it can be granularly controlled. With presets for thin, normal, and bold.
-  boldText: boolean;
-  italicizeText: boolean;
+  bold: boolean;
+  italic: boolean;
   underlineText: boolean;
   /** NOTE: Flex container treats its children as flex items, and unfortunately, the
    * text-overflow: ellipsis; doesn't apply to flex items. If you want to keep using
@@ -54,14 +57,14 @@ export function watchBoxText(
   // Bold
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    const textIsBold = parseProp({ boldText: v => v });
+    const textIsBold = parseProp({ bold: v => v });
     element.value.style.fontWeight = exists(textIsBold) ? (textIsBold ? `bold` : `normal`) : ``;
   });
 
   // Italic
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    const textIsItalic = parseProp({ italicizeText: v => v });
+    const textIsItalic = parseProp({ italic: v => v });
     element.value.style.fontStyle = exists(textIsItalic)
       ? textIsItalic
         ? `italic`
@@ -85,7 +88,7 @@ export function watchBoxText(
   // Text Color
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    element.value.style.color = parseProp({ foreground: v => v }) ?? ``;
+    element.value.style.color = parseProp({ stroke: v => v }) ?? ``;
   });
 
   // Text Align

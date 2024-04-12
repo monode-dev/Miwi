@@ -34,7 +34,7 @@ export function AppBar(
         shadowSize={1.25}
         shadowDirection={$Align.bottomCenter}
         alignBottomCenter
-        foreground={$theme.colors.accent}
+        stroke={$theme.colors.accent}
         zIndex={1}
         overrideProps={props}
       >
@@ -55,7 +55,7 @@ export function AppBar(
           </Row>
 
           {/* Title / Center */}
-          <Row widthGrows={3} alignCenter boldText>
+          <Row widthGrows={3} alignCenter bold>
             {props.children}
           </Row>
 

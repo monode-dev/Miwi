@@ -8,7 +8,7 @@ export function Body(props: BoxProps) {
       heightGrows
       alignTopCenter
       preventClickPropagation
-      foreground={$theme.colors.text}
+      stroke={$theme.colors.text}
       scale={1}
       pad={1}
       overflowY={$Overflow.scroll}

@@ -1,5 +1,6 @@
 import { muToCss } from "./Box/BoxUtils";
 import { createSignal } from "solid-js";
+import { foregroundMaterial } from "./Theme";
 
 export function CircularProgressIndicator(props: {
   diameter?: number | string;
@@ -11,7 +12,7 @@ export function CircularProgressIndicator(props: {
   const thicknessPx = muToCss(
     props.thickness ?? (typeof diameterMu === `number` ? diameterMu / 8 : diameterMu),
   );
-  const color = props.color ?? $theme.colors.sameAsText;
+  const color = props.color ?? foregroundMaterial;
   const speed = 2.5; // Degrees per frame
   // A state for rotation angle
   const [angle, setAngle] = createSignal(0);

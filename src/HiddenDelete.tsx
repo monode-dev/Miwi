@@ -49,7 +49,7 @@ export function HiddenDelete(
       modalWidth={props.modalWidth}
     >
       <Row
-        foreground={$theme.colors.text}
+        stroke={$theme.colors.text}
         scale={scale}
         alignCenterLeft
         padBetween={0.25}
@@ -67,7 +67,7 @@ export function HiddenDelete(
           isOpen.value = false;
           props.onDelete();
         }}
-        foreground={$theme.colors.error}
+        stroke={$theme.colors.error}
       >
         <Txt>{props.deleteText ?? `Delete`}</Txt>
         <Icon iconPath={props.deleteIcon ?? mdiDelete} />

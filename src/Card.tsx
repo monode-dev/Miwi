@@ -9,7 +9,7 @@ export function Card(props: BoxProps) {
       shadowSize={1.5}
       shadowDirection={$Align.bottomRight}
       alignCenter
-      foreground={$theme.colors.text}
+      stroke={$theme.colors.text}
       scale={1}
       pad={1}
       overrideProps={props}
