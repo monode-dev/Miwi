@@ -33,7 +33,7 @@ export type MiwiTheme = {
   };
 };
 
-export const foregroundMaterial = `currentColor`;
+export const strokeMaterial = `currentColor`;
 export const theme = {
   palette: {
     primary: `var(--miwi-material-primary)`,

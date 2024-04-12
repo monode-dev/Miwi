@@ -2,7 +2,7 @@ import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign } from "./BoxLayout";
 import { Prop } from "src/utils";
 import { createRenderEffect } from "solid-js";
-import { foregroundMaterial } from "src/Theme";
+import { strokeMaterial } from "src/Theme";
 
 export type DecorationSty = Partial<
   {
@@ -22,7 +22,7 @@ export type DecorationSty = Partial<
 
 export type BackgroundProps = {
   fill: string;
-  fillWithForeground: boolean;
+  fillWithStroke: boolean;
   backgroundFit: BackgroundFit;
   backgroundCover: boolean;
   backgroundContain: boolean;
@@ -108,7 +108,7 @@ export function watchBoxDecoration(
     const fill =
       parseProp({
         fill: v => v,
-        fillWithForeground: _ => foregroundMaterial,
+        fillWithStroke: _ => strokeMaterial,
       }) ?? ``;
     const backgroundIsImage = fill.startsWith(`data:image`) || fill.startsWith(`/`);
     element.value.style.backgroundColor = backgroundIsImage ? `` : fill;

@@ -61,7 +61,7 @@ export function TabButtons(
             getElement={el => (tabUnderline.value = el)}
             width={tabButtonWidth}
             height={0.125}
-            fillWithForeground
+            fillWithStroke
           />
           <Box width={tabButtonWidth} />
         </Row>

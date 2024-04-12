@@ -7,9 +7,9 @@ import { createRenderEffect } from "solid-js";
 export type TextSty = Partial<{
   scale: number | string;
   stroke: string;
-  // primaryForeground: boolean;
-  // hintForeground: boolean;
-  // errorForeground: boolean;
+  // primaryStroke: boolean;
+  // hintStroke: boolean;
+  // errorStroke: boolean;
   // NOTE: Eventually we might want to make this a number so it can be granularly controlled. With presets for thin, normal, and bold.
   bold: boolean;
   italic: boolean;
