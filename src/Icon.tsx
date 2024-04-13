@@ -18,8 +18,8 @@ export function Icon(props: {
 }) {
   return (
     <Box
-      width={props.scale ?? `var(miwi-size-scale)`}
-      height={props.scale ?? `var(miwi-size-scale)`}
+      width={props.scale ?? `var(--miwi-size-scale)`}
+      height={props.scale ?? `var(--miwi-size-scale)`}
       stroke={props.stroke ?? `currentColor`}
       overflowY={$Overflow.crop}
       overflowX={$Overflow.crop}
