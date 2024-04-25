@@ -1,8 +1,8 @@
 export const sizeScaleCssVarName = `--miwi-size-scale`;
 
-export function cssVarForMiwiMaterial(nameInPalette: string, color: string) {
+export function cssVarForMiwiTexture(nameInPalette: string, color: string) {
   return {
-    key: `--miwi-material-${nameInPalette}`,
+    key: `--miwi-texture-${nameInPalette}`,
     value: color,
   };
 }
@@ -33,16 +33,16 @@ export type MiwiTheme = {
   };
 };
 
-export const strokeMaterial = `currentColor`;
+export const strokeTexture = `currentColor`;
 export const theme = {
   palette: {
-    primary: `var(--miwi-material-primary)`,
-    accent: `var(--miwi-material-accent)`,
-    pageBackground: `var(--miwi-material-page-fill)`,
-    text: `var(--miwi-material-text)`,
-    hint: `var(--miwi-material-hint)`,
-    lightHint: `var(--miwi-material-light-hint)`,
-    warning: `var(--miwi-material-warning)`,
-    error: `var(--miwi-material-error)`,
+    primary: `var(--miwi-texture-primary)`,
+    accent: `var(--miwi-texture-accent)`,
+    pageBackground: `var(--miwi-texture-page-fill)`,
+    text: `var(--miwi-texture-text)`,
+    hint: `var(--miwi-texture-hint)`,
+    lightHint: `var(--miwi-texture-light-hint)`,
+    warning: `var(--miwi-texture-warning)`,
+    error: `var(--miwi-texture-error)`,
   },
 };
