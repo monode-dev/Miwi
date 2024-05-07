@@ -25,10 +25,10 @@ export function Selector<T>(
   const noneLabel = useFormula(() => props.noneLabel ?? "None");
   const emptyListText = useFormula(() => props.emptyListText ?? "No Options");
   const isWide = useFormula(() => props.isWide ?? false);
-  const _modalIsOpen = props.modalIsOpenSig ?? useProp(false);
+  const isOpen = props.modalIsOpenSig ?? useProp(false);
   doWatch(() => {
     if (!exists(props.filterStringSig)) return;
-    if (!_modalIsOpen.value) {
+    if (!isOpen.value) {
       props.filterStringSig.value = ``;
     }
   });
@@ -36,6 +36,7 @@ export function Selector<T>(
   const selectedLabel = useFormula(() => props.getLabelForData(props.value) ?? noneLabel.value);
 
   const thereAreNoOptions = useFormula(() => {
+    console.log(props.children);
     return (
       !exists(props.children) || (Array.isArray(props.children) && props.children.length === 0)
     );
@@ -46,15 +47,15 @@ export function Selector<T>(
       openButton={
         <Row
           onClick={() => {
-            if (exists(props.filterStringSig) && _modalIsOpen.value) return;
-            _modalIsOpen.value = !_modalIsOpen.value;
+            if (exists(props.filterStringSig) && isOpen.value) return;
+            isOpen.value = !isOpen.value;
           }}
           widthGrows
           height={props.scale ?? 1}
           spaceBetween
         >
           <Show
-            when={!exists(props.filterStringSig) || !_modalIsOpen.value}
+            when={!exists(props.filterStringSig) || !isOpen.value}
             fallback={
               <Field value={props.filterStringSig} hintText="Search" hasFocus={useProp(true)} />
             }
@@ -68,19 +69,19 @@ export function Selector<T>(
             </Txt>
           </Show>
           <Icon
-            iconPath={exists(props.filterStringSig) && _modalIsOpen.value ? mdiClose : mdiMenuDown}
-            onClick={() => (_modalIsOpen.value = !_modalIsOpen.value)}
+            iconPath={exists(props.filterStringSig) && isOpen.value ? mdiClose : mdiMenuDown}
+            onClick={() => (isOpen.value = !isOpen.value)}
           />
         </Row>
       }
       openButtonWidth={grow()}
       openButtonHeight={props.scale ?? 1}
-      isOpen={_modalIsOpen}
+      isOpen={isOpen}
       modalWidth={isWide.value ? `100%` : undefined}
     >
       {/* SECTION: No Options */}
       <Show when={thereAreNoOptions.value}>
-        <Txt hint onClick={() => (_modalIsOpen.value = false)} widthGrows>
+        <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
           {emptyListText.value}
         </Txt>
       </Show>
@@ -93,7 +94,7 @@ export function Selector<T>(
           !thereAreNoOptions.value
         }
       >
-        <Txt hint onClick={() => (_modalIsOpen.value = false)} widthGrows>
+        <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
           Cancel
         </Txt>
       </Show>
