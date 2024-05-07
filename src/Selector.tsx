@@ -36,6 +36,7 @@ export function Selector<T>(
   const selectedLabel = useFormula(() => props.getLabelForData(props.value) ?? noneLabel.value);
 
   const thereAreNoOptions = useFormula(() => {
+    console.log(`props.children`);
     console.log(props.children);
     return (
       !exists(props.children) || (Array.isArray(props.children) && props.children.length === 0)
