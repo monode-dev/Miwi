@@ -11,10 +11,11 @@ import { Prop, useFormula, useProp, exists, doWatch } from "./utils";
 
 export function Selector<T>(
   props: {
-    selected: T;
+    value: T;
     getLabelForData: (data: T) => string | null;
     noneLabel?: string;
     modalIsOpenSig?: Prop<boolean>;
+    emptyListText?: string;
     filterStringSig?: Prop<string>;
     showCancelOptionForFilter?: boolean;
     isWide?: boolean;
@@ -22,6 +23,7 @@ export function Selector<T>(
 ) {
   // DEFAULT PROPERTIES
   const noneLabel = useFormula(() => props.noneLabel ?? "None");
+  const emptyListText = useFormula(() => props.emptyListText ?? "No Options");
   const isWide = useFormula(() => props.isWide ?? false);
   const isOpen = props.modalIsOpenSig ?? useProp(false);
   doWatch(() => {
@@ -29,6 +31,11 @@ export function Selector<T>(
     if (!isOpen.value) {
       props.filterStringSig.value = ``;
     }
+  });
+  const thereAreNoOptions = useFormula(() => {
+    return (
+      !exists(props.children) || (Array.isArray(props.children) && props.children.length === 0)
+    );
   });
 
   return (
@@ -52,9 +59,9 @@ export function Selector<T>(
             <Txt
               widthGrows
               overflowX={$Overflow.crop}
-              stroke={exists(props.selected) ? $theme.colors.text : $theme.colors.hint}
+              stroke={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
             >
-              {props.getLabelForData(props.selected) ?? noneLabel.value}
+              {props.getLabelForData(props.value) ?? noneLabel.value}
             </Txt>
           </Show>
           <Icon
@@ -68,13 +75,25 @@ export function Selector<T>(
       isOpen={isOpen}
       modalWidth={isWide.value ? `100%` : undefined}
     >
+      {" "}
+      {/* SECTION: No Options */}
+      <Show when={thereAreNoOptions.value}>
+        <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
+          {emptyListText.value}
+        </Txt>
+      </Show>
       {/* SECTION: Cancel */}
-      <Show when={exists(props.filterStringSig) && props.showCancelOptionForFilter}>
+      <Show
+        when={
+          exists(props.filterStringSig) &&
+          props.showCancelOptionForFilter &&
+          !thereAreNoOptions.value
+        }
+      >
         <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
           Cancel
         </Txt>
       </Show>
-
       {/* SECTION: Custom Options */}
       {props.children}
     </Modal>
