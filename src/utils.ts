@@ -2,7 +2,7 @@ import { mosaForSolid } from "mosa-js/solid-js";
 
 // SECTION: Mosa Reactivity
 export type { ReadonlyProp, WriteonlyProp, Prop } from "mosa-js";
-export const { useProp, useFormula, doNow, doWatch, onDispose, exists } = mosaForSolid;
+export const { useProp, useFormula, doNow, doWatch, onDispose, exists, useRoot } = mosaForSolid;
 
 // Experimentally lets us create a value that can be watched or not.
 export type Toggle<T> = {

@@ -11,7 +11,7 @@ import { Prop, useFormula, useProp, exists, doWatch } from "./utils";
 
 export function Selector<T>(
   props: {
-    value: T;
+    selected: T;
     getLabelForData: (data: T) => string | null;
     noneLabel?: string;
     modalIsOpenSig?: Prop<boolean>;
@@ -33,8 +33,9 @@ export function Selector<T>(
     }
   });
 
-  const selectedLabel = useFormula(() => props.getLabelForData(props.value) ?? noneLabel.value);
+  const selectedLabel = useFormula(() => props.getLabelForData(props.selected) ?? noneLabel.value);
 
+  console.log(`Selector`);
   const thereAreNoOptions = useFormula(() => {
     console.log(`props.children`);
     console.log(props.children);
@@ -64,7 +65,7 @@ export function Selector<T>(
             <Txt
               widthGrows
               overflowX={$Overflow.crop}
-              stroke={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
+              stroke={exists(props.selected) ? $theme.colors.text : $theme.colors.hint}
             >
               {selectedLabel.value}
             </Txt>
