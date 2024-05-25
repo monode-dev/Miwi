@@ -46,6 +46,10 @@ export type BoxStyleProps = Partial<
     }
 >;
 const _boxElementsToInit = new Map<HTMLElement, () => void>();
+/** Box is the basic UI element of Miwi.
+ * ```
+ * ```
+ * Docs: https://miwi.dev/components/box.html */
 export function Box(props: BoxProps) {
   const parseProp: (...args: any[]) => any = makePropParser(props);
   // TODO: Eventually we want a "tag" prop, and to use document.createElement here.

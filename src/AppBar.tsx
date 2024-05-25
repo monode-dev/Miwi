@@ -7,6 +7,7 @@ import { Row } from "./Row";
 import { Column } from "./Column";
 import { exists } from "./utils";
 
+/** Docs: https://miwi.dev/components/appbar.html */
 export function AppBar(
   props: {
     left?: JSX.Element;
