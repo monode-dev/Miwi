@@ -6,6 +6,7 @@ import { Txt } from "./Txt";
 export function Label(
   props: {
     label?: string;
+    icon?: string;
     hint?: boolean;
     labelBackground?: string;
     labelWidth?: number | string;
