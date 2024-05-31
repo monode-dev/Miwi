@@ -1,5 +1,5 @@
 import { Box, BoxProps } from "./Box/Box";
-import { useFormula, exists } from "./utils";
+import { exists } from "./utils";
 import { Row } from "./Row";
 import { Txt } from "./Txt";
 import { Match, Switch } from "solid-js";
@@ -14,11 +14,7 @@ export function Label(
     labelWidth?: number | string;
   } & BoxProps,
 ) {
-  const shouldShowLabel = useFormula(
-    () => exists(props.icon) || (exists(props.label) && props.label.length > 0),
-  );
-
-  return shouldShowLabel.value ? (
+  return (
     <Row
       widthGrows
       padBetween={0.25}
@@ -40,7 +36,5 @@ export function Label(
       </Switch>
       {props.children}
     </Row>
-  ) : (
-    props.children
   );
 }
