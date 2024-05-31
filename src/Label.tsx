@@ -14,7 +14,9 @@ export function Label(
     labelWidth?: number | string;
   } & BoxProps,
 ) {
-  const shouldShowLabel = useFormula(() => exists(props.label) && props.label.length > 0);
+  const shouldShowLabel = useFormula(
+    () => exists(props.icon) || (exists(props.label) && props.label.length > 0),
+  );
 
   return shouldShowLabel.value ? (
     <Row
