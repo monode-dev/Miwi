@@ -308,12 +308,9 @@ export function Field(
 
           {/* Underline */}
           <Show when={props.underlined}>
-            <Box
-              padTop={underlineHeight.value}
-              widthGrows
-              height={1 / 16}
-              fill={detailColor.value}
-            />
+            <Box height={underlineHeight.value} alignBottom>
+              <Box widthGrows height={1 / 16} fill={detailColor.value} />
+            </Box>
           </Show>
         </Column>
       </Show>
