@@ -255,6 +255,7 @@ export function Field(
         resize: "none" as const,
         [`overflow-y`]: `visible` as const,
         // [`line-height`]: sizeToCss(scale.value),
+        [`white-space`]: maxLines.value === 1 ? `nowrap` : `break-spaces`,
         [`caret-color`]: $theme.colors.primary,
         "--miwi-placeholder-color": props.hintColor ?? $theme.colors.hint,
         "-webkit-user-select": "text" /* Safari */,
@@ -303,9 +304,7 @@ export function Field(
                   : value.value}
             </Txt>
           </Show>
-          <Box overflowXWraps>
-            <_Input value={value.value} />
-          </Box>
+          <_Input value={value.value} />
         </Stack>
 
         {/* Underline */}
