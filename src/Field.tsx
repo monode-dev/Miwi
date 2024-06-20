@@ -234,8 +234,7 @@ export function Field(
       onKeyPress: handleKeyPress,
       onPaste: handlePaste,
       class: "field",
-      // TODO: 100 -> undefined
-      rows: maxLines.value === Infinity ? 100 : maxLines.value,
+      rows: maxLines.value === Infinity ? undefined : maxLines.value,
       wrap: maxLines.value > 1 ? (`soft` as const) : undefined,
       ["auto-capitalize"]: props.capitalize ?? "none",
       enterkeyhint: props.enterKeyHint ?? `done`,
