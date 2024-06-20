@@ -207,10 +207,9 @@ export function Field(
       const { alignX: _alignX } = parseAlignProps(parseProp, false, Align.topLeft.alignX);
       alignX.value = _alignX;
     });
-    const overflowX = useProp<Overflow>(Overflow.crop);
-    doWatch(() => {
-      overflowX.value = parseOverflowX(parseProp);
-    });
+    const overflowX = useFormula<Overflow>(() =>
+      maxLines.value == 1 ? parseOverflowX(parseProp) : Overflow.wrap,
+    );
     watchBoxText(parseProp, useProp(inputElement), {
       alignX,
       overflowX,
@@ -235,7 +234,8 @@ export function Field(
       onKeyPress: handleKeyPress,
       onPaste: handlePaste,
       class: "field",
-      rows: maxLines.value === Infinity ? undefined : maxLines.value,
+      // TODO: 100 -> undefined
+      rows: maxLines.value === Infinity ? 100 : maxLines.value,
       wrap: maxLines.value > 1 ? (`soft` as const) : undefined,
       ["auto-capitalize"]: props.capitalize ?? "none",
       enterkeyhint: props.enterKeyHint ?? `done`,
@@ -255,8 +255,6 @@ export function Field(
         resize: "none" as const,
         [`overflow-y`]: `visible` as const,
         // [`line-height`]: sizeToCss(scale.value),
-        [`white-space`]: maxLines.value === 1 ? `break-spaces` : `break-spaces`,
-        [`overflow-x`]: maxLines.value === 1 ? `clip` : `clip`,
         [`text-wrap`]: `normal`,
         [`flex-wrap`]: `wrap`,
         [`caret-color`]: $theme.colors.primary,
@@ -281,6 +279,7 @@ export function Field(
       overrideProps={props}
       overrideOverrides={{
         scale: scale.value,
+        overflowX: Overflow.crop,
       }}
     >
       {/* Icon */}
