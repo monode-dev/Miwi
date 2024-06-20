@@ -139,6 +139,22 @@ export const heightGrowsClassName = `miwi-height-grows`;
 export const ignoreSizeInMaxWidthCalcClassName = `miwi-ignore-size-in-max-width-calc`;
 export const ignoreSizeInMaxHeightCalcClassName = `miwi-ignore-size-in-max-height-calc`;
 
+export function parseSize(axis: `width` | `height`, parseProp: ParseProp<SizeSty>) {
+  return axis === `width`
+    ? parseProp({
+        width: v => v,
+        widthGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
+        widthShrinks: (() => SIZE_SHRINKS) as () => SIZE_SHRINKS,
+        asWideAsParent: () => `100%`,
+      })
+    : parseProp({
+        height: v => v,
+        heightGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
+        heightShrinks: (() => SIZE_SHRINKS) as () => SIZE_SHRINKS,
+        asTallAsParent: () => `100%`,
+      });
+}
+
 // Box Size
 export function watchBoxSize(
   parseProp: ParseProp<SizeSty>,
@@ -178,12 +194,7 @@ export function watchBoxSize(
     const [exactWidth, wMin, wMax, _flexWidth, ignoreSizeInMaxWidthCalc] = computeSizeInfo({
       shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
       minSize: parseProp(`minWidth`),
-      size: parseProp({
-        width: v => v,
-        widthGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
-        widthShrinks: (() => SIZE_SHRINKS) as () => SIZE_SHRINKS,
-        asWideAsParent: () => `100%`,
-      }),
+      size: parseSize(`width`, parseProp),
       maxSize: parseProp(`maxWidth`),
       isMainAxis: context.parentAxis.value === Axis.row,
       iAmAStack: context.myAxis.value === Axis.stack,
@@ -214,12 +225,7 @@ export function watchBoxSize(
     const [exactHeight, hMin, hMax, _flexHeight, ignoreSizeInMaxHeightCalc] = computeSizeInfo({
       shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
       minSize: parseProp(`minHeight`),
-      size: parseProp({
-        height: v => v,
-        heightGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
-        heightShrinks: (() => SIZE_SHRINKS) as () => SIZE_SHRINKS,
-        asTallAsParent: () => `100%`,
-      }),
+      size: parseSize(`height`, parseProp),
       maxSize: parseProp(`maxHeight`),
       isMainAxis: context.parentAxis.value === Axis.column,
       iAmAStack: context.myAxis.value === Axis.stack,

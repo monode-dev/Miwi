@@ -43,6 +43,8 @@ export type AxisStyProps = Partial<{
 export type OverflowStyProps = {
   overflowX: Overflow;
   overflowY: Overflow;
+  /** TODO: MaxLines controls the same visual concept. We need to merge those two at
+   * some point. */
   overflowXWraps: boolean;
   overflowYWraps: boolean;
   overflowXScrolls: boolean;

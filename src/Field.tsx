@@ -7,7 +7,9 @@ import { Column } from "./Column";
 import { makePropParser } from "./Box/BoxUtils";
 import { Align, AlignSingleAxis, Overflow, parseAlignProps, parseOverflowX } from "./Box/BoxLayout";
 import { watchBoxText } from "./Box/BoxText";
-// import { sizeToCss } from './Box/BoxUtils'
+import { SIZE_SHRINKS, parseSize } from "./Box/BoxSize";
+import { Stack } from "./Stack";
+import { Txt } from "./Txt";
 
 export type KeyboardType =
   | "none"
@@ -33,8 +35,7 @@ export function Field(
     hasFocus?: Prop<boolean>;
     hintText?: string;
     hintColor?: string;
-    lineCount?: number;
-    limitLines?: boolean;
+    maxLines?: number;
     underlined?: boolean;
     scale?: number;
     iconPath?: string;
@@ -49,10 +50,30 @@ export function Field(
     enterKeyHint?: `enter` | `done` | `go` | `next` | `previous` | `search` | `send`;
   } & BoxProps,
 ) {
+  const parseProp: (...args: any[]) => any = makePropParser(props as any);
   const value = props.value ?? useProp(``);
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
   const inputElementHasFocus = props.hasFocus ?? useProp(false);
   const scale = useFormula(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
+  const maxLines = useFormula(() =>
+    props.maxLines === undefined ? 1 : props.maxLines <= 0 ? 1 : props.maxLines,
+  );
+  const underlineHeight = useFormula(() => (props.underlined ? 0.5 * scale.value : 0));
+  const textHeight = useFormula(() => {
+    const heightFromProps = parseSize(`height`, parseProp);
+    if (!exists(heightFromProps)) {
+      return maxLines.value * scale.value;
+    } else if (typeof heightFromProps === `number`) {
+      return heightFromProps - underlineHeight.value;
+    } else {
+      return heightFromProps;
+    }
+  });
+  const fieldHeight = useFormula(() =>
+    typeof textHeight.value === `number`
+      ? textHeight.value + underlineHeight.value
+      : textHeight.value,
+  );
 
   // Input
   function setTempValue(newValue: string | undefined | null) {
@@ -100,7 +121,7 @@ export function Field(
     }
   }
   function handleKeyPress(event: KeyboardEvent) {
-    if (lineCount <= 1 && event.key === `Enter`) {
+    if (maxLines.value <= 1 && event.key === `Enter`) {
       inputElementHasFocus.value = false;
       return;
     }
@@ -111,16 +132,11 @@ export function Field(
   }
   function validateInput(event: Event, newText: string) {
     const nextInput = predictNextInput(newText);
-    if (exists(nextInput) && (props.limitLines ?? true)) {
-      if (nextInput.split("\n").length > (props.lineCount ?? 1)) {
-        event.preventDefault();
-      }
-    }
-    if (exists(nextInput) && exists(props.validateNextInput)) {
-      if (!props.validateNextInput(nextInput)) {
-        event.preventDefault();
-      }
-    }
+    if (!exists(nextInput)) return;
+    // We want to check line count first, so that `validateNextInput` can depend on it.
+    if (nextInput.split("\n").length > maxLines.value) event.preventDefault();
+    const nextInputIsValid = props.validateNextInput?.(nextInput) ?? true;
+    if (!nextInputIsValid) event.preventDefault();
   }
   function predictNextInput(newText: string) {
     const input = inputElement;
@@ -162,8 +178,6 @@ export function Field(
     }
   });
 
-  const underlineHeight = useFormula(() => (props.underlined ? 0.5 * scale.value : 0));
-
   const detailColor = useFormula(() =>
     inputElementHasFocus.value
       ? $theme.colors.primary
@@ -186,7 +200,6 @@ export function Field(
   }
 
   // Apply text style to input element
-  const parseProp: (...args: any[]) => any = makePropParser(props as any);
   function startWatchingTextStyle(inputElement: HTMLInputElement | HTMLTextAreaElement) {
     const alignX = useProp<AlignSingleAxis>(Align.topLeft.alignX);
     doWatch(() => {
@@ -204,7 +217,6 @@ export function Field(
   }
 
   // TODO: Tapping on the field does not move the cursor.
-  const lineCount = props.lineCount ?? 1;
   function _Input(_inputProps: { value: string }) {
     const inputProps = {
       ref: (el: HTMLInputElement | HTMLTextAreaElement) => {
@@ -222,8 +234,8 @@ export function Field(
       onKeyPress: handleKeyPress,
       onPaste: handlePaste,
       class: "field",
-      rows: exists(lineCount) ? lineCount : undefined,
-      wrap: lineCount !== 1 ? (`soft` as const) : undefined,
+      rows: maxLines.value,
+      wrap: maxLines.value !== 1 ? (`soft` as const) : undefined,
       ["auto-capitalize"]: props.capitalize ?? "none",
       enterkeyhint: props.enterKeyHint ?? `done`,
       style: {
@@ -249,13 +261,13 @@ export function Field(
         "user-select": "text" /* Standard syntax */,
       } as any,
     };
-    return lineCount > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
+    return maxLines.value > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
   }
   return (
     <Row
       onClick={() => tryFocus()}
       widthGrows
-      height={exists(lineCount) ? scale.value * lineCount + underlineHeight.value : undefined}
+      height={fieldHeight.value}
       stroke={$theme.colors.text}
       padBetweenX={0.25}
       padBetweenY={0}
@@ -271,26 +283,38 @@ export function Field(
         <Icon iconPath={props.iconPath!} stroke={detailColor.value} scale={scale.value} />
       </Show>
 
-      <Show when={props.underlined} fallback={<_Input value={value.value} />}>
+      <Show when={props.underlined}>
         <Column>
-          {/* Underlined Input */}
-          <Row
-            widthGrows
-            alignTopLeft
-            height={exists(lineCount) ? scale.value * lineCount : undefined}
-          >
+          {/* Input */}
+          <Stack widthGrows height={textHeight.value} pad={0} alignTopLeft overflowYCrops>
+            <Show when={textHeight.value === SIZE_SHRINKS}>
+              <Txt
+                underlineText
+                alignTopLeft
+                stroke={`transparent`}
+                overflowXWraps
+                widthGrows
+                overflowYCrops
+              >
+                {value.value == ``
+                  ? `a`
+                  : value.value.endsWith(`\n`)
+                    ? value.value + `\n`
+                    : value.value}
+              </Txt>
+            </Show>
             <_Input value={value.value} />
-            {/* <Box width={0.25} />
-            <Box widthGrows>
-              <_Input />
-            </Box>
-            <Box width={0.25} /> */}
-          </Row>
+          </Stack>
 
           {/* Underline */}
-          <Box height={underlineHeight.value} alignBottomLeft>
-            <Box widthGrows height={0.0625} fill={detailColor.value} />
-          </Box>
+          <Show when={props.underlined}>
+            <Box
+              padTop={underlineHeight.value}
+              widthGrows
+              height={1 / 16}
+              fill={detailColor.value}
+            />
+          </Show>
         </Column>
       </Show>
     </Row>
