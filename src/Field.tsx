@@ -36,6 +36,7 @@ export function Field(
     hintText?: string;
     hintColor?: string;
     maxLines?: number;
+    multiline?: boolean;
     underlined?: boolean;
     scale?: number;
     iconPath?: string;
@@ -56,7 +57,13 @@ export function Field(
   const inputElementHasFocus = props.hasFocus ?? useProp(false);
   const scale = useFormula(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
   const maxLines = useFormula(() =>
-    props.maxLines === undefined ? 1 : props.maxLines <= 0 ? 1 : props.maxLines,
+    props.multiline
+      ? Infinity
+      : props.maxLines === undefined
+        ? 1
+        : props.maxLines <= 0
+          ? 1
+          : props.maxLines,
   );
   const underlineHeight = useFormula(() => (props.underlined ? 0.5 * scale.value : 0));
   const textHeight = useFormula(() => {
