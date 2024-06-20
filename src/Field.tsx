@@ -53,9 +53,6 @@ export function Field(
 ) {
   const parseProp: (...args: any[]) => any = makePropParser(props as any);
   const value = props.value ?? useProp(``);
-  doWatch(() => {
-    console.log(value.value);
-  });
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
   const inputElementHasFocus = props.hasFocus ?? useProp(false);
   const scale = useFormula(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
@@ -103,7 +100,6 @@ export function Field(
   doWatch(
     () => {
       if (!inputElementHasFocus.value) {
-        // console.log(`Setting temp value to ${value.value}`);
         setTempValue(value.value);
       }
     },
