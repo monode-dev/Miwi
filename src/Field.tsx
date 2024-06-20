@@ -234,6 +234,7 @@ export function Field(
       type: props.inputType ?? `text`,
       inputmode: props.keyboard,
       value: _inputProps.value,
+      height: `100%`,
       onInput: handleInput,
       onFocus: handleFocus,
       onBlur: handleBlur,
