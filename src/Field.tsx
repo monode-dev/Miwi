@@ -53,6 +53,9 @@ export function Field(
 ) {
   const parseProp: (...args: any[]) => any = makePropParser(props as any);
   const value = props.value ?? useProp(``);
+  doWatch(() => {
+    console.log(value.value);
+  });
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
   const inputElementHasFocus = props.hasFocus ?? useProp(false);
   const scale = useFormula(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
@@ -307,14 +310,7 @@ export function Field(
           overflowXWraps
         >
           <Show when={textHeight.value === SIZE_SHRINKS}>
-            <Txt
-              underlineText
-              alignTopLeft
-              stroke={`transparent`}
-              overflowXWraps
-              widthGrows
-              overflowYCrops
-            >
+            <Txt stroke={`transparent`} widthGrows>
               {value.value == ``
                 ? `a`
                 : value.value.endsWith(`\n`)
