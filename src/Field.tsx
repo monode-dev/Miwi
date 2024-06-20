@@ -284,37 +284,35 @@ export function Field(
         <Icon iconPath={props.iconPath!} stroke={detailColor.value} scale={scale.value} />
       </Show>
 
-      <Show when={props.underlined}>
-        <Column>
-          {/* Input */}
-          <Stack widthGrows height={textHeight.value} pad={0} alignTopLeft overflowYCrops>
-            <Show when={textHeight.value === SIZE_SHRINKS}>
-              <Txt
-                underlineText
-                alignTopLeft
-                stroke={`transparent`}
-                overflowXWraps
-                widthGrows
-                overflowYCrops
-              >
-                {value.value == ``
-                  ? `a`
-                  : value.value.endsWith(`\n`)
-                    ? value.value + `\n`
-                    : value.value}
-              </Txt>
-            </Show>
-            <_Input value={value.value} />
-          </Stack>
-
-          {/* Underline */}
-          <Show when={props.underlined}>
-            <Box height={underlineHeight.value} alignBottom>
-              <Box widthGrows height={1 / 16} fill={detailColor.value} />
-            </Box>
+      <Column>
+        {/* Input */}
+        <Stack widthGrows height={textHeight.value} pad={0} alignTopLeft overflowYCrops>
+          <Show when={textHeight.value === SIZE_SHRINKS}>
+            <Txt
+              underlineText
+              alignTopLeft
+              stroke={`transparent`}
+              overflowXWraps
+              widthGrows
+              overflowYCrops
+            >
+              {value.value == ``
+                ? `a`
+                : value.value.endsWith(`\n`)
+                  ? value.value + `\n`
+                  : value.value}
+            </Txt>
           </Show>
-        </Column>
-      </Show>
+          <_Input value={value.value} />
+        </Stack>
+
+        {/* Underline */}
+        <Show when={props.underlined}>
+          <Box height={underlineHeight.value} alignBottom>
+            <Box widthGrows height={1 / 16} fill={detailColor.value} />
+          </Box>
+        </Show>
+      </Column>
     </Row>
   );
 }
