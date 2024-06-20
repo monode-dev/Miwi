@@ -308,12 +308,12 @@ function _watchMaxChildSize(
       function checkGrows() {
         [maxChildWidthPx.value, maxChildHeightPx.value] = childElements.reduce(
           (max, child) => {
-            const shouldIgnoreWidth = [...child.classList].includes(
-              ignoreSizeInMaxWidthCalcClassName,
-            );
-            const shouldIgnoreHeight = [...child.classList].includes(
-              ignoreSizeInMaxHeightCalcClassName,
-            );
+            const shouldIgnoreWidth =
+              [...child.classList].includes(ignoreSizeInMaxWidthCalcClassName) ||
+              child.style.width.includes(`%`);
+            const shouldIgnoreHeight =
+              [...child.classList].includes(ignoreSizeInMaxHeightCalcClassName) ||
+              child.style.height.includes(`%`);
             const { width, height } = child.getBoundingClientRect();
             return [
               Math.max(shouldIgnoreWidth ? 0 : width, max[0]),
