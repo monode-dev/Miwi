@@ -289,7 +289,14 @@ export function Field(
 
       <Column>
         {/* Input */}
-        <Stack widthGrows height={textHeight.value} pad={0} alignTopLeft overflowYCrops>
+        <Stack
+          widthGrows
+          height={textHeight.value}
+          pad={0}
+          alignTopLeft
+          overflowYCrops
+          overflowXCrops
+        >
           <Show when={textHeight.value === SIZE_SHRINKS}>
             <Txt
               underlineText
