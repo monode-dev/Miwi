@@ -257,6 +257,7 @@ export function Field(
         // [`line-height`]: sizeToCss(scale.value),
         [`white-space`]: maxLines.value === 1 ? `break-spaces` : `break-spaces`,
         [`overflow-x`]: maxLines.value === 1 ? `clip` : `clip`,
+        [`flex-wrap`]: `wrap`,
         [`caret-color`]: $theme.colors.primary,
         "--miwi-placeholder-color": props.hintColor ?? $theme.colors.hint,
         "-webkit-user-select": "text" /* Safari */,
