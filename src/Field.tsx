@@ -303,7 +303,9 @@ export function Field(
                   : value.value}
             </Txt>
           </Show>
-          <_Input value={value.value} />
+          <Box overflowXWraps>
+            <_Input value={value.value} />
+          </Box>
         </Stack>
 
         {/* Underline */}
