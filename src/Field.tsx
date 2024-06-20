@@ -256,6 +256,7 @@ export function Field(
         [`overflow-y`]: `visible` as const,
         // [`line-height`]: sizeToCss(scale.value),
         [`white-space`]: maxLines.value === 1 ? `nowrap` : `break-spaces`,
+        [`overflow-x`]: maxLines.value === 1 ? `clip` : `visible`,
         [`caret-color`]: $theme.colors.primary,
         "--miwi-placeholder-color": props.hintColor ?? $theme.colors.hint,
         "-webkit-user-select": "text" /* Safari */,
