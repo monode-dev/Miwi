@@ -62,7 +62,7 @@ export function Field(
   const textHeight = useFormula(() => {
     const heightFromProps = parseSize(`height`, parseProp);
     if (!exists(heightFromProps)) {
-      return maxLines.value * scale.value;
+      return maxLines.value === Infinity ? SIZE_SHRINKS : maxLines.value * scale.value;
     } else if (typeof heightFromProps === `number`) {
       return heightFromProps - underlineHeight.value;
     } else {
@@ -121,7 +121,7 @@ export function Field(
     }
   }
   function handleKeyPress(event: KeyboardEvent) {
-    if (maxLines.value <= 1 && event.key === `Enter`) {
+    if (maxLines.value === 1 && event.key === `Enter`) {
       inputElementHasFocus.value = false;
       return;
     }
@@ -133,6 +133,7 @@ export function Field(
   function validateInput(event: Event, newText: string) {
     const nextInput = predictNextInput(newText);
     if (!exists(nextInput)) return;
+    // TODO: Maybe crop instead of prevent input?
     // We want to check line count first, so that `validateNextInput` can depend on it.
     if (nextInput.split("\n").length > maxLines.value) event.preventDefault();
     const nextInputIsValid = props.validateNextInput?.(nextInput) ?? true;
@@ -234,8 +235,8 @@ export function Field(
       onKeyPress: handleKeyPress,
       onPaste: handlePaste,
       class: "field",
-      rows: maxLines.value,
-      wrap: maxLines.value !== 1 ? (`soft` as const) : undefined,
+      rows: maxLines.value === Infinity ? undefined : maxLines.value,
+      wrap: maxLines.value > 1 ? (`soft` as const) : undefined,
       ["auto-capitalize"]: props.capitalize ?? "none",
       enterkeyhint: props.enterKeyHint ?? `done`,
       style: {
@@ -253,7 +254,6 @@ export function Field(
         overflow: "visible",
         resize: "none" as const,
         [`overflow-y`]: `visible` as const,
-        [`overflow-x`]: `crop` as const,
         // [`line-height`]: sizeToCss(scale.value),
         [`caret-color`]: $theme.colors.primary,
         "--miwi-placeholder-color": props.hintColor ?? $theme.colors.hint,
