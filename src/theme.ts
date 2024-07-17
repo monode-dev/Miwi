@@ -9,14 +9,14 @@ export function cssVarForMiwiTexture(nameInPalette: string, color: string) {
 
 export const defaultTheme = {
   palette: {
-    primary: `var(--miwi-color-primary)`,
-    accent: `var(--miwi-color-accent)`,
-    pageBackground: `var(--miwi-color-page-fill)`,
-    text: `var(--miwi-color-text)`,
-    hint: `var(--miwi-color-hint)`,
-    lightHint: `var(--miwi-color-light-hint)`,
-    warning: `var(--miwi-color-warning)`,
-    error: `var(--miwi-color-error)`,
+    primary: `var(--miwi-texture-primary)`,
+    accent: `var(--miwi-texture-accent)`,
+    pageBackground: `var(--miwi-texture-page-fill)`,
+    text: `var(--miwi-texture-text)`,
+    hint: `var(--miwi-texture-hint)`,
+    lightHint: `var(--miwi-texture-light-hint)`,
+    warning: `var(--miwi-texture-warning)`,
+    error: `var(--miwi-texture-error)`,
   },
 };
 
