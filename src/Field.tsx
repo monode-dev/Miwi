@@ -315,6 +315,7 @@ export function Field(
             </Txt>
           </Show>
           <_Input value={value.value} />
+          <Box height={2} width={2} />
         </Stack>
 
         {/* Underline */}
