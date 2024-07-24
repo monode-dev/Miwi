@@ -272,7 +272,7 @@ export function Field(
         "user-select": "text" /* Standard syntax */,
       } as any,
     };
-    return maxLines.value > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
+    return <textarea {...inputProps} />; //maxLines.value > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
   }
   return (
     <Row
@@ -306,8 +306,7 @@ export function Field(
           overflowXWraps
         >
           <Show when={textHeight.value === SIZE_SHRINKS}>
-            {/* <Txt stroke={`transparent`} widthGrows> */}
-            <Txt widthGrows>
+            <Txt stroke={`transparent`} widthGrows>
               {value.value == ``
                 ? `a`
                 : value.value.endsWith(`\n`)
