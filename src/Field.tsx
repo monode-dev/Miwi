@@ -302,7 +302,7 @@ export function Field(
           height={textHeight.value}
           pad={0}
           alignTopLeft
-          overflowYCrops
+          overflowYSpills
           overflowXWraps
         >
           <Show when={textHeight.value === SIZE_SHRINKS}>
