@@ -10,6 +10,7 @@ import { watchBoxText } from "./Box/BoxText";
 import { SIZE_SHRINKS, parseSize } from "./Box/BoxSize";
 import { Stack } from "./Stack";
 import { Txt } from "./Txt";
+import { mdColors } from "./Miwi";
 
 export type KeyboardType =
   | "none"
@@ -315,7 +316,7 @@ export function Field(
             </Txt>
           </Show>
           <_Input value={value.value} />
-          <Box height={2} width={2} />
+          <Box height={2} width={2} fill={mdColors.red} />
         </Stack>
 
         {/* Underline */}
