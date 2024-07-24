@@ -10,7 +10,6 @@ import { watchBoxText } from "./Box/BoxText";
 import { SIZE_SHRINKS, parseSize } from "./Box/BoxSize";
 import { Stack } from "./Stack";
 import { Txt } from "./Txt";
-import { mdColors } from "./Miwi";
 
 export type KeyboardType =
   | "none"
@@ -307,7 +306,8 @@ export function Field(
           overflowXWraps
         >
           <Show when={textHeight.value === SIZE_SHRINKS}>
-            <Txt stroke={`transparent`} widthGrows>
+            {/* <Txt stroke={`transparent`} widthGrows> */}
+            <Txt widthGrows>
               {value.value == ``
                 ? `a`
                 : value.value.endsWith(`\n`)
@@ -316,7 +316,6 @@ export function Field(
             </Txt>
           </Show>
           <_Input value={value.value} />
-          <Box height={2} width={2} fill={mdColors.red} />
         </Stack>
 
         {/* Underline */}
