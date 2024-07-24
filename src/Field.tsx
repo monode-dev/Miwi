@@ -316,7 +316,6 @@ export function Field(
           </Show>
           <_Input value={value.value} />
         </Stack>
-        <_Input value={value.value} />
 
         {/* Underline */}
         <Show when={props.underlined}>
