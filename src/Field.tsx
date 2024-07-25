@@ -272,7 +272,7 @@ export function Field(
         "user-select": "text" /* Standard syntax */,
       } as any,
     };
-    return maxLines.value > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
+    return <textarea {...inputProps} />; //maxLines.value > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
   }
   return (
     <Row
