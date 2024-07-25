@@ -240,8 +240,8 @@ export function Field(
       onKeyPress: handleKeyPress,
       onPaste: handlePaste,
       class: "field",
-      rows: maxLines.value === Infinity ? undefined : maxLines.value,
-      wrap: maxLines.value > 1 ? (`soft` as const) : undefined,
+      rows: undefined, //maxLines.value === Infinity ? undefined : maxLines.value,
+      wrap: `soft` as const, //maxLines.value > 1 ? (`soft` as const) : undefined,
       ["auto-capitalize"]: props.capitalize ?? "none",
       enterkeyhint: props.enterKeyHint ?? `done`,
       style: {
@@ -272,7 +272,7 @@ export function Field(
         "user-select": "text" /* Standard syntax */,
       } as any,
     };
-    return <textarea {...inputProps} />; //maxLines.value > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
+    return maxLines.value > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
   }
   return (
     <Row
