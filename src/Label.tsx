@@ -4,6 +4,7 @@ import { Row } from "./Row";
 import { Txt } from "./Txt";
 import { Match, Switch } from "solid-js";
 import { Icon } from "./Icon";
+import { SIZE_SHRINKS } from "./Box/BoxSize";
 
 export function Label(
   props: {
@@ -29,7 +30,7 @@ export function Label(
           </Box>
         </Match>
         <Match when={exists(props.label)}>
-          <Txt singleLine width={props.labelWidth ?? `fit-content`} fill={props.labelBackground}>
+          <Txt singleLine width={props.labelWidth ?? SIZE_SHRINKS} fill={props.labelBackground}>
             {props.label}:
           </Txt>
         </Match>
