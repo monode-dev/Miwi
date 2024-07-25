@@ -69,7 +69,10 @@ export function Field(
   const textHeight = useFormula(() => {
     const heightFromProps = parseSize(`height`, parseProp);
     if (!exists(heightFromProps)) {
-      return maxLines.value === Infinity ? SIZE_SHRINKS : maxLines.value * scale.value * 1.18;
+      const offsetBetweenLineHeightAndScaleHeight = 1.18;
+      return maxLines.value === Infinity
+        ? SIZE_SHRINKS
+        : maxLines.value * scale.value * offsetBetweenLineHeightAndScaleHeight;
     } else if (typeof heightFromProps === `number`) {
       return heightFromProps - underlineHeight.value;
     } else {
