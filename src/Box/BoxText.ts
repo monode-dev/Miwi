@@ -112,7 +112,10 @@ export function watchBoxText(
       context.overflowX.value === Overflow.crop || context.overflowX.value === Overflow.spill
         ? `nowrap`
         : // TODO: Css ignores the last trailing newline. We need to find a way to fix that.
-          `break-spaces`; // I'm not sure that `break-spaces` is the best option here, but it works for now.
+          /* We tried `break-spaces`, but it does not wrap long words with no spaces like
+           * supercalifragilisticexpialidocious. We also tried `normal`, but it doesn't preserve
+           * new liens and spaces. */
+          `pre-wrap`;
     element.value.style.textOverflow = context.overflowX.value === Overflow.crop ? `ellipsis` : ``;
   });
 }
