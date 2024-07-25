@@ -249,6 +249,7 @@ export function Field(
         height: `100%`,
         maxHeight: `100%`,
         border: "none",
+        "box-sizing": "border-box",
         "background-color": "transparent",
         outline: "none",
         "font-family": "inherit",
@@ -314,13 +315,6 @@ export function Field(
                   : value.value}
             </Txt>
           </Show>
-          <Txt widthGrows>
-            {value.value == ``
-              ? `a`
-              : value.value.endsWith(`\n`)
-                ? value.value + `\n`
-                : value.value}
-          </Txt>
           <_Input value={value.value} />
         </Stack>
 
