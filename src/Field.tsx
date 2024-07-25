@@ -250,7 +250,7 @@ export function Field(
         maxHeight: `100%`,
         border: "none",
         display: "flex",
-        "box-sizing": "border-box",
+        "box-sizing": "content-box",
         "background-color": "transparent",
         outline: "none",
         "font-family": "inherit",
