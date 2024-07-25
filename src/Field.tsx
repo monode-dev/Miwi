@@ -249,8 +249,6 @@ export function Field(
         height: `100%`,
         maxHeight: `100%`,
         border: "none",
-        display: "flex",
-        "box-sizing": "content-box",
         "background-color": "transparent",
         outline: "none",
         "font-family": "inherit",
