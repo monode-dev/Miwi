@@ -298,7 +298,7 @@ export function Field(
 
       <Column>
         {/* Input */}
-        <Stack
+        {/* <Stack
           widthGrows
           height={textHeight.value}
           pad={0}
@@ -315,15 +315,9 @@ export function Field(
                   : value.value}
             </Txt>
           </Show>
-          <Txt widthGrows>
-            {value.value == ``
-              ? `a`
-              : value.value.endsWith(`\n`)
-                ? value.value + `\n`
-                : value.value}
-          </Txt>
-          {/* <_Input value={value.value} /> */}
-        </Stack>
+          <_Input value={value.value} />
+        </Stack> */}
+        <_Input value={value.value} />
 
         {/* Underline */}
         <Show when={props.underlined}>
