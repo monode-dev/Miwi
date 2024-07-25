@@ -315,7 +315,14 @@ export function Field(
                   : value.value}
             </Txt>
           </Show>
-          <_Input value={value.value} />
+          <Txt widthGrows>
+            {value.value == ``
+              ? `a`
+              : value.value.endsWith(`\n`)
+                ? value.value + `\n`
+                : value.value}
+          </Txt>
+          {/* <_Input value={value.value} /> */}
         </Stack>
 
         {/* Underline */}
