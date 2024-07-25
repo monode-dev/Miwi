@@ -317,7 +317,16 @@ export function Field(
           </Show>
           <_Input value={value.value} />
         </Stack> */}
-        <_Input value={value.value} />
+        <Box
+          widthGrows
+          height={textHeight.value}
+          pad={0}
+          alignTopLeft
+          overflowYSpills
+          overflowXWraps
+        >
+          <_Input value={value.value} />
+        </Box>
 
         {/* Underline */}
         <Show when={props.underlined}>
