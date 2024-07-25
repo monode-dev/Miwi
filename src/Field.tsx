@@ -249,7 +249,6 @@ export function Field(
         height: `100%`,
         maxHeight: `100%`,
         border: "none",
-        "box-sizing": "border-box",
         "background-color": "transparent",
         outline: "none",
         "font-family": "inherit",
@@ -298,7 +297,7 @@ export function Field(
 
       <Column>
         {/* Input */}
-        {/* <Stack
+        <Stack
           widthGrows
           height={textHeight.value}
           pad={0}
@@ -316,17 +315,7 @@ export function Field(
             </Txt>
           </Show>
           <_Input value={value.value} />
-        </Stack> */}
-        <Box
-          widthGrows
-          height={textHeight.value}
-          pad={0}
-          alignTopLeft
-          overflowYSpills
-          overflowXWraps
-        >
-          <_Input value={value.value} />
-        </Box>
+        </Stack>
 
         {/* Underline */}
         <Show when={props.underlined}>
