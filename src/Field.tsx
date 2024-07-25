@@ -69,7 +69,7 @@ export function Field(
   const textHeight = useFormula(() => {
     const heightFromProps = parseSize(`height`, parseProp);
     if (!exists(heightFromProps)) {
-      return maxLines.value === Infinity ? SIZE_SHRINKS : maxLines.value * scale.value;
+      return maxLines.value === Infinity ? SIZE_SHRINKS : maxLines.value * scale.value * 1.18;
     } else if (typeof heightFromProps === `number`) {
       return heightFromProps - underlineHeight.value;
     } else {
@@ -302,6 +302,12 @@ export function Field(
           height={textHeight.value}
           pad={0}
           alignTopLeft
+          /* <_Input/> specifically is "overflowYSpills" ignoring. If Input is outside of
+           * Stack, it works. If Stack's height is set to SIZE_SHRINKS it works. If we
+           * use a <Txt/> instead of <_Input/>. If we use a Column instead of a stack
+           * it works. This seems to be some specific css issue with the way <input> or
+           * <textarea> behave when in a fixed height <div>. Asked AI and Google, neither
+           * had any idea. */
           overflowYSpills
           overflowXWraps
         >
