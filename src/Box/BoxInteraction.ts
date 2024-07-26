@@ -28,7 +28,6 @@ style.textContent = `
   bottom: -2rem;
   left: -2rem;
   pointer-events: auto;
-  background-color: red;
 }`; //z-index: -1;
 // top: -0.5rem;
 // right: -0.5rem;
