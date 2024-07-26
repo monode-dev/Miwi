@@ -23,13 +23,17 @@ style.textContent = `
 .${bonusTouchAreaClassName}::before {
   content: '';
   position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  bottom: -0.5rem;
-  left: -0.5rem;
+  top: -2rem;
+  right: -2rem;
+  bottom: -2rem;
+  left: -2rem;
   pointer-events: auto;
-}
-`; //z-index: -1;
+  background-color: red;
+}`; //z-index: -1;
+// top: -0.5rem;
+// right: -0.5rem;
+// bottom: -0.5rem;
+// left: -0.5rem;
 document.body.appendChild(style);
 
 export function watchBoxInteraction(
