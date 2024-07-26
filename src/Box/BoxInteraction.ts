@@ -28,7 +28,7 @@ style.textContent = `
   bottom: -2rem;
   left: -2rem;
   z-index: -1;
-  pointer-events: none;
+  pointer-events: auto;
 }
 `;
 document.body.appendChild(style);
@@ -63,10 +63,10 @@ export function watchBoxInteraction(
         : null;
     element.value.style.cursor = parseProp(`cssCursor`) ?? (isClickable ? `pointer` : `default`);
     // NOTE: This seems to be adding extra padding to layouts sometimes so I'm disabling it for now.
-    // element.value.classList.toggle(
-    //   bonusTouchAreaClassName,
-    //   parseProp(`bonusTouchArea`) ?? isClickable,
-    // );
+    element.value.classList.toggle(
+      bonusTouchAreaClassName,
+      parseProp(`bonusTouchArea`) ?? isClickable,
+    );
   });
 
   // On Mouse Enter
