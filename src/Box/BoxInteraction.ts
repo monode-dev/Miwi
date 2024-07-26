@@ -23,16 +23,12 @@ style.textContent = `
 .${bonusTouchAreaClassName}::before {
   content: '';
   position: absolute;
-  top: -2rem;
-  right: -2rem;
-  bottom: -2rem;
-  left: -2rem;
+  top: -0.5rem;
+  right: -0.5rem;
+  bottom: -0.5rem;
+  left: -0.5rem;
   pointer-events: auto;
 }`; //z-index: -1;
-// top: -0.5rem;
-// right: -0.5rem;
-// bottom: -0.5rem;
-// left: -0.5rem;
 document.body.appendChild(style);
 
 export function watchBoxInteraction(
@@ -65,10 +61,10 @@ export function watchBoxInteraction(
         : null;
     element.value.style.cursor = parseProp(`cssCursor`) ?? (isClickable ? `pointer` : `default`);
     // NOTE: This seems to be adding extra padding to layouts sometimes so I'm disabling it for now.
-    // element.value.classList.toggle(
-    //   bonusTouchAreaClassName,
-    //   parseProp(`bonusTouchArea`) ?? isClickable,
-    // );
+    element.value.classList.toggle(
+      bonusTouchAreaClassName,
+      parseProp(`bonusTouchArea`) ?? isClickable,
+    );
   });
 
   // On Mouse Enter
