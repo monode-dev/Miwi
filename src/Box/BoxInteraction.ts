@@ -27,10 +27,9 @@ style.textContent = `
   right: -2rem;
   bottom: -2rem;
   left: -2rem;
-  z-index: -1;
   pointer-events: auto;
 }
-`;
+`; //z-index: -1;
 document.body.appendChild(style);
 
 export function watchBoxInteraction(
