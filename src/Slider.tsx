@@ -53,10 +53,10 @@ export function Slider(props: {
   return (
     <Stack ref={slider} alignCenterLeft widthGrows height={thumbHeight}>
       {/* Track Background */}
-      <Box width={"100%"} height={trackHeight} cornerRadius={0.25} fill={$theme.colors.lightHint} />
+      <Box widthGrows height={trackHeight} cornerRadius={0.25} fill={$theme.colors.lightHint} />
 
       {/* Track Foreground */}
-      <Row width={"100%"} heightGrows padBetween={0} alignCenterLeft preventClickPropagation={true}>
+      <Row widthGrows heightGrows padBetween={0} alignCenterLeft preventClickPropagation={true}>
         {/* Filled part of track */}
         <Box
           width={`${Math.min(
