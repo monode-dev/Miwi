@@ -51,8 +51,8 @@ export function Slider(props: {
   const color = useFormula(() => props.color ?? theme.palette.primary);
 
   return (
-    <Stack ref={slider}>
-      <Box alignCenterLeft widthGrows height={thumbHeight} axis={$Axis.stack}>
+    <Box ref={slider}>
+      <Stack alignCenterLeft widthGrows height={thumbHeight}>
         {/* Track Background */}
         <Box widthGrows height={trackHeight} cornerRadius={0.25} fill={$theme.colors.lightHint} />
 
@@ -83,7 +83,7 @@ export function Slider(props: {
             />
           </Box>
         </Row>
-      </Box>
-    </Stack>
+      </Stack>
+    </Box>
   );
 }
