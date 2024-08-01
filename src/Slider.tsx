@@ -51,37 +51,39 @@ export function Slider(props: {
   const color = useFormula(() => props.color ?? theme.palette.primary);
 
   return (
-    <Stack ref={slider} alignCenterLeft widthGrows height={thumbHeight}>
-      {/* Track Background */}
-      <Box widthGrows height={trackHeight} cornerRadius={0.25} fill={$theme.colors.lightHint} />
+    <Stack ref={slider}>
+      <Box alignCenterLeft widthGrows height={thumbHeight} axis={$Axis.stack}>
+        {/* Track Background */}
+        <Box widthGrows height={trackHeight} cornerRadius={0.25} fill={$theme.colors.lightHint} />
 
-      {/* Track Foreground */}
-      <Row widthGrows heightGrows padBetween={0} alignCenterLeft preventClickPropagation={true}>
-        {/* Filled part of track */}
-        <Box
-          width={`${Math.min(
-            100,
-            Math.max(0, 100 * ((props.value.value - props.min) / (props.max - props.min))),
-          )}%`}
-          height={trackHeight}
-          cornerRadius={0.25}
-          fill={color.value}
-        />
-
-        {/* Handle */}
-        <Box width={0} height={0} overflowX={$Overflow.spill} overflowY={$Overflow.spill}>
+        {/* Track Foreground */}
+        <Row widthGrows heightGrows padBetween={0} alignCenterLeft preventClickPropagation={true}>
+          {/* Filled part of track */}
           <Box
-            onMouseDown={startDrag}
-            onTouchStart={startDrag}
-            width={thumbHeight}
-            height={thumbHeight}
-            cornerRadius={thumbHeight / 2}
+            width={`${Math.min(
+              100,
+              Math.max(0, 100 * ((props.value.value - props.min) / (props.max - props.min))),
+            )}%`}
+            height={trackHeight}
+            cornerRadius={0.25}
             fill={color.value}
-            preventClickPropagation={true}
-            bonusTouchArea
           />
-        </Box>
-      </Row>
+
+          {/* Handle */}
+          <Box width={0} height={0} overflowX={$Overflow.spill} overflowY={$Overflow.spill}>
+            <Box
+              onMouseDown={startDrag}
+              onTouchStart={startDrag}
+              width={thumbHeight}
+              height={thumbHeight}
+              cornerRadius={thumbHeight / 2}
+              fill={color.value}
+              preventClickPropagation={true}
+              bonusTouchArea
+            />
+          </Box>
+        </Row>
+      </Box>
     </Stack>
   );
 }
