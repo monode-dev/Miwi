@@ -1,25 +1,29 @@
-import { Prop, useProp } from "./utils";
-import { Box, BoxProps } from "./Box/Box";
+import { Prop, useFormula, useProp } from "./utils";
+import { Box } from "./Box/Box";
 import { Row } from "./Row";
 import { Stack } from "./Stack";
+import { theme } from "./Theme";
 
-export function Slider(
-  props: {
-    valueSig: Prop<number>;
-    min: number;
-    max: number;
-  } & BoxProps,
-) {
+export function Slider(props: {
+  value: Prop<number>;
+  min: number;
+  max: number;
+  step?: number;
+  color?: string;
+}) {
   const thumbHeight = 1;
   const trackHeight = 0.5;
-  let isDragging = useProp(false);
+  const isDragging = useProp(false);
   let slider: HTMLElement | undefined = undefined;
 
   function updateValue(clientX: number) {
     const rect = slider!.getBoundingClientRect();
-    const newValue = ((clientX - rect.left) / rect.width) * (props.max - props.min) + props.min;
+    let newValue = ((clientX - rect.left) / rect.width) * (props.max - props.min) + props.min;
+    const step = props.step ? props.step * 0.01 : 0.01;
+    newValue = Math.round(newValue / step) * step;
+
     const clampedValue = Math.max(props.min, Math.min(props.max, newValue));
-    props.valueSig.value = clampedValue;
+    props.value.value = clampedValue;
   }
 
   function startDrag(event: MouseEvent | TouchEvent) {
@@ -44,15 +48,19 @@ export function Slider(
     document.removeEventListener("touchend", stopDrag);
   }
 
+  const color = useFormula(() => props.color ?? theme.palette.primary);
+
   return (
-    <Box getElement={slider}>
+    <Box getElement={el => (slider = el)}>
       <Stack alignCenterLeft widthGrows height={thumbHeight}>
+        {/* Track Background */}
         <Box
           width={"100%"}
           height={trackHeight}
           cornerRadius={0.25}
           fill={$theme.colors.lightHint}
         />
+
         <Row
           width={"100%"}
           heightGrows
@@ -60,15 +68,18 @@ export function Slider(
           alignCenterLeft
           preventClickPropagation={true}
         >
+          {/* Track Filled */}
           <Box
             width={`${Math.min(
               100,
-              Math.max(0, 100 * ((props.valueSig.value - props.min) / (props.max - props.min))),
+              Math.max(0, 100 * ((props.value.value - props.min) / (props.max - props.min))),
             )}%`}
             height={trackHeight}
             cornerRadius={0.25}
-            fill={$theme.colors.primary}
+            fill={color.value}
           />
+
+          {/* Handle */}
           <Box width={0} height={0} overflowX={$Overflow.spill} overflowY={$Overflow.spill}>
             <Box
               onMouseDown={startDrag}
@@ -76,7 +87,7 @@ export function Slider(
               width={thumbHeight}
               height={thumbHeight}
               cornerRadius={thumbHeight / 2}
-              fill={$theme.colors.primary}
+              fill={color.value}
             />
           </Box>
         </Row>

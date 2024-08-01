@@ -113,11 +113,13 @@ export function watchBoxText(
         ? `nowrap`
         : // TODO: Css ignores the last trailing newline. We need to find a way to fix that.
           `break-spaces`;
+    /* NOTE: Some browsers only seem break some words at certain points. If those browsers can't
+     * find a good break-point they will spill. */
+    /* Needed to break up long words like supercalifragilisticexpialidocious. */
     element.value.style.hyphens =
       context.overflowX.value === Overflow.crop || context.overflowX.value === Overflow.spill
         ? `none`
-        : /* Needed to break up long words like supercalifragilisticexpialidocious. */
-          `auto`;
+        : `auto`;
     element.value.style.textOverflow = context.overflowX.value === Overflow.crop ? `ellipsis` : ``;
   });
 }

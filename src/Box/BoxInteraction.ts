@@ -5,6 +5,7 @@ import { createRenderEffect } from "solid-js";
 export type InteractionSty = Partial<{
   // role: string
   bonusTouchArea: boolean;
+  // TODO: Maybe rename to "interactable", "clickable", "absorbsClicks", or something like that.
   preventClickPropagation: boolean;
   cssCursor: "pointer" | "default";
   onMouseEnter: () => void;
