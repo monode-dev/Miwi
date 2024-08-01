@@ -51,8 +51,8 @@ export function Slider(props: {
   const color = useFormula(() => props.color ?? theme.palette.primary);
 
   return (
-    <Box getElement={el => (slider = el)}>
-      <Stack alignCenterLeft widthGrows height={thumbHeight}>
+    <Box ref={slider}>
+      <Box alignCenterLeft widthGrows height={thumbHeight} axis={$Axis.stack}>
         {/* Track Background */}
         <Box
           width={"100%"}
@@ -61,6 +61,7 @@ export function Slider(props: {
           fill={$theme.colors.lightHint}
         />
 
+        {/* Track Foreground */}
         <Row
           width={"100%"}
           heightGrows
@@ -68,7 +69,7 @@ export function Slider(props: {
           alignCenterLeft
           preventClickPropagation={true}
         >
-          {/* Track Filled */}
+          {/* Filled part of track */}
           <Box
             width={`${Math.min(
               100,
@@ -88,10 +89,12 @@ export function Slider(props: {
               height={thumbHeight}
               cornerRadius={thumbHeight / 2}
               fill={color.value}
+              preventClickPropagation={true}
+              bonusTouchArea
             />
           </Box>
         </Row>
-      </Stack>
+      </Box>
     </Box>
   );
 }
