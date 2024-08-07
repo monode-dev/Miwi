@@ -20,14 +20,18 @@ export type InteractionSty = Partial<{
 
 const bonusTouchAreaClassName = `miwi-bonus-touch-area`;
 const style = document.createElement(`style`);
+// TODO: Use bonus touch radius to control the size of the touch area.
 style.textContent = `
+:root {
+  --miwi-bonus-touch-radius: -0.5rem
+}
 .${bonusTouchAreaClassName}::before {
   content: '';
   position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  bottom: -0.5rem;
-  left: -0.5rem;
+  top: var(--miwi-bonus-touch-radius);
+  right: var(--miwi-bonus-touch-radius);
+  bottom: var(--miwi-bonus-touch-radius);
+  left: var(--miwi-bonus-touch-radius);
   pointer-events: auto;
 }`; //z-index: -1;
 document.body.appendChild(style);

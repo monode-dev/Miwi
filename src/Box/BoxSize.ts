@@ -248,15 +248,17 @@ export function watchBoxSize(
   // SECTION: Flex Basis
   createRenderEffect(() => {
     if (!exists(element.value)) return; //flex: 1 1 0;
-    element.value.style.flexBasis =
+    element.value.style.flex =
       context.parentAxis.value === Axis.column
         ? exists(flexHeight.value)
-          ? `${flexHeight.value * 100}%`
-          : ``
+          ? `${flexHeight.value}`
+          : // ? `${flexHeight.value * 100}%`
+            ``
         : context.parentAxis.value === Axis.row
           ? exists(flexWidth.value)
-            ? `${flexWidth.value * 100}%`
-            : ``
+            ? `${flexWidth.value}`
+            : // ? `${flexWidth.value * 100}%`
+              ``
           : ``;
   });
 }

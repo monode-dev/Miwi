@@ -140,6 +140,8 @@ export function watchBoxDecoration(
       }[alignShadowDirection.alignY],
     };
     const shadowSize = parseProp({ shadowSize: v => v });
+    /* NOTE: We haven't let the shadow color or opacity be manually overriden yet, because
+     * we'd have to parse the color format. Which wouldn't even work with css variables. */
     element.value.style.boxShadow = exists(shadowSize)
       ? `${muToCss(0.09 * shadowSize * shadowDirection.x)} ${muToCss(
           -0.09 * shadowSize * shadowDirection.y,
