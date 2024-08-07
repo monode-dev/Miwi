@@ -248,17 +248,22 @@ export function watchBoxSize(
   // SECTION: Flex Basis
   createRenderEffect(() => {
     if (!exists(element.value)) return; //flex: 1 1 0;
+    /* We use to use flex-basis and do `${flexHeight.value * 100}%` instead of `${flexHeight.value}`.
+     * There was some edge cases, that caused us to use flex-basis. I don't remember what this edge
+     * case was. However, in safari flex-basis of > 100% does not mix well with siblings that use
+     * fit-content. Safari cuts some of the width off of the fit-content sibling and gives it to the
+     * flex-basis element instead. This is probably because it's trying to give 100%, can't so it
+     * picks a middle of the road compromise and splits the space, somewhat undercutting the
+     * fit-content element. Swapping to flex so far has fixed this without any known errors yet. */
     element.value.style.flex =
       context.parentAxis.value === Axis.column
         ? exists(flexHeight.value)
           ? `${flexHeight.value}`
-          : // ? `${flexHeight.value * 100}%`
-            ``
+          : ``
         : context.parentAxis.value === Axis.row
           ? exists(flexWidth.value)
             ? `${flexWidth.value}`
-            : // ? `${flexWidth.value * 100}%`
-              ``
+            : ``
           : ``;
   });
 }
