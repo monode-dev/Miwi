@@ -129,10 +129,10 @@ export function Modal(
           asTallAsParent
           alignTopLeft
           overflowYSpills
+          padBetween={0.5}
         >
           <Show when={!shouldOpenUpwards.value}>
             <Box asTallAsParent />
-            <Box height={0.5} />
           </Show>
           <Box
             width={0}
@@ -142,8 +142,7 @@ export function Modal(
             overflowYSpills
           >
             <Card
-              // widthGrows
-              minHeight={0}
+              minHeight={`fit-content`}
               heightShrinks
               maxHeight={16.65}
               overflowYScrolls
@@ -160,7 +159,6 @@ export function Modal(
             </Card>
           </Box>
           <Show when={shouldOpenUpwards.value}>
-            <Box height={0.5} />
             <Box asTallAsParent />
           </Show>
         </Column>
