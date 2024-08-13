@@ -135,17 +135,14 @@ export function Modal(
             <Box asTallAsParent />
           </Show>
           <Box
-            width={0}
-            height={0}
-            align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}
-            overflowXSpills
-            overflowYSpills
+            heightShrinks
+            maxHeight={16.65}
+            // align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}
+            // overflowXSpills
+            // overflowYSpills
           >
             <Card
-              // minHeight={`fit-content`}
-              // heightShrinks
-              minHeight={16.65}
-              height={16.65}
+              heightShrinks
               maxHeight={16.65}
               overflowYScrolls
               pad={1}
