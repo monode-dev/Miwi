@@ -27,6 +27,7 @@ export const closeParentModal = (thisElement: Element | null | undefined) => {
 };
 
 // SECTION: Modal Component
+/* TODO: Eventually phase out <Modal> and replace it with <HiddenOptions> */
 export function Modal(
   props: {
     openButton: JSX.Element;
