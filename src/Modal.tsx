@@ -29,8 +29,6 @@ export const closeParentModal = (thisElement: Element | null | undefined) => {
 export function Modal(
   props: {
     openButton: JSX.Element;
-    openButtonWidth: Size;
-    openButtonHeight: Size;
     isOpen?: Prop<boolean>;
     modalWidth?: Size;
     pad?: number;
@@ -112,8 +110,6 @@ export function Modal(
   return (
     <Stack
       pad={props.pad ?? 0}
-      width={props.openButtonWidth}
-      height={props.openButtonHeight}
       align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}
       getElement={el => (element = el)}
       classList={{
@@ -125,9 +121,13 @@ export function Modal(
 
       {/* Modal */}
       <Show when={_isOpen.value}>
-        <Column width={props.modalWidth ?? SIZE_SHRINKS} alignTopLeft overflowYSpills>
+        <Column
+          width={props.modalWidth ?? SIZE_SHRINKS}
+          asTallAsParent
+          alignTopLeft
+          overflowYSpills
+        >
           <Show when={!shouldOpenUpwards.value}>
-            <Box height={props.openButtonHeight} />
             <Box height={0.5} />
           </Show>
           <Column
@@ -149,7 +149,6 @@ export function Modal(
           </Column>
           <Show when={shouldOpenUpwards.value}>
             <Box height={0.5} />
-            <Box height={props.openButtonHeight} />
           </Show>
         </Column>
       </Show>

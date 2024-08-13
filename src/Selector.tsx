@@ -1,45 +1,37 @@
 import { mdiClose, mdiMenuDown } from "@mdi/js";
-import { Show } from "solid-js";
+import { JSXElement, Show } from "solid-js";
 import { BoxProps } from "./Box/Box";
-import { grow } from "./Box/BoxSize";
 import { Field } from "./Field";
 import { Icon } from "./Icon";
-import { Modal } from "./Modal";
 import { Row } from "./Row";
 import { Txt } from "./Txt";
 import { Prop, useFormula, useProp, exists, doWatch } from "./utils";
+import { HiddenOptions } from "./HiddenOptions";
 
 export function Selector<T>(
   props: {
     value: T;
     getLabelForData: (data: T) => string | null;
     noneLabel?: string;
-    modalIsOpenSig?: Prop<boolean>;
-    emptyListText?: string;
+    isOpen?: Prop<boolean>;
     filterStringSig?: Prop<string>;
-    showCancelOptionForFilter?: boolean;
     isWide?: boolean;
+    actionButtons?: JSXElement;
   } & BoxProps,
 ) {
   // DEFAULT PROPERTIES
   const noneLabel = useFormula(() => props.noneLabel ?? "None");
-  const emptyListText = useFormula(() => props.emptyListText ?? "No Options");
   const isWide = useFormula(() => props.isWide ?? false);
-  const isOpen = props.modalIsOpenSig ?? useProp(false);
+  const isOpen = props.isOpen ?? useProp(false);
   doWatch(() => {
     if (!exists(props.filterStringSig)) return;
     if (!isOpen.value) {
       props.filterStringSig.value = ``;
     }
   });
-  const thereAreNoOptions = useFormula(() => {
-    return (
-      !exists(props.children) || (Array.isArray(props.children) && props.children.length === 0)
-    );
-  });
 
   return (
-    <Modal
+    <HiddenOptions
       openButton={
         <Row
           onClick={() => {
@@ -48,7 +40,6 @@ export function Selector<T>(
           }}
           widthGrows
           height={props.scale ?? 1}
-          spaceBetween
         >
           <Show
             when={!exists(props.filterStringSig) || !isOpen.value}
@@ -68,34 +59,14 @@ export function Selector<T>(
             iconPath={exists(props.filterStringSig) && isOpen.value ? mdiClose : mdiMenuDown}
             onClick={() => (isOpen.value = !isOpen.value)}
           />
+          {props.actionButtons}
         </Row>
       }
-      openButtonWidth={grow()}
-      openButtonHeight={props.scale ?? 1}
       isOpen={isOpen}
       modalWidth={isWide.value ? `100%` : undefined}
     >
-      {" "}
-      {/* SECTION: No Options */}
-      <Show when={thereAreNoOptions.value}>
-        <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
-          {emptyListText.value}
-        </Txt>
-      </Show>
-      {/* SECTION: Cancel */}
-      <Show
-        when={
-          exists(props.filterStringSig) &&
-          props.showCancelOptionForFilter &&
-          !thereAreNoOptions.value
-        }
-      >
-        <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
-          Cancel
-        </Txt>
-      </Show>
       {/* SECTION: Custom Options */}
       {props.children}
-    </Modal>
+    </HiddenOptions>
   );
 }

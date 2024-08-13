@@ -123,7 +123,7 @@ export * from "./DeleteDialog";
 export * from "./Dialog";
 export * from "./Field";
 export * from "./FloatSort";
-export * from "./HiddenDelete";
+export * from "./HiddenOptions";
 export * from "./Icon";
 export * from "./Label";
 export * from "./Modal";

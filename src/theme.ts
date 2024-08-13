@@ -43,6 +43,10 @@ export const theme = {
     hint: `var(--miwi-color-hint)`,
     lightHint: `var(--miwi-color-light-hint)`,
     warning: `var(--miwi-color-warning)`,
+    /* TODO: I'd like to find a better name for this color. "error" doesn't make
+     * as much sense with options like "delete". Something like "dangerous" or
+     * "extremeWarning" might cover both of these better, and better communicate
+     * to devs when they should use this color. */
     error: `var(--miwi-color-error)`,
   },
 };
