@@ -15,7 +15,7 @@ export function Selector<T>(
     noneLabel?: string;
     noOptionsText?: string;
     isOpen?: Prop<boolean>;
-    filterStringSig?: Prop<string>;
+    filterString?: Prop<string>;
     stillShowInlineCancelOptionWhenFiltering?: boolean;
     isWide?: boolean;
     actionButtons?: JSXElement;
@@ -26,10 +26,13 @@ export function Selector<T>(
   const noneLabel = useFormula(() => props.noneLabel ?? "None");
   const isWide = useFormula(() => props.isWide ?? false);
   const isOpen = props.isOpen ?? useProp(false);
+  const isFiltering = useFormula(
+    () => exists(props.filterString) && props.filterString.value !== ``,
+  );
   doWatch(() => {
-    if (!exists(props.filterStringSig)) return;
+    if (!exists(props.filterString)) return;
     if (!isOpen.value) {
-      props.filterStringSig.value = ``;
+      props.filterString.value = ``;
     }
   });
 
@@ -38,16 +41,16 @@ export function Selector<T>(
       openButton={
         <Row
           onClick={() => {
-            if (exists(props.filterStringSig) && isOpen.value) return;
+            if (exists(props.filterString) && isOpen.value) return;
             isOpen.value = !isOpen.value;
           }}
           widthGrows
           height={props.scale ?? 1}
         >
           <Show
-            when={!exists(props.filterStringSig) || !isOpen.value}
+            when={!exists(props.filterString) || !isOpen.value}
             fallback={
-              <Field value={props.filterStringSig} hintText="Search" hasFocus={useProp(true)} />
+              <Field value={props.filterString} hintText="Search" hasFocus={useProp(true)} />
             }
           >
             <Txt
@@ -59,7 +62,7 @@ export function Selector<T>(
             </Txt>
           </Show>
           <Icon
-            iconPath={exists(props.filterStringSig) && isOpen.value ? mdiClose : mdiMenuDown}
+            iconPath={exists(props.filterString) && isOpen.value ? mdiClose : mdiMenuDown}
             onClick={() => (isOpen.value = !isOpen.value)}
           />
           {props.actionButtons}
@@ -67,7 +70,7 @@ export function Selector<T>(
       }
       isOpen={isOpen}
       modalWidth={isWide.value ? `100%` : undefined}
-      hideCancel={exists(props.filterStringSig) && !props.stillShowInlineCancelOptionWhenFiltering}
+      hideCancel={isFiltering.value && !props.stillShowInlineCancelOptionWhenFiltering}
       noOptionsText={props.noOptionsText}
       cancelOptions={props.cancelOptions}
     >

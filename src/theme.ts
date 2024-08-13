@@ -49,4 +49,5 @@ export const theme = {
      * to devs when they should use this color. */
     error: `var(--miwi-color-error)`,
   },
+  /* TODO: Publicly, although maybe not internally, there should be config options for every component in Miwi. */
 };
