@@ -1,10 +1,11 @@
 import { BoxProps } from "./Box/Box";
 import { useProp, Prop, doWatch, exists } from "./utils";
-import { Field, KeyboardType } from "./Field";
+import { EnterKeyHint, Field, KeyboardType } from "./Field";
 
 export function NumField(
   props: {
-    valueSig?: Prop<number | null | undefined>;
+    value?: Prop<number | null | undefined>;
+    onlyWriteOnBlur?: boolean;
     negativesAreAllowed?: boolean;
     hasFocusSig?: Prop<boolean>;
     scale?: number;
@@ -16,16 +17,16 @@ export function NumField(
     heading?: boolean;
     keyboard?: KeyboardType;
     onBlur?: () => void;
-    enterKeyHint?: `enter` | `done` | `go` | `next` | `previous` | `search` | `send`;
+    enterKeyHint?: EnterKeyHint;
   } & BoxProps,
 ) {
   const keyboard = props.keyboard ?? "decimal";
-  const _stringValue = useProp(props.valueSig?.value?.toString() ?? "");
+  const _stringValue = useProp(props.value?.value?.toString() ?? "");
 
-  if (exists(props.valueSig)) {
+  if (exists(props.value)) {
     doWatch(
       () => {
-        const value = props.valueSig?.value;
+        const value = props.value?.value;
         if (!exists(value)) {
           _stringValue.value = "";
         } else if (textToNumber(_stringValue.value) !== value) {
@@ -33,18 +34,18 @@ export function NumField(
         }
       },
       {
-        on: [props.valueSig],
+        on: [props.value],
       },
     );
     doWatch(
       () => {
         if (_stringValue.value === "") {
-          props.valueSig!.value = null;
+          props.value!.value = null;
         } else {
           if (!validateInput(_stringValue.value)) return;
           const asNumber = textToNumber(_stringValue.value);
-          if (asNumber === props.valueSig!.value) return;
-          props.valueSig!.value = asNumber;
+          if (asNumber === props.value!.value) return;
+          props.value!.value = asNumber;
         }
       },
       {
@@ -127,7 +128,6 @@ export function NumField(
       {...props}
       onBlur={() => {
         _stringValue.value = formatFinishedInput(_stringValue.value);
-        console.log(_stringValue.value);
         props.onBlur?.();
       }}
       align={props.align ?? $Align.centerLeft}
@@ -144,6 +144,7 @@ export function NumField(
       padBetweenX={props.padBetweenX ?? 0.0}
       padBetweenY={props.padBetweenY ?? 0.0}
       formatInput={formatInput}
+      onlyWriteOnBlur={props.onlyWriteOnBlur}
       enterKeyHint={props.enterKeyHint}
     />
   );

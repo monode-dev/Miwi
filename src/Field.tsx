@@ -28,10 +28,15 @@ export type FormatFieldInput = (
   input: string;
   caret: number;
 };
+export type EnterKeyHint = `enter` | `done` | `go` | `next` | `previous` | `search` | `send`;
+export type FieldInputType = `password` | `text` | `email` | `number` | `tel` | `url`;
 export function Field(
   props: {
     value?: Prop<string>;
-    tempValue?: Prop<string>;
+    /* We use to use this to let people track the value before blur, but now that we
+     * have "onlyWriteOnBlur" I don't think we need it. */
+    // tempValue?: Prop<string>;
+    onlyWriteOnBlur?: boolean;
     hasFocus?: Prop<boolean>;
     hintText?: string;
     hintColor?: string;
@@ -44,15 +49,16 @@ export function Field(
     h1?: boolean;
     h2?: boolean;
     capitalize?: FieldCapitalization;
-    inputType?: `password` | `text` | `email` | `number` | `tel` | `url`;
+    inputType?: FieldInputType;
     onBlur?: () => void;
     validateNextInput?: (nextInput: string) => boolean;
     formatInput?: FormatFieldInput;
-    enterKeyHint?: `enter` | `done` | `go` | `next` | `previous` | `search` | `send`;
+    enterKeyHint?: EnterKeyHint;
   } & BoxProps,
 ) {
   const parseProp: (...args: any[]) => any = makePropParser(props as any);
-  const value = props.value ?? useProp(``);
+  const externalValue = props.value ?? useProp(``);
+  const internalValue = props.onlyWriteOnBlur ? useProp(externalValue.value) : undefined;
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
   const inputElementHasFocus = props.hasFocus ?? useProp(false);
   const scale = useFormula(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
@@ -88,26 +94,26 @@ export function Field(
   // Input
   function setTempValue(newValue: string | undefined | null) {
     const stringValue = newValue ?? ``;
-    if (exists(props.tempValue)) {
-      props.tempValue.value = stringValue;
+    if (exists(internalValue)) {
+      internalValue.value = stringValue;
     } else {
-      value.value = stringValue;
+      externalValue.value = stringValue;
     }
     if (exists(inputElement)) {
       inputElement.value = stringValue;
     }
   }
   function getTempValue() {
-    return props.tempValue?.value ?? value.value;
+    return internalValue?.value ?? externalValue.value;
   }
   doWatch(
     () => {
       if (!inputElementHasFocus.value) {
-        setTempValue(value.value);
+        setTempValue(externalValue.value);
       }
     },
     {
-      on: [value],
+      on: [externalValue],
     },
   );
   function handleInput(uncastEvent: Event) {
@@ -157,23 +163,23 @@ export function Field(
   }
 
   // Focus
-  let valueOnFocus = value.value;
+  let valueOnFocus = externalValue.value;
   const handleFocus = () => {
-    if (getTempValue() !== value.value) {
-      setTempValue(value.value);
+    if (getTempValue() !== externalValue.value) {
+      setTempValue(externalValue.value);
     }
-    valueOnFocus = value.value;
+    valueOnFocus = externalValue.value;
     inputElementHasFocus.value = true;
   };
 
   const handleBlur = () => {
-    const tempValueIsDifferentThanProp = getTempValue() !== value.value;
+    const tempValueIsDifferentThanProp = getTempValue() !== externalValue.value;
     const haveTypedSomething = getTempValue() !== valueOnFocus;
     if (haveTypedSomething && tempValueIsDifferentThanProp) {
-      value.value = getTempValue();
+      externalValue.value = getTempValue();
     } else if (!haveTypedSomething && tempValueIsDifferentThanProp) {
       // If someone else changed the value, and we didn't, then get the new value.
-      setTempValue(value.value);
+      setTempValue(externalValue.value);
     }
     inputElementHasFocus.value = false;
     props.onBlur?.();
@@ -191,7 +197,7 @@ export function Field(
   const detailColor = useFormula(() =>
     inputElementHasFocus.value
       ? $theme.colors.primary
-      : value.value === `` || !exists(value.value)
+      : externalValue.value === `` || !exists(externalValue.value)
         ? $theme.colors.hint
         : props.stroke ?? $theme.colors.text,
   );
@@ -316,14 +322,14 @@ export function Field(
         >
           <Show when={textHeight.value === SIZE_SHRINKS}>
             <Txt stroke={`transparent`} widthGrows>
-              {value.value == ``
+              {externalValue.value == ``
                 ? `a`
-                : value.value.endsWith(`\n`)
-                  ? value.value + `\n`
-                  : value.value}
+                : externalValue.value.endsWith(`\n`)
+                  ? externalValue.value + `\n`
+                  : externalValue.value}
             </Txt>
           </Show>
-          <_Input value={value.value} />
+          <_Input value={externalValue.value} />
         </Stack>
 
         {/* Underline */}
