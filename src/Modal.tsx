@@ -142,8 +142,10 @@ export function Modal(
             overflowYSpills
           >
             <Card
-              minHeight={`fit-content`}
-              heightShrinks
+              // minHeight={`fit-content`}
+              // heightShrinks
+              minHeight={16.65}
+              height={16.65}
               maxHeight={16.65}
               overflowYScrolls
               pad={1}
