@@ -36,7 +36,7 @@ export function Modal(
   } & BoxProps,
 ) {
   // Modal
-  const openButton = props.openButton as HTMLElement;
+  let openButtonContainer: HTMLElement | undefined = undefined;
   let modal: HTMLElement | undefined = undefined;
   let element: HTMLElement | undefined = undefined;
 
@@ -79,8 +79,9 @@ export function Modal(
   const shouldOpenUpwards = useProp(false);
   function openDropDown() {
     if (_isOpen.value) return;
-    console.log(openButton);
-    shouldOpenUpwards.value = openButton.getBoundingClientRect().top > window.innerHeight * 0.6;
+    console.log(openButtonContainer);
+    shouldOpenUpwards.value =
+      openButtonContainer!.getBoundingClientRect().top > window.innerHeight * 0.6;
     _isOpen.value = true;
   }
   function closeDropDown() {
@@ -92,7 +93,7 @@ export function Modal(
   function closeOnClickOutside(e: MouseEvent) {
     if (!_isOpen.value) return;
     if (modal?.contains(e.target as any) ?? false) return;
-    if (openButton.contains(e.target as any)) return;
+    if (openButtonContainer!.contains(e.target as any)) return;
     if (!exists(modal)) return;
     const page = findPageInAncestors(modal);
     if (exists(page) && !isActivePage(page)) return;
@@ -118,7 +119,7 @@ export function Modal(
       }}
     >
       {/* Open Button */}
-      {openButton}
+      <Box getElement={el => (openButtonContainer = el)}>{props.openButton}</Box>
 
       {/* Modal */}
       <Show when={_isOpen.value}>
