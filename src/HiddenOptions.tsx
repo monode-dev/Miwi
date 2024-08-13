@@ -5,7 +5,7 @@ import { Icon } from "./Icon";
 import { Modal, closeParentModal } from "./Modal";
 import { Row } from "./Row";
 import { Txt } from "./Txt";
-import { doNow, useProp, useFormula, exists } from "./utils";
+import { doNow, useProp, useFormula, exists, hasChildren } from "./utils";
 import { BoxProps } from "./Box/Box";
 import { Size } from "./Box/BoxSize";
 import { theme } from "./Theme";
@@ -28,11 +28,6 @@ export function HiddenOptions(
     return useFormula(
       () => props.isOpen?.value ?? _fallbackIsOpen.value,
       v => (exists(props.isOpen) ? (props.isOpen.value = v) : (_fallbackIsOpen.value = v)),
-    );
-  });
-  const thereAreNoOptions = useFormula(() => {
-    return (
-      !exists(props.children) || (Array.isArray(props.children) && props.children.length === 0)
     );
   });
   return (
@@ -60,7 +55,7 @@ export function HiddenOptions(
       modalWidth={props.modalWidth}
     >
       {/* No Options Hint */}
-      <Show when={thereAreNoOptions.value}>
+      <Show when={hasChildren(props.children)}>
         <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
           {props.noOptionsText ?? `No Options`}
         </Txt>

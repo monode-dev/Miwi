@@ -1,4 +1,5 @@
 import { mosaForSolid } from "mosa-js/solid-js";
+import { JSXElement } from "solid-js";
 
 // SECTION: Mosa Reactivity
 export type { ReadonlyProp, WriteonlyProp, Prop } from "mosa-js";
@@ -178,3 +179,7 @@ export type OnlyOne<T extends {}> = Partial<
     [K in keyof T]: Pick<T, K> & Partial<Record<Exclude<keyof T, K>, never>>;
   }[keyof T]
 >;
+
+export function hasChildren(children: JSXElement | undefined) {
+  return exists(children) && (!Array.isArray(children) || children.length > 0);
+}

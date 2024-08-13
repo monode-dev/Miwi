@@ -46,6 +46,7 @@ export function Selector<T>(
           }}
           widthGrows
           height={props.scale ?? 1}
+          padBetween={0.5}
         >
           <Show
             when={!exists(props.filterString) || !isOpen.value}
@@ -65,9 +66,7 @@ export function Selector<T>(
             iconPath={exists(props.filterString) && isOpen.value ? mdiClose : mdiMenuDown}
             onClick={() => (isOpen.value = !isOpen.value)}
           />
-          <Row padLeft={0.5} padBetween={0.5}>
-            {props.actionButtons}
-          </Row>
+          {props.actionButtons}
         </Row>
       }
       isOpen={isOpen}
