@@ -134,7 +134,7 @@ export function Modal(
             <Box asTallAsParent />
             <Box height={0.5} />
           </Show>
-          <Box overflowXSpills overflowYSpills>
+          <Box width={0} height={0} overflowXSpills overflowYSpills>
             <Card
               // widthGrows
               minHeight={0}
