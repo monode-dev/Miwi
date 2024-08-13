@@ -55,7 +55,7 @@ export function HiddenOptions(
       modalWidth={props.modalWidth}
     >
       {/* No Options Hint */}
-      <Show when={hasChildren(props.children)}>
+      <Show when={!hasChildren(props.children)}>
         <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
           {props.noOptionsText ?? `No Options`}
         </Txt>
