@@ -134,13 +134,10 @@ export function Modal(
           <Show when={!shouldOpenUpwards.value}>
             <Box asTallAsParent />
           </Show>
-          <Box
-            heightShrinks
-            maxHeight={16.65}
-            // align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}
-            // overflowXSpills
-            // overflowYSpills
-          >
+          {/* NOTE: We need this wrapper box because with overflowYSpills on the parent and
+           * overflowYScrolls on the card, the card decides to not give any space for its
+           * children only for its pad Around. */}
+          <Box heightShrinks maxHeight={16.65}>
             <Card
               heightShrinks
               maxHeight={16.65}

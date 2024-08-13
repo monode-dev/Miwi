@@ -13,8 +13,10 @@ export function Selector<T>(
     value: T;
     getLabelForData: (data: T) => string | null;
     noneLabel?: string;
+    noOptionsText?: string;
     isOpen?: Prop<boolean>;
     filterStringSig?: Prop<string>;
+    stillShowInlineCancelOptionWhenFiltering?: boolean;
     isWide?: boolean;
     actionButtons?: JSXElement;
   } & BoxProps,
@@ -64,6 +66,8 @@ export function Selector<T>(
       }
       isOpen={isOpen}
       modalWidth={isWide.value ? `100%` : undefined}
+      hideCancel={exists(props.filterStringSig) && !props.stillShowInlineCancelOptionWhenFiltering}
+      noOptionsText={props.noOptionsText}
     >
       {/* SECTION: Custom Options */}
       {props.children}
