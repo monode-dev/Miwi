@@ -130,6 +130,7 @@ export function Modal(
           overflowYSpills
         >
           <Show when={!shouldOpenUpwards.value}>
+            <Box asTallAsParent />
             <Box height={0.5} />
           </Show>
           <Column
@@ -151,6 +152,7 @@ export function Modal(
           </Column>
           <Show when={shouldOpenUpwards.value}>
             <Box height={0.5} />
+            <Box asTallAsParent />
           </Show>
         </Column>
       </Show>
