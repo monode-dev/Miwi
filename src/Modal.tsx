@@ -5,6 +5,7 @@ import { JSX, Show, onCleanup, onMount } from "solid-js";
 import { SIZE_SHRINKS, Size } from "./Box/BoxSize";
 import { findPageInAncestors, isActivePage } from "./Nav";
 import { Column } from "./Column";
+import { Card } from "./Card";
 
 // SECTION: Modal Utils
 const _openModals = new Map<Element, () => void>();
@@ -133,23 +134,25 @@ export function Modal(
             <Box asTallAsParent />
             <Box height={0.5} />
           </Show>
-          <Column
-            // widthGrows
-            minHeight={0}
-            heightShrinks
-            maxHeight={16.65}
-            overflowYScrolls
-            pad={1}
-            shadowSize={1}
-            fill={$theme.colors.accent}
-            alignTopLeft
-            preventClickPropagation
-            getElement={el => (modal = el)}
-            zIndex={1000}
-            overrideProps={props.cardStyle}
-          >
-            {props.children}
-          </Column>
+          <Box overflowXSpills overflowYSpills>
+            <Card
+              // widthGrows
+              minHeight={0}
+              heightShrinks
+              maxHeight={16.65}
+              overflowYScrolls
+              pad={1}
+              shadowSize={1}
+              fill={$theme.colors.accent}
+              alignTopLeft
+              preventClickPropagation
+              getElement={el => (modal = el)}
+              zIndex={1000}
+              overrideProps={props.cardStyle}
+            >
+              {props.children}
+            </Card>
+          </Box>
           <Show when={shouldOpenUpwards.value}>
             <Box height={0.5} />
             <Box asTallAsParent />
