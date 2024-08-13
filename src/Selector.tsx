@@ -19,6 +19,7 @@ export function Selector<T>(
     stillShowInlineCancelOptionWhenFiltering?: boolean;
     isWide?: boolean;
     actionButtons?: JSXElement;
+    cancelOptions?: Parameters<typeof HiddenOptions>[0][`cancelOptions`];
   } & BoxProps,
 ) {
   // DEFAULT PROPERTIES
@@ -68,6 +69,7 @@ export function Selector<T>(
       modalWidth={isWide.value ? `100%` : undefined}
       hideCancel={exists(props.filterStringSig) && !props.stillShowInlineCancelOptionWhenFiltering}
       noOptionsText={props.noOptionsText}
+      cancelOptions={props.cancelOptions}
     >
       {/* SECTION: Custom Options */}
       {props.children}

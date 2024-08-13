@@ -15,7 +15,7 @@ export function HiddenOptions(
     openIcon?: string;
     openButton?: JSXElement;
     hideCancel?: boolean;
-    cancelOption?: Partial<Parameters<typeof HiddenOption>[0]>;
+    cancelOptions?: Partial<Parameters<typeof HiddenOption>[0]>;
     isOpen?: Prop<boolean>;
     cardStyle?: BoxProps;
     modalWidth?: Size;
@@ -74,7 +74,7 @@ export function HiddenOptions(
             icon: mdiClose,
             autoHide: true,
             singleLine: true,
-            ...props.cancelOption,
+            ...props.cancelOptions,
           }}
         />
       </Show>
