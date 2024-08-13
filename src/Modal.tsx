@@ -79,6 +79,7 @@ export function Modal(
   const shouldOpenUpwards = useProp(false);
   function openDropDown() {
     if (_isOpen.value) return;
+    console.log(openButton);
     shouldOpenUpwards.value = openButton.getBoundingClientRect().top > window.innerHeight * 0.6;
     _isOpen.value = true;
   }

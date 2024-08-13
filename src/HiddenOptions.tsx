@@ -89,7 +89,7 @@ export function DeleteOption(
   props: {
     text?: string;
     icon?: string;
-    autoHide?: boolean;
+    doNotAutoHide?: boolean;
     singleLine?: boolean;
   } & BoxProps,
 ) {
@@ -97,7 +97,7 @@ export function DeleteOption(
     <HiddenOption
       text={props.text ?? `Delete`}
       icon={props.icon ?? mdiTrashCanOutline}
-      autoHide={props.autoHide}
+      doNotAutoHide={props.doNotAutoHide}
       singleLine={props.singleLine}
       stroke={theme.palette.error}
       overrideProps={props}
@@ -109,7 +109,8 @@ export function HiddenOption(
   props: {
     text?: string;
     icon?: string;
-    autoHide?: boolean;
+    // TODO: autoHide is the default, so we should replace this with the opposite like "doNotAutoHide"
+    doNotAutoHide?: boolean;
     singleLine?: boolean;
   } & BoxProps,
 ) {
@@ -120,7 +121,7 @@ export function HiddenOption(
       padBetween={0.25}
       getElement={el => (optionElement = el)}
       onClick={() => {
-        if (!(props.autoHide ?? true)) return;
+        if (props.doNotAutoHide ?? false) return;
         if (!exists(optionElement)) return;
         closeParentModal(optionElement);
       }}
