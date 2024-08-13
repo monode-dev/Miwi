@@ -16,6 +16,7 @@ export function NumField(
     heading?: boolean;
     keyboard?: KeyboardType;
     onBlur?: () => void;
+    enterKeyHint?: `enter` | `done` | `go` | `next` | `previous` | `search` | `send`;
   } & BoxProps,
 ) {
   const keyboard = props.keyboard ?? "decimal";
@@ -143,6 +144,7 @@ export function NumField(
       padBetweenX={props.padBetweenX ?? 0.0}
       padBetweenY={props.padBetweenY ?? 0.0}
       formatInput={formatInput}
+      enterKeyHint={props.enterKeyHint}
     />
   );
 }
