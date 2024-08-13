@@ -134,7 +134,13 @@ export function Modal(
             <Box asTallAsParent />
             <Box height={0.5} />
           </Show>
-          <Box width={0} height={0} overflowXSpills overflowYSpills>
+          <Box
+            width={0}
+            height={0}
+            align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}
+            overflowXSpills
+            overflowYSpills
+          >
             <Card
               // widthGrows
               minHeight={0}
