@@ -65,7 +65,9 @@ export function Selector<T>(
             iconPath={exists(props.filterString) && isOpen.value ? mdiClose : mdiMenuDown}
             onClick={() => (isOpen.value = !isOpen.value)}
           />
-          {props.actionButtons}
+          <Row padLeft={0.5} padBetween={0.5}>
+            {props.actionButtons}
+          </Row>
         </Row>
       }
       isOpen={isOpen}
