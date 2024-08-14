@@ -70,7 +70,7 @@ export function Selector<T>(
         </Row>
       }
       isOpen={isOpen}
-      modalWidth={isWide.value ? `100%` : undefined}
+      // modalWidth={isWide.value ? `100%` : undefined}
       hideCancel={isFiltering.value && !props.stillShowInlineCancelOptionWhenFiltering}
       noOptionsText={props.noOptionsText}
       cancelOptions={props.cancelOptions}

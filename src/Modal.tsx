@@ -153,7 +153,7 @@ export function Modal(
            * overflowYScrolls on the card, the card decides to not give any space for its
            * children only for its pad Around. */}
           <Box
-            asWideAsParent
+            width={0}
             overflowXSpills
             heightShrinks
             maxHeight={maxDropDownHeight.value}
