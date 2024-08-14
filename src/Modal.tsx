@@ -142,7 +142,7 @@ export function Modal(
             overflowXSpills
             heightShrinks
             maxHeight={16.65}
-            align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}
+            align={shouldOpenUpwards.value ? $Align.bottomLeft : $Align.topLeft}
           >
             <Card
               heightShrinks
