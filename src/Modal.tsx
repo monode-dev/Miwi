@@ -140,7 +140,13 @@ export function Modal(
 
       {/* Modal */}
       <Show when={_isOpen.value}>
-        <Column asTallAsParent align={align.value} overflowYSpills padBetween={0.5}>
+        <Column
+          asTallAsParent
+          align={align.value}
+          overflowYSpills
+          padBetween={0.5}
+          width={props.dropDownWidth ?? SIZE_SHRINKS}
+        >
           <Show when={!shouldOpenUpwards.value}>
             <Box asTallAsParent />
           </Show>
