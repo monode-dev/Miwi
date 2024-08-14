@@ -81,7 +81,6 @@ export function Modal(
   const shouldOpenUpwards = useProp(false);
   function openDropDown() {
     if (_isOpen.value) return;
-    console.log(openButtonContainer);
     shouldOpenUpwards.value =
       openButtonContainer!.getBoundingClientRect().top > window.innerHeight * 0.6;
     _isOpen.value = true;
@@ -138,7 +137,7 @@ export function Modal(
           {/* NOTE: We need this wrapper box because with overflowYSpills on the parent and
            * overflowYScrolls on the card, the card decides to not give any space for its
            * children only for its pad Around. */}
-          <Box heightShrinks maxHeight={16.65}>
+          <Box width={0} overflowXSpills heightShrinks maxHeight={16.65}>
             <Card
               heightShrinks
               maxHeight={16.65}
@@ -149,7 +148,8 @@ export function Modal(
               alignTopLeft
               preventClickPropagation
               getElement={el => (modal = el)}
-              zIndex={1000}
+              cornerRadius={0.5}
+              zIndex={2}
               overrideProps={props.cardStyle}
             >
               {props.children}
