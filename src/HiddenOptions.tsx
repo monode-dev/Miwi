@@ -18,7 +18,7 @@ export function HiddenOptions(
     cancelOptions?: Partial<Parameters<typeof HiddenOption>[0]>;
     isOpen?: Prop<boolean>;
     cardStyle?: BoxProps;
-    modalWidth?: Size;
+    dropDownWidth?: Size;
     noOptionsText?: string;
   } & BoxProps,
 ) {
@@ -48,7 +48,7 @@ export function HiddenOptions(
       }
       isOpen={isOpen}
       cardStyle={props.cardStyle}
-      modalWidth={props.modalWidth}
+      dropDownWidth={props.dropDownWidth}
     >
       {/* No Options Hint */}
       <Show when={!hasChildren(props.children)}>

@@ -7,6 +7,7 @@ import { Row } from "./Row";
 import { Txt } from "./Txt";
 import { Prop, useFormula, useProp, exists, doWatch } from "./utils";
 import { HiddenOptions } from "./HiddenOptions";
+import { Size } from "./Box/BoxSize";
 
 export function Selector<T>(
   props: {
@@ -17,14 +18,13 @@ export function Selector<T>(
     isOpen?: Prop<boolean>;
     filterString?: Prop<string>;
     stillShowInlineCancelOptionWhenFiltering?: boolean;
-    isWide?: boolean;
     actionButtons?: JSXElement;
     cancelOptions?: Parameters<typeof HiddenOptions>[0][`cancelOptions`];
+    dropDownWidth?: Size;
   } & BoxProps,
 ) {
   // DEFAULT PROPERTIES
   const noneLabel = useFormula(() => props.noneLabel ?? "None");
-  const isWide = useFormula(() => props.isWide ?? false);
   const isOpen = props.isOpen ?? useProp(false);
   const isFiltering = useFormula(
     () => exists(props.filterString) && props.filterString.value !== ``,
@@ -70,7 +70,7 @@ export function Selector<T>(
         </Row>
       }
       isOpen={isOpen}
-      // modalWidth={isWide.value ? `100%` : undefined}
+      dropDownWidth={props.dropDownWidth ?? `100%`}
       hideCancel={isFiltering.value && !props.stillShowInlineCancelOptionWhenFiltering}
       noOptionsText={props.noOptionsText}
       cancelOptions={props.cancelOptions}

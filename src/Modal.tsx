@@ -32,7 +32,7 @@ export function Modal(
   props: {
     openButton: JSX.Element;
     isOpen?: Prop<boolean>;
-    modalWidth?: Size;
+    dropDownWidth?: Size;
     pad?: number;
     cardStyle?: BoxProps;
   } & BoxProps,
@@ -97,6 +97,7 @@ export function Modal(
     const distanceToRight = window.innerWidth - openButtonRect.right;
     maxDropDownHeight.value = `${(window.innerHeight - openButtonRect.height) * 0.4}px`;
     shouldOpenUpwards.value = distanceToBottom < openButtonRect.top;
+    // TODO: This math is wrong. We should put the overhang on the right, unless this runs the dropdown off the screen.
     shouldPutOverhangOnLeft.value = distanceToRight < openButtonRect.left;
     _isOpen.value = true;
   }
@@ -139,13 +140,7 @@ export function Modal(
 
       {/* Modal */}
       <Show when={_isOpen.value}>
-        <Column
-          width={props.modalWidth ?? SIZE_SHRINKS}
-          asTallAsParent
-          align={align.value}
-          overflowYSpills
-          padBetween={0.5}
-        >
+        <Column asTallAsParent align={align.value} overflowYSpills padBetween={0.5}>
           <Show when={!shouldOpenUpwards.value}>
             <Box asTallAsParent />
           </Show>
@@ -153,13 +148,14 @@ export function Modal(
            * overflowYScrolls on the card, the card decides to not give any space for its
            * children only for its pad Around. */}
           <Box
-            width={0}
+            width={props.dropDownWidth ?? 0}
             overflowXSpills
             heightShrinks
             maxHeight={maxDropDownHeight.value}
             align={align.value}
           >
             <Card
+              width={props.dropDownWidth ?? SIZE_SHRINKS}
               heightShrinks
               maxHeight={maxDropDownHeight.value}
               overflowYScrolls
