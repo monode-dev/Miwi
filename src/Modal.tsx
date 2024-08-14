@@ -142,7 +142,7 @@ export function Modal(
         <Column
           width={props.modalWidth ?? SIZE_SHRINKS}
           asTallAsParent
-          alignTopLeft
+          align={align.value}
           overflowYSpills
           padBetween={0.5}
         >
