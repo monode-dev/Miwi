@@ -79,10 +79,16 @@ export function Modal(
 
   //
   const shouldOpenUpwards = useProp(false);
+  const shouldPutOverhangOnLeft = useProp(false);
+  const maxDropDownHeight = useProp(`10px`);
   function openDropDown() {
     if (_isOpen.value) return;
-    shouldOpenUpwards.value =
-      openButtonContainer!.getBoundingClientRect().top > window.innerHeight * 0.6;
+    const openButtonRect = openButtonContainer!.getBoundingClientRect();
+    const distanceToBottom = window.innerHeight - openButtonRect.bottom;
+    const distanceToRight = window.innerWidth - openButtonRect.right;
+    maxDropDownHeight.value = `${(window.innerHeight - openButtonRect.height) * 0.4}px`;
+    shouldOpenUpwards.value = distanceToBottom < openButtonRect.top;
+    shouldPutOverhangOnLeft.value = distanceToRight < openButtonRect.left;
     _isOpen.value = true;
   }
   function closeDropDown() {
@@ -141,12 +147,20 @@ export function Modal(
             width={0}
             overflowXSpills
             heightShrinks
-            maxHeight={16.65}
-            align={shouldOpenUpwards.value ? $Align.bottomLeft : $Align.topLeft}
+            maxHeight={maxDropDownHeight.value}
+            align={
+              shouldOpenUpwards.value
+                ? shouldPutOverhangOnLeft.value
+                  ? $Align.bottomRight
+                  : $Align.bottomLeft
+                : shouldPutOverhangOnLeft.value
+                  ? $Align.topRight
+                  : $Align.topLeft
+            }
           >
             <Card
               heightShrinks
-              maxHeight={16.65}
+              maxHeight={maxDropDownHeight.value}
               overflowYScrolls
               pad={1}
               shadowSize={1}
