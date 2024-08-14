@@ -187,13 +187,11 @@ export function SortableColumn(props: {
       const nextCenter = getYFromChildNode(placeholderElement.nextSibling);
       const dragPos = dragElement.getBoundingClientRect();
       if (exists(prevCenter) && dragPos.top < prevCenter) {
-        // console.log(`Swapping with prev.`);
         placeholderElement.parentNode?.insertBefore(
           placeholderElement,
           placeholderElement.previousSibling,
         );
       } else if (exists(nextCenter) && dragPos.bottom > nextCenter) {
-        // console.log(`Swapping with next.`);
         placeholderElement.parentNode?.insertBefore(
           placeholderElement,
           placeholderElement.nextSibling?.nextSibling ?? null,

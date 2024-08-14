@@ -116,7 +116,6 @@ export const useNav = sessionStore("navigator", () => {
       //     inOrOut: `in`,
       //   },
       // ]
-      // console.log(_pagesInTransitions.value)
     },
     popPage() {
       if (openedPages.value.length <= 1) return;
@@ -129,7 +128,6 @@ export const useNav = sessionStore("navigator", () => {
       //     inOrOut: `out`,
       //   },
       // ]
-      // console.log(_pagesInTransitions.value)
       // openedPages.value = openedPages.value.slice(0, -1)
     },
   };
