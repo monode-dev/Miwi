@@ -47,11 +47,7 @@ export function HiddenOptions(
         </Show>
       }
       isOpen={isOpen}
-      cardStyle={{
-        cornerRadius: 0.5,
-        zIndex: 2,
-        ...props.cardStyle,
-      }}
+      cardStyle={props.cardStyle}
       modalWidth={props.modalWidth}
     >
       {/* No Options Hint */}
