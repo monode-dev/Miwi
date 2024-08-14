@@ -1,4 +1,4 @@
-import { Prop, ReadonlyProp, exists, useProp, doWatch } from "./utils";
+import { Prop, ReadonlyProp, exists, useProp, doWatch, useFormula } from "./utils";
 import { Box, BoxProps } from "./Box/Box";
 import { Stack } from "./Stack";
 import { JSX, Show, onCleanup, onMount } from "solid-js";
@@ -81,6 +81,15 @@ export function Modal(
   const shouldOpenUpwards = useProp(false);
   const shouldPutOverhangOnLeft = useProp(false);
   const maxDropDownHeight = useProp(`10px`);
+  const align = useFormula(() =>
+    shouldOpenUpwards.value
+      ? shouldPutOverhangOnLeft.value
+        ? $Align.bottomRight
+        : $Align.bottomLeft
+      : shouldPutOverhangOnLeft.value
+        ? $Align.topRight
+        : $Align.topLeft,
+  );
   function openDropDown() {
     if (_isOpen.value) return;
     const openButtonRect = openButtonContainer!.getBoundingClientRect();
@@ -119,7 +128,7 @@ export function Modal(
   return (
     <Stack
       pad={props.pad ?? 0}
-      align={shouldOpenUpwards.value ? $Align.bottomRight : $Align.topRight}
+      align={align.value}
       getElement={el => (element = el)}
       classList={{
         [_modalCssClass]: true,
@@ -148,15 +157,7 @@ export function Modal(
             overflowXSpills
             heightShrinks
             maxHeight={maxDropDownHeight.value}
-            align={
-              shouldOpenUpwards.value
-                ? shouldPutOverhangOnLeft.value
-                  ? $Align.bottomRight
-                  : $Align.bottomLeft
-                : shouldPutOverhangOnLeft.value
-                  ? $Align.topRight
-                  : $Align.topLeft
-            }
+            align={align.value}
           >
             <Card
               heightShrinks
