@@ -130,7 +130,7 @@ export function NumField(
         _stringValue.value = formatFinishedInput(_stringValue.value);
         props.onBlur?.();
       }}
-      align={props.align ?? $Align.centerLeft}
+      // align={props.align ?? $Align.topLeft}
       value={_stringValue}
       hasFocus={props.hasFocusSig}
       hintText={props.hint}
@@ -141,8 +141,7 @@ export function NumField(
       h1={props.heading}
       validateNextInput={validateInput}
       keyboard={keyboard}
-      padBetweenX={props.padBetweenX ?? 0.0}
-      padBetweenY={props.padBetweenY ?? 0.0}
+      overrideProps={props}
       formatInput={formatInput}
       onlyWriteOnBlur={props.onlyWriteOnBlur}
       enterKeyHint={props.enterKeyHint}
