@@ -21,6 +21,7 @@ export function Selector<T>(
     actionButtons?: JSXElement;
     cancelOptions?: Parameters<typeof HiddenOptions>[0][`cancelOptions`];
     dropDownWidth?: Size;
+    rightActions?: JSXElement;
   } & BoxProps,
 ) {
   // DEFAULT PROPERTIES
@@ -74,6 +75,7 @@ export function Selector<T>(
       hideCancel={isFiltering.value && !props.stillShowInlineCancelOptionWhenFiltering}
       noOptionsText={props.noOptionsText}
       cancelOptions={props.cancelOptions}
+      rightActions={props.rightActions}
     >
       {/* SECTION: Custom Options */}
       {props.children}

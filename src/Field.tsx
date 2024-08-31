@@ -56,12 +56,9 @@ export function Field(
     enterKeyHint?: EnterKeyHint;
   } & BoxProps,
 ) {
-  const parseProp: (...args: any[]) => any = makePropParser(props as any);
-  const externalValue = props.value ?? useProp(``);
-  const internalValue = props.onlyWriteOnBlur ? useProp(externalValue.value) : undefined;
+  // Parse Props
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
-  const inputElementHasFocus = props.hasFocus ?? useProp(false);
-  const scale = useFormula(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
+  const parseProp: (...args: any[]) => any = makePropParser(props as any);
   const maxLines = useFormula(() =>
     props.multiline
       ? Infinity
@@ -71,51 +68,79 @@ export function Field(
           ? 1
           : props.maxLines,
   );
-  const underlineHeight = useFormula(() => (props.underlined ? 0.5 * scale.value : 0));
-  const textHeight = useFormula(() => {
-    const heightFromProps = parseSize(`height`, parseProp);
-    if (!exists(heightFromProps)) {
-      const offsetBetweenLineHeightAndScaleHeight = 1.18;
-      return maxLines.value === Infinity
-        ? SIZE_SHRINKS
-        : maxLines.value * scale.value * offsetBetweenLineHeightAndScaleHeight;
-    } else if (typeof heightFromProps === `number`) {
-      return heightFromProps - underlineHeight.value;
-    } else {
-      return heightFromProps;
+
+  // Input focus
+  const inputElementHasFocus = props.hasFocus ?? useProp(false);
+  onMount(() => {
+    if (inputElementHasFocus.value) {
+      // Focus on next frame
+      const frameId = requestAnimationFrame(() => inputElement?.focus());
+      onCleanup(() => cancelAnimationFrame(frameId));
     }
   });
-  const fieldHeight = useFormula(() =>
-    typeof textHeight.value === `number`
-      ? textHeight.value + underlineHeight.value
-      : textHeight.value,
-  );
-
-  // Input
-  function setTempValue(newValue: string | undefined | null) {
-    const stringValue = newValue ?? ``;
-    if (exists(internalValue)) {
-      internalValue.value = stringValue;
-    } else {
-      externalValue.value = stringValue;
-    }
-    if (exists(inputElement)) {
-      inputElement.value = stringValue;
-    }
-  }
-  function getTempValue() {
-    return internalValue?.value ?? externalValue.value;
-  }
-  doWatch(
-    () => {
-      if (!inputElementHasFocus.value) {
-        setTempValue(externalValue.value);
+  doWatch(() => {
+    if (inputElementHasFocus.value !== (inputElement === document.activeElement)) {
+      if (inputElementHasFocus.value) {
+        tryFocus();
+      } else {
+        inputElement?.blur();
       }
-    },
-    {
-      on: [externalValue],
-    },
-  );
+    }
+  });
+  function tryFocus() {
+    if (inputElementHasFocus.value) return;
+    inputElement?.focus();
+  }
+
+  // Apply text style to input element
+  function startWatchingTextStyle(inputElement: HTMLInputElement | HTMLTextAreaElement) {
+    const alignX = useProp<AlignSingleAxis>(Align.topLeft.alignX);
+    doWatch(() => {
+      const { alignX: _alignX } = parseAlignProps(parseProp, false, Align.topLeft.alignX);
+      alignX.value = _alignX;
+    });
+    const overflowX = useFormula<Overflow>(() =>
+      maxLines.value == 1 ? parseOverflowX(parseProp) : Overflow.wrap,
+    );
+    watchBoxText(parseProp, useProp(inputElement), {
+      alignX,
+      overflowX,
+    });
+  }
+
+  // Internal Value, External Value, and Focus Change
+  const _externalValue = props.value ?? useProp(``);
+  const internalValue = props.onlyWriteOnBlur ? useProp(_externalValue.value) : _externalValue;
+  if (props.onlyWriteOnBlur) {
+    doWatch(
+      () => {
+        if (!inputElementHasFocus.value) {
+          internalValue.value = _externalValue.value;
+        }
+      },
+      { on: [_externalValue] },
+    );
+  }
+  let internalValueOnFocus = ``;
+  const handleFocus = () => {
+    internalValueOnFocus = internalValue.value;
+    inputElementHasFocus.value = true;
+  };
+  const handleBlur = () => {
+    if (props.onlyWriteOnBlur) {
+      if (internalValue.value !== internalValueOnFocus) {
+        // If an internal change happened overwrite any external changes.
+        _externalValue.value = internalValue.value;
+      } else if (internalValue.value !== _externalValue.value) {
+        // Only apply external changes if there were no internal changes.
+        internalValue.value = _externalValue.value;
+      }
+    }
+    inputElementHasFocus.value = false;
+    props.onBlur?.();
+  };
+
+  // Validate & format input
   function handleInput(uncastEvent: Event) {
     const event = uncastEvent as InputEvent;
     let newInput = (event.target as any)?.value ?? "";
@@ -129,7 +154,7 @@ export function Field(
 
     (event.target as any).value = newInput;
 
-    setTempValue(newInput);
+    internalValue.value = newInput ?? ``;
 
     if (position !== null) {
       (event.target as any).setSelectionRange(position, position);
@@ -155,84 +180,47 @@ export function Field(
     if (!nextInputIsValid) event.preventDefault();
   }
   function predictNextInput(newText: string) {
-    const input = inputElement;
-    if (!exists(input)) return;
+    if (!exists(inputElement)) return;
     return (
-      input.value.slice(0, input.selectionStart!) + newText + input.value.slice(input.selectionEnd!)
+      inputElement.value.slice(0, inputElement.selectionStart!) +
+      newText +
+      inputElement.value.slice(inputElement.selectionEnd!)
     );
   }
 
-  // Focus
-  let valueOnFocus = externalValue.value;
-  const handleFocus = () => {
-    if (getTempValue() !== externalValue.value) {
-      setTempValue(externalValue.value);
-    }
-    valueOnFocus = externalValue.value;
-    inputElementHasFocus.value = true;
-  };
-
-  const handleBlur = () => {
-    const tempValueIsDifferentThanProp = getTempValue() !== externalValue.value;
-    const haveTypedSomething = getTempValue() !== valueOnFocus;
-    if (haveTypedSomething && tempValueIsDifferentThanProp) {
-      externalValue.value = getTempValue();
-    } else if (!haveTypedSomething && tempValueIsDifferentThanProp) {
-      // If someone else changed the value, and we didn't, then get the new value.
-      setTempValue(externalValue.value);
-    }
-    inputElementHasFocus.value = false;
-    props.onBlur?.();
-  };
-  doWatch(() => {
-    if (inputElementHasFocus.value !== (inputElement === document.activeElement)) {
-      if (inputElementHasFocus.value) {
-        tryFocus();
-      } else {
-        inputElement?.blur();
-      }
-    }
-  });
-
+  // Visuals
   const detailColor = useFormula(() =>
     inputElementHasFocus.value
       ? $theme.colors.primary
-      : externalValue.value === `` || !exists(externalValue.value)
+      : internalValue.value === `` || !exists(internalValue.value)
         ? $theme.colors.hint
         : props.stroke ?? $theme.colors.text,
   );
 
-  onMount(() => {
-    if (inputElementHasFocus.value) {
-      // Focus on next frame
-      const frameId = requestAnimationFrame(() => inputElement?.focus());
-      onCleanup(() => cancelAnimationFrame(frameId));
+  // Height Calcs
+  const scale = useFormula(() => props.scale ?? (props.h1 ? 1.5 : props.h2 ? 1.25 : 1));
+  const underlineHeight = useFormula(() => (props.underlined ? 0.5 * scale.value : 0));
+  const textHeight = useFormula(() => {
+    const heightFromProps = parseSize(`height`, parseProp);
+    if (!exists(heightFromProps)) {
+      const offsetBetweenLineHeightAndScaleHeight = 1.18;
+      return maxLines.value === Infinity
+        ? SIZE_SHRINKS
+        : maxLines.value * scale.value * offsetBetweenLineHeightAndScaleHeight;
+    } else if (typeof heightFromProps === `number`) {
+      return heightFromProps - underlineHeight.value;
+    } else {
+      return heightFromProps;
     }
   });
+  const fieldHeight = useFormula(() =>
+    typeof textHeight.value === `number`
+      ? textHeight.value + underlineHeight.value
+      : textHeight.value,
+  );
 
-  function tryFocus() {
-    if (inputElementHasFocus.value) return;
-    inputElement?.focus();
-  }
-
-  // Apply text style to input element
-  function startWatchingTextStyle(inputElement: HTMLInputElement | HTMLTextAreaElement) {
-    const alignX = useProp<AlignSingleAxis>(Align.topLeft.alignX);
-    doWatch(() => {
-      const { alignX: _alignX } = parseAlignProps(parseProp, false, Align.topLeft.alignX);
-      alignX.value = _alignX;
-    });
-    const overflowX = useFormula<Overflow>(() =>
-      maxLines.value == 1 ? parseOverflowX(parseProp) : Overflow.wrap,
-    );
-    watchBoxText(parseProp, useProp(inputElement), {
-      alignX,
-      overflowX,
-    });
-  }
-
-  // TODO: Tapping on the field does not move the cursor.
-  function _Input(_inputProps: { value: string }) {
+  // TODO: At one point in time, tapping on the field did not move the cursor.
+  function _InputOrTextArea(_inputProps: { value: string }) {
     const inputProps = {
       ref: (el: HTMLInputElement | HTMLTextAreaElement) => {
         inputElement = el;
@@ -322,14 +310,14 @@ export function Field(
         >
           <Show when={textHeight.value === SIZE_SHRINKS}>
             <Txt stroke={`transparent`} widthGrows>
-              {externalValue.value == ``
+              {internalValue.value == ``
                 ? `a`
-                : externalValue.value.endsWith(`\n`)
-                  ? externalValue.value + `\n`
-                  : externalValue.value}
+                : internalValue.value.endsWith(`\n`)
+                  ? internalValue.value + `\n`
+                  : internalValue.value}
             </Txt>
           </Show>
-          <_Input value={externalValue.value} />
+          <_InputOrTextArea value={internalValue.value} />
         </Stack>
 
         {/* Underline */}
