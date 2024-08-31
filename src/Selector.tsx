@@ -75,7 +75,6 @@ export function Selector<T>(
       hideCancel={isFiltering.value && !props.stillShowInlineCancelOptionWhenFiltering}
       noOptionsText={props.noOptionsText}
       cancelOptions={props.cancelOptions}
-      rightActions={props.rightActions}
     >
       {/* SECTION: Custom Options */}
       {props.children}

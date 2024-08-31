@@ -20,7 +20,6 @@ export function HiddenOptions(
     cardStyle?: BoxProps;
     dropDownWidth?: Size;
     noOptionsText?: string;
-    rightActions?: JSXElement;
   } & BoxProps,
 ) {
   const scale = props.scale ?? 1;
@@ -34,21 +33,18 @@ export function HiddenOptions(
   return (
     <Modal
       openButton={
-        <Row padBetween={1}>
-          <Show
-            when={exists(props.openButton)}
-            fallback={
-              <Icon
-                scale={scale}
-                iconPath={props.openIcon ?? mdiDotsVertical}
-                onClick={() => (isOpen.value = !isOpen.value)}
-              />
-            }
-          >
-            {props.openButton}
-          </Show>
-          {props.rightActions}
-        </Row>
+        <Show
+          when={exists(props.openButton)}
+          fallback={
+            <Icon
+              scale={scale}
+              iconPath={props.openIcon ?? mdiDotsVertical}
+              onClick={() => (isOpen.value = !isOpen.value)}
+            />
+          }
+        >
+          {props.openButton}
+        </Show>
       }
       isOpen={isOpen}
       cardStyle={props.cardStyle}
