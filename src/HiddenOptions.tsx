@@ -34,7 +34,7 @@ export function HiddenOptions(
   return (
     <Modal
       openButton={
-        <Row>
+        <Row padBetween={1}>
           <Show
             when={exists(props.openButton)}
             fallback={
@@ -47,6 +47,7 @@ export function HiddenOptions(
           >
             {props.openButton}
           </Show>
+          {props.rightActions}
         </Row>
       }
       isOpen={isOpen}
