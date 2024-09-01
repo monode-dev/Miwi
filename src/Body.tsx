@@ -1,14 +1,16 @@
 import { BoxProps } from "./Box/Box";
 import { Column } from "./Column";
+import { theme } from "./Theme";
 
 export function Body(props: BoxProps) {
   return (
     <Column
       widthGrows
+      maxWidth={30}
       heightGrows
       alignTopCenter
       preventClickPropagation
-      stroke={$theme.colors.text}
+      stroke={theme.palette.text}
       scale={1}
       pad={1}
       overflowY={$Overflow.scroll}

@@ -48,6 +48,7 @@ export function Selector<T>(
           widthGrows
           height={props.scale ?? 1}
           padBetween={0.5}
+          alignTopLeft
         >
           <Show
             when={!exists(props.filterString) || !isOpen.value}
