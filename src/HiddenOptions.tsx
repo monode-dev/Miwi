@@ -58,7 +58,7 @@ export function HiddenOptions(
       </Show>
 
       {/* Cancel */}
-      <Show when={!props.hideCancel}>
+      <Show when={!props.hideCancel && hasChildren(props.children)}>
         <HiddenOption
           {...{
             text: `Cancel`,
