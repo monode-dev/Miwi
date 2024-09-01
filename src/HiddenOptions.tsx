@@ -9,6 +9,7 @@ import { doNow, useProp, useFormula, exists, hasChildren } from "./utils";
 import { BoxProps } from "./Box/Box";
 import { Size } from "./Box/BoxSize";
 import { theme } from "./Theme";
+import { Column } from "./Column";
 
 export function HiddenOptions(
   props: {
@@ -22,6 +23,8 @@ export function HiddenOptions(
     noOptionsText?: string;
   } & BoxProps,
 ) {
+  const optionsWrapper = useProp<HTMLElement | null>(null);
+  const hasOptions = useFormula(() => exists(optionsWrapper.value?.children));
   const scale = props.scale ?? 1;
   const isOpen = doNow(() => {
     const _fallbackIsOpen = useProp(false);
@@ -51,14 +54,14 @@ export function HiddenOptions(
       dropDownWidth={props.dropDownWidth}
     >
       {/* No Options Hint */}
-      <Show when={!hasChildren(props.children)}>
+      <Show when={!hasOptions.value}>
         <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
           {props.noOptionsText ?? `No Options`}
         </Txt>
       </Show>
 
       {/* Cancel */}
-      <Show when={!props.hideCancel && hasChildren(props.children)}>
+      <Show when={!props.hideCancel && hasOptions.value}>
         <HiddenOption
           {...{
             text: `Cancel`,
@@ -71,7 +74,7 @@ export function HiddenOptions(
       </Show>
 
       {/* Other Options */}
-      {props.children}
+      <Column getElement={el => (optionsWrapper.value = el)}>{props.children}</Column>
     </Modal>
   );
 }
