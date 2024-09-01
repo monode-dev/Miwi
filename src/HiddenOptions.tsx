@@ -1,11 +1,11 @@
 import { mdiClose, mdiDotsVertical, mdiTrashCanOutline } from "@mdi/js";
 import { Prop } from "mosa-js";
-import { JSXElement, Show } from "solid-js";
+import { JSXElement, Show, children } from "solid-js";
 import { Icon } from "./Icon";
 import { Modal, closeParentModal } from "./Modal";
 import { Row } from "./Row";
 import { Txt } from "./Txt";
-import { doNow, useProp, useFormula, exists, hasChildren } from "./utils";
+import { doNow, useProp, useFormula, exists } from "./utils";
 import { BoxProps } from "./Box/Box";
 import { Size } from "./Box/BoxSize";
 import { theme } from "./Theme";
@@ -30,6 +30,13 @@ export function HiddenOptions(
       v => (exists(props.isOpen) ? (props.isOpen.value = v) : (_fallbackIsOpen.value = v)),
     );
   });
+  const getActualChildren = children(() => props.children);
+  const hasChildren = useFormula(() => {
+    const actualChildren = getActualChildren();
+    if (!exists(actualChildren)) return false;
+    if (!Array.isArray(actualChildren)) return true;
+    return actualChildren.length > 0;
+  });
   return (
     <Modal
       openButton={
@@ -50,15 +57,8 @@ export function HiddenOptions(
       cardStyle={props.cardStyle}
       dropDownWidth={props.dropDownWidth}
     >
-      {/* No Options Hint */}
-      <Show when={!hasChildren(props.children)}>
-        <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
-          {props.noOptionsText ?? `No Options`}
-        </Txt>
-      </Show>
-
       {/* Cancel */}
-      <Show when={!props.hideCancel && hasChildren(props.children)}>
+      <Show when={!props.hideCancel && hasChildren.value}>
         <HiddenOption
           {...{
             text: `Cancel`,
@@ -68,6 +68,13 @@ export function HiddenOptions(
             ...props.cancelOptions,
           }}
         />
+      </Show>
+
+      {/* No Options Hint */}
+      <Show when={!hasChildren.value}>
+        <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
+          {props.noOptionsText ?? `No Options`}
+        </Txt>
       </Show>
 
       {/* Other Options */}
