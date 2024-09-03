@@ -13,7 +13,7 @@ export function Selector<T>(
   props: {
     value: T;
     getLabelForData: (data: T) => string | null;
-    noneLabel?: string;
+    hintText?: string;
     noOptionsText?: string;
     isOpen?: Prop<boolean>;
     filterString?: Prop<string>;
@@ -25,7 +25,6 @@ export function Selector<T>(
   } & BoxProps,
 ) {
   // DEFAULT PROPERTIES
-  const noneLabel = useFormula(() => props.noneLabel ?? "None");
   const isOpen = props.isOpen ?? useProp(false);
   const isFiltering = useFormula(
     () => exists(props.filterString) && props.filterString.value !== ``,
@@ -61,7 +60,7 @@ export function Selector<T>(
               overflowX={$Overflow.crop}
               stroke={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
             >
-              {props.getLabelForData(props.value) ?? noneLabel.value}
+              {props.getLabelForData(props.value) ?? props.hintText ?? "None"}
             </Txt>
           </Show>
           <Icon
