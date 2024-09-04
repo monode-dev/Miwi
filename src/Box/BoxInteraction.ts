@@ -76,7 +76,7 @@ export function watchBoxInteraction(
     //   bonusTouchAreaClassName,
     //   parseProp(`bonusTouchArea`) ?? isClickable,
     // );
-    element.value.style.outline = isClickable ? `0.5rem solid transparent` : ``;
+    element.value.style.outline = isClickable ? `0.5rem solid rgba(255, 0, 0, 0.125)` : ``;
   });
 
   // On Mouse Enter
