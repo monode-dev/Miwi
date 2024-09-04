@@ -79,7 +79,7 @@ export function Slider(props: {
               cornerRadius={thumbHeight / 2}
               fill={color.value}
               preventClickPropagation={true}
-              bonusTouchArea
+              touchRadius={0.5}
             />
           </Box>
         </Row>

@@ -1,10 +1,11 @@
-import { Prop, exists } from "src/utils";
+import { Prop, doNow, exists } from "src/utils";
 import { muToCss, ParseProp } from "./BoxUtils";
 import { createRenderEffect } from "solid-js";
 
 export type InteractionSty = Partial<{
   // role: string
-  bonusTouchArea: boolean;
+  // bonusTouchArea: boolean;
+  touchRadius: number | string;
   // TODO: Maybe rename to "interactable", "clickable", "absorbsClicks", or something like that.
   preventClickPropagation: boolean;
   cssCursor: "pointer" | "default";
@@ -82,7 +83,22 @@ export function watchBoxInteraction(
      * some degree. Imagine a scrollable body, withe a bottom nav bar. Components under the bottom nav bar should not
      * be interactable. */
     // Use color `rgba(255, 0, 0, 0.125)` for debugging.
-    element.value.style.outline = isClickable ? `${muToCss(2)} solid rgba(255, 0, 0, 0.125)` : ``;
+    const touchRadiusCss = doNow(() => {
+      const touchRadius = parseProp(`touchRadius`);
+      return exists(touchRadius)
+        ? typeof touchRadius === `string`
+          ? touchRadius
+          : // If touch radius is zero, then don't set it.
+            touchRadius === 0
+            ? undefined
+            : muToCss(touchRadius)
+        : isClickable
+          ? 2
+          : undefined;
+    });
+    element.value.style.outline = exists(touchRadiusCss)
+      ? `${touchRadiusCss} solid rgba(255, 0, 0, 0.125)`
+      : ``;
   });
 
   // On Mouse Enter
