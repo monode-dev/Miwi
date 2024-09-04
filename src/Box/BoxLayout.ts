@@ -373,6 +373,8 @@ export function watchBoxLayout(
         : overflowY === Overflow.wrap && context.axis.value === Axis.row
           ? `wrap`
           : ``;
+    /* We considered using `clip-path: inset(0);` so that `::before` sudo elements could
+     * be used for touch radius, but `clip-path` doesn't clip text. */
     element.value.style.overflowX =
       _overflowX === Overflow.scroll
         ? `auto` // Scroll when necessary, and float above contents so we can make it invisible
