@@ -82,7 +82,7 @@ export function watchBoxInteraction(
      * some degree. Imagine a scrollable body, withe a bottom nav bar. Components under the bottom nav bar should not
      * be interactable. */
     // Use color `rgba(255, 0, 0, 0.125)` for debugging.
-    element.value.style.outline = isClickable ? `${muToCss(0.5)} solid rgba(255, 0, 0, 0.125)` : ``;
+    element.value.style.outline = isClickable ? `${muToCss(2)} solid rgba(255, 0, 0, 0.125)` : ``;
   });
 
   // On Mouse Enter
