@@ -21,6 +21,11 @@ export type InteractionSty = Partial<{
 const bonusTouchAreaClassName = `miwi-bonus-touch-area`;
 const style = document.createElement(`style`);
 // TODO: Use bonus touch radius to control the size of the touch area.
+/* We tried to prevent clip from affecting touch radius since that seemed like a good
+ * idea, but clip needs to effect touch radius to some degree. Imagine a scrollable
+ * body, withe a bottom nav bar. Components under the bottom nav bar should not be
+ * interactable. */
+// Use background: rgba(255, 0, 0, 0.125); for debugging.
 style.textContent = `
 :root {
   --miwi-bonus-touch-radius: -0.5rem
@@ -33,7 +38,6 @@ style.textContent = `
   bottom: var(--miwi-bonus-touch-radius);
   left: var(--miwi-bonus-touch-radius);
   pointer-events: auto;
-  transform: translateZ(1);
   background: rgba(255, 0, 0, 0.125);
 }`; //z-index: -1;
 document.body.appendChild(style);
@@ -72,8 +76,6 @@ export function watchBoxInteraction(
       bonusTouchAreaClassName,
       parseProp(`bonusTouchArea`) ?? isClickable,
     );
-    // This forces a new stacking context, hopefully preventing the pseudo-element for touch area from being clipped.
-    element.value.style.transform = `translateZ(0)`;
   });
 
   // On Mouse Enter
