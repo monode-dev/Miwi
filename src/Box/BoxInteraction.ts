@@ -25,7 +25,7 @@ export const touchAreaColorCssVarName = `--miwi-touch-area-color`;
 const style = document.createElement(`style`);
 style.textContent = `
 :root {
-  ${touchRadiusCssVarName}: -0.5rem
+  ${touchRadiusCssVarName}: -${muToCss(0.5)}
 }
 .${expandedTouchRadiusClassName}::before {
   content: '';
@@ -79,12 +79,12 @@ export function watchBoxInteraction(
             ? undefined
             : muToCss(touchRadius)
         : isClickable
-          ? muToCss(2)
+          ? muToCss(0.5)
           : undefined;
     });
     element.value.style.setProperty(
       touchRadiusCssVarName,
-      exists(touchRadiusCss) ? touchRadiusCss : ``,
+      exists(touchRadiusCss) ? `-${touchRadiusCss}` : ``,
     );
     element.value.classList.toggle(expandedTouchRadiusClassName, exists(touchRadiusCss));
     // element.value.style.outline = exists(touchRadiusCss)
