@@ -2,6 +2,7 @@ import { DeepPartial } from "./utils";
 import { sizeScaleCssVarName } from "./Theme";
 import { muToCss } from "./Box/BoxUtils";
 import { Align, Axis, Overflow } from "./Box/BoxLayout";
+import { touchAreaColorCssVarName } from "./Box/BoxInteraction";
 
 // SECTION: Global variables
 declare global {
@@ -64,7 +65,11 @@ document.body.appendChild(themeScriptElement);
 const themeStyleElement = document.createElement(`style`);
 setTheme({});
 document.body.appendChild(themeStyleElement);
-export function setTheme(props: DeepPartial<Omit<typeof $theme, `stroke`>>) {
+export function setTheme(
+  props: DeepPartial<Omit<typeof $theme, `stroke`>> & {
+    debugInteractableArea?: boolean;
+  },
+) {
   themeStyleElement.innerHTML = `
   :root {
     ${sizeScaleCssVarName}: ${muToCss(props.scale ?? 1)};
@@ -76,6 +81,9 @@ export function setTheme(props: DeepPartial<Omit<typeof $theme, `stroke`>>) {
     --miwi-color-light-hint: ${props.colors?.lightHint ?? `lightgray`};
     --miwi-color-warning: ${props.colors?.warning ?? `#ff9800ff`};
     --miwi-color-error: ${props.colors?.error ?? `#f44336ff`};
+    ${touchAreaColorCssVarName}: ${
+      props.debugInteractableArea ? `rgba(255, 0, 0, 0.125)` : `transparent`
+    };
   }`;
 }
 

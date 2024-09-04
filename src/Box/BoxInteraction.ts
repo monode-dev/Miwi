@@ -19,6 +19,26 @@ export type InteractionSty = Partial<{
   onclick: (e: MouseEvent) => void;
 }>;
 
+const expandedTouchRadiusClassName = `miwi-bonus-touch-area`;
+const touchRadiusCssVarName = `--miwi-touch-radius`;
+export const touchAreaColorCssVarName = `--miwi-touch-area-color`;
+const style = document.createElement(`style`);
+style.textContent = `
+:root {
+  ${touchRadiusCssVarName}: -0.5rem
+}
+.${expandedTouchRadiusClassName}::before {
+  content: '';
+  position: absolute;
+  top: var(${touchRadiusCssVarName});
+  right: var(${touchRadiusCssVarName});
+  bottom: var(${touchRadiusCssVarName});
+  left: var(${touchRadiusCssVarName});
+  pointer-events: auto;
+  background: var(${touchAreaColorCssVarName});
+}`; //z-index: -1;
+document.body.appendChild(style);
+
 export function watchBoxInteraction(
   parseProp: ParseProp<InteractionSty>,
   element: Prop<HTMLElement | undefined>,
@@ -62,14 +82,20 @@ export function watchBoxInteraction(
           ? muToCss(2)
           : undefined;
     });
-    element.value.style.outline = exists(touchRadiusCss)
-      ? `${touchRadiusCss} solid rgba(255, 0, 0, 0.125)`
-      : ``;
+    element.value.style.setProperty(
+      touchRadiusCssVarName,
+      exists(touchRadiusCss) ? touchRadiusCss : ``,
+    );
+    element.value.classList.toggle(expandedTouchRadiusClassName, exists(touchRadiusCss));
+    // element.value.style.outline = exists(touchRadiusCss)
+    //   ? `${touchRadiusCss} solid rgba(255, 0, 0, 0.125)`
+    //   : ``;
     /* Previously to get touch radius we used a `::before` pseudo element with position `absolute, but this was adding
      * extra padding to layouts when both a full-screen dialog and keyboard where open, and overflow clip on a box was
      * clipping that box's touch radius. When we did that, we tried to prevent clip from affecting touch radius since
      * that seemed like a good idea, but clip needs to effect touch radius to some degree. Imagine a scrollable body,
-     * with a bottom nav bar. Components under the bottom nav bar should not be interactable. */
+     * with a bottom nav bar. Components under the bottom nav bar should not be interactable.
+     * https://github.com/w3c/csswg-drafts/issues/4708 */
     // const bonusTouchAreaClassName = `miwi-bonus-touch-area`;
     // element.value.classList.toggle(
     //   bonusTouchAreaClassName,
