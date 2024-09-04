@@ -33,7 +33,7 @@ style.textContent = `
   bottom: var(--miwi-bonus-touch-radius);
   left: var(--miwi-bonus-touch-radius);
   pointer-events: auto;
-  transform: translateZ(0);
+  transform: translateZ(1);
   background: rgba(255, 0, 0, 0.125);
 }`; //z-index: -1;
 document.body.appendChild(style);
