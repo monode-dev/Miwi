@@ -67,11 +67,13 @@ export function watchBoxInteraction(
         ? (e: MouseEvent) => onClickListeners.forEach(listener => listener(e))
         : null;
     element.value.style.cursor = parseProp(`cssCursor`) ?? (isClickable ? `pointer` : `default`);
-    // NOTE: This seems to be adding extra padding to layouts sometimes so I'm disabling it for now.
+    // NOTE: This seems to be adding extra padding to layouts when a full-screen dialog and keyboard are open.
     element.value.classList.toggle(
       bonusTouchAreaClassName,
       parseProp(`bonusTouchArea`) ?? isClickable,
     );
+    // This forces a new stacking context, hopefully preventing the pseudo-element for touch area from being clipped.
+    element.value.style.transform = `translateZ(0)`;
   });
 
   // On Mouse Enter
