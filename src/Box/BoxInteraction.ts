@@ -109,7 +109,7 @@ export function watchBoxInteraction(
         ? (e: MouseEvent) => onClickListeners.forEach(listener => listener(e))
         : null;
     element.value.style.cursor = parseProp(`cssCursor`) ?? (isClickable ? `pointer` : `default`);
-    // applyTouchRadius({ parseProp, element: element.value, isClickable });
+    applyTouchRadius({ parseProp, element: element.value, isClickable });
   });
 
   // On Mouse Enter
