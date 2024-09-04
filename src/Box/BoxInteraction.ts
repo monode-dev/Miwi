@@ -19,25 +19,66 @@ export type InteractionSty = Partial<{
   onclick: (e: MouseEvent) => void;
 }>;
 
-const expandedTouchRadiusClassName = `miwi-bonus-touch-area`;
-const touchRadiusCssVarName = `--miwi-touch-radius`;
-export const touchAreaColorCssVarName = `--miwi-touch-area-color`;
-const style = document.createElement(`style`);
-style.textContent = `
-:root {
-  ${touchRadiusCssVarName}: -${muToCss(0.5)}
-}
-.${expandedTouchRadiusClassName}::before {
-  content: '';
-  position: absolute;
-  top: var(${touchRadiusCssVarName});
-  right: var(${touchRadiusCssVarName});
-  bottom: var(${touchRadiusCssVarName});
-  left: var(${touchRadiusCssVarName});
-  pointer-events: auto;
-  background: var(${touchAreaColorCssVarName});
-}`; //z-index: -1;
-document.body.appendChild(style);
+// SECTION: Touch radius
+/* To get touch radius we are using a `::before` pseudo element with `position: absolute`, but this is adding
+ * extra padding to layouts when both a full-screen dialog and keyboard are open, and overflow clip on a box is
+ * clipping that box's touch radius. An element's parent's clip should affect the touch radius, but an element's
+ * own clip should not affect its touch radius. Imagine a scrollable body, with a bottom nav bar. Components
+ * under the bottom nav bar should not be interactable. See the following link for a possible future approach.
+ * https://github.com/w3c/csswg-drafts/issues/4708 */
+export const { touchAreaColorCssVarName, applyTouchRadius } = doNow(() => {
+  const expandedTouchRadiusClassName = `miwi-bonus-touch-area`;
+  const touchRadiusCssVarName = `--miwi-touch-radius`;
+  // This is so we can use semi-transparent red for debugging: `rgba(255, 0, 0, 0.125)`
+  const touchAreaColorCssVarName = `--miwi-touch-area-color`;
+  const style = document.createElement(`style`);
+  style.textContent = `
+  :root {
+    ${touchRadiusCssVarName}: -${muToCss(0.5)}
+  }
+  .${expandedTouchRadiusClassName}::before {
+    content: '';
+    position: absolute;
+    top: var(${touchRadiusCssVarName});
+    right: var(${touchRadiusCssVarName});
+    bottom: var(${touchRadiusCssVarName});
+    left: var(${touchRadiusCssVarName});
+    pointer-events: auto;
+    background: var(${touchAreaColorCssVarName});
+  }`; //z-index: -1;
+  document.body.appendChild(style);
+
+  return {
+    touchAreaColorCssVarName,
+    applyTouchRadius: (params: {
+      parseProp: ParseProp<InteractionSty>;
+      element: HTMLElement;
+      isClickable: boolean;
+    }) => {
+      const touchRadiusCss = doNow(() => {
+        const touchRadius = params.parseProp(`touchRadius`);
+        return exists(touchRadius)
+          ? typeof touchRadius === `string`
+            ? touchRadius
+            : // If touch radius is zero, then don't set it.
+              touchRadius === 0
+              ? undefined
+              : muToCss(touchRadius)
+          : params.isClickable
+            ? muToCss(0.5)
+            : undefined;
+      });
+      params.element.style.setProperty(
+        touchRadiusCssVarName,
+        exists(touchRadiusCss) ? `-${touchRadiusCss}` : ``,
+      );
+      params.element.classList.toggle(expandedTouchRadiusClassName, exists(touchRadiusCss));
+      // params.element.style.outline = exists(touchRadiusCss)
+      //   ? `${touchRadiusCss} solid rgba(255, 0, 0, 0.125)`
+      //   : ``;
+    },
+  };
+});
 
 export function watchBoxInteraction(
   parseProp: ParseProp<InteractionSty>,
@@ -68,53 +109,7 @@ export function watchBoxInteraction(
         ? (e: MouseEvent) => onClickListeners.forEach(listener => listener(e))
         : null;
     element.value.style.cursor = parseProp(`cssCursor`) ?? (isClickable ? `pointer` : `default`);
-    // Use color `rgba(255, 0, 0, 0.125)` for debugging.
-    const touchRadiusCss = doNow(() => {
-      const touchRadius = parseProp(`touchRadius`);
-      return exists(touchRadius)
-        ? typeof touchRadius === `string`
-          ? touchRadius
-          : // If touch radius is zero, then don't set it.
-            touchRadius === 0
-            ? undefined
-            : muToCss(touchRadius)
-        : isClickable
-          ? muToCss(0.5)
-          : undefined;
-    });
-    element.value.style.setProperty(
-      touchRadiusCssVarName,
-      exists(touchRadiusCss) ? `-${touchRadiusCss}` : ``,
-    );
-    element.value.classList.toggle(expandedTouchRadiusClassName, exists(touchRadiusCss));
-    // element.value.style.outline = exists(touchRadiusCss)
-    //   ? `${touchRadiusCss} solid rgba(255, 0, 0, 0.125)`
-    //   : ``;
-    /* Previously to get touch radius we used a `::before` pseudo element with position `absolute, but this was adding
-     * extra padding to layouts when both a full-screen dialog and keyboard where open, and overflow clip on a box was
-     * clipping that box's touch radius. When we did that, we tried to prevent clip from affecting touch radius since
-     * that seemed like a good idea, but clip needs to effect touch radius to some degree. Imagine a scrollable body,
-     * with a bottom nav bar. Components under the bottom nav bar should not be interactable.
-     * https://github.com/w3c/csswg-drafts/issues/4708 */
-    // const bonusTouchAreaClassName = `miwi-bonus-touch-area`;
-    // element.value.classList.toggle(
-    //   bonusTouchAreaClassName,
-    //   parseProp(`bonusTouchArea`) ?? isClickable,
-    // );
-    // style.textContent = `
-    // :root {
-    //   --miwi-bonus-touch-radius: -0.5rem
-    // }
-    // .${bonusTouchAreaClassName}::before {
-    //   content: '';
-    //   position: absolute;
-    //   top: var(--miwi-bonus-touch-radius);
-    //   right: var(--miwi-bonus-touch-radius);
-    //   bottom: var(--miwi-bonus-touch-radius);
-    //   left: var(--miwi-bonus-touch-radius);
-    //   pointer-events: auto;
-    //   background: rgba(255, 0, 0, 0.125);
-    // }`; //z-index: -1;
+    applyTouchRadius({ parseProp, element: element.value, isClickable });
   });
 
   // On Mouse Enter
