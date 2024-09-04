@@ -72,10 +72,11 @@ export function watchBoxInteraction(
         : null;
     element.value.style.cursor = parseProp(`cssCursor`) ?? (isClickable ? `pointer` : `default`);
     // NOTE: This seems to be adding extra padding to layouts when a full-screen dialog and keyboard are open.
-    element.value.classList.toggle(
-      bonusTouchAreaClassName,
-      parseProp(`bonusTouchArea`) ?? isClickable,
-    );
+    // element.value.classList.toggle(
+    //   bonusTouchAreaClassName,
+    //   parseProp(`bonusTouchArea`) ?? isClickable,
+    // );
+    element.value.style.outline = isClickable ? `0.5rem solid transparent` : ``;
   });
 
   // On Mouse Enter
