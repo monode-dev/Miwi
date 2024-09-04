@@ -1,5 +1,5 @@
 import { Prop, exists } from "src/utils";
-import { ParseProp } from "./BoxUtils";
+import { muToCss, ParseProp } from "./BoxUtils";
 import { createRenderEffect } from "solid-js";
 
 export type InteractionSty = Partial<{
@@ -18,29 +18,29 @@ export type InteractionSty = Partial<{
   onclick: (e: MouseEvent) => void;
 }>;
 
-const bonusTouchAreaClassName = `miwi-bonus-touch-area`;
-const style = document.createElement(`style`);
+// const bonusTouchAreaClassName = `miwi-bonus-touch-area`;
+// const style = document.createElement(`style`);
 // TODO: Use bonus touch radius to control the size of the touch area.
 /* We tried to prevent clip from affecting touch radius since that seemed like a good
  * idea, but clip needs to effect touch radius to some degree. Imagine a scrollable
  * body, withe a bottom nav bar. Components under the bottom nav bar should not be
  * interactable. */
 // Use background: rgba(255, 0, 0, 0.125); for debugging.
-style.textContent = `
-:root {
-  --miwi-bonus-touch-radius: -0.5rem
-}
-.${bonusTouchAreaClassName}::before {
-  content: '';
-  position: absolute;
-  top: var(--miwi-bonus-touch-radius);
-  right: var(--miwi-bonus-touch-radius);
-  bottom: var(--miwi-bonus-touch-radius);
-  left: var(--miwi-bonus-touch-radius);
-  pointer-events: auto;
-  background: rgba(255, 0, 0, 0.125);
-}`; //z-index: -1;
-document.body.appendChild(style);
+// style.textContent = `
+// :root {
+//   --miwi-bonus-touch-radius: -0.5rem
+// }
+// .${bonusTouchAreaClassName}::before {
+//   content: '';
+//   position: absolute;
+//   top: var(--miwi-bonus-touch-radius);
+//   right: var(--miwi-bonus-touch-radius);
+//   bottom: var(--miwi-bonus-touch-radius);
+//   left: var(--miwi-bonus-touch-radius);
+//   pointer-events: auto;
+//   background: rgba(255, 0, 0, 0.125);
+// }`; //z-index: -1;
+// document.body.appendChild(style);
 
 export function watchBoxInteraction(
   parseProp: ParseProp<InteractionSty>,
@@ -76,7 +76,13 @@ export function watchBoxInteraction(
     //   bonusTouchAreaClassName,
     //   parseProp(`bonusTouchArea`) ?? isClickable,
     // );
-    element.value.style.outline = isClickable ? `0.5rem solid rgba(255, 0, 0, 0.125)` : ``;
+    /* We previously considered using a `::before` pseudo element with position `absolute, but this was affecting
+     * layout, and overflow clip on a box was clipping that box's touch radius. When we did that, we tried to prevent
+     * clip from affecting touch radius since that seemed like a good idea, but clip needs to effect touch radius to
+     * some degree. Imagine a scrollable body, withe a bottom nav bar. Components under the bottom nav bar should not
+     * be interactable. */
+    // Use color `rgba(255, 0, 0, 0.125)` for debugging.
+    element.value.style.outline = isClickable ? `${muToCss(0.5)} solid rgba(255, 0, 0, 0.125)` : ``;
   });
 
   // On Mouse Enter
