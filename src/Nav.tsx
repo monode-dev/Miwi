@@ -3,6 +3,7 @@ import { useFormula, useProp, sessionStore, Prop, exists } from "./utils";
 import { gsap } from "gsap";
 import { Box } from "./Box/Box";
 import { OfflineWarning } from "./OfflineWarning";
+import { Stack } from "./Stack";
 
 // SECTION: Transitions
 export interface PageTransition {
@@ -206,22 +207,21 @@ export function Nav(props: { isOnlineSig?: Prop<boolean> }) {
   //   }
   // }
   return (
-    <Box asWideAsParent asTallAsParent>
+    <Stack asWideAsParent asTallAsParent>
       {/* Openned Pages */}
       <For each={nav.openedPages.value}>
         {(page, index) => (
-          <div
+          <Box
             classList={{
               [pageClassTag]: true,
               [activePageClass]: index() === nav.openedPages.value.length - 1,
             }}
             id={`${pageIdTag}${index()}`}
-            style={pageWrapperStyle(10 + index() * 10)}
+            zIndex={10 + index() * 10}
+            // style={pageWrapperStyle(10 + index() * 10)}
           >
-            <_PageWrapper transitions={page.transitions}>
-              <page.component {...page.props} />
-            </_PageWrapper>
-          </div>
+            <page.component {...page.props} />
+          </Box>
         )}
       </For>
 
@@ -242,7 +242,7 @@ export function Nav(props: { isOnlineSig?: Prop<boolean> }) {
           }}
         />
       </Show>
-    </Box>
+    </Stack>
   );
 }
 

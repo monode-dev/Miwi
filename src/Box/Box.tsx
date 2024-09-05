@@ -39,6 +39,7 @@ export type BoxStyleProps = Partial<
     DecorationSty &
     TextSty &
     InteractionSty & {
+      id: string;
       overrideProps: Partial<BoxStyleProps>;
       overrideOverrides: Partial<Omit<BoxStyleProps, `overrideProps` | `overrideOverrides`>>;
       getElement: (e: HTMLElement) => void;
