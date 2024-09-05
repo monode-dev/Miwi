@@ -16,6 +16,7 @@ export function Dialog(
     <Box
       widthGrows
       heightGrows
+      padAround={1}
       fill={`#00000099`}
       onClick={() => (props.doNotCloseOnClickOutside ? {} : popPage())}
     >
