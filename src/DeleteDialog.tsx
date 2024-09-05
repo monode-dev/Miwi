@@ -14,6 +14,7 @@ export function DeleteDialog(props: BoxProps & { onDelete?: () => void; message:
       <Row widthGrows spaceEvenly>
         <Button
           outlined
+          widthGrows
           onClick={() => {
             popPage();
             props.onDelete?.();
@@ -21,7 +22,9 @@ export function DeleteDialog(props: BoxProps & { onDelete?: () => void; message:
         >
           Yes
         </Button>
-        <Button onClick={() => popPage()}>No</Button>
+        <Button widthGrows onClick={() => popPage()}>
+          No
+        </Button>
       </Row>
     </Dialog>
   );
