@@ -1,4 +1,4 @@
-import { Component, For, JSX, Show, onMount } from "solid-js";
+import { Component, For, Show } from "solid-js";
 import { useFormula, useProp, sessionStore, Prop, exists } from "./utils";
 import { gsap } from "gsap";
 import { Box } from "./Box/Box";
@@ -151,17 +151,18 @@ const activePageClass = `miwi-nav-active-page`;
 // function getTouchId(pageId: string) {
 //   return `${pageId}-touch`;
 // }
-function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
-  return {
-    fill: "transparent",
-    width: "100%",
-    height: "100%",
-    top: "0px",
-    left: "0px",
-    position: "absolute",
-    [`z-index`]: zIndex,
-  };
-}
+// We used this before stack, but stack is better.
+// function pageWrapperStyle(zIndex: number): JSX.CSSProperties {
+//   return {
+//     fill: "transparent",
+//     width: "100%",
+//     height: "100%",
+//     top: "0px",
+//     left: "0px",
+//     position: "absolute",
+//     [`z-index`]: zIndex,
+//   };
+// }
 export function getMyPageIndex(currentElement: HTMLElement): number | null {
   const page = findPageInAncestors(currentElement);
   if (!exists(page)) return null;
@@ -248,22 +249,23 @@ export function Nav(props: { isOnlineSig?: Prop<boolean> }) {
   );
 }
 
-function _PageWrapper(props: { children: JSX.Element; transitions: PageTransition }) {
-  let element: HTMLDivElement | undefined = undefined;
-  onMount(() => {
-    if (exists(element)) {
-      props.transitions.enter(element);
-    }
-  });
-  return (
-    <div
-      ref={el => (element = el)}
-      style={{
-        width: `100%`,
-        height: `100%`,
-      }}
-    >
-      {props.children}
-    </div>
-  );
-}
+// We used this before stack, but stack is better.
+// function _PageWrapper(props: { children: JSX.Element; transitions: PageTransition }) {
+//   let element: HTMLDivElement | undefined = undefined;
+//   onMount(() => {
+//     if (exists(element)) {
+//       props.transitions.enter(element);
+//     }
+//   });
+//   return (
+//     <div
+//       ref={el => (element = el)}
+//       style={{
+//         width: `100%`,
+//         height: `100%`,
+//       }}
+//     >
+//       {props.children}
+//     </div>
+//   );
+// }
