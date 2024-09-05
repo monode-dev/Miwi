@@ -212,6 +212,8 @@ export function Nav(props: { isOnlineSig?: Prop<boolean> }) {
       <For each={nav.openedPages.value}>
         {(page, index) => (
           <Box
+            asWideAsParent
+            asTallAsParent
             classList={{
               [pageClassTag]: true,
               [activePageClass]: index() === nav.openedPages.value.length - 1,
