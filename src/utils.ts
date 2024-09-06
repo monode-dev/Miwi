@@ -99,62 +99,6 @@ export function formatAddress(input: string, event: InputEvent) {
   };
 }
 
-// Tue, March 10th 2021 - 3:00 PM
-export function formatPosixTime(posixTime: number) {
-  // Create a new Date object from the posix time
-  let date = new Date(posixTime);
-
-  // Array of day names
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-  // Array of month names
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  // Get the day of the week, the month and the date
-  let dayOfWeek = days[date.getDay()];
-  let month = months[date.getMonth()];
-  let day = date.getDate();
-  let time = date.toLocaleTimeString(undefined, {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-
-  // Add the ordinal suffix
-  let suffix = "";
-  switch (day % 10) {
-    case 1:
-      suffix = day === 11 ? "th" : "st";
-      break;
-    case 2:
-      suffix = day === 12 ? "th" : "nd";
-      break;
-    case 3:
-      suffix = day === 13 ? "th" : "rd";
-      break;
-    default:
-      suffix = "th";
-  }
-
-  // Get the year
-  let year = date.getFullYear();
-
-  // Return the formatted string
-  return `${dayOfWeek}, ${month} ${day}${suffix} ${year} - ${time}`;
-}
-
 export function sessionStore<T>(storeName: string, defineStore: () => T): () => T {
   const storePropName = `miwi_sessionStore_${storeName}`;
   return function () {
