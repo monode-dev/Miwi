@@ -11,7 +11,7 @@ export function DeleteDialog(props: BoxProps & { onDelete?: () => void; message:
       <Txt widthGrows overflowX={$Overflow.wrap}>
         {props.message}
       </Txt>
-      <Row widthGrows spaceEvenly>
+      <Row padBetween={1}>
         <Button
           outlined
           widthGrows
