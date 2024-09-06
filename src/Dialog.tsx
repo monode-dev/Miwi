@@ -19,6 +19,7 @@ export function Dialog(
       padAround={1}
       fill={`#00000099`}
       onClick={() => (props.doNotCloseOnClickOutside ? {} : popPage())}
+      touchRadius={0}
     >
       <Card width={`75%`} preventClickPropagation overrideProps={props} shadowSize={1.25}>
         {props.children}
