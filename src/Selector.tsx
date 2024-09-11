@@ -58,7 +58,7 @@ export function Selector<T>(
             <Show
               when={
                 !exists(props.getLabelForData(props.value)) ||
-                typeof props.getLabelForData(props.value) !== `string`
+                typeof props.getLabelForData(props.value) === `string`
               }
               // If a custom component was provided, use it
               fallback={props.getLabelForData(props.value)}
