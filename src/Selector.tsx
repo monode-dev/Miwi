@@ -12,7 +12,7 @@ import { Size } from "./Box/BoxSize";
 export function Selector<T>(
   props: {
     value: T;
-    getLabelForData: (data: T) => string | null;
+    getLabelForData: (data: T) => string | JSXElement | null;
     hintText?: string;
     noOptionsText?: string;
     isOpen?: Prop<boolean>;
@@ -48,6 +48,7 @@ export function Selector<T>(
           height={props.scale ?? 1}
           padBetween={0.5}
           alignTopLeft
+          overflowXCrops
         >
           <Show
             when={!exists(props.filterString) || !isOpen.value}
@@ -55,13 +56,22 @@ export function Selector<T>(
               <Field value={props.filterString} hintText="Search" hasFocus={useProp(true)} />
             }
           >
-            <Txt
-              widthGrows
-              overflowX={$Overflow.crop}
-              stroke={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
+            <Show
+              when={
+                !exists(props.getLabelForData(props.value)) ||
+                typeof props.getLabelForData(props.value) !== `string`
+              }
+              // If a custom component was provided, use it
+              fallback={props.getLabelForData(props.value)}
             >
-              {props.getLabelForData(props.value) ?? props.hintText ?? "None"}
-            </Txt>
+              <Txt
+                widthGrows
+                singleLine
+                stroke={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
+              >
+                {props.getLabelForData(props.value) ?? props.hintText ?? "None"}
+              </Txt>
+            </Show>
           </Show>
           <Icon
             iconPath={exists(props.filterString) && isOpen.value ? mdiClose : mdiMenuDown}
