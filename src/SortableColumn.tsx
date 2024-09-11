@@ -10,6 +10,7 @@ const elementsBeingSorted = useProp<HTMLElement[]>([]);
 /** Contents can be sorted by long pressing. */
 export function SortableColumn(props: {
   onSort: (props: { from: number; to: number }) => void;
+  onPickUp?: () => void;
   children: any;
   sortingZIndex?: number;
   shouldLog?: boolean;
@@ -61,6 +62,7 @@ export function SortableColumn(props: {
   // SECTION: Handle Drag
   // TODO: Handle children being added/removed mid-drag
   function handleDrag(clickTarget: HTMLElement, startMousePos: { x: number; y: number }) {
+    props.onPickUp?.();
     const sourceElement = (() => {
       let sourceElement = clickTarget;
       while (sourceElement.parentNode !== columnElement) {
