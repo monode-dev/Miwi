@@ -65,7 +65,7 @@ export function Selector<T>(
             >
               <Txt
                 widthGrows
-                singleLine
+                overflowX={$Overflow.crop}
                 stroke={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
               >
                 {props.getLabelForData(props.value) ?? props.hintText ?? "None"}
