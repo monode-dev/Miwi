@@ -48,6 +48,7 @@ export function Selector<T>(
           height={props.scale ?? 1}
           padBetween={0.5}
           alignTopLeft
+          overflowXCrops
         >
           <Show
             when={!exists(props.filterString) || !isOpen.value}
@@ -65,7 +66,7 @@ export function Selector<T>(
             >
               <Txt
                 widthGrows
-                overflowX={$Overflow.crop}
+                singleLine
                 stroke={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
               >
                 {props.getLabelForData(props.value) ?? props.hintText ?? "None"}
