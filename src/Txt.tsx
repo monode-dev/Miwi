@@ -1,6 +1,8 @@
 import { Box, BoxProps } from "./Box/Box";
 import { AllowOne, useFormula } from "./utils";
 
+/** TODO: Should expand to fill available width by default, but only stretch parent if text
+ * is wide enough. */
 export function Txt(
   props: AllowOne<{
     h1: boolean;

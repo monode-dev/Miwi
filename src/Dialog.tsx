@@ -21,7 +21,13 @@ export function Dialog(
       onClick={() => (props.doNotCloseOnClickOutside ? {} : popPage())}
       touchRadius={0}
     >
-      <Card widthGrows preventClickPropagation overrideProps={props} shadowSize={1.25}>
+      <Card
+        widthGrows
+        maxWidth={30}
+        preventClickPropagation
+        overrideProps={props}
+        shadowSize={1.25}
+      >
         {props.children}
       </Card>
     </Box>
