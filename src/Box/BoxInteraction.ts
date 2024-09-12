@@ -100,7 +100,7 @@ export function watchBoxInteraction(
     const preventClickPropagation =
       parseProp(`preventClickPropagation`) ?? (isClickable || context.isScrollable.value);
     element.value.style.pointerEvents = preventClickPropagation ? `auto` : `none`;
-    element.value.onclick = preventClickPropagation
+    element.value.onpointerdown = preventClickPropagation
       ? (e: MouseEvent) => {
           e.stopPropagation();
           onClickListeners.forEach(listener => listener(e));
