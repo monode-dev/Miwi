@@ -11,6 +11,7 @@ export function NumField(
     scale?: number;
     hint?: string;
     hintColor?: string;
+    textColor?: string;
     icon?: string;
     underlined?: boolean;
     title?: boolean;
@@ -135,6 +136,7 @@ export function NumField(
       hasFocus={props.hasFocusSig}
       hintText={props.hint}
       hintColor={props.hintColor}
+      textColor={props.textColor}
       iconPath={props.icon}
       underlined={props.underlined}
       h2={props.title}

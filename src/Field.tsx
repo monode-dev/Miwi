@@ -40,6 +40,7 @@ export function Field(
     hasFocus?: Prop<boolean>;
     hintText?: string;
     hintColor?: string;
+    textColor?: string;
     maxLines?: number;
     multiline?: boolean;
     underlined?: boolean;
@@ -252,7 +253,7 @@ export function Field(
         "font-size": "inherit",
         "font-weight": "inherit",
         "pointer-events": "auto",
-        color: "inherit",
+        color: props.textColor ?? "inherit",
         padding: "0px",
         margin: "0px",
         width: "100%",
