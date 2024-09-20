@@ -222,7 +222,7 @@ export function Field(
 
   // TODO: At one point in time, tapping on the field did not move the cursor.
   function _InputOrTextArea(_inputProps: { value: string }) {
-    const inputProps = {
+    const getInputProps = () => ({
       ref: (el: HTMLInputElement | HTMLTextAreaElement) => {
         inputElement = el;
         startWatchingTextStyle(el);
@@ -269,8 +269,8 @@ export function Field(
         "-ms-user-select": "text" /* IE 10 and IE 11 */,
         "user-select": "text" /* Standard syntax */,
       } as any,
-    };
-    return maxLines.value > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />;
+    });
+    return maxLines.value > 1 ? <textarea {...getInputProps()} /> : <input {...getInputProps()} />;
   }
   return (
     <Row
