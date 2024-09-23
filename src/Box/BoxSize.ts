@@ -3,7 +3,7 @@ import { Axis } from "./BoxLayout";
 import { Prop, ReadonlyProp, Toggle, useProp } from "../utils";
 import { createRenderEffect, untrack } from "solid-js";
 
-export type Size = number | string | FlexSize | SIZE_SHRINKS;
+export type Size = number | string | FlexSize | SIZE_SHRINKS | AspectRatioSize;
 export type SizeSty = Partial<{
   // Width
   minWidth: string | number;
@@ -11,6 +11,7 @@ export type SizeSty = Partial<{
   widthGrows: boolean | number;
   widthShrinks: boolean;
   asWideAsParent: boolean;
+  widthFromAspectRatio: number | string;
   maxWidth: string | number;
   // Height
   minHeight: string | number;
@@ -18,6 +19,7 @@ export type SizeSty = Partial<{
   heightGrows: boolean | number;
   heightShrinks: boolean;
   asTallAsParent: boolean;
+  heightFromAspectRatio: number | string;
   maxHeight: string | number;
   // Other
   isFlexDisplay: boolean;
@@ -48,6 +50,13 @@ export interface FlexSize {
 export function isFlexSize(size: any): size is FlexSize {
   return exists(size?.flex);
 }
+export type AspectRatioSize = ReturnType<typeof aspectRatioSize>;
+export const aspectRatioSize = (aspectRatio: number | string) => {
+  return { aspectRatio };
+};
+export const isAspectRatioSize = (size: any): size is AspectRatioSize => {
+  return exists(size?.aspectRatio);
+};
 
 export function computeSizeInfo(props: {
   shouldWatchMaxChildSize: Prop<boolean>;
@@ -100,7 +109,9 @@ export function computeSizeInfo(props: {
               props.parentIsStack
               ? getPercentOfStackSize(100)
               : `100%`
-          : undefined;
+          : isAspectRatioSize(targetSize)
+            ? undefined
+            : undefined;
 
   // TODO: If maxSize has been set, then maybe minSize should be set to 0.
   const minSize = exists(props.minSize)
@@ -125,12 +136,14 @@ export function computeSizeInfo(props: {
     : isShrinkSize(targetSize)
       ? ``
       : exactSize ?? ``;
+  const aspectRatio = isAspectRatioSize(targetSize) ? targetSize.aspectRatio : undefined;
   return [
     exactSize ?? ``,
     minSize,
     maxSize,
     isFlexSize(targetSize) ? targetSize.flex : undefined,
     props.parentIsStack && isCssSize(targetSize) && isCssPercent(targetSize),
+    aspectRatio,
   ] as const;
 }
 
@@ -146,12 +159,14 @@ export function parseSize(axis: `width` | `height`, parseProp: ParseProp<SizeSty
         widthGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
         widthShrinks: (() => SIZE_SHRINKS) as () => SIZE_SHRINKS,
         asWideAsParent: () => `100%`,
+        widthFromAspectRatio: v => (exists(v) ? aspectRatioSize(v) : v),
       })
     : parseProp({
         height: v => v,
         heightGrows: v => (exists(v) && v !== false ? { flex: v === true ? 1 : v } : -1),
         heightShrinks: (() => SIZE_SHRINKS) as () => SIZE_SHRINKS,
         asTallAsParent: () => `100%`,
+        heightFromAspectRatio: v => (exists(v) ? aspectRatioSize(v) : v),
       });
 }
 
@@ -189,28 +204,31 @@ export function watchBoxSize(
 
   // SECTION: Width
   const flexWidth = useProp<number | undefined>(undefined);
+  const aspectRatioWidth = useProp<number | string | undefined>(undefined);
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    const [exactWidth, wMin, wMax, _flexWidth, ignoreSizeInMaxWidthCalc] = computeSizeInfo({
-      shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
-      minSize: parseProp(`minWidth`),
-      size: parseSize(`width`, parseProp),
-      maxSize: parseProp(`maxWidth`),
-      isMainAxis: context.parentAxis.value === Axis.row,
-      iAmAStack: context.myAxis.value === Axis.stack,
-      myPaddingStart: context.padLeft.value,
-      myPaddingEnd: context.padRight.value,
-      maxChildSizePx: context.maxChildWidthPx,
-      parentIsStack: context.parentAxis.value === Axis.stack,
-      parentPaddingStart: context.parentPaddingLeft.value,
-      parentPaddingEnd: context.parentPaddingRight.value,
-      someChildGrows: context.aChildsWidthGrows,
-      shouldLog: context.shouldLog,
-    });
+    const [exactWidth, wMin, wMax, _flexWidth, ignoreSizeInMaxWidthCalc, _aspectRatioWidth] =
+      computeSizeInfo({
+        shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
+        minSize: parseProp(`minWidth`),
+        size: parseSize(`width`, parseProp),
+        maxSize: parseProp(`maxWidth`),
+        isMainAxis: context.parentAxis.value === Axis.row,
+        iAmAStack: context.myAxis.value === Axis.stack,
+        myPaddingStart: context.padLeft.value,
+        myPaddingEnd: context.padRight.value,
+        maxChildSizePx: context.maxChildWidthPx,
+        parentIsStack: context.parentAxis.value === Axis.stack,
+        parentPaddingStart: context.parentPaddingLeft.value,
+        parentPaddingEnd: context.parentPaddingRight.value,
+        someChildGrows: context.aChildsWidthGrows,
+        shouldLog: context.shouldLog,
+      });
     if (context.shouldLog) {
       console.log(`exactWidth`, exactWidth);
     }
     flexWidth.value = _flexWidth;
+    aspectRatioWidth.value = _aspectRatioWidth;
     element.value.classList.toggle(widthGrowsClassName, exists(_flexWidth));
     element.value.classList.toggle(ignoreSizeInMaxWidthCalcClassName, ignoreSizeInMaxWidthCalc);
     element.value.style.minWidth = wMin;
@@ -220,24 +238,27 @@ export function watchBoxSize(
 
   // Height
   const flexHeight = useProp<number | undefined>(undefined);
+  const aspectRatioHeight = useProp<number | string | undefined>(undefined);
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    const [exactHeight, hMin, hMax, _flexHeight, ignoreSizeInMaxHeightCalc] = computeSizeInfo({
-      shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
-      minSize: parseProp(`minHeight`),
-      size: parseSize(`height`, parseProp),
-      maxSize: parseProp(`maxHeight`),
-      isMainAxis: context.parentAxis.value === Axis.column,
-      iAmAStack: context.myAxis.value === Axis.stack,
-      myPaddingStart: context.padTop.value,
-      myPaddingEnd: context.padBottom.value,
-      maxChildSizePx: context.maxChildHeightPx,
-      parentIsStack: context.parentAxis.value === Axis.stack,
-      parentPaddingStart: context.parentPaddingTop.value,
-      parentPaddingEnd: context.parentPaddingBottom.value,
-      someChildGrows: context.aChildsHeightGrows,
-    });
+    const [exactHeight, hMin, hMax, _flexHeight, ignoreSizeInMaxHeightCalc, _aspectRatioHeight] =
+      computeSizeInfo({
+        shouldWatchMaxChildSize: context.shouldWatchMaxChildSize,
+        minSize: parseProp(`minHeight`),
+        size: parseSize(`height`, parseProp),
+        maxSize: parseProp(`maxHeight`),
+        isMainAxis: context.parentAxis.value === Axis.column,
+        iAmAStack: context.myAxis.value === Axis.stack,
+        myPaddingStart: context.padTop.value,
+        myPaddingEnd: context.padBottom.value,
+        maxChildSizePx: context.maxChildHeightPx,
+        parentIsStack: context.parentAxis.value === Axis.stack,
+        parentPaddingStart: context.parentPaddingTop.value,
+        parentPaddingEnd: context.parentPaddingBottom.value,
+        someChildGrows: context.aChildsHeightGrows,
+      });
     flexHeight.value = _flexHeight;
+    aspectRatioHeight.value = _aspectRatioHeight;
     element.value.classList.toggle(heightGrowsClassName, exists(_flexHeight));
     element.value.classList.toggle(ignoreSizeInMaxHeightCalcClassName, ignoreSizeInMaxHeightCalc);
     element.value.style.minHeight = hMin;
@@ -245,10 +266,10 @@ export function watchBoxSize(
     element.value.style.maxHeight = hMax;
   });
 
-  // SECTION: Flex Basis
+  // SECTION: Flex Basis & Aspect Ratio
   createRenderEffect(() => {
     if (!exists(element.value)) return; //flex: 1 1 0;
-    /* We use to use flex-basis and do `${flexHeight.value * 100}%` instead of `${flexHeight.value}`.
+    /** NOTE: We use to use flex-basis and do `${flexHeight.value * 100}%` instead of `${flexHeight.value}`.
      * There was some edge cases, that caused us to use flex-basis. I don't remember what this edge
      * case was. However, in safari flex-basis of > 100% does not mix well with siblings that use
      * fit-content. Safari cuts some of the width off of the fit-content sibling and gives it to the
@@ -265,5 +286,10 @@ export function watchBoxSize(
             ? `${flexWidth.value}`
             : ``
           : ``;
+    // Aspect Ratio
+    if (exists(aspectRatioWidth.value) && exists(aspectRatioHeight.value)) {
+      throw new Error(`You can't set both width and height aspect ratios.`);
+    }
+    element.value.style.aspectRatio = `${aspectRatioWidth.value ?? aspectRatioHeight.value ?? ``}`;
   });
 }

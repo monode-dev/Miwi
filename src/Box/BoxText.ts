@@ -14,6 +14,7 @@ export type TextSty = Partial<{
   bold: boolean;
   italic: boolean;
   underlineText: boolean;
+  font: string;
   /** NOTE: Flex container treats its children as flex items, and unfortunately, the
    * text-overflow: ellipsis; doesn't apply to flex items. If you want to keep using
    * flex for other properties, a solution is to wrap your text in an inner div (or
@@ -39,10 +40,11 @@ export function watchBoxText(
     overflowX: Prop<Overflow>;
   },
 ) {
-  // Basics
+  // Font
   createRenderEffect(() => {
     if (!exists(element.value)) return;
-    element.value.style.fontFamily = `inherit`; //`Roboto`;
+    const font = parseProp({ font: v => v });
+    element.value.style.fontFamily = font ?? `inherit`; //`Roboto`;
   });
 
   // Scale / Font Size
