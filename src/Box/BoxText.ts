@@ -1,7 +1,7 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { AlignSingleAxis, Overflow, _FlexAlign } from "./BoxLayout";
-import { sizeScaleCssVarName } from "src/Theme";
-import { Prop } from "src/utils";
+import { sizeScaleCssVarName } from "../theme";
+import { Prop } from "../utils";
 import { createRenderEffect } from "solid-js";
 
 export type TextSty = Partial<{

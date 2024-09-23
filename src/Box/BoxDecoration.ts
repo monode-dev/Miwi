@@ -1,8 +1,8 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Align, AlignTwoAxis, _FlexAlign, _SpaceAlign } from "./BoxLayout";
-import { Prop } from "src/utils";
+import { Prop } from "../utils";
 import { createRenderEffect } from "solid-js";
-import { strokeTexture } from "src/Theme";
+import { strokeTexture } from "../theme";
 
 export type DecorationSty = Partial<
   {

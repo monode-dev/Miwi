@@ -1,4 +1,4 @@
-import { Prop, doNow, exists } from "src/utils";
+import { Prop, doNow, exists } from "../utils";
 import { muToCss, ParseProp } from "./BoxUtils";
 import { createRenderEffect } from "solid-js";
 

@@ -1,4 +1,4 @@
-import { Prop, ReadonlyProp, useFormula, exists, useProp } from "src/utils";
+import { Prop, ReadonlyProp, useFormula, exists, useProp } from "../utils";
 import { ParseProp, muToCss } from "./BoxUtils";
 import { createRenderEffect } from "solid-js";
 

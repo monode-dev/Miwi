@@ -1,6 +1,6 @@
 import { ParseProp, exists, muToCss } from "./BoxUtils";
 import { Axis } from "./BoxLayout";
-import { Prop, ReadonlyProp, Toggle, useProp } from "src/utils";
+import { Prop, ReadonlyProp, Toggle, useProp } from "../utils";
 import { createRenderEffect, untrack } from "solid-js";
 
 export type Size = number | string | FlexSize | SIZE_SHRINKS;
