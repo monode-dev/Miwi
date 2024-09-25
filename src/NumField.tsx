@@ -19,6 +19,7 @@ export function NumField(
     keyboard?: KeyboardType;
     onBlur?: () => void;
     enterKeyHint?: EnterKeyHint;
+    validateNextInput?: (newInput: number) => boolean;
   } & BoxProps,
 ) {
   const keyboard = props.keyboard ?? "decimal";
@@ -79,6 +80,7 @@ export function NumField(
   function validateInput(newInput: string) {
     const asNumber = textToNumber(newInput);
     if (!exists(asNumber)) return true;
+    if (props.validateNextInput?.(asNumber) === false) return false;
     if (!props.negativesAreAllowed && asNumber < 0) return false;
     if (props.negativesAreAllowed && newInput === "-") {
       return true;

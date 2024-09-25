@@ -1,4 +1,4 @@
-import { Show, onCleanup, onMount } from "solid-js";
+import { Show, batch, onCleanup, onMount } from "solid-js";
 import { Box, BoxProps } from "./Box/Box";
 import { Row } from "./Row";
 import { Icon } from "./Icon";
@@ -115,6 +115,7 @@ export function Field(
   if (props.onlyWriteOnBlur) {
     doWatch(
       () => {
+        console.log(`inputElementHasFocus.value`, inputElementHasFocus.value)
         if (!inputElementHasFocus.value) {
           internalValue.value = _externalValue.value;
         }
@@ -128,16 +129,18 @@ export function Field(
     inputElementHasFocus.value = true;
   };
   const handleBlur = () => {
-    if (props.onlyWriteOnBlur) {
-      if (internalValue.value !== internalValueOnFocus) {
-        // If an internal change happened overwrite any external changes.
-        _externalValue.value = internalValue.value;
-      } else if (internalValue.value !== _externalValue.value) {
-        // Only apply external changes if there were no internal changes.
-        internalValue.value = _externalValue.value;
+    batch(() => {
+      if (props.onlyWriteOnBlur) {
+        if (internalValue.value !== internalValueOnFocus) {
+          // If an internal change happened overwrite any external changes.
+          _externalValue.value = internalValue.value;
+        } else if (internalValue.value !== _externalValue.value) {
+          // Only apply external changes if there were no internal changes.
+          internalValue.value = _externalValue.value;
+        }
       }
-    }
-    inputElementHasFocus.value = false;
+      inputElementHasFocus.value = false;
+    })
     props.onBlur?.();
   };
 
@@ -161,18 +164,22 @@ export function Field(
       (event.target as any).setSelectionRange(position, position);
     }
   }
+  function handleBackspace(event: KeyboardEvent) {
+    if (event.key !== `Backspace` && event.key !== `Delete`) return;
+    validateInput(event, ``, event.key);
+  }
   function handleKeyPress(event: KeyboardEvent) {
     if (maxLines.value === 1 && event.key === `Enter`) {
       inputElementHasFocus.value = false;
       return;
     }
-    validateInput(event, event.key === `Enter` ? `\n` : event.key);
+    validateInput(event, event.key === `Enter` ? `\n`: event.key);
   }
   function handlePaste(event: ClipboardEvent) {
     validateInput(event, event.clipboardData?.getData("text") ?? ``);
   }
-  function validateInput(event: Event, newText: string) {
-    const nextInput = predictNextInput(newText);
+  function validateInput(event: Event, newText: string, deletion?: `Backspace` | `Delete`) {
+    const nextInput = predictNextInput(newText, deletion);
     if (!exists(nextInput)) return;
     // TODO: Maybe crop instead of prevent input?
     // We want to check line count first, so that `validateNextInput` can depend on it.
@@ -180,12 +187,14 @@ export function Field(
     const nextInputIsValid = props.validateNextInput?.(nextInput) ?? true;
     if (!nextInputIsValid) event.preventDefault();
   }
-  function predictNextInput(newText: string) {
+  function predictNextInput(newText: string, deletion?: `Backspace` | `Delete`) {
     if (!exists(inputElement)) return;
+    const selectionStart = inputElement.selectionStart! + (deletion === `Backspace` ? -1 : 0);
+    const selectionEnd = inputElement.selectionEnd! + (deletion === `Delete` ? 1 : 0);
     return (
-      inputElement.value.slice(0, inputElement.selectionStart!) +
+      inputElement.value.slice(0, selectionStart) +
       newText +
-      inputElement.value.slice(inputElement.selectionEnd!)
+      inputElement.value.slice(selectionEnd)
     );
   }
 
@@ -235,7 +244,9 @@ export function Field(
       onFocus: handleFocus,
       onBlur: handleBlur,
       placeholder: props.hintText,
+      // Handles only printable characters
       onKeyPress: handleKeyPress,
+      onkeydown: handleBackspace,
       onPaste: handlePaste,
       class: "field",
       rows: maxLines.value === Infinity ? undefined : maxLines.value,
