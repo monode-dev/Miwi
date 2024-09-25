@@ -3,7 +3,7 @@ import { Box } from "./miwi";
 import { useProp, exists, ReadonlyProp, useFormula } from "./utils";
 import { observeElement } from "./Box/BoxUtils";
 import { numOpenModals } from "./Modal";
-
+import { CorkBoardPin } from "./CorkBoardPin";
 const elementsBeingSorted = useProp<HTMLElement[]>([]);
 
 /** Contents can be sorted by long pressing. */
@@ -177,7 +177,7 @@ export function CorkBoard(props: {
       sourceElement.style.position = "absolute";
       sourceElement.style.left = `${endX}px`;
       sourceElement.style.top = `${endY}px`;
-      sourceElement.style.pointerEvents = "auto"; // re-enable pointer events
+      sourceElement.style.pointerEvents = "auto"; // re-enable pointer events 
 
       boxElement!.appendChild(sourceElement);
 
