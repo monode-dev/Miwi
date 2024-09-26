@@ -30,6 +30,7 @@ export type FormatFieldInput = (
 };
 export type EnterKeyHint = `enter` | `done` | `go` | `next` | `previous` | `search` | `send`;
 export type FieldInputType = `password` | `text` | `email` | `number` | `tel` | `url`;
+/** Use enterKeyHint to control what happens when the done button is pressed. */
 export function Field(
   props: {
     value?: Prop<string>;
@@ -54,12 +55,14 @@ export function Field(
     onBlur?: () => void;
     validateNextInput?: (nextInput: string) => boolean;
     formatInput?: FormatFieldInput;
+    /** TODO: If is set to `nest` auto tab. */
     enterKeyHint?: EnterKeyHint;
   } & BoxProps,
 ) {
   // Parse Props
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
   const parseProp: (...args: any[]) => any = makePropParser(props as any);
+  const enterKeyHint = useFormula(() => props.enterKeyHint ?? props.multiline ? `enter` : `done`);
   const maxLines = useFormula(() =>
     props.multiline
       ? Infinity
@@ -169,7 +172,7 @@ export function Field(
     validateInput(event, ``, event.key);
   }
   function handleKeyPress(event: KeyboardEvent) {
-    if (maxLines.value === 1 && event.key === `Enter`) {
+    if (event.key === `Enter` && (maxLines.value === 1 || enterKeyHint.value !== `enter`)) {
       inputElementHasFocus.value = false;
       return;
     }
@@ -252,7 +255,7 @@ export function Field(
       rows: maxLines.value === Infinity ? undefined : maxLines.value,
       wrap: maxLines.value > 1 ? (`soft` as const) : undefined,
       ["auto-capitalize"]: props.capitalize ?? "none",
-      enterkeyhint: props.enterKeyHint ?? `done`,
+      enterkeyhint: enterKeyHint.value,
       style: {
         minHeight: `100%`,
         height: `100%`,
