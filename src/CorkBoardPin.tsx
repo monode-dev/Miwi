@@ -1,10 +1,10 @@
 import { Box, Prop } from "./miwi";
 
-export function CorkBoardPin(props: { children: any, posX?: Prop<number>, posY?: Prop<number>}) {
+export function CorkBoardPin(props: { children: any, obj:{x: number, y: number}}) {
   return (
     <Box
       data-corkboard-pin
-      cssStyle={{ position: "absolute", left: `${props.posX?.value}px`, top: `${props.posY?.value}px` }}
+      cssStyle={{ position: "absolute", left: `${props.obj.x}px`, top: `${props.obj.y}px` }}
     >
       {props.children}
     </Box>

@@ -8,7 +8,7 @@ const elementsBeingSorted = useProp<HTMLElement[]>([]);
 
 /** Contents can be sorted by long pressing. */
 export function CorkBoard(props: {
-  onSort: (props: { from: number; to: number }) => void;
+  onSort: (props: { from: number; x: number;  y: number;}) => void;
   onPickUp?: () => void;
   children: any;
   sortingZIndex?: number;
@@ -57,6 +57,9 @@ export function CorkBoard(props: {
   // SECTION: Handle Drag
   function handleDrag(clickTarget: HTMLElement, startMousePos: { x: number; y: number }) {
     props.onPickUp?.();
+
+    console.log("CorkBoard needs some work on line 103. What we really need to do is access the mufasa doc.");
+
     const sourceElement = (() => {
       let sourceElement = clickTarget;
       while (sourceElement.parentNode !== boxElement) {
@@ -95,6 +98,11 @@ export function CorkBoard(props: {
     }
 
     const { mousePos, stopWatchingMousePos } = watchMousePos(startMousePos);
+
+    //TODO - Find a better way to get the index of the element
+    const fromIndex = Array.from(boxElement!.children).indexOf(sourceElement);
+
+
     // Create a floating container and attach to the body
     const dragElement = document.createElement("div");
     dragElement.style.position = "fixed";
@@ -177,13 +185,16 @@ export function CorkBoard(props: {
       sourceElement.style.position = "absolute";
       sourceElement.style.left = `${endX}px`;
       sourceElement.style.top = `${endY}px`;
-      sourceElement.style.pointerEvents = "auto"; // re-enable pointer events 
-
+      sourceElement.style.pointerEvents = "auto"; // re-enable pointer events
+      
       boxElement!.appendChild(sourceElement);
+      
+      props.onSort({ from: fromIndex , x: endX, y: endY });
 
       elementsBeingSorted.value = elementsBeingSorted.value.filter(
         element => element !== sourceElement,
       );
+
       document.removeEventListener("mousemove", preventScrollOnMouseMove);
       document.removeEventListener("touchmove", preventScrollOnMouseMove);
       document.removeEventListener("mouseup", endDrag);
