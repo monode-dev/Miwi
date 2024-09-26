@@ -1,13 +1,10 @@
-import { prop } from "mufasa";
-import { Box, useProp } from "./miwi";
+import { Box, Prop } from "./miwi";
 
-export function CorkBoardPin(props: { children: any, posX?: number, posY?: number}) {
-  const posX = prop(props.posX ?? 0);
-  const posY = prop(props.posY ?? 0);
+export function CorkBoardPin(props: { children: any, posX?: Prop<number>, posY?: Prop<number>}) {
   return (
     <Box
       data-corkboard-pin
-      cssStyle={{ position: "absolute", left: `${posX}px`, top: `${posY}px` }}
+      cssStyle={{ position: "absolute", left: `${props.posX?.value}px`, top: `${props.posY?.value}px` }}
     >
       {props.children}
     </Box>
