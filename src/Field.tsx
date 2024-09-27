@@ -55,16 +55,15 @@ export function Field(
     onBlur?: () => void;
     validateNextInput?: (nextInput: string) => boolean;
     formatInput?: FormatFieldInput;
-    /** TODO: If is set to `nest` auto tab. */
+    /** TODO: If is set to `next` auto tab. */
     enterKeyHint?: EnterKeyHint;
   } & BoxProps,
 ) {
   // Parse Props
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
   const parseProp: (...args: any[]) => any = makePropParser(props as any);
-  console.log("DEBUGGING: ALL FIELDS TO 'next'");
-  const enterKeyHint: Prop<EnterKeyHint> = useProp(`next`);
-    // useFormula(() => props.enterKeyHint ?? props.multiline ? `enter` : `done`);
+
+  const enterKeyHint: Prop<EnterKeyHint> = useFormula(() => props.enterKeyHint ?? props.multiline ? `enter` : `done`);
 
   const maxLines = useFormula(() =>
     props.multiline
@@ -177,7 +176,8 @@ export function Field(
   function handleKeyPress(event: KeyboardEvent) {
     if (event.key === `Enter` && (maxLines.value === 1 || enterKeyHint.value !== `enter`)) {
       inputElementHasFocus.value = false;
-      focusNextField();
+      if (enterKeyHint.value === `next`)
+        focusNextField();
       return;
     }
     validateInput(event, event.key === `Enter` ? `\n`: event.key);
