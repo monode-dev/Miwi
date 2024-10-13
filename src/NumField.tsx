@@ -20,6 +20,7 @@ export function NumField(
     onBlur?: () => void;
     enterKeyHint?: EnterKeyHint;
     validateNextInput?: (newInput: number) => boolean;
+    label?: string;
   } & BoxProps,
 ) {
   const keyboard = props.keyboard ?? "decimal";
@@ -149,6 +150,7 @@ export function NumField(
       formatInput={formatInput}
       onlyWriteOnBlur={props.onlyWriteOnBlur}
       enterKeyHint={props.enterKeyHint}
+      label={props.label}
     />
   );
 }

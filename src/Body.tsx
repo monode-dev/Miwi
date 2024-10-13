@@ -1,6 +1,6 @@
 import { BoxProps } from "./Box/Box";
 import { Column } from "./Column";
-import { theme } from "./Theme";
+import { theme } from "./theme";
 
 export function Body(props: BoxProps) {
   return (

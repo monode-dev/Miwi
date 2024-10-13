@@ -1,14 +1,14 @@
 import { mdiClose, mdiDotsVertical, mdiTrashCanOutline } from "@mdi/js";
 import { Prop } from "mosa-js";
-import { JSXElement, Show, children } from "solid-js";
+import { JSXElement, Show } from "solid-js";
 import { Icon } from "./Icon";
 import { Modal, closeParentModal } from "./Modal";
 import { Row } from "./Row";
 import { Txt } from "./Txt";
-import { doNow, useProp, useFormula, exists } from "./utils";
+import { doNow, useProp, useFormula, exists, getActualChildrenProp } from "./utils";
 import { BoxProps } from "./Box/Box";
 import { Size } from "./Box/BoxSize";
-import { theme } from "./Theme";
+import { theme } from "./theme";
 
 export function HiddenOptions(
   props: {
@@ -30,13 +30,8 @@ export function HiddenOptions(
       v => (exists(props.isOpen) ? (props.isOpen.value = v) : (_fallbackIsOpen.value = v)),
     );
   });
-  const getActualChildren = children(() => props.children);
-  const hasChildren = useFormula(() => {
-    const actualChildren = getActualChildren();
-    if (!exists(actualChildren)) return false;
-    if (!Array.isArray(actualChildren)) return true;
-    return actualChildren.length > 0;
-  });
+  const actualChildren  = getActualChildrenProp(() => props.children);
+  const hasChildren = useFormula(() => actualChildren.value.length > 0);
   return (
     <Modal
       openButton={

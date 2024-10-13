@@ -1,5 +1,5 @@
 import { DeepPartial } from "./utils";
-import { sizeScaleCssVarName } from "./Theme";
+import { sizeScaleCssVarName } from "./theme";
 import { muToCss } from "./Box/BoxUtils";
 import { Align, Axis, Overflow } from "./Box/BoxLayout";
 import { touchAreaColorCssVarName } from "./Box/BoxInteraction";
@@ -147,5 +147,5 @@ export * from "./SortableColumn";
 export * from "./Stack";
 export * from "./TabButtons";
 export * from "./TabView";
-export * from "./Theme";
+export * from "./theme";
 export * from "./utils";

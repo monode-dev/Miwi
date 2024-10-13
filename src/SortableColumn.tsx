@@ -1,17 +1,28 @@
-import { onCleanup, onMount } from "solid-js";
+import { JSXElement, onCleanup, onMount, Show } from "solid-js";
 import { Column } from "./Column";
-import { useProp, exists, ReadonlyProp, useFormula } from "./utils";
+import { useProp, exists, ReadonlyProp, useFormula, getActualChildrenProp } from "./utils";
 import { observeElement } from "./Box/BoxUtils";
 import { numOpenModals } from "./Modal";
 
 const elementsBeingSorted = useProp<HTMLElement[]>([]);
 
+/** Contents can be sorted by long pressing. */
+export function SortableColumn(props: Parameters<typeof _SortableColumn>[0]) {
+  const actualChildren  = getActualChildrenProp(() => props.children);
+  const hasChildren = useFormula(() => actualChildren.value.length > 0);
+  return (
+    <Show when={hasChildren.value}>
+    <_SortableColumn {...props} />
+    </Show>
+  );
+}
+
 // TODO: Support horizontal and grid sorting
 /** Contents can be sorted by long pressing. */
-export function SortableColumn(props: {
+function _SortableColumn(props: {
   onSort: (props: { from: number; to: number }) => void;
   onPickUp?: () => void;
-  children: any;
+  children: JSXElement;
   sortingZIndex?: number;
   shouldLog?: boolean;
   // TODO: for: (entry: T) => JSX.Element

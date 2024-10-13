@@ -2,7 +2,7 @@ import { Prop, useFormula, useProp } from "./utils";
 import { Box } from "./Box/Box";
 import { Row } from "./Row";
 import { Stack } from "./Stack";
-import { theme } from "./Theme";
+import { theme } from "./theme";
 
 export function Slider(props: {
   value: Prop<number>;

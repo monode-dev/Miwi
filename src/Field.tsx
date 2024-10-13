@@ -10,6 +10,7 @@ import { watchBoxText } from "./Box/BoxText";
 import { SIZE_SHRINKS, parseSize } from "./Box/BoxSize";
 import { Stack } from "./Stack";
 import { Txt } from "./Txt";
+import { Label } from "./Label";
 
 export type KeyboardType =
   | "none"
@@ -57,6 +58,7 @@ export function Field(
     formatInput?: FormatFieldInput;
     /** TODO: If is set to `nest` auto tab. */
     enterKeyHint?: EnterKeyHint;
+    label?: string;
   } & BoxProps,
 ) {
   // Parse Props
@@ -287,61 +289,63 @@ export function Field(
     return maxLines.value > 1 ? <textarea {...getInputProps()} /> : <input {...getInputProps()} />;
   }
   return (
-    <Row
-      onClick={() => tryFocus()}
-      widthGrows
-      height={fieldHeight.value}
-      stroke={$theme.colors.text}
-      padBetweenX={0.25}
-      padBetweenY={0}
-      overflowY={$Overflow.spill}
-      alignTopLeft
-      overrideProps={props}
-      overrideOverrides={{
-        scale: scale.value,
-        overflowX: Overflow.crop,
-      }}
-    >
-      {/* Icon */}
-      <Show when={exists(props.iconPath) && props.iconPath !== ``}>
-        <Icon iconPath={props.iconPath!} stroke={detailColor.value} scale={scale.value} />
-      </Show>
-
-      <Column>
-        {/* Input */}
-        <Stack
-          widthGrows
-          height={textHeight.value}
-          pad={0}
-          alignTopLeft
-          /* <_Input/> specifically is "overflowYSpills" ignoring. If Input is outside of
-           * Stack, it works. If Stack's height is set to SIZE_SHRINKS it works. If we
-           * use a <Txt/> instead of <_Input/>. If we use a Column instead of a stack
-           * it works. This seems to be some specific css issue with the way <input> or
-           * <textarea> behave when in a fixed height <div>. Asked AI and Google, neither
-           * had any idea. */
-          overflowYSpills
-          overflowXWraps
-        >
-          <Show when={textHeight.value === SIZE_SHRINKS}>
-            <Txt stroke={`transparent`} widthGrows>
-              {internalValue.value == ``
-                ? `a`
-                : internalValue.value.endsWith(`\n`)
-                  ? internalValue.value + `\n`
-                  : internalValue.value}
-            </Txt>
-          </Show>
-          <_InputOrTextArea value={internalValue.value} />
-        </Stack>
-
-        {/* Underline */}
-        <Show when={props.underlined}>
-          <Box height={underlineHeight.value} alignBottom>
-            <Box widthGrows height={1 / 16} fill={detailColor.value} />
-          </Box>
+    <Label label={props.label}>
+      <Row
+        onClick={() => tryFocus()}
+        widthGrows
+        height={fieldHeight.value}
+        stroke={$theme.colors.text}
+        padBetweenX={0.25}
+        padBetweenY={0}
+        overflowY={$Overflow.spill}
+        alignTopLeft
+        overrideProps={props}
+        overrideOverrides={{
+          scale: scale.value,
+          overflowX: Overflow.crop,
+        }}
+      >
+        {/* Icon */}
+        <Show when={exists(props.iconPath) && props.iconPath !== ``}>
+          <Icon iconPath={props.iconPath!} stroke={detailColor.value} scale={scale.value} />
         </Show>
-      </Column>
-    </Row>
+
+        <Column>
+          {/* Input */}
+          <Stack
+            widthGrows
+            height={textHeight.value}
+            pad={0}
+            alignTopLeft
+            /* <_Input/> specifically is "overflowYSpills" ignoring. If Input is outside of
+            * Stack, it works. If Stack's height is set to SIZE_SHRINKS it works. If we
+            * use a <Txt/> instead of <_Input/>. If we use a Column instead of a stack
+            * it works. This seems to be some specific css issue with the way <input> or
+            * <textarea> behave when in a fixed height <div>. Asked AI and Google, neither
+            * had any idea. */
+            overflowYSpills
+            overflowXWraps
+          >
+            <Show when={textHeight.value === SIZE_SHRINKS}>
+              <Txt stroke={`transparent`} widthGrows>
+                {internalValue.value == ``
+                  ? `a`
+                  : internalValue.value.endsWith(`\n`)
+                    ? internalValue.value + `\n`
+                    : internalValue.value}
+              </Txt>
+            </Show>
+            <_InputOrTextArea value={internalValue.value} />
+          </Stack>
+
+          {/* Underline */}
+          <Show when={props.underlined}>
+            <Box height={underlineHeight.value} alignBottom>
+              <Box widthGrows height={1 / 16} fill={detailColor.value} />
+            </Box>
+          </Show>
+        </Column>
+      </Row>
+    </Label>
   );
 }

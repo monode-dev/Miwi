@@ -2,10 +2,12 @@ import { Box, BoxProps } from "./Box/Box";
 import { exists } from "./utils";
 import { Row } from "./Row";
 import { Txt } from "./Txt";
-import { Match, Switch } from "solid-js";
+import { Match, Show, Switch } from "solid-js";
 import { Icon } from "./Icon";
 import { SIZE_SHRINKS } from "./Box/BoxSize";
 
+/** Label won't use any elements if the label is empty, so feel free to just use this all over the place, and only
+ * use it if you need to. */
 export function Label(
   props: {
     label?: string;
@@ -16,6 +18,7 @@ export function Label(
   } & BoxProps,
 ) {
   return (
+    <Show when={(exists(props.label) && props.label.length > 0) || exists(props.icon)} fallback={props.children}>
     <Row
       widthGrows
       padBetween={0.25}
@@ -37,5 +40,6 @@ export function Label(
       </Switch>
       {props.children}
     </Row>
+    </Show>
   );
 }

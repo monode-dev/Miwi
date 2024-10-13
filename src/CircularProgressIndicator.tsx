@@ -1,6 +1,6 @@
 import { muToCss } from "./Box/BoxUtils";
 import { createSignal } from "solid-js";
-import { strokeTexture } from "./Theme";
+import { strokeTexture } from "./theme";
 
 export function CircularProgressIndicator(props: {
   diameter?: number | string;

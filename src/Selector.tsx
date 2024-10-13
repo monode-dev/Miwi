@@ -8,6 +8,7 @@ import { Txt } from "./Txt";
 import { Prop, useFormula, useProp, exists, doWatch } from "./utils";
 import { HiddenOptions } from "./HiddenOptions";
 import { Size } from "./Box/BoxSize";
+import { Label } from "./Label";
 
 export function Selector<T>(
   props: {
@@ -22,6 +23,7 @@ export function Selector<T>(
     cancelOptions?: Parameters<typeof HiddenOptions>[0][`cancelOptions`];
     dropDownWidth?: Size;
     rightActions?: JSXElement;
+    label?: string;
   } & BoxProps,
 ) {
   // DEFAULT PROPERTIES
@@ -37,57 +39,59 @@ export function Selector<T>(
   });
 
   return (
-    <HiddenOptions
-      openButton={
-        <Row
-          onClick={() => {
-            if (exists(props.filterString) && isOpen.value) return;
-            isOpen.value = !isOpen.value;
-          }}
-          widthGrows
-          height={props.scale ?? 1}
-          padBetween={0.5}
-          alignTopLeft
-          overflowXCrops
-        >
-          <Show
-            when={!exists(props.filterString) || !isOpen.value}
-            fallback={
-              <Field value={props.filterString} hintText="Search" hasFocus={useProp(true)} />
-            }
+    <Label label={props.label}>
+      <HiddenOptions
+        openButton={
+          <Row
+            onClick={() => {
+              if (exists(props.filterString) && isOpen.value) return;
+              isOpen.value = !isOpen.value;
+            }}
+            widthGrows
+            height={props.scale ?? 1}
+            padBetween={0.5}
+            alignTopLeft
+            overflowXCrops
           >
             <Show
-              when={
-                !exists(props.getLabelForData(props.value)) ||
-                typeof props.getLabelForData(props.value) === `string`
+              when={!exists(props.filterString) || !isOpen.value}
+              fallback={
+                <Field value={props.filterString} hintText="Search" hasFocus={useProp(true)} />
               }
-              // If a custom component was provided, use it
-              fallback={props.getLabelForData(props.value)}
             >
-              <Txt
-                widthGrows
-                singleLine
-                stroke={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
+              <Show
+                when={
+                  !exists(props.getLabelForData(props.value)) ||
+                  typeof props.getLabelForData(props.value) === `string`
+                }
+                // If a custom component was provided, use it
+                fallback={props.getLabelForData(props.value)}
               >
-                {props.getLabelForData(props.value) ?? props.hintText ?? "None"}
-              </Txt>
+                <Txt
+                  widthGrows
+                  singleLine
+                  stroke={exists(props.value) ? $theme.colors.text : $theme.colors.hint}
+                >
+                  {props.getLabelForData(props.value) ?? props.hintText ?? "None"}
+                </Txt>
+              </Show>
             </Show>
-          </Show>
-          <Icon
-            iconPath={exists(props.filterString) && isOpen.value ? mdiClose : mdiMenuDown}
-            onClick={() => (isOpen.value = !isOpen.value)}
-          />
-          {props.actionButtons}
-        </Row>
-      }
-      isOpen={isOpen}
-      dropDownWidth={props.dropDownWidth ?? `100%`}
-      hideCancel={isFiltering.value && !props.stillShowInlineCancelOptionWhenFiltering}
-      noOptionsText={props.noOptionsText}
-      cancelOptions={props.cancelOptions}
-    >
-      {/* SECTION: Custom Options */}
-      {props.children}
-    </HiddenOptions>
+            <Icon
+              iconPath={exists(props.filterString) && isOpen.value ? mdiClose : mdiMenuDown}
+              onClick={() => (isOpen.value = !isOpen.value)}
+            />
+            {props.actionButtons}
+          </Row>
+        }
+        isOpen={isOpen}
+        dropDownWidth={props.dropDownWidth ?? `100%`}
+        hideCancel={isFiltering.value && !props.stillShowInlineCancelOptionWhenFiltering}
+        noOptionsText={props.noOptionsText}
+        cancelOptions={props.cancelOptions}
+      >
+        {/* SECTION: Custom Options */}
+        {props.children}
+      </HiddenOptions>
+    </Label>
   );
 }
