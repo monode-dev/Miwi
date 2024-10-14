@@ -58,7 +58,6 @@ export function Field(
     onBlur?: () => void;
     validateNextInput?: (nextInput: string) => boolean;
     formatInput?: FormatFieldInput;
-    /** TODO: If is set to `nest` auto tab. */
     enterKeyHint?: EnterKeyHint;
     label?: string;
   } & BoxProps,
@@ -66,7 +65,9 @@ export function Field(
   // Parse Props
   let inputElement: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
   const parseProp: (...args: any[]) => any = makePropParser(props as any);
-  const enterKeyHint = useFormula(() => props.enterKeyHint ?? props.multiline ? `enter` : `done`);
+
+  const enterKeyHint: Prop<EnterKeyHint> = useFormula(() => props.enterKeyHint ?? props.multiline ? `enter` : `done`);
+
   const maxLines = useFormula(() =>
     props.multiline
       ? Infinity
@@ -183,10 +184,22 @@ export function Field(
   function handleKeyPress(event: KeyboardEvent) {
     if (event.key === `Enter` && (maxLines.value === 1 || enterKeyHint.value !== `enter`)) {
       inputElementHasFocus.value = false;
+      if (enterKeyHint.value === `next`)
+        focusNextField();
       return;
     }
     validateInput(event, event.key === `Enter` ? `\n`: event.key);
   }
+
+  function focusNextField() {
+    const fields = document.querySelectorAll('input, textarea');
+    const currentIndex = Array.prototype.indexOf.call(fields, inputElement);
+    if (currentIndex >= 0 && currentIndex < fields.length - 1) {
+      const nextField = fields[currentIndex + 1] as HTMLInputElement | HTMLTextAreaElement;
+      nextField.focus();
+    }
+  }
+
   function handlePaste(event: ClipboardEvent) {
     validateInput(event, event.clipboardData?.getData("text") ?? ``);
   }
