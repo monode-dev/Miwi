@@ -35,10 +35,12 @@ export type FieldInputType = `password` | `text` | `email` | `number` | `tel` | 
 export function Field(
   props: {
     value?: Prop<string>;
+    getValue?: () => string;
+    setValue?: (value: string) => void;
     /* We use to use this to let people track the value before blur, but now that we
-     * have "onlyWriteOnBlur" I don't think we need it. */
+     * have "setValueOnEveryKeyStroke" I don't think we need it. */
     // tempValue?: Prop<string>;
-    onlyWriteOnBlur?: boolean;
+    setValueOnEveryKeyStroke?: boolean;
     hasFocus?: Prop<boolean>;
     hintText?: string;
     hintColor?: string;
@@ -115,9 +117,14 @@ export function Field(
   }
 
   // Internal Value, External Value, and Focus Change
-  const _externalValue = props.value ?? useProp(``);
-  const internalValue = props.onlyWriteOnBlur ? useProp(_externalValue.value) : _externalValue;
-  if (props.onlyWriteOnBlur) {
+  const _externalValue = exists(props.getValue)
+    // We want this to throw if props.setValue is undefined.
+    ? useFormula(props.getValue, props.setValue!)
+    : exists(props.value)
+      ? props.value
+      : useProp(``);
+  const internalValue = !props.setValueOnEveryKeyStroke ? useProp(_externalValue.value) : _externalValue;
+  if (!props.setValueOnEveryKeyStroke) {
     doWatch(
       () => {
         console.log(`inputElementHasFocus.value`, inputElementHasFocus.value)
@@ -135,7 +142,7 @@ export function Field(
   };
   const handleBlur = () => {
     batch(() => {
-      if (props.onlyWriteOnBlur) {
+      if (!props.setValueOnEveryKeyStroke) {
         if (internalValue.value !== internalValueOnFocus) {
           // If an internal change happened overwrite any external changes.
           _externalValue.value = internalValue.value;

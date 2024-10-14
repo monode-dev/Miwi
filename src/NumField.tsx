@@ -1,11 +1,13 @@
 import { BoxProps } from "./Box/Box";
-import { useProp, Prop, doWatch, exists } from "./utils";
+import { useProp, Prop, doWatch, exists, useFormula } from "./utils";
 import { EnterKeyHint, Field, KeyboardType } from "./Field";
 
 export function NumField(
   props: {
     value?: Prop<number | null | undefined>;
-    onlyWriteOnBlur?: boolean;
+    getValue?: () => number | null | undefined;
+    setValue?: (value: number | null | undefined) => void;
+    setValueOnEveryKeyStroke?: boolean;
     negativesAreAllowed?: boolean;
     hasFocusSig?: Prop<boolean>;
     scale?: number;
@@ -23,13 +25,17 @@ export function NumField(
     label?: string;
   } & BoxProps,
 ) {
+  const propValue = exists(props.getValue)
+  // We want this to throw if props.setValue is undefined.
+  ? useFormula(props.getValue, props.setValue!)
+  : props.value
   const keyboard = props.keyboard ?? "decimal";
-  const _stringValue = useProp(props.value?.value?.toString() ?? "");
+  const _stringValue = useProp(propValue?.value?.toString() ?? "");
 
-  if (exists(props.value)) {
+  if (exists(propValue)) {
     doWatch(
       () => {
-        const value = props.value?.value;
+        const value = propValue?.value;
         if (!exists(value)) {
           _stringValue.value = "";
         } else if (textToNumber(_stringValue.value) !== value) {
@@ -37,18 +43,18 @@ export function NumField(
         }
       },
       {
-        on: [props.value],
+        on: [propValue],
       },
     );
     doWatch(
       () => {
         if (_stringValue.value === "") {
-          props.value!.value = null;
+          propValue!.value = null;
         } else {
           if (!validateInput(_stringValue.value)) return;
           const asNumber = textToNumber(_stringValue.value);
-          if (asNumber === props.value!.value) return;
-          props.value!.value = asNumber;
+          if (asNumber === propValue!.value) return;
+          propValue!.value = asNumber;
         }
       },
       {
@@ -136,6 +142,8 @@ export function NumField(
       }}
       // align={props.align ?? $Align.topLeft}
       value={_stringValue}
+      getValue={undefined}
+      setValue={undefined}
       hasFocus={props.hasFocusSig}
       hintText={props.hint}
       hintColor={props.hintColor}
@@ -148,7 +156,7 @@ export function NumField(
       keyboard={keyboard}
       overrideProps={props}
       formatInput={formatInput}
-      onlyWriteOnBlur={props.onlyWriteOnBlur}
+      setValueOnEveryKeyStroke={props.setValueOnEveryKeyStroke}
       enterKeyHint={props.enterKeyHint}
       label={props.label}
     />
