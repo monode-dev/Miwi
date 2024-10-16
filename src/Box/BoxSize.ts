@@ -225,7 +225,7 @@ export function watchBoxSize(
         shouldLog: context.shouldLog,
       });
     if (context.shouldLog) {
-      console.log(`exactWidth`, exactWidth);
+      console.log(`exactWidth`, exactWidth, `wMin`, wMin, `wMax`, wMax, `_flexWidth`, _flexWidth);
     }
     flexWidth.value = _flexWidth;
     aspectRatioWidth.value = _aspectRatioWidth;
