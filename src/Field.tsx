@@ -40,6 +40,7 @@ export function Field(
     /* We use to use this to let people track the value before blur, but now that we
      * have "setValueOnEveryKeyStroke" I don't think we need it. */
     // tempValue?: Prop<string>;
+    // TODO: Once we debounce mufasa writes, this should be reworked to be `onlyWriteOnBlur` and should default to false.
     setValueOnEveryKeyStroke?: boolean;
     hasFocus?: Prop<boolean>;
     hintText?: string;
@@ -79,17 +80,17 @@ export function Field(
   );
 
   // Input focus
-  const inputElementHasFocus = props.hasFocus ?? useProp(false);
+  const externalHasFocus = props.hasFocus ?? useProp(false);
   onMount(() => {
-    if (inputElementHasFocus.value) {
+    if (externalHasFocus.value) {
       // Focus on next frame
       const frameId = requestAnimationFrame(() => inputElement?.focus());
       onCleanup(() => cancelAnimationFrame(frameId));
     }
   });
   doWatch(() => {
-    if (inputElementHasFocus.value !== (inputElement === document.activeElement)) {
-      if (inputElementHasFocus.value) {
+    if (externalHasFocus.value !== (inputElement === document.activeElement)) {
+      if (externalHasFocus.value) {
         tryFocus();
       } else {
         inputElement?.blur();
@@ -97,7 +98,6 @@ export function Field(
     }
   });
   function tryFocus() {
-    if (inputElementHasFocus.value) return;
     inputElement?.focus();
   }
 
@@ -128,8 +128,8 @@ export function Field(
   if (!props.setValueOnEveryKeyStroke) {
     doWatch(
       () => {
-        console.log(`inputElementHasFocus.value`, inputElementHasFocus.value)
-        if (!inputElementHasFocus.value) {
+        console.log(`inputElementHasFocus.value`, externalHasFocus.value)
+        if (!externalHasFocus.value) {
           internalValue.value = _externalValue.value;
         }
       },
@@ -139,7 +139,7 @@ export function Field(
   let internalValueOnFocus = ``;
   const handleFocus = () => {
     internalValueOnFocus = internalValue.value;
-    inputElementHasFocus.value = true;
+    externalHasFocus.value = true;
   };
   const handleBlur = () => {
     batch(() => {
@@ -152,7 +152,7 @@ export function Field(
           internalValue.value = _externalValue.value;
         }
       }
-      inputElementHasFocus.value = false;
+      externalHasFocus.value = false;
     })
     props.onBlur?.();
   };
@@ -183,7 +183,7 @@ export function Field(
   }
   function handleKeyPress(event: KeyboardEvent) {
     if (event.key === `Enter` && (maxLines.value === 1 || enterKeyHint.value !== `enter`)) {
-      inputElementHasFocus.value = false;
+      externalHasFocus.value = false;
       if (enterKeyHint.value === `next`)
         focusNextField();
       return;
@@ -225,7 +225,7 @@ export function Field(
 
   // Visuals
   const detailColor = useFormula(() =>
-    inputElementHasFocus.value
+    externalHasFocus.value
       ? $theme.colors.primary
       : internalValue.value === `` || !exists(internalValue.value)
         ? $theme.colors.hint
