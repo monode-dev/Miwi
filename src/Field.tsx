@@ -11,6 +11,46 @@ import { SIZE_SHRINKS, parseSize } from "./Box/BoxSize";
 import { Stack } from "./Stack";
 import { Txt } from "./Txt";
 import { Label } from "./Label";
+import { findPageInAncestors } from "./Nav";
+
+let mobileBrowserIsGoingToAddAnExtraNewlineForNoReason = false;
+
+const autoTabGroupIdKey = 'auto-tab-group-id';
+/** Finds the next input or textarea in this page in the same group that doesn't have some text
+ * in it already. */
+function getNextEmptyFieldInGroup(inputElement: HTMLInputElement | HTMLTextAreaElement) {
+  // If the field is not part of a group, then there can't be a next field
+  if (!inputElement.hasAttribute(autoTabGroupIdKey)) return;
+  const groupId = inputElement.getAttribute(autoTabGroupIdKey);
+
+  // Try to find the next field in the group
+  let nextInputElInGroup: HTMLInputElement | HTMLTextAreaElement | undefined = undefined;
+  let haveFoundCurrentField = false;
+  const pageElement = (findPageInAncestors(inputElement) ?? document);
+  for (const _el of pageElement.querySelectorAll('input, textarea')) {
+    const el = _el as HTMLInputElement | HTMLTextAreaElement; 
+    // Skip fields before the current field.
+    if (el === inputElement) {
+      haveFoundCurrentField = true;
+      continue;
+    }
+    if (!haveFoundCurrentField) continue;
+
+    // Skip fields that are not part of the group.
+    if (el.getAttribute('auto-tab-group-id') !== groupId) continue;
+
+    // Skip if the field has content in it.
+    if (el.value.trim() !== '') continue;
+
+    // Skip if the field is not visible.
+    if (el.offsetParent === null) continue;
+
+    // If we have found the next field, return it.
+    nextInputElInGroup = el;
+    break;
+  }
+  return nextInputElInGroup;
+}
 
 export type KeyboardType =
   | "none"
@@ -61,6 +101,7 @@ export function Field(
     formatInput?: FormatFieldInput;
     enterKeyHint?: EnterKeyHint;
     label?: string;
+    autoTabGroupId?: string;
   } & BoxProps,
 ) {
   // Parse Props
@@ -84,7 +125,7 @@ export function Field(
   onMount(() => {
     if (externalHasFocus.value) {
       // Focus on next frame
-      const frameId = requestAnimationFrame(() => inputElement?.focus());
+      const frameId = requestAnimationFrame(() => tryFocus());
       onCleanup(() => cancelAnimationFrame(frameId));
     }
   });
@@ -98,7 +139,19 @@ export function Field(
     }
   });
   function tryFocus() {
+    // We need to do this on tryFocus before the keyboard is opened.
+    setUpEnterKeyHintForAutoTab();
     inputElement?.focus();
+  }
+  function setUpEnterKeyHintForAutoTab(el?: HTMLInputElement | HTMLTextAreaElement) {
+    el = el ?? inputElement;
+    // If there is a field to auto-tab to, then use the "next" enter key hint.
+    // We need to do this on tryFocus before the keyboard is opened.
+    if (!exists(props.enterKeyHint) && exists(el)) {
+      const nextEmptyFieldInGroup = getNextEmptyFieldInGroup(el);
+      if (exists(getNextEmptyFieldInGroup(el))) el.enterKeyHint = `next`;
+      const keyboardIsOpenning = el === document.activeElement;
+    }
   }
 
   // Apply text style to input element
@@ -128,7 +181,6 @@ export function Field(
   if (!props.setValueOnEveryKeyStroke) {
     doWatch(
       () => {
-        console.log(`inputElementHasFocus.value`, externalHasFocus.value)
         if (!externalHasFocus.value) {
           internalValue.value = _externalValue.value;
         }
@@ -140,6 +192,15 @@ export function Field(
   const handleFocus = () => {
     internalValueOnFocus = internalValue.value;
     externalHasFocus.value = true;
+    // Sometimes mobile browsers add an extra newline when we focus on a text area. This lets us fix that.
+    if (inputElement! instanceof HTMLTextAreaElement && mobileBrowserIsGoingToAddAnExtraNewlineForNoReason) {
+      mobileBrowserIsGoingToAddAnExtraNewlineForNoReason = false;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          internalValue.value = internalValueOnFocus;
+        });
+      });
+    }
   };
   const handleBlur = () => {
     batch(() => {
@@ -184,20 +245,21 @@ export function Field(
   function handleKeyPress(event: KeyboardEvent) {
     if (event.key === `Enter` && (maxLines.value === 1 || enterKeyHint.value !== `enter`)) {
       externalHasFocus.value = false;
-      if (enterKeyHint.value === `next`)
-        focusNextField();
+      // If this input is in an auto-tab group and there is a field to auto-tab to, then focus it.
+      const nextInputInGroup = getNextEmptyFieldInGroup(inputElement!);
+      if (exists(nextInputInGroup)) {
+        // We need to set this up before the keyboard is opened.
+        setUpEnterKeyHintForAutoTab(nextInputInGroup)
+        /** At-least in safari, when we focus on a text area via an enter key press, it adds an extra newline.
+         * We need to tell the next field to ignore this. */
+        if (nextInputInGroup instanceof HTMLTextAreaElement) {
+          mobileBrowserIsGoingToAddAnExtraNewlineForNoReason = true;
+        }
+        nextInputInGroup.focus();
+      }
       return;
     }
     validateInput(event, event.key === `Enter` ? `\n`: event.key);
-  }
-
-  function focusNextField() {
-    const fields = document.querySelectorAll('input, textarea');
-    const currentIndex = Array.prototype.indexOf.call(fields, inputElement);
-    if (currentIndex >= 0 && currentIndex < fields.length - 1) {
-      const nextField = fields[currentIndex + 1] as HTMLInputElement | HTMLTextAreaElement;
-      nextField.focus();
-    }
   }
 
   function handlePaste(event: ClipboardEvent) {
@@ -278,6 +340,10 @@ export function Field(
       wrap: maxLines.value > 1 ? (`soft` as const) : undefined,
       ["auto-capitalize"]: props.capitalize ?? "none",
       enterkeyhint: enterKeyHint.value,
+      [autoTabGroupIdKey]: props.autoTabGroupId,
+      /** We do this here to make sure auto-tab groups can pick the right enter key hint before the keyboard
+       * is opened. It has to be onmousedown on onclick so that it fires before the keyboard is opened. */
+      onmousedown: () => setUpEnterKeyHintForAutoTab(),
       style: {
         minHeight: `100%`,
         height: `100%`,
@@ -351,7 +417,9 @@ export function Field(
                 {internalValue.value == ``
                   ? `a`
                   : internalValue.value.endsWith(`\n`)
-                    ? internalValue.value + `\n`
+                    ? internalValue.value.trim() === ``
+                      ? internalValue.value + `a\n`
+                      : internalValue.value + `\n`
                     : internalValue.value}
               </Txt>
             </Show>

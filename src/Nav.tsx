@@ -172,7 +172,6 @@ export function getMyPageIndex(currentElement: HTMLElement): number | null {
 }
 
 export function findPageInAncestors(currentElement: HTMLElement): HTMLElement | null {
-  // Find Touch Element for current page
   let element: HTMLElement | null = currentElement;
   while (exists(element) && !element.classList.contains(pageClassTag)) {
     element = element.parentElement;
