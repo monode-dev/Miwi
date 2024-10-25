@@ -19,7 +19,7 @@ export function HiddenOptions(
     isOpen?: Prop<boolean>;
     cardStyle?: BoxProps;
     dropDownWidth?: Size;
-    noOptionsText?: string;
+    noAvailableOptionsHint?: string;
   } & BoxProps,
 ) {
   const scale = props.scale ?? 1;
@@ -68,7 +68,7 @@ export function HiddenOptions(
       {/* No Options Hint */}
       <Show when={!hasChildren.value}>
         <Txt hint onClick={() => (isOpen.value = false)} widthGrows>
-          {props.noOptionsText ?? `No Options`}
+          {props.noAvailableOptionsHint ?? `No Options`}
         </Txt>
       </Show>
 

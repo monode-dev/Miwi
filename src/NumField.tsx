@@ -23,6 +23,7 @@ export function NumField(
     enterKeyHint?: EnterKeyHint;
     validateNextInput?: (newInput: number) => boolean;
     label?: string;
+    labelStyle?: BoxProps
     autoTabGroupId?: string;
   } & BoxProps,
 ) {
@@ -160,6 +161,7 @@ export function NumField(
       setValueOnEveryKeyStroke={props.setValueOnEveryKeyStroke}
       enterKeyHint={props.enterKeyHint}
       label={props.label}
+      labelStyle={props.labelStyle}
       autoTabGroupId={props.autoTabGroupId}
     />
   );

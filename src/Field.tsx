@@ -101,6 +101,7 @@ export function Field(
     formatInput?: FormatFieldInput;
     enterKeyHint?: EnterKeyHint;
     label?: string;
+    labelStyle?: BoxProps
     autoTabGroupId?: string;
   } & BoxProps,
 ) {
@@ -375,7 +376,7 @@ export function Field(
     return maxLines.value > 1 ? <textarea {...getInputProps()} /> : <input {...getInputProps()} />;
   }
   return (
-    <Label label={props.label}>
+    <Label label={props.label} overrideProps={props.labelStyle}>
       <Row
         onClick={() => tryFocus()}
         widthGrows
