@@ -57,7 +57,7 @@ export function Selector<T>(
             <Show
               when={!exists(props.filterString) || !isOpen.value}
               fallback={
-                <Field value={props.filterString} hintText="Search" hasFocus={useProp(true)} />
+                <Field value={props.filterString} hintText="Search" hasFocus={useProp(true)} setValueOnEveryKeyStroke />
               }
             >
               <Show
