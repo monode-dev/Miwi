@@ -27,6 +27,8 @@ export function Dialog(
         preventClickPropagation
         overrideProps={props}
         shadowSize={1.25}
+        overflowYScrolls
+        alignTopCenter
       >
         {props.children}
       </Card>
