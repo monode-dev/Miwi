@@ -40,7 +40,7 @@ export function HiddenOptions(
           fallback={
             <Icon
               scale={scale}
-              iconPath={props.openIcon ?? mdiDotsVertical}
+              icon={props.openIcon ?? mdiDotsVertical}
               onClick={() => (isOpen.value = !isOpen.value)}
             />
           }
@@ -124,7 +124,7 @@ export function HiddenOption(
     >
       {props.children}
       <Show when={exists(props.icon)}>
-        <Icon iconPath={props.icon!} />
+        <Icon icon={props.icon!} />
       </Show>
       <Show when={exists(props.text)}>
         <Txt singleLine={props.singleLine}>{props.text}</Txt>

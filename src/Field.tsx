@@ -393,7 +393,7 @@ export function Field(
       >
         {/* Icon */}
         <Show when={exists(props.iconPath) && props.iconPath !== ``}>
-          <Icon iconPath={props.iconPath!} stroke={detailColor.value} scale={scale.value} />
+          <Icon icon={props.iconPath!} stroke={detailColor.value} scale={scale.value} />
         </Show>
 
         <Column>

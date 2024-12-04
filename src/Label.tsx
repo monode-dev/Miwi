@@ -29,7 +29,7 @@ export function Label(
       <Switch>
         <Match when={exists(props.icon)}>
           <Box fill={props.labelBackground}>
-            <Icon iconPath={props.icon!} scale={props.labelWidth ?? undefined} />
+            <Icon icon={props.icon!} scale={props.labelWidth ?? undefined} />
           </Box>
         </Match>
         <Match when={exists(props.label)}>
