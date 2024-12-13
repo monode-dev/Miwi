@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { Box } from "./Box/Box";
 import { OfflineWarning } from "./OfflineWarning";
 import { Stack } from "./Stack";
+import { Delivery } from "@/Deliveries/Delivery";
 
 // SECTION: Transitions
 export interface PageTransition {
@@ -139,7 +140,7 @@ export function pushPage<T>(newPage: PageComponent<T>, props: T) {
   nav.pushPage(newPage, props);
 }
 
-export function popPage() {
+export function popPage(subDeliveryPopUp: any, p0: { delivery: Delivery; }) {
   const nav = useNav();
   nav.popPage();
 }
