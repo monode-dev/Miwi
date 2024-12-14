@@ -15,7 +15,7 @@ export function Selector<T>(
     value: T;
     getLabelForData: (data: T) => string | JSXElement | null;
     hintText?: string;
-    noOptionsText?: string;
+    noAvailableOptionsHint?: string;
     isOpen?: Prop<boolean>;
     filterString?: Prop<string>;
     stillShowInlineCancelOptionWhenFiltering?: boolean;
@@ -24,6 +24,7 @@ export function Selector<T>(
     dropDownWidth?: Size;
     rightActions?: JSXElement;
     label?: string;
+    labelStyle?: BoxProps
   } & BoxProps,
 ) {
   // DEFAULT PROPERTIES
@@ -39,7 +40,7 @@ export function Selector<T>(
   });
 
   return (
-    <Label label={props.label}>
+    <Label label={props.label} overrideProps={props.labelStyle}>
       <HiddenOptions
         openButton={
           <Row
@@ -86,7 +87,7 @@ export function Selector<T>(
         isOpen={isOpen}
         dropDownWidth={props.dropDownWidth ?? `100%`}
         hideCancel={isFiltering.value && !props.stillShowInlineCancelOptionWhenFiltering}
-        noOptionsText={props.noOptionsText}
+        noAvailableOptionsHint={props.noAvailableOptionsHint}
         cancelOptions={props.cancelOptions}
       >
         {/* SECTION: Custom Options */}

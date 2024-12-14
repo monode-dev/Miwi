@@ -13,6 +13,9 @@ export function Card(props: BoxProps) {
       stroke={theme.palette.text}
       scale={1}
       pad={1}
+      outlineSize={1 / 8}
+      outlineColor={`transparent`}
+      preventClickPropagation
       overrideProps={props}
     >
       {props.children}
