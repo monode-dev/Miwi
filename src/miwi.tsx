@@ -28,6 +28,7 @@ declare global {
     readonly scale: number | string;
     readonly colors: {
       readonly primary: string;
+      readonly secondary: string;
       readonly accent: string;
       readonly pageBackground: string;
       readonly text: string;
@@ -52,6 +53,7 @@ const $theme = ${JSON.stringify({
   scale: `var(${sizeScaleCssVarName})` as any,
   colors: {
     primary: `var(--miwi-color-primary)`,
+    secondary: `var(--miwi-color-secondary)`,
     accent: `var(--miwi-color-accent)`,
     pageBackground: `var(--miwi-color-page-fill)`,
     text: `var(--miwi-color-text)`,
@@ -74,6 +76,7 @@ export function setTheme(
   :root {
     ${sizeScaleCssVarName}: ${muToCss(props.scale ?? 1)};
     --miwi-color-primary: ${props.colors?.primary ?? `#b3dd3e`};
+    --miwi-color-secondary: ${props.colors?.secondary ?? `#2d2d2d`};
     --miwi-color-accent: ${props.colors?.accent ?? `#ffffffff`};
     --miwi-color-page-fill: ${props.colors?.pageBackground ?? `#f9fafdff`};
     --miwi-color-text: ${props.colors?.text ?? `#000000ff`};
@@ -133,6 +136,7 @@ export * from "./Field";
 export * from "./FloatSort";
 export * from "./HiddenOptions";
 export * from "./Icon";
+export * from "./InlineAppBar";
 export * from "./Label";
 export * from "./Modal";
 export * from "./Nav";
@@ -142,6 +146,8 @@ export * from "./Page";
 export * from "./Row";
 export * from "./Txt";
 export * from "./Selector";
+export * from "./SimpleBody";
+export * from "./SimplePage";
 export * from "./Slider";
 export * from "./SortableColumn";
 export * from "./Stack";
