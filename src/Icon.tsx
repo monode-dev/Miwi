@@ -11,7 +11,7 @@ function toMdiName(str: string) {
 }
 
 export function Icon(props: {
-  iconPath: string;
+  icon: string;
   stroke?: string;
   scale?: Size;
   onClick?: () => void;
@@ -33,7 +33,7 @@ export function Icon(props: {
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path d={props.iconPath}></path>
+        <path d={props.icon}></path>
       </svg>
     </Box>
   );

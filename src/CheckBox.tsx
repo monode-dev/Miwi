@@ -31,7 +31,7 @@ export function Checkbox(props: {
           }
         >
           <Show when={props.getValue()}>
-            <Icon iconPath={mdiCheck} scale={0.85} stroke={theme.palette.accent} />
+            <Icon icon={mdiCheck} scale={0.85} stroke={theme.palette.accent} />
           </Show>
         </Box>
       </Box>

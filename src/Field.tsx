@@ -90,7 +90,7 @@ export function Field(
     multiline?: boolean;
     underlined?: boolean;
     scale?: number;
-    iconPath?: string;
+    icon?: string;
     keyboard?: KeyboardType;
     h1?: boolean;
     h2?: boolean;
@@ -393,8 +393,8 @@ export function Field(
         }}
       >
         {/* Icon */}
-        <Show when={exists(props.iconPath) && props.iconPath !== ``}>
-          <Icon iconPath={props.iconPath!} stroke={detailColor.value} scale={scale.value} />
+        <Show when={exists(props.icon) && props.icon !== ``}>
+          <Icon icon={props.icon!} stroke={detailColor.value} scale={scale.value} />
         </Show>
 
         <Column>

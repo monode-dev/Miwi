@@ -78,7 +78,7 @@ export function Selector<T>(
               </Show>
             </Show>
             <Icon
-              iconPath={exists(props.filterString) && isOpen.value ? mdiClose : mdiMenuDown}
+              icon={exists(props.filterString) && isOpen.value ? mdiClose : mdiMenuDown}
               onClick={() => (isOpen.value = !isOpen.value)}
             />
             {props.actionButtons}

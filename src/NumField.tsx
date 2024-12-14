@@ -150,7 +150,7 @@ export function NumField(
       hintText={props.hint}
       hintColor={props.hintColor}
       textColor={props.textColor}
-      iconPath={props.icon}
+      icon={props.icon}
       underlined={props.underlined}
       h2={props.title}
       h1={props.heading}

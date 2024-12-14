@@ -50,7 +50,7 @@ export function AppBar(
                 !exists(props.left)
               }
             >
-              <Icon onClick={nav.popPage} scale={1.25} iconPath={mdiArrowLeft} />
+              <Icon onClick={nav.popPage} scale={1.25} icon={mdiArrowLeft} />
             </Show>
             {props.left}
           </Row>

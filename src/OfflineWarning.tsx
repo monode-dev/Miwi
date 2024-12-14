@@ -40,7 +40,7 @@ export function OfflineWarning(props: { isOnlineSig: ReadonlyProp<boolean> }) {
             shadowSize={2}
             pad={0.5}
           >
-            <Icon iconPath={mdiWifiOff} scale={1} />
+            <Icon icon={mdiWifiOff} scale={1} />
             Will Sync When Online
           </Row>
         </Box>
