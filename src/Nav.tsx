@@ -60,8 +60,8 @@ export const pageTransitions = {
     },
   } satisfies PageTransition,
 };
-type PageComponent<T> = Component<T> & { readonly transitions?: PageTransition };
-export function setPageTransitions<T>(
+type PageComponent<T extends Record<string, any>> = Component<T> & { readonly transitions?: PageTransition };
+export function setPageTransitions<T extends Record<string, any>>(
   page: Component<T>,
   transitions: PageTransition,
 ): PageComponent<T> {
@@ -75,7 +75,7 @@ export function setPageTransitions<T>(
 }
 
 // SECTION: Nav
-type PageToOpen<T = any> = {
+type PageToOpen<T extends Record<string, any> = any> = {
   component: Component<T>;
   props: T;
   transitions: PageTransition;
@@ -97,7 +97,7 @@ export const useNav = sessionStore("navigator", () => {
     _pagesInTransitions,
     pagesAreTransitioning: useFormula(() => _pagesInTransitions.value.length > 0),
     // TODO: Poping a page and then immediately pushing a page seems to fail
-    pushPage<T>(newPage: PageComponent<T>, props: T) {
+    pushPage<T extends Record<string, any>>(newPage: PageComponent<T>, props: T) {
       openedPages.value = [
         ...openedPages.value,
         {
@@ -134,7 +134,7 @@ export const useNav = sessionStore("navigator", () => {
   };
 });
 
-export function pushPage<T>(newPage: PageComponent<T>, props: T) {
+export function pushPage<T extends Record<string, any>>(newPage: PageComponent<T>, props: T) {
   const nav = useNav();
   nav.pushPage(newPage, props);
 }

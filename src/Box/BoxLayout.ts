@@ -223,6 +223,7 @@ export const columnClassName = `miwi-column`;
 export const rowClassName = `miwi-row`;
 export const stackClassName = `miwi-stack`;
 export const nonStackClassName = `miwi-non-stack`;
+export const hiddenScrollbarClassName = `miwi-hidden-scrollbar`;
 const style = document.createElement(`style`);
 style.textContent = `
 .${stackClassName} > * {
@@ -231,6 +232,16 @@ style.textContent = `
 
 .${nonStackClassName} > * {
   position: relative;
+}
+
+.${hiddenScrollbarClassName}::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.${hiddenScrollbarClassName}::-webkit-scrollbar-thumb {
+  background: transparent;
 }
 `;
 document.body.appendChild(style);
@@ -385,13 +396,14 @@ export function watchBoxLayout(
         : overflowY === Overflow.crop
           ? `clip` // We don't use "hidden" because: https://www.youtube.com/watch?v=72pUm4tQesw&t=490
           : `visible`;
-    // Scroll bar should be invisible
-    (element.value.style as any).scrollbarWidth = [_overflowX, overflowY].includes(Overflow.scroll)
-      ? `thin`
+    const shouldHideScrollbar = [_overflowX, overflowY].includes(Overflow.scroll);
+    // Scroll bar should be invisible across Firefox, old Edge/IE, and WebKit.
+    (element.value.style as any).scrollbarWidth = shouldHideScrollbar ? `none` : ``;
+    (element.value.style as any).scrollbarColor = shouldHideScrollbar
+      ? `transparent transparent`
       : ``;
-    (element.value.style as any).scrollbarColor = [_overflowX, overflowY].includes(Overflow.scroll)
-      ? `#e3e3e3 transparent`
-      : ``;
+    (element.value.style as any).msOverflowStyle = shouldHideScrollbar ? `none` : ``;
+    element.value.classList.toggle(hiddenScrollbarClassName, shouldHideScrollbar);
   });
   // TODO: These should really be signals so that other things can watch if they change.
   return {

@@ -61,6 +61,11 @@ export function watchBoxDecoration(
   parseProp: ParseProp<DecorationSty>,
   element: Prop<HTMLElement | undefined>,
 ) {
+  const isGradientFill = (fill: string) =>
+    /^(linear|radial|conic|repeating-linear|repeating-radial|repeating-conic)-gradient\(/.test(
+      fill.trim(),
+    );
+
   // Corner Radius
   createRenderEffect(() => {
     if (!exists(element.value)) return;
@@ -111,16 +116,24 @@ export function watchBoxDecoration(
         fillWithStroke: _ => strokeTexture,
       }) ?? ``;
     const backgroundIsImage = fill.startsWith(`data:image`) || fill.startsWith(`/`);
-    element.value.style.backgroundColor = backgroundIsImage ? `` : fill;
-    element.value.style.backgroundImage = backgroundIsImage ? `url('${fill}')` : ``;
+    const backgroundIsGradient = isGradientFill(fill);
+    element.value.style.backgroundColor =
+      backgroundIsImage || backgroundIsGradient ? `` : fill;
+    element.value.style.backgroundImage = backgroundIsImage
+      ? `url('${fill}')`
+      : backgroundIsGradient
+        ? fill
+        : ``;
     element.value.style.backgroundSize =
       parseProp({
         backgroundFit: v => v,
         backgroundCover: v => (v ? `cover` : ``),
         backgroundContain: v => (v ? `contain` : ``),
-      }) ?? (backgroundIsImage ? `cover` : ``);
-    element.value.style.backgroundPosition = backgroundIsImage ? `center` : ``;
-    element.value.style.backgroundRepeat = backgroundIsImage ? `no-repeat` : ``;
+      }) ?? (backgroundIsImage ? `cover` : backgroundIsGradient ? `100% 100%` : ``);
+    element.value.style.backgroundPosition =
+      backgroundIsImage || backgroundIsGradient ? `center` : ``;
+    element.value.style.backgroundRepeat =
+      backgroundIsImage || backgroundIsGradient ? `no-repeat` : ``;
   });
 
   // Shadow
